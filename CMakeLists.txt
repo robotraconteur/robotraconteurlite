@@ -14,7 +14,8 @@ add_library(robotraconteurlite include/robotraconteurlite/robotraconteurlite.h
 							   include/robotraconteurlite/array.h
 							   include/robotraconteurlite/nodeid.h
 							   src/message.c
-							   src/array.c)
+							   src/array.c
+							   src/nodeid.c)
 
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})

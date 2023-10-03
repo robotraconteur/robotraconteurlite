@@ -17,10 +17,17 @@
 #define __ROBOTRACONTEURLITE_NODEID_H__
 
 #include <stdint.h>
+#include "robotraconteurlite/config.h"
 
 struct robotraconteurlite_nodeid
 {
 	uint8_t data[16];
 };
+
+ROBOTRACONTEURLITE_DECL int robotraconteurlite_nodeid_equal(const struct robotraconteurlite_nodeid *a, const struct robotraconteurlite_nodeid *b);
+
+ROBOTRACONTEURLITE_DECL int robotraconteurlite_nodeid_isany(const struct robotraconteurlite_nodeid *a);
+
+ROBOTRACONTEURLITE_DECL int robotraconteurlite_nodeid_newrandom(struct robotraconteurlite_nodeid *a);
 
 #endif /* __ROBOTRACONTEURLITE_NODEID_H__ */
