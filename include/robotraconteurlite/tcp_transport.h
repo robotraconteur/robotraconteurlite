@@ -1,0 +1,71 @@
+/* Copyright 2011-2023 Wason Technology, LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+#ifndef __ROBOTRACONTEURLITE_TCP_TRANSPORT_H__
+#define __ROBOTRACONTEURLITE_TCP_TRANSPORT_H__
+
+#include "robotraconteurlite/node.h"
+
+#define ROBOTRACONTEURLITE_TCP_TRANSPORT 0x10001
+
+enum robotraconteurlite_tcp_transport_state
+{
+    ROBOTRACONTEURLITE_TCP_TRANSPORT_STATE_NULL = 0,
+    ROBOTRACONTEURLITE_TCP_TRANSPORT_STATE_STARTED = 0x1,
+    ROBOTRACONTEURLITE_TCP_TRANSPORT_STATE_IN_HTTP_HEADER = 0x2,
+    ROBOTRACONTEURLITE_TCP_TRANSPORT_STATE_HTTP_LINE_EMPTY = 0x4,
+    ROBOTRACONTEURLITE_TCP_TRANSPORT_STATE_HTTP_IS_SEC_WEBSOCKET_KEY_LINE = 0x8,
+    ROBOTRACONTEURLITE_TCP_TRANSPORT_STATE_IS_WEBSOCKET = 0x10,
+    ROBOTRACONTEURLITE_TCP_TRANSPORT_STATE_RECV_WEBSOCKET_IN_FRAME = 0x20,
+    ROBOTRACONTEURLITE_TCP_TRANSPORT_STATE_RECV_WEBSOCKET_ENABLE_MASK = 0x40,
+    ROBOTRACONTEURLITE_TCP_TRANSPORT_STATE_RECV_WEBSOCKET_HEADER1_RECV = 0x80,
+    ROBOTRACONTEURLITE_TCP_TRANSPORT_STATE_RECV_WEBSOCKET_HEADER2_RECV = 0x100,
+};
+
+enum ROBOTRACONTEURLITE_TCP_TRANSPORT_WEBSOCKET_OPCODE
+{
+    ROBOTRACONTEURLITE_TCP_TRANSPORT_WEBSOCKET_FLAGS_CONTINUATION = 0x0,
+    ROBOTRACONTEURLITE_TCP_TRANSPORT_WEBSOCKET_FLAGS_TEXT = 0x1,
+    ROBOTRACONTEURLITE_TCP_TRANSPORT_WEBSOCKET_FLAGS_BINARY = 0x2,
+    ROBOTRACONTEURLITE_TCP_TRANSPORT_WEBSOCKET_FLAGS_CLOSE = 0x8,
+    ROBOTRACONTEURLITE_TCP_TRANSPORT_WEBSOCKET_FLAGS_PING = 0x9,
+    ROBOTRACONTEURLITE_TCP_TRANSPORT_WEBSOCKET_FLAGS_PONG = 0xA
+};
+
+struct robotraconteurlite_tcp_sha1_storage
+{
+    uint8_t sha1_bytes[20];
+};
+
+struct robotraconteurlite_tcp_transport_storage
+{
+    uint32_t tcp_transport_state;
+    uint32_t http_line_pos;
+    uint32_t recv_websocket_frame_pos;
+    uint32_t recv_websocket_frame_len;
+    uint16_t recv_websocket_header_pos;
+    uint16_t send_websocket_header_pos;
+    uint8_t recv_websocket_mask[4];
+    uint8_t recv_websocket_header_buffer[16];
+    uint8_t send_websocket_header_buffer[8];
+};
+
+struct sockaddr_in;
+
+ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_acceptor_listen(struct robotraconteurlite_connection_acceptor* acceptor, const struct sockaddr_storage* serv_addr, int backlog);
+
+ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_acceptor_close(struct robotraconteurlite_connection_acceptor* acceptor);
+
+#endif //__ROBOTRACONTEURLITE_TCP_TRANSPORT_H__
