@@ -177,6 +177,7 @@ struct robotraconteurlite_connection
 
     // Message information
     uint32_t recv_message_len;
+    uint32_t send_message_len;
 
     // Transport storage
     struct robotraconteurlite_transport_storage transport_storage;    
