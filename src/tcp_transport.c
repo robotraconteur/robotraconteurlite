@@ -64,7 +64,7 @@ int robotraconteurlite_tcp_acceptor_communicate(struct robotraconteurlite_connec
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
 
-int robotraconteurlite_tcp_connection_recv_websocket(struct robotraconteurlite_connection* connection, size_t len)
+static int robotraconteurlite_tcp_connection_buffer_recv_websocket(struct robotraconteurlite_connection* connection, size_t len)
 {
     struct robotraconteurlite_tcp_transport_storage* storage = (struct robotraconteurlite_tcp_transport_storage*)&connection->transport_storage;
     if (storage->recv_websocket_frame_pos == storage->recv_websocket_frame_len && 
@@ -159,12 +159,12 @@ int robotraconteurlite_tcp_connection_recv_websocket(struct robotraconteurlite_c
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
 
-int robotraconteurlite_tcp_connection_recv(struct robotraconteurlite_connection* connection, size_t len)
+int robotraconteurlite_tcp_connection_buffer_recv(struct robotraconteurlite_connection* connection, size_t len)
 {
     struct robotraconteurlite_tcp_transport_storage* storage = (struct robotraconteurlite_tcp_transport_storage*)&connection->transport_storage;
     if ((storage->tcp_transport_state & ROBOTRACONTEURLITE_TCP_TRANSPORT_STATE_IS_WEBSOCKET) != 0)
     {
-        return robotraconteurlite_tcp_connection_recv_websocket(connection, len);
+        return robotraconteurlite_tcp_connection_buffer_recv_websocket(connection, len);
     }
 
     int last_errno;
@@ -200,7 +200,7 @@ int robotraconteurlite_tcp_connection_communicate_recv(struct robotraconteurlite
             size_t recv_op_len = connection->recv_message_len == 0 ? 64 : connection->recv_message_len - connection->recv_buffer_pos;
             
             // Receive data
-            int ret = robotraconteurlite_tcp_connection_recv(connection, recv_op_len);
+            int ret = robotraconteurlite_tcp_connection_buffer_recv(connection, recv_op_len);
             if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
             {
                 connection->connection_state |= ROBOTRACONTEURLITE_STATUS_FLAGS_ERROR;
@@ -229,7 +229,7 @@ int robotraconteurlite_tcp_connection_communicate_recv(struct robotraconteurlite
     }
 }
 
-int robotraconteurlite_tcp_websocket_random_mask(struct robotraconteurlite_connection* connection, uint8_t mask[4])
+static int robotraconteurlite_tcp_websocket_random_mask(struct robotraconteurlite_connection* connection, uint8_t mask[4])
 {
     // TODO: use better random source
     uint32_t random_val = rand();
@@ -237,7 +237,7 @@ int robotraconteurlite_tcp_websocket_random_mask(struct robotraconteurlite_conne
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
 
-int robotraconteurlite_tcp_connection_send_websocket(struct robotraconteurlite_connection* connection, size_t len)
+static int robotraconteurlite_tcp_connection_buffer_send_websocket(struct robotraconteurlite_connection* connection, size_t len)
 {
     struct robotraconteurlite_tcp_transport_storage* storage = (struct robotraconteurlite_tcp_transport_storage*)&connection->transport_storage;
     size_t send_len = len - connection->send_buffer_pos;
@@ -330,12 +330,12 @@ int robotraconteurlite_tcp_connection_send_websocket(struct robotraconteurlite_c
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
 
-int robotraconteurlite_tcp_connection_send(struct robotraconteurlite_connection* connection, size_t len)
+int robotraconteurlite_tcp_connection_buffer_send(struct robotraconteurlite_connection* connection, size_t len)
 {
     struct robotraconteurlite_tcp_transport_storage* storage = (struct robotraconteurlite_tcp_transport_storage*)&connection->transport_storage;
     if ((storage->tcp_transport_state & ROBOTRACONTEURLITE_TCP_TRANSPORT_STATE_IS_WEBSOCKET) != 0)
     {
-        return robotraconteurlite_tcp_connection_send_websocket(connection, len);
+        return robotraconteurlite_tcp_connection_buffer_send_websocket(connection, len);
     }
 
     int last_errno;
@@ -350,7 +350,7 @@ int robotraconteurlite_tcp_connection_communicate_send(struct robotraconteurlite
         connection->connection_state &= ~ROBOTRACONTEURLITE_STATUS_FLAGS_SEND_REQUESTED;
 
         // Send data
-        int ret = robotraconteurlite_tcp_connection_send(connection, connection->send_message_len);
+        int ret = robotraconteurlite_tcp_connection_buffer_send(connection, connection->send_message_len);
         if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
         {
             connection->connection_state |= ROBOTRACONTEURLITE_STATUS_FLAGS_ERROR;
@@ -368,7 +368,7 @@ int robotraconteurlite_tcp_connection_communicate_send(struct robotraconteurlite
     {
         // Send data
         size_t send_op_len = connection->send_message_len == 0 ? 64 : connection->send_message_len - connection->send_buffer_pos;
-        int ret = robotraconteurlite_tcp_connection_send(connection, send_op_len);
+        int ret = robotraconteurlite_tcp_connection_buffer_send(connection, send_op_len);
         if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
         {
             connection->connection_state |= ROBOTRACONTEURLITE_STATUS_FLAGS_ERROR;
@@ -388,7 +388,7 @@ int robotraconteurlite_tcp_connection_communicate_send(struct robotraconteurlite
     }    
 }
 
-int robotraconteurlite_tcp_connection_handshake_http_handshake_find_next_line(const char* recv_data, size_t recv_data_len, size_t* i_end, size_t* i_next)
+static int robotraconteurlite_tcp_connection_handshake_http_handshake_find_next_line(const char* recv_data, size_t recv_data_len, size_t* i_end, size_t* i_next)
 {
     size_t i = *i_end;
     while (i < recv_data_len && recv_data[i] != '\n' && recv_data[i] != '\r')
@@ -419,7 +419,7 @@ int robotraconteurlite_tcp_connection_handshake_http_handshake_find_next_line(co
 #define STRCONST_HTTP_RESPONSE_2 "\r\n\r\n"
 #define STRCONST_HTTP_RESPONSE_2_LEN 4
 
-int robotraconteurlite_tcp_connection_handshake_http_handshake(struct robotraconteurlite_connection* connection)
+static int robotraconteurlite_tcp_connection_handshake_http_handshake(struct robotraconteurlite_connection* connection)
 {
     const char* recv_data = (const char*)connection->recv_buffer;
     size_t recv_data_len = connection->recv_buffer_pos;

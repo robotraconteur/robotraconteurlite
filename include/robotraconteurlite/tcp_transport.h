@@ -74,6 +74,23 @@ ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_acceptor_listen(struct robotr
 
 ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_acceptor_close(struct robotraconteurlite_connection_acceptor* acceptor);
 
+ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_acceptor_communicate(struct robotraconteurlite_connection_acceptor* acceptor, struct robotraconteurlite_connection* connection_head);
+
+ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_connection_buffer_recv(struct robotraconteurlite_connection* connection, size_t len);
+
+ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_connection_communicate_recv(struct robotraconteurlite_connection* connection);
+
+ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_connection_buffer_send(struct robotraconteurlite_connection* connection, size_t len);
+
+ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_connection_communicate_send(struct robotraconteurlite_connection* connection);
+
+ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_connection_handshake(struct robotraconteurlite_connection* connection);
+
+ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_connection_communicate(struct robotraconteurlite_connection* connection);
+
+ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_connections_communicate(struct robotraconteurlite_connection* connections_head);
+
+// TCP socket functions
 
 ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_sha1(const uint8_t* data, size_t len, struct robotraconteurlite_tcp_sha1_storage* storage);
 
@@ -86,5 +103,7 @@ ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_socket_send_nonblocking(int s
 ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_socket_begin_server(const struct sockaddr_storage* serv_addr, size_t backlog, int* sock_out, int* errno_out);
 
 ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_socket_accept(int acceptor_sock, int* client_sock, int* errno_out);
+
+ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_socket_close(int sock);
 
 #endif //__ROBOTRACONTEURLITE_TCP_TRANSPORT_H__
