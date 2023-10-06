@@ -9,15 +9,22 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 add_compile_definitions(-DROBOTRACONTEURLITE_USE_OPENSSL=1)
 
-add_library(robotraconteurlite include/robotraconteurlite/robotraconteurlite.h
-                               include/robotraconteurlite/config.h
-							   include/robotraconteurlite/message.h
-							   include/robotraconteurlite/err.h
+add_library(robotraconteurlite 
 							   include/robotraconteurlite/array.h
+                               include/robotraconteurlite/config.h
+							   include/robotraconteurlite/err.h
+							   include/robotraconteurlite/message.h
+							   include/robotraconteurlite/node.h
 							   include/robotraconteurlite/nodeid.h
-							   src/message.c
+							   include/robotraconteurlite/robotraconteurlite.h
+							   include/robotraconteurlite/tcp_transport.h
 							   src/array.c
-							   src/nodeid.c)
+							   src/connection.c
+							   src/message.c
+							   src/node.c
+							   src/nodeid.c
+							   src/tcp_transport_posix.c
+							   src/tcp_transport.c)
 
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
