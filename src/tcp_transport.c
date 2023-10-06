@@ -67,6 +67,22 @@ int robotraconteurlite_tcp_acceptor_communicate(struct robotraconteurlite_connec
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
 
+void robotraconteurlite_tcp_connection_init_connection(struct robotraconteurlite_connection* connection)
+{
+    connection->transport_type = ROBOTRACONTEURLITE_TCP_TRANSPORT;
+    connection->sock = -1;
+}
+
+void robotraconteurlite_tcp_connection_init_connections(struct robotraconteurlite_connection* connections_head)
+{
+    struct robotraconteurlite_connection* c = connections_head;
+    while (c)
+    {
+        robotraconteurlite_tcp_connection_init_connection(c);
+        c = c->next;
+    }
+}
+
 static int robotraconteurlite_tcp_connection_buffer_recv_websocket(struct robotraconteurlite_connection* connection, size_t len)
 {
     struct robotraconteurlite_tcp_transport_storage* storage = (struct robotraconteurlite_tcp_transport_storage*)&connection->transport_storage;

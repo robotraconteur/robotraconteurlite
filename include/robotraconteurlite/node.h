@@ -96,7 +96,7 @@ ROBOTRACONTEURLITE_DECL int robotraconteurlite_node_consume_event(struct robotra
 
 ROBOTRACONTEURLITE_DECL int robotraconteurlite_node_event_special_request(struct robotraconteurlite_node* node, struct robotraconteurlite_event* event);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_node_verify_incoming_message(struct robotraconteurlite_node* node, struct robotraconteurlite_connection* connection, struct robotraconteurlite_message_reader* message);
+ROBOTRACONTEURLITE_DECL int robotraconteurlite_node_verify_incoming_message(struct robotraconteurlite_node* node, struct robotraconteurlite_connection* connection, struct robotraconteurlite_message_header* message_header);
 
 ROBOTRACONTEURLITE_DECL int robotraconteurlite_node_begin_send_messageentry(struct robotraconteurlite_node_send_messageentry_data* send_data);
 

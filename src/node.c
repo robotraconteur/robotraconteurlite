@@ -296,7 +296,7 @@ int robotraconteurlite_node_event_special_request(struct robotraconteurlite_node
     }
 }
 
-int robotraconteurlite_node_verify_incoming_message(struct robotraconteurlite_node* node, struct robotraconteurlite_connection* connection, struct robotraconteurlite_message_reader* message)
+int robotraconteurlite_node_verify_incoming_message(struct robotraconteurlite_node* node, struct robotraconteurlite_connection* connection, struct robotraconteurlite_message_header* message_header)
 {
     /* TODO: verify address information */
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
@@ -427,4 +427,54 @@ int robotraconteurlite_connection_send_messageentry_error_response(struct robotr
     }
 
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
+}
+
+int robotraconteurlite_node_receive_messageentry(struct robotraconteurlite_node_receive_messageentry_data* receive_data)
+{
+    int ret;
+    struct robotraconteurlite_message_reader message_reader;
+    struct robotraconteurlite_messageentry_reader entry_reader;
+    ret = robotraconteurlite_connection_message_receive(receive_data->connection, &message_reader);
+    if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+    {
+        return ret;
+    }
+
+    ret = robotraconteurlite_message_reader_read_header(&message_reader, &receive_data->received_message_header);
+    if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+    {
+        return ret;
+    }
+
+    ret = robotraconteurlite_node_verify_incoming_message(receive_data->node, receive_data->connection, &receive_data->received_message_header);
+    if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+    {
+        return ret;
+    }
+
+    /* TODO: Support multiple entries in one message */
+    ret = robotraconteurlite_message_reader_begin_read_entries(&message_reader, &entry_reader);
+    if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+    {
+        return ret;
+    }
+
+    ret = robotraconteurlite_messageentry_reader_read_header(&entry_reader, &receive_data->received_message_entry_header);
+    if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+    {
+        return ret;
+    }
+
+    ret = robotraconteurlite_messageentry_reader_begin_read_elements(&entry_reader, &receive_data->element_reader);
+    if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+    {
+        return ret;
+    }
+
+    return ROBOTRACONTEURLITE_ERROR_SUCCESS;
+}
+
+int robotraconteurlite_node_receive_messageentry_consume(struct robotraconteurlite_node_receive_messageentry_data* receive_data)
+{
+    return robotraconteurlite_connection_message_receive_consume(receive_data->connection);
 }

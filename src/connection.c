@@ -1,5 +1,6 @@
 #include "robotraconteurlite/connection.h"
 #include "robotraconteurlite/util.h"
+#include <assert.h>
 
 int robotraconteurlite_connection_reset(struct robotraconteurlite_connection* connection)
 {
@@ -150,4 +151,29 @@ int robotraconteurlite_connection_close(struct robotraconteurlite_connection* co
     connection->connection_state |= ROBOTRACONTEURLITE_STATUS_FLAGS_CLOSE_REQUESTED;
 
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
+}
+
+struct robotraconteurlite_connection* robotraconteurlite_connections_init_from_array(struct robotraconteurlite_connection connections_fixed_storage[], size_t connections_fixed_storage_len, uint8_t buffers[], size_t buffer_size, size_t buffer_count)
+{
+    size_t i;
+    assert(connections_fixed_storage_len > 0);
+    assert(buffer_count > connections_fixed_storage_len*2);
+    assert(buffer_size > 1024);
+
+    for (i=0; i<connections_fixed_storage_len; i++)
+    {
+        memset(&connections_fixed_storage[i], 0, sizeof(struct robotraconteurlite_connection));
+        connections_fixed_storage[i].recv_buffer = buffers + (i*2*buffer_size);
+        connections_fixed_storage[i].send_buffer = buffers + (i*2*buffer_size) + buffer_size;
+        connections_fixed_storage[i].recv_buffer_len = buffer_size;
+        connections_fixed_storage[i].send_buffer_len = buffer_size;
+
+        if (i > 0)
+        {
+            connections_fixed_storage[i-1].next = &connections_fixed_storage[i];
+            connections_fixed_storage[i].prev = &connections_fixed_storage[i-1];
+        }
+    }
+
+    return &connections_fixed_storage[0];
 }

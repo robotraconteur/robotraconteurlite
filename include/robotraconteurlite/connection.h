@@ -190,4 +190,6 @@ static int robotraconteurlite_connection_is_server(struct robotraconteurlite_con
     return (connection->config_flags & ROBOTRACONTEURLITE_CONFIG_FLAGS_ISSERVER) != 0;
 }
 
+ROBOTRACONTEURLITE_DECL struct robotraconteurlite_connection* robotraconteurlite_connections_init_from_array(struct robotraconteurlite_connection connections_fixed_storage[], size_t connections_fixed_storage_len, uint8_t buffers[], size_t buffer_size, size_t buffer_count);
+
 #endif /*__ROBOTRACONTEURLITE_CONNECTION_H__*/

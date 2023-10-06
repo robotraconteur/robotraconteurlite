@@ -5,6 +5,11 @@ project(robotraconteurlite)
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -ansi -pedantic -Werror -Werror=return-type -Wimplicit-function-declaration -Wint-conversion -Wincompatible-pointer-types")
 #endif()
 
+find_package(OpenSSL REQUIRED)
+find_package(PkgConfig REQUIRED)
+
+pkg_check_modules(uuid REQUIRED IMPORTED_TARGET uuid)
+
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 add_definitions(-DROBOTRACONTEURLITE_USE_OPENSSL=1)
@@ -26,6 +31,7 @@ add_library(robotraconteurlite
 							   src/tcp_transport_posix.c
 							   src/tcp_transport.c)
 
+target_link_libraries(robotraconteurlite PUBLIC OpenSSL::Crypto uuid)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
