@@ -42,10 +42,11 @@ enum robotraconteurlite_connection_status_flags
     ROBOTRACONTEURLITE_STATUS_FLAGS_SENDING_MESSAGE = 0x1000,
     ROBOTRACONTEURLITE_STATUS_FLAGS_MESSAGE_SENT = 0x2000,
     ROBOTRACONTEURLITE_STATUS_FLAGS_ESTABLISHED = 0x4000,
-    ROBOTRACONTEURLITE_STATUS_FLAGS_CLIENT_CONNECTED = 0x8000,
+    ROBOTRACONTEURLITE_STATUS_FLAGS_CLIENT_ESTABLISHED = 0x8000,
     ROBOTRACONTEURLITE_STATUS_FLAGS_CLOSE_REQUESTED = 0x10000,
     ROBOTRACONTEURLITE_STATUS_FLAGS_CLOSED_CONSUMED = 0x20000,
-    ROBOTRACONTEURLITE_STATUS_FLAGS_MESSAGE_SENT_CONSUMED = 0x40000
+    ROBOTRACONTEURLITE_STATUS_FLAGS_MESSAGE_SENT_CONSUMED = 0x40000,
+    ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTED_CONSUMED = 0x80000,
 };
 
 struct robotraconteurlite_transport_storage
@@ -83,6 +84,8 @@ struct robotraconteurlite_connection
     uint32_t local_endpoint;
     uint32_t remote_endpoint;
     struct robotraconteurlite_nodeid remote_nodeid;
+    char remote_nodename_char[128];
+    struct robotraconteurlite_string remote_nodename;
 
     // Message information
     uint32_t recv_message_len;
@@ -114,12 +117,77 @@ ROBOTRACONTEURLITE_DECL int robotraconteurlite_connection_begin_send_message(str
 
 ROBOTRACONTEURLITE_DECL int robotraconteurlite_connection_end_send_message(struct robotraconteurlite_connection* connection, size_t message_len);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_connection_abort_send_message(struct robotraconteurlite_connection* connection, size_t message_len);
+ROBOTRACONTEURLITE_DECL int robotraconteurlite_connection_abort_send_message(struct robotraconteurlite_connection* connection);
 
 ROBOTRACONTEURLITE_DECL int robotraconteurlite_connection_message_receive(struct robotraconteurlite_connection* connection, struct robotraconteurlite_message_reader* message_reader);
 
 ROBOTRACONTEURLITE_DECL int robotraconteurlite_connection_message_receive_consume(struct robotraconteurlite_connection* connection);
 
 ROBOTRACONTEURLITE_DECL int robotraconteurlite_connection_close(struct robotraconteurlite_connection* connection);
+
+inline int robotraconteurlite_connection_is_closed(struct robotraconteurlite_connection* connection)
+{
+    return (connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_CLOSED) != 0;
+}
+
+inline int robotraconteurlite_connection_is_closed_event(struct robotraconteurlite_connection* connection)
+{
+    return ((connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_CLOSED) != 0)
+        && ((connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_CLOSED_CONSUMED) == 0);
+}
+
+inline void robotraconteurlite_connection_consume_closed(struct robotraconteurlite_connection* connection)
+{
+    connection->connection_state |= ROBOTRACONTEURLITE_STATUS_FLAGS_CLOSED_CONSUMED;
+}
+
+inline int robotraconteurlite_connection_is_error(struct robotraconteurlite_connection* connection)
+{
+    // Check for error, but don't report if already closed or closing
+    return (connection->connection_state |= ROBOTRACONTEURLITE_STATUS_FLAGS_ERROR != 0) &&    
+        (connection->connection_state & (ROBOTRACONTEURLITE_STATUS_FLAGS_CLOSED | ROBOTRACONTEURLITE_STATUS_FLAGS_CLOSE_REQUESTED)) == 0;
+}
+
+inline int robotraconteurlite_connection_is_connected(struct robotraconteurlite_connection* connection)
+{
+    return (connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTED) != 0;
+}
+
+inline void robotraconteurlite_connection_consume_connected(struct robotraconteurlite_connection* connection)
+{
+    connection->connection_state |= ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTED_CONSUMED;
+}
+
+inline int robotraconteurlite_connection_is_connected_event(struct robotraconteurlite_connection* connection)
+{
+    return ((connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTED) != 0)
+        && ((connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTED_CONSUMED) == 0);
+}
+
+inline int robotraconteurlite_connection_is_message_received(struct robotraconteurlite_connection* connection)
+{
+    return (connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_MESSAGE_RECEIVED) != 0;
+}
+
+inline int robotraconteurlite_connection_is_message_received_event(struct robotraconteurlite_connection* connection)
+{
+    return ((connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_MESSAGE_RECEIVED) != 0)
+        && ((connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_MESSAGE_CONSUMED) == 0);
+}
+
+inline void robotraconteurlite_connection_consume_message_received(struct robotraconteurlite_connection* connection)
+{
+    connection->connection_state |= ROBOTRACONTEURLITE_STATUS_FLAGS_MESSAGE_CONSUMED;
+}
+
+inline void robotraconteurlite_connection_error(struct robotraconteurlite_connection* connection)
+{
+    connection->connection_state |= ROBOTRACONTEURLITE_STATUS_FLAGS_ERROR;
+}
+
+inline int robotraconteurlite_connection_is_server(struct robotraconteurlite_connection* connection)
+{
+    return (connection->config_flags & ROBOTRACONTEURLITE_CONFIG_FLAGS_ISSERVER) != 0;
+}
 
 #endif //__ROBOTRACONTEURLITE_CONNECTION_H__

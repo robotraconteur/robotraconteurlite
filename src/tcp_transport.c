@@ -48,7 +48,8 @@ int robotraconteurlite_tcp_acceptor_communicate(struct robotraconteurlite_connec
     }
 
     // Accept connection
-    int ret = robotraconteurlite_tcp_socket_accept(acceptor->sock, &c->sock);
+    int errno_out;
+    int ret = robotraconteurlite_tcp_socket_accept(acceptor->sock, &c->sock, &errno_out);
     if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
     {
         if (ret == ROBOTRACONTEURLITE_ERROR_RETRY)
@@ -149,7 +150,8 @@ static int robotraconteurlite_tcp_connection_buffer_recv_websocket(struct robotr
         size_t prev_recv_buffer_pos = connection->recv_buffer_pos;
         int ret = robotraconteurlite_tcp_socket_recv_nonblocking(connection->sock, connection->recv_buffer, &connection->recv_buffer_pos, recv_len, &last_errno);
         size_t n = connection->recv_buffer_pos - prev_recv_buffer_pos;
-        for (size_t i=0; i<n; i++)
+        size_t i;
+        for (i=0; i<n; i++)
         {
             connection->recv_buffer[prev_recv_buffer_pos + i] ^= storage->recv_websocket_mask[(storage->recv_websocket_frame_pos + i) % 4];
         }
@@ -270,7 +272,8 @@ static int robotraconteurlite_tcp_connection_buffer_send_websocket(struct robotr
         // Apply mask to send buffer
         if ((storage->tcp_transport_state & ROBOTRACONTEURLITE_TCP_TRANSPORT_STATE_SEND_WEBSOCKET_ENABLE_MASK) != 0)
         {
-            for (size_t i=0; i<send_len; i++)
+            size_t i;
+            for (i=0; i<send_len; i++)
             {
                 connection->send_buffer[connection->send_buffer_pos + i] ^= storage->send_websocket_mask[i % 4];
             }

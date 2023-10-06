@@ -123,7 +123,7 @@ int robotraconteurlite_connection_end_send_message(struct robotraconteurlite_con
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
 
-int robotraconteurlite_connection_abort_send_message(struct robotraconteurlite_connection* connection, size_t message_len)
+int robotraconteurlite_connection_abort_send_message(struct robotraconteurlite_connection* connection)
 {
     // Don't need to do anything, for future use
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
@@ -131,6 +131,10 @@ int robotraconteurlite_connection_abort_send_message(struct robotraconteurlite_c
 
 int robotraconteurlite_connection_close(struct robotraconteurlite_connection* connection)
 {
+    if ((connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_IDLE)!=0)
+    {
+        return ROBOTRACONTEURLITE_ERROR_SUCCESS;
+    }
     connection->connection_state |= ROBOTRACONTEURLITE_STATUS_FLAGS_CLOSE_REQUESTED;
 
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;

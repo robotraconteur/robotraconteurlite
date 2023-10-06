@@ -469,6 +469,46 @@ ROBOTRACONTEURLITE_DECL int robotraconteurlite_buffer_vec_copy_from_string(const
 
 ROBOTRACONTEURLITE_DECL int robotraconteurlite_string_cmp(const struct robotraconteurlite_string* str1, const struct robotraconteurlite_string* str2);
 
+inline int robotraconteurlite_string_cmp_c_str(const struct robotraconteurlite_string* str1, const char* str2)
+{
+	size_t strlen_str2 = strlen(str2);
+	if (strlen_str2 == 0 && str1->len == 0)
+	{
+	 return 0;
+	}
+
+	if (str1->len == 0)
+	{
+		return -1;
+	}
+
+	if (strlen_str2 == 0)
+	{
+		return 1;
+	}
+
+	if (str1->len < strlen_str2)
+	{
+		return -1;
+	}
+
+	if (str1->len > strlen_str2)
+	{
+		return 1;
+	}
+
+	return memcmp(str1->data, str2, str1->len);
+}
+
 ROBOTRACONTEURLITE_DECL uint32_t robotraconteurlite_string_hash(const struct robotraconteurlite_string* str);
 
+ROBOTRACONTEURLITE_DECL int robotraconteurlite_string_copy_to(const struct robotraconteurlite_string* source, struct robotraconteurlite_string* dest);
+
+ROBOTRACONTEURLITE_DECL int robotraconteurlite_string_shallow_copy_to(const struct robotraconteurlite_string* source, struct robotraconteurlite_string* dest);
+
+inline void robotraconteurlite_string_from_c_str(const char* source, struct robotraconteurlite_string* dest)
+{
+	dest->data = (char*)source;
+	dest->len = strlen(source);
+}
 #endif /* __ROBOTRACONTEURLITE_ARRAY_H__ */

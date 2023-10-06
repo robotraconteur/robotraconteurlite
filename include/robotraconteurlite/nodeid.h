@@ -32,4 +32,6 @@ ROBOTRACONTEURLITE_DECL int robotraconteurlite_nodeid_newrandom(struct robotraco
 
 ROBOTRACONTEURLITE_DECL int robotraconteurlite_nodeid_reset(struct robotraconteurlite_nodeid *a);
 
+ROBOTRACONTEURLITE_DECL int robotraconteurlite_nodeid_copy_to(const struct robotraconteurlite_nodeid *src, struct robotraconteurlite_nodeid *dst);
+
 #endif /* __ROBOTRACONTEURLITE_NODEID_H__ */
