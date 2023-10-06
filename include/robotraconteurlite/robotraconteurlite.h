@@ -17,7 +17,14 @@
 #ifndef __ROBOTRACONTEURLITE_H__
 #define __ROBOTRACONTEURLITE_H__
 
+#include "robotraconteurlite/array.h"
 #include "robotraconteurlite/config.h"
+#include "robotraconteurlite/connection.h"
+#include "robotraconteurlite/err.h"
 #include "robotraconteurlite/message.h"
+#include "robotraconteurlite/node.h"
+#include "robotraconteurlite/nodeid.h"
+#include "robotraconteurlite/tcp_transport.h"
+#include "robotraconteurlite/util.h"
 
 #endif /* __ROBOTRACONTEURLITE_H__ */
