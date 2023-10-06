@@ -32,7 +32,7 @@ enum robotraconteurlite_tcp_transport_state
     ROBOTRACONTEURLITE_TCP_TRANSPORT_STATE_RECV_WEBSOCKET_ENABLE_MASK = 0x40,
     ROBOTRACONTEURLITE_TCP_TRANSPORT_STATE_RECV_WEBSOCKET_HEADER1_RECV = 0x80,
     ROBOTRACONTEURLITE_TCP_TRANSPORT_STATE_RECV_WEBSOCKET_HEADER2_RECV = 0x100,
-    ROBOTRACONTEURLITE_TCP_TRANSPORT_STATE_SEND_WEBSOCKET_ENABLE_MASK = 0x40,
+    ROBOTRACONTEURLITE_TCP_TRANSPORT_STATE_SEND_WEBSOCKET_ENABLE_MASK = 0x40
 };
 
 enum ROBOTRACONTEURLITE_TCP_TRANSPORT_WEBSOCKET_OPCODE
@@ -56,15 +56,15 @@ struct robotraconteurlite_tcp_transport_storage
     uint32_t http_line_pos;
     uint32_t recv_websocket_frame_pos;
     uint32_t recv_websocket_frame_len;
-    uint16_t recv_websocket_header_pos;
-    uint16_t send_websocket_header_pos;
+    uint32_t recv_websocket_header_pos;
+    uint32_t send_websocket_header_pos;
     uint8_t recv_websocket_mask[4];
     uint8_t recv_websocket_header_buffer[16];
     uint8_t send_websocket_header_buffer[8];
     uint32_t send_websocket_frame_len;
     uint32_t send_websocket_frame_buffer_pos;
     uint32_t send_websocket_frame_buffer_end;
-    uint16_t send_websocket_header_len;
+    uint32_t send_websocket_header_len;
     uint8_t send_websocket_mask[4];
 };
 
@@ -90,15 +90,15 @@ ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_connection_communicate(struct
 
 ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_connections_communicate(struct robotraconteurlite_connection* connections_head);
 
-// TCP socket functions
+/* TCP socket functions */
 
 ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_sha1(const uint8_t* data, size_t len, struct robotraconteurlite_tcp_sha1_storage* storage);
 
 ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_base64_encode(const uint8_t* binary_data, size_t binary_len, char* base64_data, size_t* base64_len);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_socket_recv_nonblocking(int sock, uint8_t* buffer, size_t* pos, size_t len, int* errno_out);
+ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_socket_recv_nonblocking(int sock, uint8_t* buffer, uint32_t* pos, size_t len, int* errno_out);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_socket_send_nonblocking(int sock, const uint8_t* buffer, size_t* pos, size_t len, int* errno_out);
+ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_socket_send_nonblocking(int sock, const uint8_t* buffer, uint32_t* pos, size_t len, int* errno_out);
 
 ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_socket_begin_server(const struct sockaddr_storage* serv_addr, size_t backlog, int* sock_out, int* errno_out);
 
@@ -106,4 +106,10 @@ ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_socket_accept(int acceptor_so
 
 ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_socket_close(int sock);
 
-#endif //__ROBOTRACONTEURLITE_TCP_TRANSPORT_H__
+ROBOTRACONTEURLITE_DECL uint16_t robotraconteurlite_ntohs(uint16_t netshort);
+
+ROBOTRACONTEURLITE_DECL uint16_t robotraconteurlite_htons(uint16_t hostshort);
+
+ROBOTRACONTEURLITE_DECL uint64_t robotraconteurlite_be64toh(uint64_t big_endian_64bits);
+
+#endif /*__ROBOTRACONTEURLITE_TCP_TRANSPORT_H__*/

@@ -27,6 +27,16 @@ int robotraconteurlite_buffer_init_scalar(struct robotraconteurlite_buffer* buff
 	return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
 
+int robotraconteurlite_buffer_vec_init_scalar(struct robotraconteurlite_buffer_vec* buffer_vec, struct robotraconteurlite_buffer* buffer)
+{
+	assert(buffer_vec != NULL);
+	assert(buffer != NULL);
+
+	buffer_vec->buffer_vec = (struct robotraconteurlite_buffer*)buffer;
+	buffer_vec->buffer_vec_cnt = 1;
+	return ROBOTRACONTEURLITE_ERROR_SUCCESS;
+}
+
 int robotraconteurlite_buffer_len(const struct robotraconteurlite_buffer* source, size_t* len)
 {
 	assert(source != NULL);

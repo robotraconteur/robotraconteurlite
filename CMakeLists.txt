@@ -1,13 +1,13 @@
 cmake_minimum_required(VERSION 3.3)
 project(robotraconteurlite)
 
-if(CMAKE_COMPILER_IS_GNUCC)
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -ansi -pedantic -Werror -Werror=return-type")
-endif()
+#if(CMAKE_COMPILER_IS_GNUCC)
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -ansi -pedantic -Werror -Werror=return-type -Wimplicit-function-declaration -Wint-conversion -Wincompatible-pointer-types")
+#endif()
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-add_compile_definitions(-DROBOTRACONTEURLITE_USE_OPENSSL=1)
+add_definitions(-DROBOTRACONTEURLITE_USE_OPENSSL=1)
 
 add_library(robotraconteurlite 
 							   include/robotraconteurlite/array.h

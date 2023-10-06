@@ -1,4 +1,7 @@
 #include "robotraconteurlite/node.h"
+#include <stdlib.h>
+#include <assert.h>
+#include <string.h>
 
 int robotraconteurlite_node_init(struct robotraconteurlite_node* node, struct robotraconteurlite_nodeid* nodeid, struct robotraconteurlite_string* nodename, struct robotraconteurlite_connection* connections_head)
 {
@@ -9,9 +12,10 @@ int robotraconteurlite_node_init(struct robotraconteurlite_node* node, struct ro
     node->nodename.data[nodename->len]=0;
     if (connections_head)
     {
+        struct robotraconteurlite_connection* c;
         node->connections_head=connections_head;
-        // Set tail
-        struct robotraconteurlite_connection* c=node->connections_head;
+        /* Set tail */
+        c=node->connections_head;
         while(c->next)
         {
             c=c->next;
@@ -26,7 +30,7 @@ int robotraconteurlite_node_init(struct robotraconteurlite_node* node, struct ro
 
 int robotraconteurlite_node_shutdown(struct robotraconteurlite_node* node)
 {
-    // Request close on all connections
+    /* Request close on all connections */
     struct robotraconteurlite_connection* c=node->connections_head;
     while(c)
     {
@@ -39,7 +43,7 @@ int robotraconteurlite_node_shutdown(struct robotraconteurlite_node* node)
 
 int robotraconteurlite_node_add_connection(struct robotraconteurlite_node* node, struct robotraconteurlite_connection* connection)
 {
-    // Add to end
+    /* Add to end */
     if (node->connections_head)
     {
         node->connections_tail->next=connection;
@@ -57,7 +61,7 @@ int robotraconteurlite_node_add_connection(struct robotraconteurlite_node* node,
 
 int robotraconteurlite_node_remove_connection(struct robotraconteurlite_node* node, struct robotraconteurlite_connection* connection)
 {
-    // Remove from list
+    /* Remove from list */
     if (connection->prev)
     {
         connection->prev->next=connection->next;
@@ -86,6 +90,7 @@ void static robotraconteurlite_clear_event(struct robotraconteurlite_event* even
 
 int robotraconteurlite_node_next_event(struct robotraconteurlite_node* node, struct robotraconteurlite_event* event)
 {
+    struct robotraconteurlite_connection* c;
     if (!node->connections_next)
     {
         robotraconteurlite_clear_event(event);
@@ -93,7 +98,6 @@ int robotraconteurlite_node_next_event(struct robotraconteurlite_node* node, str
         return ROBOTRACONTEURLITE_ERROR_SUCCESS;
     }
 
-    struct robotraconteurlite_connection* c;
     do
     {
         c = node->connections_next;
@@ -162,7 +166,7 @@ int robotraconteurlite_node_consume_event(struct robotraconteurlite_node* node, 
         }
         case ROBOTRACONTEURLITE_EVENT_TYPE_CONNECTION_ERROR:
         {
-            // Error cannot be cleared or consumed
+            /* Error cannot be cleared or consumed */
             return ROBOTRACONTEURLITE_ERROR_SUCCESS;
         }
         case ROBOTRACONTEURLITE_EVENT_TYPE_CONNECTION_CONNECTED:
@@ -188,7 +192,7 @@ static int robotraconteurlite_node_event_special_request_handle_error(struct rob
         return ROBOTRACONTEURLITE_ERROR_RETRY;
     }
     robotraconteurlite_connection_error(event->connection);
-    // Consume event
+    /* Consume event */
     robotraconteurlite_node_consume_event(node, event);
     return ROBOTRACONTEURLITE_ERROR_CONSUMED;
 }
@@ -197,13 +201,13 @@ int robotraconteurlite_node_event_special_request(struct robotraconteurlite_node
 {
     if (event->received_message.received_message_entry_header.entry_type > 500)
     {
-        // Special requests are below entry type 500
+        /* Special requests are below entry type 500 */
         return ROBOTRACONTEURLITE_ERROR_SUCCESS;
     }
     if (event->event_error_code != ROBOTRACONTEURLITE_ERROR_SUCCESS)
     {
         robotraconteurlite_connection_error(event->connection);
-        // Consume event
+        /* Consume event */
         robotraconteurlite_node_consume_event(node, event);
         return ROBOTRACONTEURLITE_ERROR_CONSUMED;
     }
@@ -216,23 +220,20 @@ int robotraconteurlite_node_event_special_request(struct robotraconteurlite_node
              && robotraconteurlite_connection_is_server(event->connection)
              && ((event->connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_ESTABLISHED) == 0))
             {
-                // TODO: Check the incoming target address and sender address
-                
-               
-                
+                int ret;
+                /* TODO: Check the incoming target address and sender address */
                 robotraconteurlite_nodeid_copy_to(&event->received_message.received_message_header.sender_nodeid, &event->connection->remote_nodeid);
-                // TODO: sender nodename
-
-                int ret = robotraconteurlite_node_send_messageentry_empty_response(node, event->connection, &event->received_message.received_message_entry_header);
+                /* TODO: sender nodename */
+                ret = robotraconteurlite_node_send_messageentry_empty_response(node, event->connection, &event->received_message.received_message_entry_header);
                 if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
                 {
                     return robotraconteurlite_node_event_special_request_handle_error(node, event, ret);
                 }
 
-                // Set the ESTABLISHED flag
+                /* Set the ESTABLISHED flag */
                 event->connection->connection_state |= ROBOTRACONTEURLITE_STATUS_FLAGS_ESTABLISHED;
 
-                // Consume event
+                /* Consume event */
                 robotraconteurlite_node_consume_event(node, event);
                 return ROBOTRACONTEURLITE_ERROR_CONSUMED;
             }
@@ -244,33 +245,28 @@ int robotraconteurlite_node_event_special_request(struct robotraconteurlite_node
         case ROBOTRACONTEURLITE_MESSAGEENTRYTYPE_GETSERVICEDESC:
         case ROBOTRACONTEURLITE_MESSAGEENTRYTYPE_OBJECTTYPENAME:
         {
-            // These need to be handled by the user to avoid memory handling
+            /* These need to be handled by the user to avoid memory handling */
             return ROBOTRACONTEURLITE_ERROR_SUCCESS;
         }
         case ROBOTRACONTEURLITE_MESSAGEENTRYTYPE_CONNECTCLIENT:
         {
-            struct robotraconteurlite_message_header outer_message_header;
-            int ret = robotraconteurlite_node_event_special_request_read_message_header(node, event, &outer_message_header);
-            if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
-            {
-                return robotraconteurlite_node_event_special_request_handle_error(node, event, ret);
-            }
+            int ret;
             if (event->connection->local_endpoint == 0)
             {
                 event->connection->local_endpoint = (uint32_t)rand();
             }
-            event->connection->remote_endpoint = outer_message_header.sender_endpoint;
+            event->connection->remote_endpoint = event->received_message.received_message_header.sender_endpoint;
             
-            ret = robotraconteurlite_node_begin_send_messageentry_empty_response(node, event->connection, &event->received_message.received_message_entry_header);
+            ret = robotraconteurlite_node_send_messageentry_empty_response(node, event->connection, &event->received_message.received_message_entry_header);
             if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
             {
                 return robotraconteurlite_node_event_special_request_handle_error(node, event, ret);
             }
 
-            // Set the CLIENT_ESTABLISHED flag
+            /* Set the CLIENT_ESTABLISHED flag */
             event->connection->connection_state |= ROBOTRACONTEURLITE_STATUS_FLAGS_CLIENT_ESTABLISHED;
 
-            // Consume event
+            /* Consume event */
             robotraconteurlite_node_consume_event(node, event);
             return ROBOTRACONTEURLITE_ERROR_CONSUMED;
         }
@@ -279,7 +275,7 @@ int robotraconteurlite_node_event_special_request(struct robotraconteurlite_node
         break;
     }
 
-    // If message is odd, it is a request, respond with error. Otherwise close transport
+    /* If message is odd, it is a request, respond with error. Otherwise close transport */
     if (event->received_message.received_message_entry_header.entry_type % 2 == 1)
     {
         int ret = robotraconteurlite_connection_send_messageentry_error_response(node, event->connection, &event->received_message.received_message_entry_header, ROBOTRACONTEURLITE_ERROR_INVALID_OPERATION, "RobotRaconteur.InvalidOperation", "Invalid operation");
@@ -287,14 +283,14 @@ int robotraconteurlite_node_event_special_request(struct robotraconteurlite_node
         {
             return ROBOTRACONTEURLITE_ERROR_RETRY;
         }
-        // Consume event
+        /* Consume event */
         robotraconteurlite_node_consume_event(node, event);
         return ROBOTRACONTEURLITE_ERROR_CONSUMED;
     }
     else
     {
         robotraconteurlite_connection_close(event->connection);
-        // Consume event
+        /* Consume event */
         robotraconteurlite_node_consume_event(node, event);
         return ROBOTRACONTEURLITE_ERROR_CONSUMED;
     }
@@ -302,7 +298,7 @@ int robotraconteurlite_node_event_special_request(struct robotraconteurlite_node
 
 int robotraconteurlite_node_verify_incoming_message(struct robotraconteurlite_node* node, struct robotraconteurlite_connection* connection, struct robotraconteurlite_message_reader* message)
 {
-    // TODO: verify address information
+    /* TODO: verify address information */
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
 
@@ -361,13 +357,14 @@ int robotraconteurlite_node_send_messageentry_empty_response(struct robotraconte
 {
     struct robotraconteurlite_node_send_messageentry_data send_data;
     struct robotraconteurlite_messageentry_header send_message_header;
+    int ret;
     memcpy(&send_message_header, recv_message_header, sizeof(struct robotraconteurlite_messageentry_header));
     send_message_header.entry_type++;
     memset(&send_data, 0, sizeof(struct robotraconteurlite_node_send_messageentry_data));
     send_data.node = node;
     send_data.connection = connection;
     send_data.message_entry_header = &send_message_header;
-    int ret = robotraconteurlite_node_begin_send_messageentry(&send_data);
+    ret = robotraconteurlite_node_begin_send_messageentry(&send_data);
     if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
     {
         return ret;
@@ -385,17 +382,19 @@ int robotraconteurlite_node_send_messageentry_empty_response(struct robotraconte
 int robotraconteurlite_node_begin_send_messageentry_response(struct robotraconteurlite_node_send_messageentry_data* send_data,
   struct robotraconteurlite_messageentry_header* request_message_entry_header)
 {
+    int ret;
     memcpy(&send_data->message_entry_header_storage, request_message_entry_header, sizeof(struct robotraconteurlite_messageentry_header));
     send_data->message_entry_header_storage.entry_type++;
     send_data->message_entry_header = &send_data->message_entry_header_storage;
-    int ret = robotraconteurlite_node_begin_send_messageentry(send_data);
+    ret = robotraconteurlite_node_begin_send_messageentry(send_data);
     return ret;
 }
 
 int robotraconteurlite_connection_send_messageentry_error_response(struct robotraconteurlite_node* node, struct robotraconteurlite_connection* connection, struct robotraconteurlite_messageentry_header* request_message_entry_header, uint16_t error_code, const char* error_name, const char* error_message)
 {
     struct robotraconteurlite_node_send_messageentry_data send_data;
-    struct robotraconteurlite_messageentry_header send_message_entry_header;    
+    struct robotraconteurlite_messageentry_header send_message_entry_header;
+    int ret;  
     memcpy(&send_message_entry_header, request_message_entry_header, sizeof(struct robotraconteurlite_messageentry_header));
     send_message_entry_header.entry_type++;
     send_message_entry_header.error = error_code;
@@ -403,7 +402,7 @@ int robotraconteurlite_connection_send_messageentry_error_response(struct robotr
     send_data.node = node;
     send_data.connection = connection;
     send_data.message_entry_header = &send_message_entry_header;
-    int ret = robotraconteurlite_node_begin_send_messageentry(&send_data);
+    ret = robotraconteurlite_node_begin_send_messageentry(&send_data);
     if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
     {
         return ret;

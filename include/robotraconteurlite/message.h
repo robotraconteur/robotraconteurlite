@@ -529,7 +529,7 @@ ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageelement_writer_write_bool_
 ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageelement_writer_write_string(struct robotraconteurlite_messageelement_writer* element_writer,
 	const struct robotraconteurlite_string* element_name, const struct robotraconteurlite_string* value);
 
-inline int robotraconteurlite_messageelement_writer_write_string_c_str(struct robotraconteurlite_messageelement_writer* element_writer,
+static int robotraconteurlite_messageelement_writer_write_string_c_str(struct robotraconteurlite_messageelement_writer* element_writer,
 	const char* element_name, const char* value)
 {
 	struct robotraconteurlite_string element_name_str;

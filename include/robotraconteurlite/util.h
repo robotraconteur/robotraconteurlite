@@ -1,4 +1,4 @@
-/* Copyright 2011-2019 Wason Technology, LLC
+/* Copyright 2011-2023 Wason Technology, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,11 +13,24 @@
  * limitations under the License.
  */
 
+#ifndef __ROBOTRACONTEURLITE_UTIL_H__
+#define __ROBOTRACONTEURLITE_UTIL_H__
 
-#ifndef __ROBOTRACONTEURLITE_H__
-#define __ROBOTRACONTEURLITE_H__
+#include <stdint.h>
+#include <string.h>
 
-#include "robotraconteurlite/config.h"
-#include "robotraconteurlite/message.h"
+static uint32_t robotraconteurlite_util_read_uint32(const void* p)
+{
+    uint32_t ret;
+    memcpy(&ret, p, sizeof(uint32_t));
+    return ret;
+}
 
-#endif /* __ROBOTRACONTEURLITE_H__ */
+static uint16_t robotraconteurlite_util_read_uint16(const void* p)
+{
+    uint16_t ret;
+    memcpy(&ret, p, sizeof(uint16_t));
+    return ret;
+}
+
+#endif /* __ROBOTRACONTEURLITE_UTIL_H__ */

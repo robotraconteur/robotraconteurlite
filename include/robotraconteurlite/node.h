@@ -34,30 +34,30 @@ enum robotraconteurlite_event_type
 
 struct robotraconteurlite_node
 {
-    // Connections linked list
+    /* Connections linked list */
     struct robotraconteurlite_connection* connections_head;
     struct robotraconteurlite_connection* connections_tail;
     struct robotraconteurlite_connection* connections_next;
 
-    // Node information
+    /* Node information */
     struct robotraconteurlite_nodeid nodeid;
     char nodename_char[128];
     struct robotraconteurlite_string nodename;
 
-    // Event information
+    /* Event information */
     size_t events_serviced;
 };
 
 struct robotraconteurlite_node_send_messageentry_data
 {
-    // Inputs
+    /* Inputs */
     struct robotraconteurlite_node* node;    
     struct robotraconteurlite_connection* connection;
     struct robotraconteurlite_message_header message_header;
     struct robotraconteurlite_messageentry_header* message_entry_header;
-    // Outputs
+    /* Outputs */
     struct robotraconteurlite_messageelement_writer element_writer;
-    // Internal
+    /* Internal */
     struct robotraconteurlite_message_writer message_writer;
     struct robotraconteurlite_messageentry_writer entry_writer;
     struct robotraconteurlite_messageentry_header message_entry_header_storage;
@@ -65,10 +65,10 @@ struct robotraconteurlite_node_send_messageentry_data
 
 struct robotraconteurlite_node_receive_messageentry_data
 {
-    // Inputs
+    /* Inputs */
     struct robotraconteurlite_node* node;
     struct robotraconteurlite_connection* connection;
-    // Outputs
+    /* Outputs */
     struct robotraconteurlite_message_header received_message_header;
     struct robotraconteurlite_messageentry_header received_message_entry_header;
     struct robotraconteurlite_messageelement_reader element_reader;
@@ -116,4 +116,4 @@ ROBOTRACONTEURLITE_DECL int robotraconteurlite_node_begin_send_messageentry_resp
 ROBOTRACONTEURLITE_DECL int robotraconteurlite_node_send_messageentry_empty_response(struct robotraconteurlite_node* node, struct robotraconteurlite_connection* connection,
   struct robotraconteurlite_messageentry_header* request_message_entry_header);
 
-#endif //__ROBOTRACONTEURLITE_NODE_H__
+#endif /* __ROBOTRACONTEURLITE_NODE_H__ */

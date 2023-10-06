@@ -849,7 +849,7 @@ void robotraconteurlite_message_writer_basictest(void** state)
 				sub_cdoubles_name.data = sub_cdoubles_name_d;
 				sub_cdoubles_name.len = strlen(sub_cdoubles_name_d);
 				sub_cdoubles_data.data = (struct robotraconteurlite_cdouble*)sub_cdoubles_data_d;
-				sub_cdoubles_data.len = sizeof(sub_cdoubles_data_d) / sizeof(struct robotraconteurlite_cdouble);
+				sub_cdoubles_data.len = ((size_t)sizeof(sub_cdoubles_data_d)) / ((size_t)sizeof(struct robotraconteurlite_cdouble));
 
 				assert_return_code(robotraconteurlite_messageelement_writer_write_cdouble_array(&nested_element_writer, &sub_cdoubles_name, &sub_cdoubles_data), 0);
 			}
@@ -862,7 +862,7 @@ void robotraconteurlite_message_writer_basictest(void** state)
 				sub_csingles_name.data = sub_csingles_name_d;
 				sub_csingles_name.len = strlen(sub_csingles_name_d);
 				sub_csingles_data.data = (struct robotraconteurlite_csingle*)sub_csingles_data_d;
-				sub_csingles_data.len = sizeof(sub_csingles_data_d) / sizeof(struct robotraconteurlite_csingle);
+				sub_csingles_data.len = ((size_t)sizeof(sub_csingles_data_d)) / ((size_t)sizeof(struct robotraconteurlite_csingle));
 
 				assert_return_code(robotraconteurlite_messageelement_writer_write_csingle_array(&nested_element_writer, &sub_csingles_name, &sub_csingles_data), 0);
 			}

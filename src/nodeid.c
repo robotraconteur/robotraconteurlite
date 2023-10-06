@@ -14,9 +14,9 @@ int robotraconteurlite_nodeid_isany(const struct robotraconteurlite_nodeid *a)
 
 int robotraconteurlite_nodeid_newrandom(struct robotraconteurlite_nodeid *a)
 {
-    // Use uuid.h to generate a random UUID
+    /* Use uuid.h to generate a random UUID */
     uuid_t uuid;
     uuid_generate_random(uuid);
     memcpy(a->data, uuid, sizeof(a->data));
-    return 0;    
+    return 0;
 }
