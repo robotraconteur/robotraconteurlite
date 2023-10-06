@@ -17,6 +17,7 @@
 #define __ROBOTRACONTEURLITE_NODE_H__
 
 #include "robotraconteurlite/message.h"
+#include "robotraconteurlite/connection.h"
 
 /*
 
@@ -119,79 +120,27 @@ protected:
 };
 */
 
-enum robotraconteurlite_connection_config_flags
+
+
+enum robotraconteurlite_event_type
 {
-    ROBOTRACONTEURLITE_CONFIG_FLAGS_NULL = 0,
-    ROBOTRACONTEURLITE_CONFIG_FLAGS_ISSERVER = 0x1,
+  ROBOTRACONTEURLITE_EVENT_TYPE_NOOP = 0,
+  ROBOTRACONTEURLITE_EVENT_TYPE_CONNECTED,
+  ROBOTRACONTEURLITE_EVENT_TYPE_DISCONNECTED,
+  ROBOTRACONTEURLITE_EVENT_TYPE_CONNECTION_ERROR,
+  ROBOTRACONTEURLITE_EVENT_TYPE_MESSAGE_RECEIVED,
+  ROBOTRACONTEURLITE_EVENT_TYPE_MESSAGE_SEND_COMPLETE,
+  ROBOTRACONTEURLITE_EVENT_TYPE_NEXT_CYCLE,
+  ROBOTRACONTEURLITE_EVENT_TYPE_CONNECTION_HEARTBEAT_TIMEOUT,
+  ROBOTRACONTEURLITE_EVENT_TYPE_CONNECTION_TIMEOUT
 };
 
-enum robotraconteurlite_connection_status_flags
+struct robotraconteurlite_event
 {
-    ROBOTRACONTEURLITE_STATUS_FLAGS_NULL = 0,
-    ROBOTRACONTEURLITE_STATUS_FLAGS_IDLE = 0x1,
-    ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTED = 0x2,
-    ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTING = 0x4,
-    ROBOTRACONTEURLITE_STATUS_FLAGS_CLOSING = 0x8,
-    ROBOTRACONTEURLITE_STATUS_FLAGS_CLOSED = 0x10,
-    ROBOTRACONTEURLITE_STATUS_FLAGS_ERROR = 0x20,
-    ROBOTRACONTEURLITE_STATUS_FLAGS_RECEIVE_REQUESTED = 0x40,
-    ROBOTRACONTEURLITE_STATUS_FLAGS_RECEIVING = 0x80,
-    ROBOTRACONTEURLITE_STATUS_FLAGS_SEND_REQUESTED = 0x100,
-    ROBOTRACONTEURLITE_STATUS_FLAGS_SENDING = 0x200,
-    ROBOTRACONTEURLITE_STATUS_FLAGS_MESSAGE_RECEIVED = 0x400,
-    ROBOTRACONTEURLITE_STATUS_FLAGS_MESSAGE_CONSUMED = 0x800,
-    ROBOTRACONTEURLITE_STATUS_FLAGS_SENDING_MESSAGE = 0x1000,
-};
-
-
-struct robotraconteurlite_transport_storage
-{
-    uint8_t _storage[32];
-};
-
-struct robotraconteurlite_connection
-{
-    uint32_t transport_type;
-    struct robotraconteurlite_connection* next;
-    struct robotraconteurlite_connection* prev;
-
-    // Socket storage
-    int sock;
-
-    // Send and receive buffers
-    uint8_t* send_buffer;
-    uint8_t* recv_buffer;
-    size_t send_buffer_len;
-    size_t recv_buffer_len;
-    size_t send_buffer_pos;
-    size_t recv_buffer_pos;
-
-    // Control flags
-    uint32_t config_flags;
-    uint32_t connection_state;
-
-    // Robot Raconteur information
-    uint32_t local_endpoint;
-    uint32_t remote_endpoint;
-    struct robotraconteurlite_nodeid remote_nodeid;
-
-    // Message information
-    uint32_t recv_message_len;
-    uint32_t send_message_len;
-
-    // Transport storage
-    struct robotraconteurlite_transport_storage transport_storage;    
-};
-
-struct robotraconteurlite_connection_acceptor
-{
-    int32_t id;
-    uint32_t transport_type;
-    struct robotraconteurlite_connection_acceptor* next;
-    struct robotraconteurlite_connection_acceptor* prev;
-
-    // Socket storage
-    int sock;
+  enum robotraconteurlite_event_type event_type;
+  struct robotraconteurlite_connection* connection;
+  struct robotraconteurlite_messageentry_header received_message_header;
+  struct robotraconteurlite_messageelement_reader received_message_data;
 };
 
 struct robotraconteurlite_node
@@ -199,6 +148,7 @@ struct robotraconteurlite_node
     // Connections linked list
     struct robotraconteurlite_connection* connections_head;
     struct robotraconteurlite_connection* connections_tail;
+    struct robotraconteurlite_connection* connections_next;
 };
 
 
@@ -210,8 +160,12 @@ ROBOTRACONTEURLITE_DECL int robotraconteurlite_node_add_connection(struct robotr
 
 ROBOTRACONTEURLITE_DECL int robotraconteurlite_node_remove_connection(struct robotraconteurlite_node* node, struct robotraconteurlite_connection* connection);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_connection_init(struct robotraconteurlite_connection* connection, uint32_t transport_type, size_t buffer_len);
+ROBOTRACONTEURLITE_DECL int robotraconteurlite_node_next_event(struct robotraconteurlite_node* node, struct robotraconteurlite_event* event);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_connection_verify_preamble(struct robotraconteurlite_connection* connection, size_t* message_len);
+ROBOTRACONTEURLITE_DECL int robotraconteurlite_node_consume_event(struct robotraconteurlite_node* node, struct robotraconteurlite_event* event);
+
+ROBOTRACONTEURLITE_DECL int robotraconteurlite_node_event_special_request(struct robotraconteurlite_node* node, struct robotraconteurlite_event* event);
+
+ROBOTRACONTEURLITE_DECL int robotraconteurlite_node_verify_incoming_message(struct robotraconteurlite_node* node, struct robotraconteurlite_message_reader* message);
 
 #endif //__ROBOTRACONTEURLITE_NODE_H__

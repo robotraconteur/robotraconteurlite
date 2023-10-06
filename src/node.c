@@ -1668,28 +1668,3 @@ uint16_t RobotRaconteurServer::ServicePath_len;
 
 */
 
-int robotraconteurlite_connection_verify_preamble(struct robotraconteurlite_connection* connection, size_t* message_len)
-{
-    if (connection->recv_buffer_pos >= 12 && connection->recv_message_len == 0)
-    {
-        // Check the message RRAC
-        if (memcmp(connection->recv_buffer, "RRAC", 4) != 0)
-        {
-            connection->connection_state |= ROBOTRACONTEURLITE_STATUS_FLAGS_ERROR;
-            connection->connection_state &= ~ROBOTRACONTEURLITE_STATUS_FLAGS_RECEIVE_REQUESTED;
-            return ROBOTRACONTEURLITE_ERROR_CONNECTION_ERROR;
-        }
-        connection->recv_message_len = robotraconteurlite_util_read_uint32(connection->recv_buffer + 4);
-
-        // Check the message version
-        uint16_t message_version = robotraconteurlite_util_read_uint16(connection->recv_buffer + 8);
-        if (message_version != 2)
-        {
-            connection->connection_state |= ROBOTRACONTEURLITE_STATUS_FLAGS_ERROR;
-            connection->connection_state &= ~ROBOTRACONTEURLITE_STATUS_FLAGS_RECEIVE_REQUESTED;
-            return ROBOTRACONTEURLITE_ERROR_CONNECTION_ERROR;
-        }
-    }
-
-    return ROBOTRACONTEURLITE_ERROR_SUCCESS;
-}

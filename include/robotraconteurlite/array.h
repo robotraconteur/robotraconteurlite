@@ -258,6 +258,8 @@ struct robotraconteurlite_string_vec
 	struct robotraconteurlite_array_storage _scalar_storage;
 };
 
+ROBOTRACONTEURLITE_DECL int robotraconteurlite_buffer_init_scalar(struct robotraconteurlite_buffer* buffer, void* data, size_t len);
+
 ROBOTRACONTEURLITE_DECL int robotraconteurlite_buffer_len(const struct robotraconteurlite_buffer* source, size_t* len);
 
 ROBOTRACONTEURLITE_DECL int robotraconteurlite_buffer_vec_len(const struct robotraconteurlite_buffer_vec* source, size_t* len);

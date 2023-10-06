@@ -172,61 +172,55 @@ int robotraconteurlite_tcp_connection_buffer_recv(struct robotraconteurlite_conn
 }
 
 int robotraconteurlite_tcp_connection_communicate_recv(struct robotraconteurlite_connection* connection)
-{    
-    if ((connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTED) != 0)
+{       
+    // If the connection is in an error state, return error
+    if ((connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_ERROR) != 0)
     {
-        // If the connection is in an error state, close the socket
-        if ((connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_ERROR) != 0)
+        return ROBOTRACONTEURLITE_ERROR_CONNECTION_ERROR;
+    }
+
+    // If the message has been consumed, move the receive buffer to the beginning
+    if ((connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_MESSAGE_CONSUMED) != 0)
+    {
+        memmove(connection->recv_buffer, connection->recv_buffer + connection->recv_message_len, connection->recv_buffer_pos - connection->recv_message_len);
+        connection->recv_buffer_pos -= connection->recv_message_len;
+        connection->recv_message_len = 0;
+        connection->connection_state &= ~ROBOTRACONTEURLITE_STATUS_FLAGS_MESSAGE_CONSUMED;
+    }
+
+    if ((connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_RECEIVE_REQUESTED) != 0)
+    {
+        
+        // Receive data
+        size_t recv_op_len = connection->recv_message_len == 0 ? 64 : connection->recv_message_len - connection->recv_buffer_pos;
+        
+        // Receive data
+        int ret = robotraconteurlite_tcp_connection_buffer_recv(connection, recv_op_len);
+        if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
         {
-            robotraconteurlite_tcp_socket_close(connection->sock);
-            connection->sock = -1;
-            connection->connection_state = ROBOTRACONTEURLITE_STATUS_FLAGS_CLOSED;
+            connection->connection_state |= ROBOTRACONTEURLITE_STATUS_FLAGS_ERROR;
+            connection->connection_state &= ~ROBOTRACONTEURLITE_STATUS_FLAGS_RECEIVE_REQUESTED;
+            return ret;
+        }
+
+        // If this is the first receive, parse the message length
+        
+        if(robotraconteurlite_connection_verify_preamble(connection, &connection->recv_message_len) != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+        {
+            connection->connection_state |= ROBOTRACONTEURLITE_STATUS_FLAGS_ERROR;
+            connection->connection_state &= ~ROBOTRACONTEURLITE_STATUS_FLAGS_RECEIVE_REQUESTED;
             return ROBOTRACONTEURLITE_ERROR_CONNECTION_ERROR;
         }
-
-        // If the message has been consumed, move the receive buffer to the beginning
-        if ((connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_MESSAGE_CONSUMED) != 0)
+        
+        // If we have received the entire message, set the message received flag
+        if (connection->recv_message_len > 0 && connection->recv_buffer_pos >= connection->recv_message_len)
         {
-            memmove(connection->recv_buffer, connection->recv_buffer + connection->recv_message_len, connection->recv_buffer_pos - connection->recv_message_len);
-            connection->recv_buffer_pos -= connection->recv_message_len;
-            connection->recv_message_len = 0;
-            connection->connection_state &= ~ROBOTRACONTEURLITE_STATUS_FLAGS_MESSAGE_CONSUMED;
+            connection->connection_state &= ~ROBOTRACONTEURLITE_STATUS_FLAGS_RECEIVE_REQUESTED;
+            connection->connection_state |= ROBOTRACONTEURLITE_STATUS_FLAGS_MESSAGE_RECEIVED;
         }
 
-        if ((connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_RECEIVE_REQUESTED) != 0)
-        {
-            
-            // Receive data
-            size_t recv_op_len = connection->recv_message_len == 0 ? 64 : connection->recv_message_len - connection->recv_buffer_pos;
-            
-            // Receive data
-            int ret = robotraconteurlite_tcp_connection_buffer_recv(connection, recv_op_len);
-            if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
-            {
-                connection->connection_state |= ROBOTRACONTEURLITE_STATUS_FLAGS_ERROR;
-                connection->connection_state &= ~ROBOTRACONTEURLITE_STATUS_FLAGS_RECEIVE_REQUESTED;
-                return ret;
-            }
-
-            // If this is the first receive, parse the message length
-            
-            if(robotraconteurlite_connection_verify_preamble(connection, &connection->recv_message_len) != ROBOTRACONTEURLITE_ERROR_SUCCESS)
-            {
-                connection->connection_state |= ROBOTRACONTEURLITE_STATUS_FLAGS_ERROR;
-                connection->connection_state &= ~ROBOTRACONTEURLITE_STATUS_FLAGS_RECEIVE_REQUESTED;
-                return ROBOTRACONTEURLITE_ERROR_CONNECTION_ERROR;
-            }
-            
-            // If we have received the entire message, set the message received flag
-            if (connection->recv_message_len > 0 && connection->recv_buffer_pos >= connection->recv_message_len)
-            {
-                connection->connection_state &= ~ROBOTRACONTEURLITE_STATUS_FLAGS_RECEIVE_REQUESTED;
-                connection->connection_state |= ROBOTRACONTEURLITE_STATUS_FLAGS_MESSAGE_RECEIVED;
-            }
-
-            return ROBOTRACONTEURLITE_ERROR_SUCCESS;
-        }  
-    }
+        return ROBOTRACONTEURLITE_ERROR_SUCCESS;
+    }    
 }
 
 static int robotraconteurlite_tcp_websocket_random_mask(struct robotraconteurlite_connection* connection, uint8_t mask[4])
@@ -344,6 +338,12 @@ int robotraconteurlite_tcp_connection_buffer_send(struct robotraconteurlite_conn
 
 int robotraconteurlite_tcp_connection_communicate_send(struct robotraconteurlite_connection* connection)
 {    
+    // If the connection is in an error state, return error
+    if ((connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_ERROR) != 0)
+    {
+        return ROBOTRACONTEURLITE_ERROR_CONNECTION_ERROR;
+    }
+
     if ((connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_SEND_REQUESTED) != 0)
     {
         // Clear send requested flag
@@ -362,6 +362,10 @@ int robotraconteurlite_tcp_connection_communicate_send(struct robotraconteurlite
         {
             connection->connection_state |= ROBOTRACONTEURLITE_STATUS_FLAGS_SENDING;                
         }
+        else
+        {
+            connection->connection_state |= ROBOTRACONTEURLITE_STATUS_FLAGS_MESSAGE_SENT;
+        }
         return ROBOTRACONTEURLITE_ERROR_SUCCESS;
     }
     else if ((connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_SENDING) != 0)
@@ -379,6 +383,7 @@ int robotraconteurlite_tcp_connection_communicate_send(struct robotraconteurlite
         if (connection->send_message_len > 0 && connection->send_buffer_pos >= connection->send_message_len)
         {
             connection->connection_state &= ~ROBOTRACONTEURLITE_STATUS_FLAGS_SENDING;
+            connection->connection_state |= ROBOTRACONTEURLITE_STATUS_FLAGS_MESSAGE_SENT;
         }
         return ROBOTRACONTEURLITE_ERROR_SUCCESS;
     }
@@ -657,6 +662,21 @@ int robotraconteurlite_tcp_connection_communicate(struct robotraconteurlite_conn
     {
         return ROBOTRACONTEURLITE_ERROR_SUCCESS;
     }
+
+    if (connection->connection_state & (ROBOTRACONTEURLITE_STATUS_FLAGS_CLOSED | ROBOTRACONTEURLITE_STATUS_FLAGS_IDLE ))
+    {       
+        return ROBOTRACONTEURLITE_ERROR_SUCCESS;
+    }
+
+    if (connection->connection_state & (ROBOTRACONTEURLITE_STATUS_FLAGS_CLOSE_REQUESTED | ROBOTRACONTEURLITE_STATUS_FLAGS_CLOSING))
+    {
+        // TODO: graceful shutdown
+        robotraconteurlite_tcp_socket_close(connection->sock);
+        connection->sock = -1;
+        connection->connection_state = ROBOTRACONTEURLITE_STATUS_FLAGS_CLOSED;
+        return ROBOTRACONTEURLITE_ERROR_SUCCESS;
+    }
+
     int ret = 0;
     // Do handshake
     ret = robotraconteurlite_tcp_connection_handshake(connection);

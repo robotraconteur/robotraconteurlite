@@ -17,6 +17,16 @@
 #include <string.h>
 #include <assert.h>
 
+int robotraconteurlite_buffer_init_scalar(struct robotraconteurlite_buffer* buffer, void* data, size_t len)
+{
+	assert(buffer != NULL);
+	assert(data != NULL);
+
+	buffer->data = (uint8_t*)data;
+	buffer->len = len;
+	return ROBOTRACONTEURLITE_ERROR_SUCCESS;
+}
+
 int robotraconteurlite_buffer_len(const struct robotraconteurlite_buffer* source, size_t* len)
 {
 	assert(source != NULL);

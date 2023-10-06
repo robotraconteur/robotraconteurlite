@@ -30,4 +30,6 @@ ROBOTRACONTEURLITE_DECL int robotraconteurlite_nodeid_isany(const struct robotra
 
 ROBOTRACONTEURLITE_DECL int robotraconteurlite_nodeid_newrandom(struct robotraconteurlite_nodeid *a);
 
+ROBOTRACONTEURLITE_DECL int robotraconteurlite_nodeid_reset(struct robotraconteurlite_nodeid *a);
+
 #endif /* __ROBOTRACONTEURLITE_NODEID_H__ */
