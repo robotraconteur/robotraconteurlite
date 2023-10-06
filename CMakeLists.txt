@@ -40,3 +40,9 @@ add_executable(robotraconteurlite_message_test test/message_test.c)
 target_link_libraries(robotraconteurlite_message_test robotraconteurlite ${CMOCKA_LIBRARY})
 add_test(message_test robotraconteurlite_message_test)
 endif()
+
+option(BUILD_EXAMPLES "Build examples" ON)
+
+if (BUILD_EXAMPLES)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/examples)
+endif()

@@ -1,0 +1,5 @@
+
+include_directories(${CMAKE_SOURCE_DIR}/include)
+
+add_executable(robotraconteurlite_tiny_service tiny_service/robotraconteurlite_tiny_service.c)
+target_link_libraries(robotraconteurlite_tiny_service robotraconteurlite)
