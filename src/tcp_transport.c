@@ -37,8 +37,8 @@ int robotraconteurlite_tcp_acceptor_communicate(struct robotraconteurlite_connec
     while (c)
     {
         if ((c->transport_type = ROBOTRACONTEURLITE_TCP_TRANSPORT) &&
-          ((c->config_flags | ROBOTRACONTEURLITE_CONFIG_FLAGS_ISSERVER) != 0) &&
-          ((c->connection_state | ROBOTRACONTEURLITE_STATUS_FLAGS_IDLE) != 0))
+          ((c->config_flags & ROBOTRACONTEURLITE_CONFIG_FLAGS_ISSERVER) != 0) &&
+          ((c->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_IDLE) != 0))
         {
             break;
         }
