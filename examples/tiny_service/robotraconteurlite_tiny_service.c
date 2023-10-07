@@ -331,6 +331,11 @@ int handle_event(struct robotraconteurlite_node* node, struct robotraconteurlite
     return 0;
 }
 
+volatile sig_atomic_t signal_received = 0;
+
+void signal_handler(int signum) {
+    signal_received = 1;
+}
 
 int main(int argc, char *argv[])
 {
@@ -346,10 +351,18 @@ int main(int argc, char *argv[])
     struct robotraconteurlite_string node_name;
     struct robotraconteurlite_clock clock;
     robotraconteurlite_timespec now;
+    struct sigaction sa;
 
     /* Disable sigpipe. This is a common source of errors. Some libraries will disable this for you, but not all. */
     /* robotraconteurlite does not automatically disable sigpipe. */
     signal(SIGPIPE, SIG_IGN);
+
+    /* Listen for SIGINT and SIGTERM to break loop */
+    sa.sa_handler = signal_handler;
+    sigemptyset(&sa.sa_mask);
+    sa.sa_flags = 0;
+    sigaction(SIGINT, &sa, NULL);
+    sigaction(SIGTERM, &sa, NULL);
 
     /* Seed rand with the current time */
     srand(time(NULL));
@@ -394,6 +407,8 @@ int main(int argc, char *argv[])
         printf("Could not start TCP acceptor\n");
         return -1;
     }
+
+    printf("robotraconteur_tiny_service started\n");
 
     do
     {
@@ -444,7 +459,20 @@ int main(int argc, char *argv[])
         /* TODO: socket polling for activity*/
         usleep(1000);
 
+        if (signal_received)
+        {
+            break;
+        }
+
     } while(1);
+
+    /* Close all connections */
+    robotraconteurlite_tcp_connections_close(connections_head);
+
+    /* Close the acceptor */
+    robotraconteurlite_tcp_acceptor_close(&tcp_acceptor);
+
+    printf("robotraconteur_tiny_service shut down\n");
 
     return 0;
 }

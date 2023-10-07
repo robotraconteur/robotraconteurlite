@@ -80,6 +80,10 @@ ROBOTRACONTEURLITE_DECL void robotraconteurlite_tcp_connection_init_connection_s
 
 ROBOTRACONTEURLITE_DECL void robotraconteurlite_tcp_connection_init_connections_server(struct robotraconteurlite_connection* connections_head);
 
+ROBOTRACONTEURLITE_DECL void robotraconteurlite_tcp_connection_close(struct robotraconteurlite_connection* connection);
+
+ROBOTRACONTEURLITE_DECL void robotraconteurlite_tcp_connections_close(struct robotraconteurlite_connection* connections_head);
+
 ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_connection_buffer_recv(struct robotraconteurlite_connection* connection, size_t len);
 
 ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_connection_communicate_recv(struct robotraconteurlite_connection* connection);

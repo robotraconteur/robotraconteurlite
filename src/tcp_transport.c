@@ -807,3 +807,27 @@ int robotraconteurlite_tcp_connections_communicate(struct robotraconteurlite_con
 }
 
 
+void robotraconteurlite_tcp_connection_close(struct robotraconteurlite_connection* connection)
+{
+    if (connection->transport_type != ROBOTRACONTEURLITE_TCP_TRANSPORT)
+    {
+        return;
+    }
+
+    if (connection->sock != -1)
+    {
+        robotraconteurlite_tcp_socket_close(connection->sock);
+        connection->sock = -1;
+    }
+}
+
+void robotraconteurlite_tcp_connections_close(struct robotraconteurlite_connection* connections_head)
+{
+    struct robotraconteurlite_connection* c = connections_head;
+    while (c)
+    {
+        robotraconteurlite_tcp_connection_close(c);
+        c = c->next;
+    }
+}
+
