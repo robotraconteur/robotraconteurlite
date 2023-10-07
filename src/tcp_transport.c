@@ -242,7 +242,10 @@ int robotraconteurlite_tcp_connection_communicate_recv(struct robotraconteurlite
     /* If the message has been consumed, move the receive buffer to the beginning */
     if ((connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_MESSAGE_CONSUMED) != 0)
     {
-        memmove(connection->recv_buffer, connection->recv_buffer + connection->recv_message_len, connection->recv_buffer_pos - connection->recv_message_len);
+        if(connection->recv_buffer_pos > connection->recv_message_len)
+        {
+            memmove(connection->recv_buffer, connection->recv_buffer + connection->recv_message_len, connection->recv_buffer_pos - connection->recv_message_len);
+        }
         connection->recv_buffer_pos -= connection->recv_message_len;
         connection->recv_message_len = 0;
         connection->connection_state &= ~(ROBOTRACONTEURLITE_STATUS_FLAGS_MESSAGE_CONSUMED | ROBOTRACONTEURLITE_STATUS_FLAGS_MESSAGE_RECEIVED);

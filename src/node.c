@@ -135,6 +135,15 @@ int robotraconteurlite_node_next_event(struct robotraconteurlite_node* node, str
             return ROBOTRACONTEURLITE_ERROR_SUCCESS;
         }
 
+        if (robotraconteurlite_connection_is_message_sent_event(c))
+        {
+            robotraconteurlite_clear_event(event);
+            node->events_serviced++;
+            event->event_type = ROBOTRACONTEURLITE_EVENT_TYPE_MESSAGE_SEND_COMPLETE;
+            event->connection = c;
+            return ROBOTRACONTEURLITE_ERROR_SUCCESS;
+        }
+        
         if (robotraconteurlite_connection_is_message_received_event(c))
         {
             robotraconteurlite_clear_event(event);
@@ -147,14 +156,6 @@ int robotraconteurlite_node_next_event(struct robotraconteurlite_node* node, str
             return ROBOTRACONTEURLITE_ERROR_SUCCESS;
         }
 
-        if (robotraconteurlite_connection_is_message_sent_event(c))
-        {
-            robotraconteurlite_clear_event(event);
-            node->events_serviced++;
-            event->event_type = ROBOTRACONTEURLITE_EVENT_TYPE_MESSAGE_SEND_COMPLETE;
-            event->connection = c;
-            return ROBOTRACONTEURLITE_ERROR_SUCCESS;
-        }
     }
     while (node->connections_next);
 

@@ -62,7 +62,7 @@ int robotraconteurlite_tcp_base64_encode(const uint8_t* binary_data, size_t bina
 int robotraconteurlite_tcp_socket_recv_nonblocking(int sock, uint8_t* buffer, uint32_t* pos, size_t len, int* errno_out)
 {
     size_t pos1 = *pos;
-    do
+    while (*pos < len)
     {
         ssize_t ret = recv(sock, buffer + *pos, len - *pos, MSG_DONTWAIT);
         if (ret < 0)
@@ -87,14 +87,14 @@ int robotraconteurlite_tcp_socket_recv_nonblocking(int sock, uint8_t* buffer, ui
             }
         }
     }
-    while (*pos < len);
+    
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
 
 int robotraconteurlite_tcp_socket_send_nonblocking(int sock, const uint8_t* buffer, uint32_t* pos, size_t len, int* errno_out)
 {
     size_t pos1 = *pos;
-    do
+    while (*pos < len)
     {
         ssize_t ret = send(sock, buffer + *pos, len - *pos, MSG_DONTWAIT);
         if (ret < 0)
@@ -119,7 +119,6 @@ int robotraconteurlite_tcp_socket_send_nonblocking(int sock, const uint8_t* buff
             }
         }
     }
-    while (*pos < len);
     return 0;
 }
 
