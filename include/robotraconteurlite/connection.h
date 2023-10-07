@@ -17,6 +17,7 @@
 #define __ROBOTRACONTEURLITE_CONNECTION_H__
 
 #include "robotraconteurlite/message.h"
+#include "robotraconteurlite/clock.h"
 
 enum robotraconteurlite_connection_config_flags
 {
@@ -80,12 +81,19 @@ struct robotraconteurlite_connection
     uint32_t config_flags;
     uint32_t connection_state;
 
+    /* Parameters */
+    uint32_t heartbeat_period_ms;
+    uint32_t heartbeat_timeout_ms;
+    uint32_t heartbeat_next_check_ms;
+
     /* Robot Raconteur information */
     uint32_t local_endpoint;
     uint32_t remote_endpoint;
     struct robotraconteurlite_nodeid remote_nodeid;
     char remote_nodename_char[128];
     struct robotraconteurlite_string remote_nodename;
+    robotraconteurlite_timespec last_recv_message_time;
+    robotraconteurlite_timespec last_send_message_time;
 
     /* Message information */
     uint32_t recv_message_len;
@@ -207,5 +215,31 @@ static int robotraconteurlite_connection_is_server(struct robotraconteurlite_con
 }
 
 ROBOTRACONTEURLITE_DECL struct robotraconteurlite_connection* robotraconteurlite_connections_init_from_array(struct robotraconteurlite_connection connections_fixed_storage[], size_t connections_fixed_storage_len, uint8_t buffers[], size_t buffer_size, size_t buffer_count);
+
+static int robotraconteurlite_connection_is_heartbeat_timeout(struct robotraconteurlite_connection* connection, robotraconteurlite_timespec now)
+{
+    int64_t recv_diff_ms = now - (int64_t)connection->last_recv_message_time;
+    int64_t send_diff_ms = now - (int64_t)connection->last_send_message_time;
+
+    if ((connection->config_flags & ROBOTRACONTEURLITE_CONFIG_FLAGS_ISSERVER) == 0)
+    {
+        if (recv_diff_ms > (int64_t)connection->heartbeat_period_ms || send_diff_ms > (int64_t)connection->heartbeat_period_ms)
+        {
+            return 1;
+        }
+    }
+    
+    if (recv_diff_ms > (int64_t)connection->heartbeat_timeout_ms || send_diff_ms > (int64_t)connection->heartbeat_timeout_ms)
+    {
+        return 2;
+    }
+
+    return 0;    
+}
+
+static int robotraconteurlite_connection_is_idle(struct robotraconteurlite_connection* connection)
+{
+    return (connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_IDLE) != 0;
+}
 
 #endif /*__ROBOTRACONTEURLITE_CONNECTION_H__*/

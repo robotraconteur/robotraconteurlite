@@ -74,7 +74,7 @@ ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_acceptor_listen(struct robotr
 
 ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_acceptor_close(struct robotraconteurlite_connection_acceptor* acceptor);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_acceptor_communicate(struct robotraconteurlite_connection_acceptor* acceptor, struct robotraconteurlite_connection* connection_head);
+ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_acceptor_communicate(struct robotraconteurlite_connection_acceptor* acceptor, struct robotraconteurlite_connection* connection_head, robotraconteurlite_timespec now);
 
 ROBOTRACONTEURLITE_DECL void robotraconteurlite_tcp_connection_init_connection_server(struct robotraconteurlite_connection* connection);
 
@@ -86,17 +86,17 @@ ROBOTRACONTEURLITE_DECL void robotraconteurlite_tcp_connections_close(struct rob
 
 ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_connection_buffer_recv(struct robotraconteurlite_connection* connection, size_t len);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_connection_communicate_recv(struct robotraconteurlite_connection* connection);
+ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_connection_communicate_recv(struct robotraconteurlite_connection* connection, robotraconteurlite_timespec now);
 
 ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_connection_buffer_send(struct robotraconteurlite_connection* connection, size_t len);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_connection_communicate_send(struct robotraconteurlite_connection* connection);
+ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_connection_communicate_send(struct robotraconteurlite_connection* connection, robotraconteurlite_timespec now);
 
 ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_connection_handshake(struct robotraconteurlite_connection* connection);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_connection_communicate(struct robotraconteurlite_connection* connection);
+ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_connection_communicate(struct robotraconteurlite_connection* connection, robotraconteurlite_timespec now);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_connections_communicate(struct robotraconteurlite_connection* connections_head);
+ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_connections_communicate(struct robotraconteurlite_connection* connections_head, robotraconteurlite_timespec now);
 
 /* TCP socket functions */
 

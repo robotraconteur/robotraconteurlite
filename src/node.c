@@ -92,7 +92,7 @@ void static robotraconteurlite_clear_event(struct robotraconteurlite_event* even
     memset(event,0,sizeof(struct robotraconteurlite_event));
 }
 
-int robotraconteurlite_node_next_event(struct robotraconteurlite_node* node, struct robotraconteurlite_event* event)
+int robotraconteurlite_node_next_event(struct robotraconteurlite_node* node, struct robotraconteurlite_event* event, robotraconteurlite_timespec now)
 {
     struct robotraconteurlite_connection* c;
     if (!node->connections_next)
@@ -107,6 +107,12 @@ int robotraconteurlite_node_next_event(struct robotraconteurlite_node* node, str
     {
         c = node->connections_next;
         node->connections_next = c->next;
+
+        /* Check for idle*/
+        if (robotraconteurlite_connection_is_idle(c))
+        {
+            continue;
+        }
 
         if (robotraconteurlite_connection_is_closed_event(c))
         {
@@ -143,7 +149,7 @@ int robotraconteurlite_node_next_event(struct robotraconteurlite_node* node, str
             event->connection = c;
             return ROBOTRACONTEURLITE_ERROR_SUCCESS;
         }
-        
+
         if (robotraconteurlite_connection_is_message_received_event(c))
         {
             robotraconteurlite_clear_event(event);
@@ -154,6 +160,24 @@ int robotraconteurlite_node_next_event(struct robotraconteurlite_node* node, str
             event->received_message.connection = c;
             event->event_error_code = robotraconteurlite_node_receive_messageentry(&event->received_message);
             return ROBOTRACONTEURLITE_ERROR_SUCCESS;
+        }
+
+        if (c->heartbeat_next_check_ms < now)
+        {
+            int heartbeat_ret;
+            c->heartbeat_next_check_ms = now + c->heartbeat_period_ms;
+
+            heartbeat_ret = robotraconteurlite_connection_is_heartbeat_timeout(c, now);
+
+            if (heartbeat_ret != 0)
+            {
+                robotraconteurlite_clear_event(event);
+                node->events_serviced++;
+                event->event_type = heartbeat_ret == 1 ? ROBOTRACONTEURLITE_EVENT_TYPE_CONNECTION_HEARTBEAT_TIMEOUT : ROBOTRACONTEURLITE_EVENT_TYPE_CONNECTION_TIMEOUT;
+                event->connection = c;
+                return ROBOTRACONTEURLITE_ERROR_SUCCESS;
+            }
+            
         }
 
     }
@@ -197,6 +221,16 @@ int robotraconteurlite_node_consume_event(struct robotraconteurlite_node* node, 
         case ROBOTRACONTEURLITE_EVENT_TYPE_MESSAGE_SEND_COMPLETE:
         {
             robotraconteurlite_connection_consume_message_sent(event->connection);
+            return ROBOTRACONTEURLITE_ERROR_SUCCESS;
+        }
+        case ROBOTRACONTEURLITE_EVENT_TYPE_CONNECTION_HEARTBEAT_TIMEOUT:
+        case ROBOTRACONTEURLITE_EVENT_TYPE_CONNECTION_TIMEOUT:
+        {
+            /* Timeouts cannot be cleared or consumed */
+            return ROBOTRACONTEURLITE_ERROR_SUCCESS;
+        }
+        {
+            /* Error cannot be cleared or consumed */
             return ROBOTRACONTEURLITE_ERROR_SUCCESS;
         }
 

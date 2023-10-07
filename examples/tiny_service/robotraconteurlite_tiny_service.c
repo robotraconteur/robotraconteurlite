@@ -272,6 +272,7 @@ int handle_event(struct robotraconteurlite_node* node, struct robotraconteurlite
         }
         case ROBOTRACONTEURLITE_EVENT_TYPE_CONNECTION_TIMEOUT:
         {
+            printf("Connection timed out\n");
             /* Close the connection on timeout */
             if(robotraconteurlite_connection_close(event->connection))
             {
@@ -414,15 +415,17 @@ int main(int argc, char *argv[])
     {
         int ret;
 
+        robotraconteurlite_clock_gettime(&clock, &now);
+
         /* Accept TCP connections */
-        if (robotraconteurlite_tcp_acceptor_communicate(&tcp_acceptor, connections_head))
+        if (robotraconteurlite_tcp_acceptor_communicate(&tcp_acceptor, connections_head, now))
         {
             printf("Could not accept TCP connections\n");
             return -1;
         }
 
         /* Communicate with all connections */
-        if (robotraconteurlite_tcp_connections_communicate(connections_head))
+        if (robotraconteurlite_tcp_connections_communicate(connections_head, now))
         {
             printf("Could not communicate with connections\n");
             return -1;
@@ -433,7 +436,7 @@ int main(int argc, char *argv[])
         do
         {
             struct robotraconteurlite_event event;
-            int ret = robotraconteurlite_node_next_event(&node, &event);
+            int ret = robotraconteurlite_node_next_event(&node, &event, now);
             if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
             {
                 printf("Could not get event\n");

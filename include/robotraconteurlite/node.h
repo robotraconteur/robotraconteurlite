@@ -115,7 +115,7 @@ ROBOTRACONTEURLITE_DECL int robotraconteurlite_node_add_connection(struct robotr
 
 ROBOTRACONTEURLITE_DECL int robotraconteurlite_node_remove_connection(struct robotraconteurlite_node* node, struct robotraconteurlite_connection* connection);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_node_next_event(struct robotraconteurlite_node* node, struct robotraconteurlite_event* event);
+ROBOTRACONTEURLITE_DECL int robotraconteurlite_node_next_event(struct robotraconteurlite_node* node, struct robotraconteurlite_event* event, robotraconteurlite_timespec now);
 
 ROBOTRACONTEURLITE_DECL int robotraconteurlite_node_consume_event(struct robotraconteurlite_node* node, struct robotraconteurlite_event* event);
 
