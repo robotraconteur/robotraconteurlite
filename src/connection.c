@@ -4,7 +4,7 @@
 
 int robotraconteurlite_connection_reset(struct robotraconteurlite_connection* connection)
 {
-    connection->connection_state = 0;
+    connection->connection_state = ROBOTRACONTEURLITE_STATUS_FLAGS_IDLE;
     connection->recv_buffer_pos = 0;
     connection->recv_message_len = 0;
     connection->send_buffer_pos = 0;

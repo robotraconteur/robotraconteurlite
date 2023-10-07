@@ -39,14 +39,17 @@ int robotraconteurlite_tcp_base64_encode(const uint8_t* binary_data, size_t bina
 #ifdef ROBOTRACONTEURLITE_USE_OPENSSL
     /* Use OpenSSL base64 implementation */
     size_t len;
+    char* base64_data_ptr; /* Make space for annoying null byte */
     BIO* bmem = BIO_new(BIO_s_mem());
     BIO* b64 = BIO_new(BIO_f_base64());
+    BIO_set_flags(b64, BIO_FLAGS_BASE64_NO_NL);
     b64 = BIO_push(b64, bmem);
     BIO_write(b64, binary_data, binary_len);
     BIO_flush(b64);
-    len = BIO_get_mem_data(bmem, &base64_data);
+    len = BIO_get_mem_data(bmem, &base64_data_ptr);
     assert(len <= *base64_len);
     *base64_len = len;
+    memcpy(base64_data, base64_data_ptr, len);
     BIO_free_all(b64);
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 #else
