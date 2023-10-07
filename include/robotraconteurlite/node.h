@@ -74,12 +74,26 @@ struct robotraconteurlite_node_receive_messageentry_data
     struct robotraconteurlite_messageelement_reader element_reader;
 };
 
+struct robotraconteurlite_node_service_definition
+{
+    struct robotraconteurlite_string qualified_name;
+    struct robotraconteurlite_string service_definition;
+};
+
+struct robotraconteurlite_node_service_object
+{
+    struct robotraconteurlite_string service_path;
+    struct robotraconteurlite_string qualified_type;
+    struct robotraconteurlite_node_service_definition* service_def;
+};
+
 struct robotraconteurlite_event
 {
   enum robotraconteurlite_event_type event_type;
   struct robotraconteurlite_connection* connection;
   struct robotraconteurlite_node_receive_messageentry_data received_message;
   int event_error_code;
+  size_t events_serviced;
 };
 
 ROBOTRACONTEURLITE_DECL int robotraconteurlite_node_init(struct robotraconteurlite_node* node, struct robotraconteurlite_nodeid* nodeid, struct robotraconteurlite_string* nodename, struct robotraconteurlite_connection* connections_head);
@@ -115,5 +129,9 @@ ROBOTRACONTEURLITE_DECL int robotraconteurlite_node_begin_send_messageentry_resp
 
 ROBOTRACONTEURLITE_DECL int robotraconteurlite_node_send_messageentry_empty_response(struct robotraconteurlite_node* node, struct robotraconteurlite_connection* connection,
   struct robotraconteurlite_messageentry_header* request_message_entry_header);
+
+ROBOTRACONTEURLITE_DECL int robotraconteurlite_node_event_special_request_service_definition(struct robotraconteurlite_node* node, struct robotraconteurlite_event* event, struct robotraconteurlite_node_service_object service_objects[], size_t service_objects_len, struct robotraconteurlite_node_service_definition service_defs[], size_t service_defs_len);
+
+ROBOTRACONTEURLITE_DECL int robotraconteurlite_node_event_special_request_object_type_name(struct robotraconteurlite_node* node, struct robotraconteurlite_event* event, struct robotraconteurlite_node_service_object service_objects[], size_t service_objects_len);
 
 #endif /* __ROBOTRACONTEURLITE_NODE_H__ */

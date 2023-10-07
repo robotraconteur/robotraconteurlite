@@ -95,6 +95,7 @@ int robotraconteurlite_node_next_event(struct robotraconteurlite_node* node, str
     {
         robotraconteurlite_clear_event(event);
         event->event_type = ROBOTRACONTEURLITE_EVENT_TYPE_NEXT_CYCLE;
+        event->events_serviced = node->events_serviced;
         return ROBOTRACONTEURLITE_ERROR_SUCCESS;
     }
 
@@ -477,4 +478,125 @@ int robotraconteurlite_node_receive_messageentry(struct robotraconteurlite_node_
 int robotraconteurlite_node_receive_messageentry_consume(struct robotraconteurlite_node_receive_messageentry_data* receive_data)
 {
     return robotraconteurlite_connection_message_receive_consume(receive_data->connection);
+}
+
+int robotraconteurlite_node_event_special_request_service_definition(struct robotraconteurlite_node* node, struct robotraconteurlite_event* event, struct robotraconteurlite_node_service_object service_objects[], size_t service_objects_len, struct robotraconteurlite_node_service_definition service_defs[], size_t service_defs_len)
+{
+
+    size_t i;
+    assert(node);
+    assert(event);
+    assert(event->received_message.received_message_entry_header.entry_type == ROBOTRACONTEURLITE_MESSAGEENTRYTYPE_GETSERVICEDESC);
+
+    for(i=0; i<service_objects_len; i++)
+    {
+        /* Compare qualified_name with service_path */
+        if (robotraconteurlite_string_cmp(&event->received_message.received_message_entry_header.service_path, &service_objects[i].service_path) == 0)
+        {
+            int ret;            
+            struct robotraconteurlite_node_send_messageentry_data send_data;
+            send_data.node = event->received_message.node;
+            send_data.connection = event->connection;
+            ret = robotraconteurlite_node_begin_send_messageentry_response(&send_data, &event->received_message.received_message_entry_header);
+            if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+            {
+                return ret;
+            }            
+            {
+                /* Write service definition */
+                struct robotraconteurlite_string element_name_str;
+                struct robotraconteurlite_string desc_str;
+                element_name_str.data = "servicedef";
+                element_name_str.len = 10;
+                desc_str.data = service_objects[i].service_def->service_definition.data;
+                desc_str.len = service_objects[i].service_def->service_definition.len;
+                ret = robotraconteurlite_messageelement_writer_write_string(&send_data.element_writer, &element_name_str, &desc_str);
+                if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+                {
+                    return ret;
+                }
+            }
+            {
+                /* Write empty attributes */
+                /* TODO: Support attributes */
+                struct robotraconteurlite_messageelement_writer attr_element_writer;
+                struct robotraconteurlite_messageelement_header attr_element_header;
+                memset(&attr_element_header, 0, sizeof(struct robotraconteurlite_messageelement_header));
+                attr_element_header.element_type = ROBOTRACONTEURLITE_DATATYPE_MAP_STRING;
+                robotraconteurlite_string_from_c_str("attributes", &attr_element_header.element_name);
+                ret = robotraconteurlite_messageelement_writer_begin_nested_element(&send_data.element_writer, &attr_element_header, &attr_element_writer);
+                if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+                {
+                    return ret;
+                }
+                ret = robotraconteurlite_messageelement_writer_end_nested_element(&send_data.element_writer, &attr_element_header, &attr_element_writer);
+                if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+                {
+                    return ret;
+                }
+            }
+
+            ret = robotraconteurlite_node_end_send_messageentry(&send_data);
+            if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+            {
+                return ret;
+            }
+
+            return ROBOTRACONTEURLITE_ERROR_SUCCESS;
+        }        
+    }
+    /* TODO: Support returning named service type */
+    
+    /* Return ServiceNotFound error message */
+    return robotraconteurlite_connection_send_messageentry_error_response(node, event->connection, &event->received_message.received_message_entry_header, ROBOTRACONTEURLITE_MESSAGEERRORTYPE_SERVICENOTFOUND, "RobotRaconteur.ServiceNotFound", "Service not found");
+    
+}
+
+int robotraconteurlite_node_event_special_request_object_type_name(struct robotraconteurlite_node* node, struct robotraconteurlite_event* event, struct robotraconteurlite_node_service_object service_objects[], size_t service_objects_len)
+{
+    size_t i;
+    assert(node);
+    assert(event);
+    assert(event->received_message.received_message_entry_header.entry_type == ROBOTRACONTEURLITE_MESSAGEENTRYTYPE_OBJECTTYPENAME);
+
+    for (i=0; i<service_objects_len; i++)
+    {
+        /* Compare qualified_name with service_path */
+        if (robotraconteurlite_string_cmp(&event->received_message.received_message_entry_header.service_path, &service_objects[i].service_path) == 0)
+        {
+            int ret;
+            struct robotraconteurlite_node_send_messageentry_data send_data;
+            send_data.node = event->received_message.node;
+            send_data.connection = event->connection;
+            ret = robotraconteurlite_node_begin_send_messageentry_response(&send_data, &event->received_message.received_message_entry_header);
+            if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+            {
+                return ret;
+            }
+            {
+                /* Write object type name */
+                struct robotraconteurlite_string element_name_str;
+                struct robotraconteurlite_string type_name_str;
+                robotraconteurlite_string_from_c_str("objecttype", &element_name_str);
+                type_name_str.data = service_objects[i].qualified_type.data;
+                type_name_str.len = service_objects[i].qualified_type.len;
+                ret = robotraconteurlite_messageelement_writer_write_string(&send_data.element_writer, &element_name_str, &type_name_str);
+                if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+                {
+                    return ret;
+                }
+            }
+            
+            ret = robotraconteurlite_node_end_send_messageentry(&send_data);
+            if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+            {
+                return ret;
+            }
+
+            return ROBOTRACONTEURLITE_ERROR_SUCCESS;
+        }
+    }
+
+    /* Return ObjectNotFound error message */
+    return robotraconteurlite_connection_send_messageentry_error_response(node, event->connection, &event->received_message.received_message_entry_header, ROBOTRACONTEURLITE_MESSAGEERRORTYPE_OBJECTNOTFOUND, "RobotRaconteur.ObjectNotFound", "Object not found");
 }
