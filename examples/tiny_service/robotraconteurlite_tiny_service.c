@@ -344,6 +344,8 @@ int main(int argc, char *argv[])
     struct sockaddr_in listen_addr;
     struct robotraconteurlite_nodeid node_id;
     struct robotraconteurlite_string node_name;
+    struct robotraconteurlite_clock clock;
+    robotraconteurlite_timespec now;
 
     /* Disable sigpipe. This is a common source of errors. Some libraries will disable this for you, but not all. */
     /* robotraconteurlite does not automatically disable sigpipe. */
@@ -351,6 +353,12 @@ int main(int argc, char *argv[])
 
     /* Seed rand with the current time */
     srand(time(NULL));
+
+    /* Initialize the clock */
+    robotraconteurlite_clock_init(&clock);
+
+    /* Read the clock */
+    robotraconteurlite_clock_gettime(&clock, &now);
 
     /* Use a random nodeid. In practice this should be fixed and unique for every service */
     robotraconteurlite_nodeid_newrandom(&node_id);

@@ -23,13 +23,15 @@ add_library(robotraconteurlite
 							   include/robotraconteurlite/nodeid.h
 							   include/robotraconteurlite/robotraconteurlite.h
 							   include/robotraconteurlite/tcp_transport.h
+							   include/robotraconteurlite/clock.h
 							   src/array.c
 							   src/connection.c
 							   src/message.c
 							   src/node.c
 							   src/nodeid.c
 							   src/tcp_transport_posix.c
-							   src/tcp_transport.c)
+							   src/tcp_transport.c
+							   src/clock_posix.c)
 
 target_link_libraries(robotraconteurlite PUBLIC OpenSSL::Crypto uuid)
 
