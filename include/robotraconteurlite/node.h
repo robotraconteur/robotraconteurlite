@@ -145,4 +145,6 @@ ROBOTRACONTEURLITE_DECL int robotraconteurlite_node_event_special_request_servic
 
 ROBOTRACONTEURLITE_DECL int robotraconteurlite_node_event_special_request_object_type_name(struct robotraconteurlite_node* node, struct robotraconteurlite_event* event, struct robotraconteurlite_node_service_object service_objects[], size_t service_objects_len);
 
+ROBOTRACONTEURLITE_DECL int robotraconteurlite_event_is_member(struct robotraconteurlite_event* event, const char* service_path, const char* member_name);
+
 #endif /* __ROBOTRACONTEURLITE_NODE_H__ */

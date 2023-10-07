@@ -659,3 +659,17 @@ int robotraconteurlite_node_event_special_request_object_type_name(struct robotr
     /* Return ObjectNotFound error message */
     return robotraconteurlite_connection_send_messageentry_error_response(node, event->connection, &event->received_message.received_message_entry_header, ROBOTRACONTEURLITE_MESSAGEERRORTYPE_OBJECTNOTFOUND, "RobotRaconteur.ObjectNotFound", "Object not found");
 }
+
+int robotraconteurlite_event_is_member(struct robotraconteurlite_event* event, const char* service_path, const char* member_name)
+{
+    assert(event->event_type == ROBOTRACONTEURLITE_EVENT_TYPE_MESSAGE_RECEIVED);
+    if (robotraconteurlite_string_cmp_c_str(&event->received_message.received_message_entry_header.service_path, service_path) != 0)
+    {
+        return 0;
+    }
+    if (robotraconteurlite_string_cmp_c_str(&event->received_message.received_message_entry_header.member_name, member_name) != 0)
+    {
+        return 0;
+    }
+    return 1;
+}
