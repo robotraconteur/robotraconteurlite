@@ -61,6 +61,8 @@ struct robotraconteurlite_node_send_messageentry_data
     struct robotraconteurlite_message_writer message_writer;
     struct robotraconteurlite_messageentry_writer entry_writer;
     struct robotraconteurlite_messageentry_header message_entry_header_storage;
+    struct robotraconteurlite_buffer buffer_storage;
+    struct robotraconteurlite_buffer_vec buffer_vec_storage;
 };
 
 struct robotraconteurlite_node_receive_messageentry_data
@@ -71,7 +73,16 @@ struct robotraconteurlite_node_receive_messageentry_data
     /* Outputs */
     struct robotraconteurlite_message_header received_message_header;
     struct robotraconteurlite_messageentry_header received_message_entry_header;
-    struct robotraconteurlite_messageelement_reader element_reader;
+    struct robotraconteurlite_messageentry_reader entry_reader;
+    /* Internal */
+    struct robotraconteurlite_buffer buffer_storage;
+    struct robotraconteurlite_buffer_vec buffer_vec_storage;
+    char receiver_nodename_char[128];
+    char sender_nodename_char[128];
+    char service_path_char[128];
+    char member_name_char[128];
+    char extended_char[128];
+    
 };
 
 struct robotraconteurlite_node_service_definition

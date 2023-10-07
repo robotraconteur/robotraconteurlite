@@ -85,6 +85,7 @@ static int robotraconteurlite_message_read_header_string(struct robotraconteurli
 
 	if (str_len == 0)
 	{
+		str->len = 0;
 		return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 	}
 
@@ -314,7 +315,7 @@ int robotraconteurlite_message_reader_begin_read_entries(struct robotraconteurli
 
 	entry_reader->buffer = reader->buffer;
 	entry_reader->buffer_offset = reader->buffer_offset + o;
-	entry_reader->buffer_count = entry_size;
+	entry_reader->buffer_count = reader->buffer_count;
 	entry_reader->buffer_remaining = reader->buffer_count - o - entry_size;
 	entry_reader->current_entry = 0;
 	entry_reader->entry_count_offset = entry_count_offset;

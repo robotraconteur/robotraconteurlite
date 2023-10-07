@@ -46,25 +46,21 @@ int robotraconteurlite_connection_verify_preamble(struct robotraconteurlite_conn
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
 
-int robotraconteurlite_connection_message_receive(struct robotraconteurlite_connection* connection, struct robotraconteurlite_message_reader* message_reader)
+int robotraconteurlite_connection_message_receive(struct robotraconteurlite_connection* connection, struct robotraconteurlite_message_reader* message_reader, struct robotraconteurlite_buffer_vec* buffer_storage)
 {
-    struct robotraconteurlite_buffer buffer;
-    struct robotraconteurlite_buffer_vec buffer_vec;
     
     if ((connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_MESSAGE_RECEIVED)==0 || (connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_MESSAGE_CONSUMED)!=0)
     {
         return ROBOTRACONTEURLITE_ERROR_RETRY;
     }
 
-    if(robotraconteurlite_buffer_init_scalar(&buffer, connection->recv_buffer, connection->recv_buffer_pos))
+    assert(buffer_storage->buffer_vec_cnt >= 1);
+    if(robotraconteurlite_buffer_init_scalar(&buffer_storage->buffer_vec[0], connection->recv_buffer, connection->recv_buffer_pos))
     {
         return ROBOTRACONTEURLITE_ERROR_INTERNAL_ERROR;
     }
-    if(robotraconteurlite_buffer_vec_init_scalar(&buffer_vec, &buffer))
-    {
-        return ROBOTRACONTEURLITE_ERROR_INTERNAL_ERROR;
-    }
-    if(robotraconteurlite_message_reader_init(message_reader, &buffer_vec, 0, connection->recv_buffer_pos))
+    buffer_storage->buffer_vec_cnt = 1;
+    if(robotraconteurlite_message_reader_init(message_reader, buffer_storage, 0, connection->recv_buffer_pos))
     {
         return ROBOTRACONTEURLITE_ERROR_INTERNAL_ERROR;
     }
@@ -83,10 +79,8 @@ int robotraconteurlite_connection_message_receive_consume(struct robotraconteurl
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
 
-int robotraconteurlite_connection_begin_send_message(struct robotraconteurlite_connection* connection, struct robotraconteurlite_message_writer* message_writer)
+int robotraconteurlite_connection_begin_send_message(struct robotraconteurlite_connection* connection, struct robotraconteurlite_message_writer* message_writer, struct robotraconteurlite_buffer_vec* buffer_storage)
 {
-    struct robotraconteurlite_buffer buffer;
-    struct robotraconteurlite_buffer_vec buffer_vec;
     if ((connection->connection_state & 
         (ROBOTRACONTEURLITE_STATUS_FLAGS_ERROR
         | ROBOTRACONTEURLITE_STATUS_FLAGS_CLOSED
@@ -111,15 +105,12 @@ int robotraconteurlite_connection_begin_send_message(struct robotraconteurlite_c
         return ROBOTRACONTEURLITE_ERROR_RETRY;
     }
         
-    if(robotraconteurlite_buffer_init_scalar(&buffer, connection->send_buffer, connection->send_buffer_len))
+    if(robotraconteurlite_buffer_init_scalar(&buffer_storage->buffer_vec[0], connection->send_buffer, connection->send_buffer_len))
     {
         return ROBOTRACONTEURLITE_ERROR_INTERNAL_ERROR;
     }
-    if(robotraconteurlite_buffer_vec_init_scalar(&buffer_vec, &buffer))
-    {
-        return ROBOTRACONTEURLITE_ERROR_INTERNAL_ERROR;
-    }
-    if(robotraconteurlite_message_writer_init(message_writer, &buffer_vec, 0, connection->send_buffer_pos))
+
+    if(robotraconteurlite_message_writer_init(message_writer, buffer_storage, 0, connection->send_buffer_pos))
     {
         return ROBOTRACONTEURLITE_ERROR_INTERNAL_ERROR;
     }
@@ -130,7 +121,7 @@ int robotraconteurlite_connection_begin_send_message(struct robotraconteurlite_c
 
 int robotraconteurlite_connection_end_send_message(struct robotraconteurlite_connection* connection, size_t message_len)
 {
-    connection->send_buffer_pos = message_len;
+    connection->send_message_len = message_len;
     connection->connection_state |= ROBOTRACONTEURLITE_STATUS_FLAGS_SEND_REQUESTED;
 
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
@@ -157,7 +148,7 @@ struct robotraconteurlite_connection* robotraconteurlite_connections_init_from_a
 {
     size_t i;
     assert(connections_fixed_storage_len > 0);
-    assert(buffer_count > connections_fixed_storage_len*2);
+    assert(buffer_count >= connections_fixed_storage_len*2);
     assert(buffer_size > 1024);
 
     for (i=0; i<connections_fixed_storage_len; i++)

@@ -27,7 +27,7 @@
 #define CONNECTION_BUFFER_SIZE 8096
 
 const char* node_name_str = "example.tiny_service";
-const uint16_t node_port = 22227;
+const uint16_t node_port = 22228;
 
 const char* service_name = "tiny_service";
 const char* service_def = \
@@ -81,7 +81,12 @@ int handle_message(struct robotraconteurlite_node* node, struct robotraconteurli
             {
                 return 0;
             }
-            if (robotraconteurlite_node_consume_event(node, event))
+            ret = robotraconteurlite_node_consume_event(node, event);
+            if (ret == ROBOTRACONTEURLITE_ERROR_RETRY)
+            {
+                return 0;
+            }
+            if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
             {
                 printf("Could not consume event\n");
                 return -1;
@@ -131,9 +136,15 @@ int handle_event(struct robotraconteurlite_node* node, struct robotraconteurlite
         }
         case ROBOTRACONTEURLITE_EVENT_TYPE_MESSAGE_RECEIVED:
         {
+            int ret;
             printf("Message received\n");
             /* Handle the message */
-            if(handle_message(node, event))
+            ret = handle_message(node, event);
+            if (ret == ROBOTRACONTEURLITE_ERROR_RETRY)
+            {
+                return 0;
+            }
+            if(ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
             {
                 printf("Could not handle message\n");
                 return -1;
@@ -206,16 +217,18 @@ int handle_event(struct robotraconteurlite_node* node, struct robotraconteurlite
                 printf("Could not consume event\n");
                 return -1;
             }
+            break;
         }
         case ROBOTRACONTEURLITE_EVENT_TYPE_CONNECTION_CLOSED:
         {
-            printf("Connection connected!\n");
+            printf("Connection closed!\n");
             /* Consume the event */
             if(robotraconteurlite_node_consume_event(node, event))
             {
                 printf("Could not consume event\n");
                 return -1;
             }
+            break;
         }
         default:
         {
@@ -258,7 +271,7 @@ int main(int argc, char *argv[])
         return -1;
     }
 
-    robotraconteurlite_tcp_connection_init_connections(connections_head);
+    robotraconteurlite_tcp_connection_init_connections_server(connections_head);
 
     /* Initialize the node */
 
@@ -319,8 +332,11 @@ int main(int argc, char *argv[])
             }
             else if (ret < 0)
             {
-                printf("Could not handle event\n");
-                return -1;
+                if (ret != ROBOTRACONTEURLITE_ERROR_RETRY)
+                {
+                    printf("Could not handle event\n");
+                    return -1;
+                }
             }
         } while (1);
 

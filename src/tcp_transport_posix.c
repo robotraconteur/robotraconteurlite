@@ -7,6 +7,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <netinet/tcp.h>
 #include <fcntl.h>
 #include <endian.h>
 #include <errno.h>
@@ -57,33 +58,65 @@ int robotraconteurlite_tcp_base64_encode(const uint8_t* binary_data, size_t bina
 
 int robotraconteurlite_tcp_socket_recv_nonblocking(int sock, uint8_t* buffer, uint32_t* pos, size_t len, int* errno_out)
 {
-    ssize_t ret = recv(sock, buffer + *pos, len - *pos, MSG_DONTWAIT);
-    if (ret < 0)
+    size_t pos1 = *pos;
+    do
     {
-        if (errno == EWOULDBLOCK)
+        ssize_t ret = recv(sock, buffer + *pos, len - *pos, MSG_DONTWAIT);
+        if (ret < 0)
         {
-            return ROBOTRACONTEURLITE_ERROR_SUCCESS;
+            if (errno == EWOULDBLOCK)
+            {
+                return ROBOTRACONTEURLITE_ERROR_SUCCESS;
+            }
+            *errno_out = errno;
+            return ROBOTRACONTEURLITE_ERROR_CONNECTION_ERROR;
         }
-        *errno_out = errno;
-        return ROBOTRACONTEURLITE_ERROR_CONNECTION_ERROR;
+        *pos += ret;
+        if (ret == 0)
+        {
+            if (*pos == pos1)
+            {
+                return ROBOTRACONTEURLITE_ERROR_CONNECTION_ERROR;
+            }
+            else
+            {
+                return ROBOTRACONTEURLITE_ERROR_SUCCESS;
+            }
+        }
     }
-    *pos += ret;
-    return 0;
+    while (*pos < len);
+    return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
 
 int robotraconteurlite_tcp_socket_send_nonblocking(int sock, const uint8_t* buffer, uint32_t* pos, size_t len, int* errno_out)
 {
-    ssize_t ret = send(sock, buffer + *pos, len - *pos, MSG_DONTWAIT);
-    if (ret < 0)
+    size_t pos1 = *pos;
+    do
     {
-        if (errno == EWOULDBLOCK)
+        ssize_t ret = send(sock, buffer + *pos, len - *pos, MSG_DONTWAIT);
+        if (ret < 0)
         {
-            return ROBOTRACONTEURLITE_ERROR_SUCCESS;
+            if (errno == EWOULDBLOCK)
+            {
+                return ROBOTRACONTEURLITE_ERROR_SUCCESS;
+            }
+            *errno_out = errno;
+            return ROBOTRACONTEURLITE_ERROR_CONNECTION_ERROR;
         }
-        *errno_out = errno;
-        return ROBOTRACONTEURLITE_ERROR_CONNECTION_ERROR;
+        *pos += ret;
+        if (ret == 0)
+        {
+            if (*pos == pos1)
+            {
+                return ROBOTRACONTEURLITE_ERROR_CONNECTION_ERROR;
+            }
+            else
+            {
+                return ROBOTRACONTEURLITE_ERROR_SUCCESS;
+            }
+        }
     }
-    *pos += ret;
+    while (*pos < len);
     return 0;
 }
 
@@ -134,12 +167,43 @@ int robotraconteurlite_tcp_socket_begin_server(const struct sockaddr_storage* se
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
 
+int robotraconteurlite_tcp_configure_socket(int sock, int* errno_out)
+{
+    int flags;
+    /* Make socket non-blocking */
+    flags = fcntl(sock, F_GETFL, 0);
+    if (flags < 0)
+    {
+        *errno_out = errno;
+        close(sock);
+        return ROBOTRACONTEURLITE_ERROR_CONNECTION_ERROR;
+    }
+
+    flags |= O_NONBLOCK;
+    if (fcntl(sock, F_SETFL, flags) < 0)
+    {
+        *errno_out = errno;
+        close(sock);
+        return ROBOTRACONTEURLITE_ERROR_CONNECTION_ERROR;
+    }
+
+    /* Set TCP no delay*/
+    flags = 1;
+    if(setsockopt(sock, IPPROTO_TCP, TCP_NODELAY, (char *)&flags, sizeof(int))<0)
+    {
+        *errno_out = errno;
+        close(sock);
+        return ROBOTRACONTEURLITE_ERROR_CONNECTION_ERROR;
+    }
+
+    return ROBOTRACONTEURLITE_ERROR_SUCCESS;
+}
+
 int robotraconteurlite_tcp_socket_accept(int acceptor_sock, int* client_sock, int* errno_out)
 {
     /* Accept connection */
     struct sockaddr_in cli_addr;
     socklen_t clilen = sizeof(cli_addr);
-    int flags;
     int newsockfd = accept(acceptor_sock, (struct sockaddr *) &cli_addr, &clilen);
     if (newsockfd < 0)
     {
@@ -151,24 +215,9 @@ int robotraconteurlite_tcp_socket_accept(int acceptor_sock, int* client_sock, in
         return ROBOTRACONTEURLITE_ERROR_SUCCESS;
     }
 
-    /* Make socket non-blocking */
-    flags = fcntl(newsockfd, F_GETFL, 0);
-    if (flags < 0)
-    {
-        *errno_out = errno;
-        close(newsockfd);
-        return ROBOTRACONTEURLITE_ERROR_CONNECTION_ERROR;
-    }
+    *client_sock = newsockfd;
 
-    flags |= O_NONBLOCK;
-    if (fcntl(newsockfd, F_SETFL, flags) < 0)
-    {
-        *errno_out = errno;
-        close(newsockfd);
-        return ROBOTRACONTEURLITE_ERROR_CONNECTION_ERROR;
-    }
-
-    return ROBOTRACONTEURLITE_ERROR_SUCCESS;
+    return robotraconteurlite_tcp_configure_socket(newsockfd, errno_out);
 }
 
 
