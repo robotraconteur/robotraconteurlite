@@ -1070,3 +1070,56 @@ int robotraconteurlite_client_begin_request(struct robotraconteurlite_node_send_
     robotraconteurlite_string_from_c_str(membername, &send_data->message_entry_header->member_name);
     return robotraconteurlite_node_begin_send_messageentry(send_data);
 }
+
+int robotraconteurlite_client_send_request(struct robotraconteurlite_node_send_messageentry_data* send_data)
+{
+    return robotraconteurlite_node_end_send_messageentry(send_data);
+}
+
+int robotraconteurlite_client_end_request(struct robotraconteurlite_node_send_messageentry_data* send_data, struct robotraconteurlite_event* event)
+{
+    int ret;
+    if (event->event_type != ROBOTRACONTEURLITE_EVENT_TYPE_MESSAGE_RECEIVED)
+    {
+        return ROBOTRACONTEURLITE_ERROR_UNHANDLED_EVENT;
+    }
+    if (event->received_message.received_message_entry_header.request_id == send_data->message_entry_header->request_id)
+    {
+        if (event->received_message.received_message_entry_header.error != 0)
+        {
+            return ROBOTRACONTEURLITE_ERROR_REQUEST_REMOTE_ERROR;
+        }
+        return ROBOTRACONTEURLITE_ERROR_SUCCESS;
+    }
+    return ROBOTRACONTEURLITE_ERROR_UNHANDLED_EVENT;
+}
+
+int robotraconteurlite_client_send_empty_request(struct robotraconteurlite_node_send_messageentry_data* send_data, uint16_t entry_type, const char* membername, const char* servicepath)
+{
+    int ret = robotraconteurlite_client_begin_request(send_data, entry_type, membername, servicepath);
+    if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+    {
+        return ret;
+    }
+    return robotraconteurlite_node_end_send_messageentry(send_data);
+}
+
+int robotraconteurlite_client_send_heartbeat(struct robotraconteurlite_node* node, struct robotraconteurlite_connection* connection)
+{
+    int ret;
+    struct robotraconteurlite_node_send_messageentry_data send_data;
+    send_data.node = node;
+    send_data.connection = connection;
+    ret = robotraconteurlite_client_begin_request(&send_data, ROBOTRACONTEURLITE_MESSAGEENTRYTYPE_CONNECTIONTEST, NULL, NULL);
+    if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+    {
+        return ret;
+    }
+    send_data.message_entry_header->request_id = 0;
+    ret = robotraconteurlite_node_end_send_messageentry(&send_data);
+    if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+    {
+        return ret;
+    }
+    return ROBOTRACONTEURLITE_ERROR_SUCCESS;
+}

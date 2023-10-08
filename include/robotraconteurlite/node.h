@@ -56,6 +56,7 @@ struct robotraconteurlite_node_send_messageentry_data
     struct robotraconteurlite_messageentry_header* message_entry_header;
     /* Outputs */
     struct robotraconteurlite_messageelement_writer element_writer;
+    uint32_t request_id;
     /* Internal */
     struct robotraconteurlite_message_header message_header;
     struct robotraconteurlite_message_writer message_writer;
@@ -178,6 +179,14 @@ ROBOTRACONTEURLITE_DECL int robotraconteurlite_client_is_connected(struct robotr
 ROBOTRACONTEURLITE_DECL int robotraconteurlite_client_handshake(struct robotraconteurlite_client_handshake_data* handshake_data, struct robotraconteurlite_event* event, robotraconteurlite_timespec now);
 
 ROBOTRACONTEURLITE_DECL int robotraconteurlite_client_begin_request(struct robotraconteurlite_node_send_messageentry_data* send_data, uint16_t entry_type, const char* membername, const char* servicepath);
+
+ROBOTRACONTEURLITE_DECL int robotraconteurlite_client_send_empty_request(struct robotraconteurlite_node_send_messageentry_data* send_data, uint16_t entry_type, const char* membername, const char* servicepath);
+
+ROBOTRACONTEURLITE_DECL int robotraconteurlite_client_send_request(struct robotraconteurlite_node_send_messageentry_data* send_data);
+
+ROBOTRACONTEURLITE_DECL int robotraconteurlite_client_end_request(struct robotraconteurlite_node_send_messageentry_data* send_data, struct robotraconteurlite_event* event);
+
+ROBOTRACONTEURLITE_DECL int robotraconteurlite_client_send_heartbeat(struct robotraconteurlite_node* node, struct robotraconteurlite_connection* connection);
 
 /*ROBOTRACONTEURLITE_DECL int robotraconteurlite_client_process_request(struct robotraconteurlite_node_send_messageentry_data* request_data, struct robotraconteurlite_node_receive_messageentry_data* response_data);*/
 
