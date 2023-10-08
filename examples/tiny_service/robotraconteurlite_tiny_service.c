@@ -464,6 +464,11 @@ int main(int argc, char *argv[])
             ret = robotraconteurlite_wait_next_wake(&clock, pollfds, num_pollfds, next_wake);
             if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
             {
+                if (signal_received)
+                {
+                    printf("Exiting\n");
+                    return 0;
+                }
                 printf("Could not wait for next wake\n");
                 return -1;
             }
