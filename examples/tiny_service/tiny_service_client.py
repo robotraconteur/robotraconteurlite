@@ -36,3 +36,5 @@ for i in range(10):
 
 assert len(async_errors) == 0
 
+print("Done!")
+

@@ -328,8 +328,13 @@ int robotraconteurlite_node_event_special_request(struct robotraconteurlite_node
         case ROBOTRACONTEURLITE_MESSAGEENTRYTYPE_GETNODEINFO:
         case ROBOTRACONTEURLITE_MESSAGEENTRYTYPE_DISCONNECTCLIENT:
         {
-            /* TODO: handle disconnect client */
             int ret;
+            if (!robotraconteurlite_connection_is_server(event->connection))
+            {
+                robotraconteurlite_node_consume_event(node, event);
+                break;
+            }
+            /* TODO: handle disconnect client */
             ret = robotraconteurlite_node_send_messageentry_empty_response(node, event->connection, &event->received_message.received_message_entry_header);
             if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
             {

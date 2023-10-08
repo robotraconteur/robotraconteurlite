@@ -27,6 +27,8 @@
 #define NUM_CONNECTIONS 1
 #define CONNECTION_BUFFER_SIZE 8096
 
+/* #define TINY_CLIENT_WEBSOCKET 1 */
+
 const uint16_t service_port = 22229;
 const char* service_ip_str = "127.0.0.1";
 const char* service_name = "tiny_service";
@@ -104,6 +106,12 @@ int main(int argc, char *argv[])
         printf("Could not convert service IP address\n");
         return -1;
     }
+#if TINY_CLIENT_WEBSOCKET
+    /* Use websocket connection */
+    service_addr.flags |= ROBOTRACONTEURLITE_ADDR_FLAGS_WEBSOCKET;
+    robotraconteurlite_string_from_c_str("127.0.0.1", &service_addr.http_host);
+    robotraconteurlite_string_from_c_str("/", &service_addr.http_path);
+#endif
 
     memset(&connect_data, 0, sizeof(connect_data));
     connect_data.connections_head = connections_head;

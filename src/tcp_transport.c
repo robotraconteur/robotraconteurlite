@@ -60,7 +60,7 @@ int robotraconteurlite_tcp_acceptor_communicate(struct robotraconteurlite_connec
         }
         return ret;
     }
-    c->sock = ret;
+
     c->connection_state = ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTING;
     c->last_recv_message_time = now;
     c->last_send_message_time = now;
@@ -338,6 +338,7 @@ static int robotraconteurlite_tcp_connection_buffer_send_websocket(struct robotr
             storage->tcp_transport_state |= ROBOTRACONTEURLITE_TCP_TRANSPORT_STATE_SEND_WEBSOCKET_ENABLE_MASK;
             robotraconteurlite_tcp_websocket_random_mask(connection, storage->send_websocket_mask);
             storage->send_websocket_header_buffer[1] |= 0x80;
+            memcpy(storage->send_websocket_header_buffer + storage->send_websocket_header_len - 4, storage->send_websocket_mask, 4);
 
         }
 
@@ -612,10 +613,60 @@ static int robotraconteurlite_tcp_connection_handshake_http_handshake(struct rob
     return ret;
 }
 
+static int robotraconteurlite_tcp_connection_handshake_http_recv_header(struct robotraconteurlite_connection* connection)
+{
+    int newline_found = 0;
+    int ret = 0;
+    /* Receive byte by byte until two newlines character */
+    while (connection->recv_buffer_pos < connection->recv_buffer_len)
+    {
+        int last_errno;
+        size_t last_recv_buffer_pos = connection->recv_buffer_pos;
+        ret = robotraconteurlite_tcp_socket_recv_nonblocking(connection->sock, connection->recv_buffer, &connection->recv_buffer_pos, connection->recv_buffer_pos+1, &last_errno);
+        if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+        {
+            connection->connection_state |= ROBOTRACONTEURLITE_STATUS_FLAGS_ERROR;
+            return ret;
+        }
+        if (connection->recv_buffer_pos == last_recv_buffer_pos)
+        {
+            return ROBOTRACONTEURLITE_ERROR_CONSUMED;
+        }
+        /* Check for ending of \r\n\r\n or \n\n or \r\r or \n\r\n\r */
+        if (connection->recv_buffer_pos >= 4)
+        {
+            uint8_t* end_minus_4 = connection->recv_buffer + connection->recv_buffer_pos - 4;
+            if (memcmp(end_minus_4, "\r\n\r\n", 4) == 0 || memcmp(end_minus_4, "\n\r\n\r", 4) == 0)
+            {
+                newline_found = 1;
+                break;
+            }
+        }
+
+        if (connection->recv_buffer_pos >= 2)
+        {
+            uint8_t* end_minus_2 = connection->recv_buffer + connection->recv_buffer_pos - 2;
+            if (memcmp(end_minus_2, "\n\n", 2) == 0 || memcmp(end_minus_2, "\r\r", 2) == 0)
+            {
+                newline_found = 1;
+                break;
+            }
+        }
+        
+    }
+
+    /* Check that two newlines were found */
+    if (!newline_found)
+    {
+        return ROBOTRACONTEURLITE_ERROR_CONNECTION_ERROR;
+    }
+
+    return ROBOTRACONTEURLITE_ERROR_SUCCESS;
+}
+
 static int robotraconteurlite_tcp_connection_handshake_server(struct robotraconteurlite_connection* connection)
 {
     struct robotraconteurlite_tcp_transport_storage* storage = (struct robotraconteurlite_tcp_transport_storage*)&connection->transport_storage;
-    int newline_found = 0;
     int ret = 0;
     
     if ((connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTING) == 0)
@@ -629,6 +680,10 @@ static int robotraconteurlite_tcp_connection_handshake_server(struct robotracont
         int ret = robotraconteurlite_tcp_socket_send_nonblocking(connection->sock, connection->send_buffer, &connection->send_buffer_pos, connection->send_message_len, &last_errno);
         if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
         {
+            if (ret == ROBOTRACONTEURLITE_ERROR_RETRY)
+            {
+                return ROBOTRACONTEURLITE_ERROR_RETRY;
+            }
             connection->connection_state |= ROBOTRACONTEURLITE_STATUS_FLAGS_ERROR;
             return ret;
         }
@@ -684,48 +739,15 @@ static int robotraconteurlite_tcp_connection_handshake_server(struct robotracont
         return ROBOTRACONTEURLITE_ERROR_CONNECTION_ERROR;
     }
 
-    /* Receive byte by byte until null character */
-    while (connection->recv_buffer_pos < connection->recv_buffer_len)
+    ret = robotraconteurlite_tcp_connection_handshake_http_recv_header(connection);
+    if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
     {
-        int last_errno;
-        size_t last_recv_buffer_pos = connection->recv_buffer_pos;
-        int ret = robotraconteurlite_tcp_socket_recv_nonblocking(connection->sock, connection->recv_buffer, &connection->recv_buffer_pos, connection->recv_buffer_pos+1, &last_errno);
-        if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+        if (ret == ROBOTRACONTEURLITE_ERROR_RETRY)
         {
-            connection->connection_state |= ROBOTRACONTEURLITE_STATUS_FLAGS_ERROR;
-            return ret;
+            return ROBOTRACONTEURLITE_ERROR_RETRY;
         }
-        if (connection->recv_buffer_pos == last_recv_buffer_pos)
-        {
-            return ROBOTRACONTEURLITE_ERROR_CONSUMED;
-        }
-        /* Check for ending of \r\n\r\n or \n\n or \r\r or \n\r\n\r */
-        if (connection->recv_buffer_pos >= 4)
-        {
-            uint8_t* end_minus_4 = connection->recv_buffer + connection->recv_buffer_pos - 4;
-            if (memcmp(end_minus_4, "\r\n\r\n", 4) == 0 || memcmp(end_minus_4, "\n\r\n\r", 4) == 0)
-            {
-                newline_found = 1;
-                break;
-            }
-        }
-
-        if (connection->recv_buffer_pos >= 2)
-        {
-            uint8_t* end_minus_2 = connection->recv_buffer + connection->recv_buffer_pos - 2;
-            if (memcmp(end_minus_2, "\n\n", 2) == 0 || memcmp(end_minus_2, "\r\r", 2) == 0)
-            {
-                newline_found = 1;
-                break;
-            }
-        }
-        
-    }
-
-    /* Check that two newlines were found */
-    if (!newline_found)
-    {
-        return ROBOTRACONTEURLITE_ERROR_CONNECTION_ERROR;
+        connection->connection_state |= ROBOTRACONTEURLITE_STATUS_FLAGS_ERROR;
+        return ret;
     }
 
     /* Handshake */
@@ -754,6 +776,68 @@ static int robotraconteurlite_tcp_connection_handshake_server(struct robotracont
 
 static int robotraconteurlite_tcp_connection_handshake_client(struct robotraconteurlite_connection* connection)
 {
+    struct robotraconteurlite_tcp_transport_storage* storage = (struct robotraconteurlite_tcp_transport_storage*)&connection->transport_storage;
+    int newline_found = 0;
+    int ret = 0;
+
+    if ((connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTING) == 0)
+    {
+        return ROBOTRACONTEURLITE_ERROR_SUCCESS;
+    }
+
+    if ((storage->tcp_transport_state & ROBOTRACONTEURLITE_TCP_TRANSPORT_STATE_IS_WEBSOCKET) == 0)
+    {
+        /* No handshake for raw sockets */
+        return ROBOTRACONTEURLITE_ERROR_SUCCESS;
+    }
+
+    /* Send data left in buffer */
+    if (connection->send_message_len > 0)
+    {
+        int last_errno;
+        int ret = robotraconteurlite_tcp_socket_send_nonblocking(connection->sock, connection->send_buffer, &connection->send_buffer_pos, connection->send_message_len, &last_errno);
+        if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+        {
+            connection->connection_state |= ROBOTRACONTEURLITE_STATUS_FLAGS_ERROR;
+            return ret;
+        }
+        if (connection->send_buffer_pos < connection->send_message_len)
+        {
+            return ROBOTRACONTEURLITE_ERROR_CONSUMED;
+        }
+    }
+
+    ret = robotraconteurlite_tcp_connection_handshake_http_recv_header(connection);
+    if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+    {
+        if (ret == ROBOTRACONTEURLITE_ERROR_RETRY || ret == ROBOTRACONTEURLITE_ERROR_CONSUMED)
+        {
+            return ret;
+        }
+        connection->connection_state |= ROBOTRACONTEURLITE_STATUS_FLAGS_ERROR;
+        return ret;
+    }
+
+    /* Make sure we actually upgraded */
+    if (memcmp(connection->recv_buffer, "HTTP/1.1 101", 12) != 0)
+    {
+        return ROBOTRACONTEURLITE_ERROR_CONNECTION_ERROR;
+    }
+
+    /* TODO: We should check more of the HTTP response, but just ignore for now and begin using the connection! */
+
+    /* We are connected using websockets! */
+    connection->connection_state |= ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTED | ROBOTRACONTEURLITE_STATUS_FLAGS_RECEIVE_REQUESTED;
+    connection->connection_state &= ~(ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTING | ROBOTRACONTEURLITE_STATUS_FLAGS_BLOCK_SEND | ROBOTRACONTEURLITE_STATUS_FLAGS_SENDING | ROBOTRACONTEURLITE_STATUS_FLAGS_SEND_REQUESTED);
+    storage->tcp_transport_state |= ROBOTRACONTEURLITE_TCP_TRANSPORT_STATE_IS_WEBSOCKET;
+    storage->tcp_transport_state &= ~ROBOTRACONTEURLITE_TCP_TRANSPORT_STATE_IN_HTTP_HEADER;
+    /* Clear send buffer */
+    connection->send_buffer_pos = 0;
+    connection->send_message_len = 0;
+    connection->recv_buffer_pos = 0;
+    connection->recv_message_len = 0;
+
+
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
 
@@ -860,6 +944,73 @@ void robotraconteurlite_tcp_connections_close(struct robotraconteurlite_connecti
     }
 }
 
+#define STRCONST_HTTP_REQUEST_1 "GET "
+#define STRCONST_HTTP_REQUEST_1_LEN 4
+#define STRCONST_HTTP_REQUEST_2 " HTTP/1.1\r\nHost: "
+#define STRCONST_HTTP_REQUEST_2_LEN 17
+#define STRCONST_HTTP_REQUEST_3 "\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Key: "
+#define STRCONST_HTTP_REQUEST_3_LEN 62
+#define STRCONST_HTTP_REQUEST_4 "\r\nSec-WebSocket-Protocol: robotraconteur.robotraconteur.com\r\nSec-WebSocket-Version: 13\r\n\r\n"
+#define STRCONST_HTTP_REQUEST_4_LEN 90
+
+int robotraconteurlite_tcp_connect_service_send_websocket_http_header(struct robotraconteurlite_tcp_connect_service_data* connect_data)
+{
+    uint8_t* send_buf = 0;
+    int i;
+    uint8_t websocket_key[STRCONST_HTTP_SEC_WEBSOCKET_KEY_LEN];
+    uint32_t send_len = STRCONST_HTTP_REQUEST_1_LEN 
+        + connect_data->service_address->http_path.len 
+        + STRCONST_HTTP_REQUEST_2_LEN 
+        + connect_data->service_address->http_host.len 
+        + STRCONST_HTTP_REQUEST_3_LEN 
+        + WEBSOCKET_KEY_BASE64_LEN 
+        + STRCONST_HTTP_REQUEST_4_LEN;
+    size_t sec_b64_send_len = send_len;
+    assert(connect_data->client_out->transport_type == ROBOTRACONTEURLITE_TCP_TRANSPORT);
+    assert(connect_data->client_out->send_buffer_pos == 0);
+
+    for (i = 0; i<sizeof(websocket_key); i++)
+    {
+        websocket_key[i] = rand() % 256;
+    }
+
+    if (send_len > connect_data->client_out->send_buffer_len)
+    {
+        return ROBOTRACONTEURLITE_ERROR_INVALID_PARAMETER;
+    }
+
+    if (connect_data->service_address->http_path.len == 0 || connect_data->service_address->http_host.len == 0)
+    {
+        return ROBOTRACONTEURLITE_ERROR_INVALID_PARAMETER;
+    }
+
+    send_buf = connect_data->client_out->send_buffer;
+    memcpy(send_buf, STRCONST_HTTP_REQUEST_1, STRCONST_HTTP_REQUEST_1_LEN);
+    send_buf += STRCONST_HTTP_REQUEST_1_LEN;
+    memcpy(send_buf, connect_data->service_address->http_path.data, connect_data->service_address->http_path.len);
+    send_buf += connect_data->service_address->http_path.len;
+    memcpy(send_buf, STRCONST_HTTP_REQUEST_2, STRCONST_HTTP_REQUEST_2_LEN);
+    send_buf += STRCONST_HTTP_REQUEST_2_LEN;
+    memcpy(send_buf, connect_data->service_address->http_host.data, connect_data->service_address->http_host.len);
+    send_buf += connect_data->service_address->http_host.len;
+    memcpy(send_buf, STRCONST_HTTP_REQUEST_3, STRCONST_HTTP_REQUEST_3_LEN);
+    send_buf += STRCONST_HTTP_REQUEST_3_LEN;
+    
+    robotraconteurlite_tcp_base64_encode(websocket_key, sizeof(websocket_key), (char*)send_buf, &sec_b64_send_len);
+    if(sec_b64_send_len != WEBSOCKET_KEY_BASE64_LEN)
+    {
+        return ROBOTRACONTEURLITE_ERROR_INTERNAL_ERROR;
+    }
+    send_buf += WEBSOCKET_KEY_BASE64_LEN;
+    memcpy(send_buf, STRCONST_HTTP_REQUEST_4, STRCONST_HTTP_REQUEST_4_LEN);
+    send_buf += STRCONST_HTTP_REQUEST_4_LEN;
+
+    connect_data->client_out->send_message_len = send_len;
+    connect_data->client_out->send_buffer_pos = 0;
+
+    return ROBOTRACONTEURLITE_ERROR_SUCCESS;
+}
+
 int robotraconteurlite_tcp_connect_service(struct robotraconteurlite_tcp_connect_service_data* connect_data, robotraconteurlite_timespec now)
 {
     struct robotraconteurlite_connection* c = connect_data->connections_head;
@@ -889,14 +1040,15 @@ int robotraconteurlite_tcp_connect_service(struct robotraconteurlite_tcp_connect
     }
     c->sock = sock;
     c->connection_state = ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTING | ROBOTRACONTEURLITE_STATUS_FLAGS_RECEIVE_REQUESTED;
+    memset(&c->transport_storage, 0, sizeof(c->transport_storage));
     if (connect_data->service_address->flags & ROBOTRACONTEURLITE_ADDR_FLAGS_WEBSOCKET)
     {
         struct robotraconteurlite_tcp_transport_storage* storage = (struct robotraconteurlite_tcp_transport_storage*)&c->transport_storage;
-        storage->tcp_transport_state |= ROBOTRACONTEURLITE_TCP_TRANSPORT_STATE_IS_WEBSOCKET;
+        storage->tcp_transport_state |= ROBOTRACONTEURLITE_TCP_TRANSPORT_STATE_IS_WEBSOCKET | ROBOTRACONTEURLITE_TCP_TRANSPORT_STATE_IN_HTTP_HEADER;
+        c->connection_state |= ROBOTRACONTEURLITE_STATUS_FLAGS_BLOCK_SEND;
     }
     c->last_recv_message_time = connect_data->now;
     c->last_send_message_time = connect_data->now;
-    memset(&c->transport_storage, 0, sizeof(c->transport_storage));
 
     c->remote_nodename.data = c->remote_nodename_char;
     c->remote_nodename.len = sizeof(c->remote_nodename_char);
@@ -910,6 +1062,11 @@ int robotraconteurlite_tcp_connect_service(struct robotraconteurlite_tcp_connect
     c->last_send_message_time = now;
 
     connect_data->client_out = c;
+
+    if (connect_data->service_address->flags & ROBOTRACONTEURLITE_ADDR_FLAGS_WEBSOCKET)
+    {
+        return robotraconteurlite_tcp_connect_service_send_websocket_http_header(connect_data);
+    }
     
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }

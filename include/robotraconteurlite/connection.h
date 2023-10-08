@@ -40,7 +40,7 @@ enum robotraconteurlite_connection_status_flags
     ROBOTRACONTEURLITE_STATUS_FLAGS_SENDING = 0x200,
     ROBOTRACONTEURLITE_STATUS_FLAGS_MESSAGE_RECEIVED = 0x400,
     ROBOTRACONTEURLITE_STATUS_FLAGS_MESSAGE_CONSUMED = 0x800,
-    ROBOTRACONTEURLITE_STATUS_FLAGS_SENDING_MESSAGE = 0x1000,
+    ROBOTRACONTEURLITE_STATUS_FLAGS_BLOCK_SEND = 0x1000,
     ROBOTRACONTEURLITE_STATUS_FLAGS_MESSAGE_SENT = 0x2000,
     ROBOTRACONTEURLITE_STATUS_FLAGS_ESTABLISHED = 0x4000,
     ROBOTRACONTEURLITE_STATUS_FLAGS_CLIENT_ESTABLISHED = 0x8000,
@@ -139,6 +139,8 @@ struct robotraconteurlite_addr
     struct robotraconteurlite_string nodename;
     struct robotraconteurlite_string service_name;
     uint32_t flags;
+    struct robotraconteurlite_string http_host;
+    struct robotraconteurlite_string http_path;
 
 };
 
