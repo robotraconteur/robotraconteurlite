@@ -68,6 +68,14 @@ struct robotraconteurlite_tcp_transport_storage
     uint8_t send_websocket_mask[4];
 };
 
+struct robotraconteurlite_tcp_connect_service_data
+{
+    struct robotraconteurlite_connection* connections_head;
+    struct robotraconteurlite_addr* service_address;
+    robotraconteurlite_timespec now;
+    struct robotraconteurlite_connection* client_out;
+};
+
 struct sockaddr_storage;
 
 ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_acceptor_listen(struct robotraconteurlite_connection_acceptor* acceptor, const struct sockaddr_storage* serv_addr, int backlog);
@@ -98,6 +106,13 @@ ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_connection_communicate(struct
 
 ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_connections_communicate(struct robotraconteurlite_connection* connections_head, robotraconteurlite_timespec now);
 
+ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_connect_service(struct robotraconteurlite_tcp_connect_service_data* connect_data, robotraconteurlite_timespec now);
+
+ROBOTRACONTEURLITE_DECL void robotraconteurlite_tcp_connection_init_connection_client(struct robotraconteurlite_connection* connection);
+
+ROBOTRACONTEURLITE_DECL void robotraconteurlite_tcp_connection_init_connections_client(struct robotraconteurlite_connection* connections_head);
+
+
 /* TCP socket functions */
 
 ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_sha1(const uint8_t* data, size_t len, struct robotraconteurlite_tcp_sha1_storage* storage);
@@ -119,5 +134,7 @@ ROBOTRACONTEURLITE_DECL uint16_t robotraconteurlite_ntohs(uint16_t netshort);
 ROBOTRACONTEURLITE_DECL uint16_t robotraconteurlite_htons(uint16_t hostshort);
 
 ROBOTRACONTEURLITE_DECL uint64_t robotraconteurlite_be64toh(uint64_t big_endian_64bits);
+
+ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_socket_connect(struct robotraconteurlite_sockaddr_storage* addr);
 
 #endif /*__ROBOTRACONTEURLITE_TCP_TRANSPORT_H__*/

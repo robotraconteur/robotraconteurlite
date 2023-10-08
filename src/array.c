@@ -986,6 +986,7 @@ int robotraconteurlite_string_copy_to(const struct robotraconteurlite_string* so
 	assert(dest != NULL);
 	if (source->len == 0)
 	{
+		dest->len = 0;
 		return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 	}
 

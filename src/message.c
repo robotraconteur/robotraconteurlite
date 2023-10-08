@@ -504,7 +504,7 @@ int robotraconteurlite_messageentry_reader_find_element_verify_array(struct robo
 	return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
 
-int robotraconteurlite_messageentry_reader_find_element_verrify_string(struct robotraconteurlite_messageentry_reader* entry_reader,
+int robotraconteurlite_messageentry_reader_find_element_verify_string(struct robotraconteurlite_messageentry_reader* entry_reader,
 	const struct robotraconteurlite_string* element_name, struct robotraconteurlite_messageelement_reader* element_reader, uint32_t expected_max_len)
 {
 	struct robotraconteurlite_messageelement_header header;

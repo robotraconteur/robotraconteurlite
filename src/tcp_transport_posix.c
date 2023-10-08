@@ -255,3 +255,26 @@ ROBOTRACONTEURLITE_DECL uint64_t robotraconteurlite_be64toh(uint64_t big_endian_
     ret_bytes[7] = big_endian_bytes[0];
     return ret;
 }
+
+int robotraconteurlite_tcp_socket_connect(struct robotraconteurlite_sockaddr_storage* addr)
+{
+    int sock = socket(AF_INET, SOCK_STREAM, 0);
+    int errno_out;
+    int ret = robotraconteurlite_tcp_configure_socket(sock, &errno_out);
+    if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+    {
+        return -1;
+    }
+
+    ret = connect(sock, (struct sockaddr *)addr, sizeof(struct sockaddr_storage));
+    if (ret < 0)
+    {
+        if (errno == EINPROGRESS)
+        {
+            return sock;
+        }
+        close(sock);
+        return -1;
+    }
+    return sock;
+}

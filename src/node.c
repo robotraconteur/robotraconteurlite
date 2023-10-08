@@ -165,7 +165,7 @@ int robotraconteurlite_node_next_event(struct robotraconteurlite_node* node, str
         if (c->heartbeat_next_check_ms < now)
         {
             int heartbeat_ret;
-            c->heartbeat_next_check_ms = now + c->heartbeat_period_ms;
+            c->heartbeat_next_check_ms = now + ((uint64_t)c->heartbeat_period_ms);
 
             heartbeat_ret = robotraconteurlite_connection_is_heartbeat_timeout(c, now);
 
@@ -341,12 +341,56 @@ int robotraconteurlite_node_event_special_request(struct robotraconteurlite_node
             return ROBOTRACONTEURLITE_ERROR_CONSUMED;
         }
 
+        /* Client special request return messages*/
+        case ROBOTRACONTEURLITE_MESSAGEENTRYTYPE_STREAMOPRET:
+        {
+            if ((robotraconteurlite_string_cmp_c_str(&event->received_message.received_message_entry_header.member_name, "CreateConnection") == 0)
+             && !robotraconteurlite_connection_is_server(event->connection)
+             && ((event->connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_ESTABLISHED) == 0))
+            {
+                int ret;
+                robotraconteurlite_nodeid_copy_to(&event->received_message.received_message_header.sender_nodeid, &event->connection->remote_nodeid);
+                
+                /* Set the ESTABLISHED flag */
+                event->connection->connection_state |= ROBOTRACONTEURLITE_STATUS_FLAGS_ESTABLISHED;
+
+                return ROBOTRACONTEURLITE_ERROR_SUCCESS;
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        case ROBOTRACONTEURLITE_MESSAGEENTRYTYPE_CONNECTCLIENTRET:
+        {
+            if(!robotraconteurlite_connection_is_server(event->connection)
+             && ((event->connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_CLIENT_ESTABLISHED) == 0))
+             {
+                event->connection->remote_endpoint = event->received_message.received_message_header.sender_endpoint;            
+
+                /* Set the CLIENT_ESTABLISHED flag */
+                event->connection->connection_state |= ROBOTRACONTEURLITE_STATUS_FLAGS_CLIENT_ESTABLISHED;
+
+                return ROBOTRACONTEURLITE_ERROR_SUCCESS;
+            }
+            else
+            {
+            break;
+            }
+        }
+        case ROBOTRACONTEURLITE_MESSAGEENTRYTYPE_CONNECTIONTESTRET:
+        {
+            /* Consume the return, handled by the connection */
+            robotraconteurlite_node_consume_event(node, event);
+            return ROBOTRACONTEURLITE_ERROR_CONSUMED;
+        }
 
     default:
         break;
     }
 
-    /* If message is odd, it is a request, respond with error. Otherwise close transport */
+    /* If message is odd, it is a request, respond with error. Otherwise pass it on to the client */
     if (event->received_message.received_message_entry_header.entry_type % 2 == 1)
     {
         int ret = robotraconteurlite_connection_send_messageentry_error_response(node, event->connection, &event->received_message.received_message_entry_header, ROBOTRACONTEURLITE_ERROR_INVALID_OPERATION, "RobotRaconteur.InvalidOperation", "Invalid operation");
@@ -360,10 +404,13 @@ int robotraconteurlite_node_event_special_request(struct robotraconteurlite_node
     }
     else
     {
-        robotraconteurlite_connection_close(event->connection);
+        /* robotraconteurlite_connection_close(event->connection); */
         /* Consume event */
-        robotraconteurlite_node_consume_event(node, event);
-        return ROBOTRACONTEURLITE_ERROR_CONSUMED;
+        /* robotraconteurlite_node_consume_event(node, event); */
+        /* return ROBOTRACONTEURLITE_ERROR_CONSUMED; */
+
+        /* For the client, pass message back to user to handle */
+        return ROBOTRACONTEURLITE_ERROR_SUCCESS;
     }
 }
 
@@ -707,4 +754,319 @@ int robotraconteurlite_event_is_member(struct robotraconteurlite_event* event, c
         return 0;
     }
     return 1;
+}
+
+int robotraconteurlite_client_is_connected(struct robotraconteurlite_node* node, struct robotraconteurlite_connection* connection)
+{
+    if ((connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_ERROR)!=0)
+    {
+        return ROBOTRACONTEURLITE_ERROR_CONNECTION_ERROR;
+    }
+
+    if ((connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTED)==0)
+    {
+        return ROBOTRACONTEURLITE_ERROR_RETRY;
+    }
+
+    return ROBOTRACONTEURLITE_ERROR_SUCCESS;
+}
+
+static int robotraconteurlite_client_handshake_error(struct robotraconteurlite_client_handshake_data* handshake_data)
+{
+    robotraconteurlite_connection_close(handshake_data->connection);
+    handshake_data->handshake_state = ROBOTRACONTEURLITE_CLIENT_HANDSHAKE_ERROR;
+    /* Error cannot be cleared or consumed */
+    return ROBOTRACONTEURLITE_ERROR_RETRY;
+}
+
+static int robotraconteurlite_client_handshake_handle_error(struct robotraconteurlite_client_handshake_data* handshake_data, int ret)
+{
+    if (ret == ROBOTRACONTEURLITE_ERROR_RETRY)
+    {
+        return ROBOTRACONTEURLITE_ERROR_RETRY;
+    }
+    return robotraconteurlite_client_handshake_error(handshake_data);
+}
+
+static int robotraconteurlite_client_handshake_begin_request(struct robotraconteurlite_client_handshake_data* handshake_data, struct robotraconteurlite_node_send_messageentry_data* send_data, uint16_t entry_type, const char* membername)
+{
+    int ret;
+    memset(send_data, 0, sizeof(struct robotraconteurlite_node_send_messageentry_data));
+    send_data->node = handshake_data->node;
+    send_data->connection = handshake_data->connection;
+    ret = robotraconteurlite_client_begin_request(send_data, entry_type, membername, NULL);
+    handshake_data->request_id = send_data->message_entry_header->request_id;
+    return ret;
+}
+
+int robotraconteurlite_client_handshake(struct robotraconteurlite_client_handshake_data* handshake_data, struct robotraconteurlite_event* event, robotraconteurlite_timespec now)
+{
+    int ret;
+
+    if (event->event_type != ROBOTRACONTEURLITE_EVENT_TYPE_NEXT_CYCLE && event->connection != handshake_data->connection)
+    {
+        return ROBOTRACONTEURLITE_ERROR_UNHANDLED_EVENT;
+    }
+
+    if (event->event_type != ROBOTRACONTEURLITE_EVENT_TYPE_NEXT_CYCLE)
+    {
+        ret = robotraconteurlite_node_event_special_request(handshake_data->node, event);
+        if (ret == ROBOTRACONTEURLITE_ERROR_CONSUMED)
+        {
+            return ROBOTRACONTEURLITE_ERROR_RETRY;
+        }
+        else if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+        {
+            return robotraconteurlite_client_handshake_handle_error(handshake_data, ret);
+        }
+
+        switch (event->event_type)
+        {
+            case ROBOTRACONTEURLITE_EVENT_TYPE_CONNECTION_CLOSED:
+            {
+                robotraconteurlite_connection_consume_closed(event->connection);
+                handshake_data->handshake_state = ROBOTRACONTEURLITE_CLIENT_HANDSHAKE_FAILED;
+                return ROBOTRACONTEURLITE_ERROR_CONNECTION_ERROR;
+            }
+            case ROBOTRACONTEURLITE_EVENT_TYPE_CONNECTION_ERROR:
+            case ROBOTRACONTEURLITE_EVENT_TYPE_CONNECTION_TIMEOUT:
+            {
+                robotraconteurlite_connection_close(event->connection);
+                handshake_data->handshake_state = ROBOTRACONTEURLITE_CLIENT_HANDSHAKE_ERROR;
+                /* Error cannot be cleared or consumed */
+                return ROBOTRACONTEURLITE_ERROR_RETRY;
+            }
+            case ROBOTRACONTEURLITE_EVENT_TYPE_CONNECTION_CONNECTED:
+            {
+                /*if (handshake_data->handshake_state != ROBOTRACONTEURLITE_CLIENT_HANDSHAKE_INIT)
+                {
+                    return robotraconteurlite_client_handshake_error(handshake_data);
+                }*/
+                /*robotraconteurlite_connection_consume_connected(event->connection);
+                handshake_data->handshake_state = ROBOTRACONTEURLITE_CLIENT_HANDSHAKE_CONNECTED;*/
+                robotraconteurlite_node_consume_event(handshake_data->node, event);
+                break;
+            }
+            case ROBOTRACONTEURLITE_EVENT_TYPE_MESSAGE_SEND_COMPLETE:
+            {
+                switch (handshake_data->handshake_state)
+                {
+                    case ROBOTRACONTEURLITE_CLIENT_HANDSHAKE_CREATECONNECTION_SENT:
+                    case ROBOTRACONTEURLITE_CLIENT_HANDSHAKE_OBJECTTYPE_SENT:
+                    case ROBOTRACONTEURLITE_CLIENT_HANDSHAKE_CONNECTCLIENT_SENT:
+                    {
+                        robotraconteurlite_node_consume_event(handshake_data->node, event);
+                        break;
+                    }
+                    default:
+                    {
+                        return ROBOTRACONTEURLITE_ERROR_UNHANDLED_EVENT;
+                    }
+                }
+                break;
+            }
+            case ROBOTRACONTEURLITE_EVENT_TYPE_MESSAGE_RECEIVED:
+            {
+                switch (handshake_data->handshake_state)
+                {
+                    case ROBOTRACONTEURLITE_CLIENT_HANDSHAKE_CREATECONNECTION_SENT:
+                    {
+                        if (/*(event->received_message.received_message_entry_header.request_id != handshake_data->request_id) || */
+                         (event->received_message.received_message_entry_header.entry_type != ROBOTRACONTEURLITE_MESSAGEENTRYTYPE_STREAMOPRET))
+                        {
+                            return robotraconteurlite_client_handshake_error(handshake_data);
+                        }
+                        /* Set to connection "connected" connection_state flag if still connecting */
+                        if ((handshake_data->connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTING) != 0)
+                        {
+                            handshake_data->connection->connection_state &= ~ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTING;
+                            handshake_data->connection->connection_state |= ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTED;
+                        }
+
+
+                        handshake_data->handshake_state = ROBOTRACONTEURLITE_CLIENT_HANDSHAKE_CREATECONNECTION_COMPLETED;
+                        robotraconteurlite_node_consume_event(handshake_data->node, event);
+                        break;
+                    }
+                    case ROBOTRACONTEURLITE_CLIENT_HANDSHAKE_OBJECTTYPE_SENT:
+                    {
+
+                        struct robotraconteurlite_string element_name;
+                        struct robotraconteurlite_messageelement_reader element_reader;
+                        if (/*(event->received_message.received_message_entry_header.request_id != handshake_data->request_id)  || */
+                            (event->received_message.received_message_entry_header.entry_type != ROBOTRACONTEURLITE_MESSAGEENTRYTYPE_OBJECTTYPENAMERET))
+                        {
+                            return robotraconteurlite_client_handshake_error(handshake_data);
+                        }
+                        robotraconteurlite_string_from_c_str("objecttype", &element_name);
+                        ret = robotraconteurlite_messageentry_reader_find_element_verify_string(
+                            &event->received_message.entry_reader, &element_name, &element_reader, 128);
+                        if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+                        {
+                            return robotraconteurlite_client_handshake_error(handshake_data);
+                        }
+
+                        handshake_data->root_object_type.data = handshake_data->root_object_type_char;
+                        handshake_data->root_object_type.len = sizeof(handshake_data->root_object_type_char);
+                        ret = robotraconteurlite_messageelement_reader_read_data_string(&element_reader, &handshake_data->root_object_type);
+                        if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+                        {
+                            return robotraconteurlite_client_handshake_error(handshake_data);
+                        }
+                        /* Consume event */
+                        robotraconteurlite_node_consume_event(handshake_data->node, event);
+                        handshake_data->handshake_state = ROBOTRACONTEURLITE_CLIENT_HANDSHAKE_OBJECTTYPE_COMPLETED;
+                        break;
+                    }
+                    case ROBOTRACONTEURLITE_CLIENT_HANDSHAKE_CONNECTCLIENT_SENT:
+                    {
+                        if ((event->received_message.received_message_entry_header.request_id != handshake_data->request_id)
+                            || (event->received_message.received_message_entry_header.entry_type != ROBOTRACONTEURLITE_MESSAGEENTRYTYPE_CONNECTCLIENTRET))
+                        {
+                            return robotraconteurlite_client_handshake_error(handshake_data);
+                        }
+                        handshake_data->handshake_state = ROBOTRACONTEURLITE_CLIENT_HANDSHAKE_CONNECTCLIENT_COMPLETED;
+                        robotraconteurlite_node_consume_event(handshake_data->node, event);
+                        break;
+                    }
+                    default:
+                    {
+                        return ROBOTRACONTEURLITE_ERROR_UNHANDLED_EVENT;
+                    }
+                }
+                break;
+                case ROBOTRACONTEURLITE_EVENT_TYPE_CONNECTION_HEARTBEAT_TIMEOUT:
+                {
+                    /* Ignore heartbeat timeouts */
+                    return ROBOTRACONTEURLITE_ERROR_RETRY;
+                }
+            }
+            default:
+            {
+                return ROBOTRACONTEURLITE_ERROR_UNHANDLED_EVENT;
+            }
+        }
+    }
+    else
+    {
+        /* Consume next cycle */
+        robotraconteurlite_node_consume_event(handshake_data->node, event);
+    }
+
+    switch (handshake_data->handshake_state)
+    {
+        /*case ROBOTRACONTEURLITE_CLIENT_HANDSHAKE_INIT:
+        {
+            if (handshake_data->connection->local_endpoint == 0)
+            {
+                handshake_data->connection->local_endpoint = rand();
+            }
+            return ROBOTRACONTEURLITE_ERROR_RETRY;
+        }
+        case ROBOTRACONTEURLITE_CLIENT_HANDSHAKE_CONNECTED:*/
+
+        /* Send opening request immediately */
+        case ROBOTRACONTEURLITE_CLIENT_HANDSHAKE_INIT:
+        {
+            struct robotraconteurlite_node_send_messageentry_data send_data;
+            uint32_t old_connection_state;
+            if (handshake_data->connection->local_endpoint == 0)
+            {
+                handshake_data->connection->local_endpoint = rand();
+            }
+            handshake_data->connection->last_request_id=100 + (rand() % 100000);
+            /* Spoof being connected to avoid error... */
+            old_connection_state = handshake_data->connection->connection_state;
+            handshake_data->connection->connection_state &= ~ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTING;
+            handshake_data->connection->connection_state |= ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTED;
+            ret = robotraconteurlite_client_handshake_begin_request(handshake_data, &send_data, ROBOTRACONTEURLITE_MESSAGEENTRYTYPE_STREAMOP, "CreateConnection");
+            handshake_data->connection->connection_state = old_connection_state;
+            if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+            {
+                return robotraconteurlite_client_handshake_handle_error(handshake_data, ret);
+            }
+            ret = robotraconteurlite_node_end_send_messageentry(&send_data);
+            if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+            {
+                return robotraconteurlite_client_handshake_handle_error(handshake_data, ret);
+            }
+
+            handshake_data->handshake_state = ROBOTRACONTEURLITE_CLIENT_HANDSHAKE_CREATECONNECTION_SENT;
+            return ROBOTRACONTEURLITE_ERROR_RETRY;
+        }
+        case ROBOTRACONTEURLITE_CLIENT_HANDSHAKE_CREATECONNECTION_SENT:
+        {
+            return ROBOTRACONTEURLITE_ERROR_RETRY;
+        }
+        case ROBOTRACONTEURLITE_CLIENT_HANDSHAKE_CREATECONNECTION_COMPLETED:
+        {
+            struct robotraconteurlite_node_send_messageentry_data send_data;            
+            ret = robotraconteurlite_client_handshake_begin_request(handshake_data, &send_data, ROBOTRACONTEURLITE_MESSAGEENTRYTYPE_OBJECTTYPENAME, NULL);
+            if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+            {
+                return robotraconteurlite_client_handshake_handle_error(handshake_data, ret);
+            }
+            ret = robotraconteurlite_node_end_send_messageentry(&send_data);
+            if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+            {
+                return robotraconteurlite_client_handshake_handle_error(handshake_data, ret);
+            }
+
+            handshake_data->handshake_state = ROBOTRACONTEURLITE_CLIENT_HANDSHAKE_OBJECTTYPE_SENT;
+            return ROBOTRACONTEURLITE_ERROR_RETRY;
+        }
+        case ROBOTRACONTEURLITE_CLIENT_HANDSHAKE_OBJECTTYPE_SENT:
+        {
+            return ROBOTRACONTEURLITE_ERROR_RETRY;
+        }
+        case ROBOTRACONTEURLITE_CLIENT_HANDSHAKE_OBJECTTYPE_COMPLETED:
+        {
+            struct robotraconteurlite_node_send_messageentry_data send_data;            
+            ret = robotraconteurlite_client_handshake_begin_request(handshake_data, &send_data, ROBOTRACONTEURLITE_MESSAGEENTRYTYPE_CONNECTCLIENT, NULL);
+            if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+            {
+                return robotraconteurlite_client_handshake_handle_error(handshake_data, ret);
+            }
+            ret = robotraconteurlite_node_end_send_messageentry(&send_data);
+            if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+            {
+                return robotraconteurlite_client_handshake_handle_error(handshake_data, ret);
+            }
+
+            handshake_data->handshake_state = ROBOTRACONTEURLITE_CLIENT_HANDSHAKE_CONNECTCLIENT_SENT;
+            return ROBOTRACONTEURLITE_ERROR_RETRY;
+        }
+        case ROBOTRACONTEURLITE_CLIENT_HANDSHAKE_CONNECTCLIENT_SENT:
+        {
+            return ROBOTRACONTEURLITE_ERROR_RETRY;
+        }
+        case ROBOTRACONTEURLITE_CLIENT_HANDSHAKE_CONNECTCLIENT_COMPLETED:
+        {
+            handshake_data->handshake_state = ROBOTRACONTEURLITE_CLIENT_HANDSHAKE_COMPLETED;
+            return ROBOTRACONTEURLITE_ERROR_SUCCESS;
+        }
+        default:
+        {
+            return robotraconteurlite_client_handshake_error(handshake_data);
+        }
+    }
+}
+
+int robotraconteurlite_client_begin_request(struct robotraconteurlite_node_send_messageentry_data* send_data, uint16_t entry_type, const char* membername, const char* servicepath)
+{
+    send_data->message_entry_header = &send_data->message_entry_header_storage;
+    memset(send_data->message_entry_header, 0, sizeof(struct robotraconteurlite_messageentry_header));
+    send_data->message_entry_header->entry_type = entry_type;
+    send_data->connection->last_request_id++;
+    send_data->message_entry_header->request_id = send_data->connection->last_request_id;
+    if (servicepath)
+    {
+        robotraconteurlite_string_from_c_str(servicepath, &send_data->message_entry_header->service_path);
+    }
+    else
+    {
+        robotraconteurlite_string_shallow_copy_to(&send_data->connection->remote_service_name, &send_data->message_entry_header->service_path);
+    }
+    robotraconteurlite_string_from_c_str(membername, &send_data->message_entry_header->member_name);
+    return robotraconteurlite_node_begin_send_messageentry(send_data);
 }

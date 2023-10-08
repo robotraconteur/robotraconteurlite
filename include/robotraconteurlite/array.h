@@ -511,6 +511,12 @@ ROBOTRACONTEURLITE_DECL int robotraconteurlite_string_shallow_copy_to(const stru
 
 static void robotraconteurlite_string_from_c_str(const char* source, struct robotraconteurlite_string* dest)
 {
+	if (source == NULL)
+	{
+		dest->data = NULL;
+		dest->len = 0;
+		return;
+	}
 	dest->data = (char*)source;
 	dest->len = strlen(source);
 }

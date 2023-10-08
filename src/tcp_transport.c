@@ -60,7 +60,7 @@ int robotraconteurlite_tcp_acceptor_communicate(struct robotraconteurlite_connec
         }
         return ret;
     }
-    
+    c->sock = ret;
     c->connection_state = ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTING;
     c->last_recv_message_time = now;
     c->last_send_message_time = now;
@@ -612,7 +612,7 @@ static int robotraconteurlite_tcp_connection_handshake_http_handshake(struct rob
     return ret;
 }
 
-int robotraconteurlite_tcp_connection_handshake(struct robotraconteurlite_connection* connection)
+static int robotraconteurlite_tcp_connection_handshake_server(struct robotraconteurlite_connection* connection)
 {
     struct robotraconteurlite_tcp_transport_storage* storage = (struct robotraconteurlite_tcp_transport_storage*)&connection->transport_storage;
     int newline_found = 0;
@@ -752,6 +752,28 @@ int robotraconteurlite_tcp_connection_handshake(struct robotraconteurlite_connec
     return ROBOTRACONTEURLITE_ERROR_CONSUMED;
 }
 
+static int robotraconteurlite_tcp_connection_handshake_client(struct robotraconteurlite_connection* connection)
+{
+    return ROBOTRACONTEURLITE_ERROR_SUCCESS;
+}
+
+int robotraconteurlite_tcp_connection_handshake(struct robotraconteurlite_connection* connection)
+{
+    if ((connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTING) == 0)
+    {
+        return ROBOTRACONTEURLITE_ERROR_SUCCESS;
+    }
+
+    if ((connection->config_flags & ROBOTRACONTEURLITE_CONFIG_FLAGS_ISSERVER) != 0)
+    {
+        return robotraconteurlite_tcp_connection_handshake_server(connection);
+    }
+    else
+    {
+        return robotraconteurlite_tcp_connection_handshake_client(connection);
+    }
+}
+
 int robotraconteurlite_tcp_connection_communicate(struct robotraconteurlite_connection* connection, robotraconteurlite_timespec now)
 {
     int ret = 0;
@@ -834,6 +856,80 @@ void robotraconteurlite_tcp_connections_close(struct robotraconteurlite_connecti
     while (c)
     {
         robotraconteurlite_tcp_connection_close(c);
+        c = c->next;
+    }
+}
+
+int robotraconteurlite_tcp_connect_service(struct robotraconteurlite_tcp_connect_service_data* connect_data, robotraconteurlite_timespec now)
+{
+    struct robotraconteurlite_connection* c = connect_data->connections_head;
+    int errno_out;
+    int ret;
+    int sock;
+    while (c)
+    {
+        if ((c->transport_type = ROBOTRACONTEURLITE_TCP_TRANSPORT) &&
+          ((c->config_flags & ROBOTRACONTEURLITE_CONFIG_FLAGS_ISSERVER) == 0) &&
+          ((c->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_IDLE) != 0))
+        {
+            break;
+        }
+        c = c->next;
+    }
+
+    if (!c)
+    {
+        return ROBOTRACONTEURLITE_ERROR_CONNECTION_ERROR;
+    }
+
+    sock = robotraconteurlite_tcp_socket_connect(&connect_data->service_address->socket_addr);
+    if (sock == -1)
+    {
+        return ROBOTRACONTEURLITE_ERROR_CONNECTION_ERROR;
+    }
+    c->sock = sock;
+    c->connection_state = ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTING | ROBOTRACONTEURLITE_STATUS_FLAGS_RECEIVE_REQUESTED;
+    if (connect_data->service_address->flags & ROBOTRACONTEURLITE_ADDR_FLAGS_WEBSOCKET)
+    {
+        struct robotraconteurlite_tcp_transport_storage* storage = (struct robotraconteurlite_tcp_transport_storage*)&c->transport_storage;
+        storage->tcp_transport_state |= ROBOTRACONTEURLITE_TCP_TRANSPORT_STATE_IS_WEBSOCKET;
+    }
+    c->last_recv_message_time = connect_data->now;
+    c->last_send_message_time = connect_data->now;
+    memset(&c->transport_storage, 0, sizeof(c->transport_storage));
+
+    c->remote_nodename.data = c->remote_nodename_char;
+    c->remote_nodename.len = sizeof(c->remote_nodename_char);
+    c->remote_service_name.data = c->remote_service_name_char;
+    c->remote_service_name.len = sizeof(c->remote_service_name_char);
+    robotraconteurlite_nodeid_copy_to(&connect_data->service_address->nodeid, &c->remote_nodeid);
+    robotraconteurlite_string_copy_to(&connect_data->service_address->nodename, &c->remote_nodename);
+    robotraconteurlite_string_copy_to(&connect_data->service_address->service_name, &c->remote_service_name);
+
+    c->last_recv_message_time = now;
+    c->last_send_message_time = now;
+
+    connect_data->client_out = c;
+    
+    return ROBOTRACONTEURLITE_ERROR_SUCCESS;
+}
+
+void robotraconteurlite_tcp_connection_init_connection_client(struct robotraconteurlite_connection* connection)
+{
+    connection->transport_type = ROBOTRACONTEURLITE_TCP_TRANSPORT;
+    connection->sock = -1;
+    connection->config_flags &= ~ROBOTRACONTEURLITE_CONFIG_FLAGS_ISSERVER;
+    connection->connection_state |= ROBOTRACONTEURLITE_STATUS_FLAGS_IDLE;
+    connection->heartbeat_period_ms = 5000;
+    connection->heartbeat_timeout_ms = 15000;
+}
+
+void robotraconteurlite_tcp_connection_init_connections_client(struct robotraconteurlite_connection* connections_head)
+{
+    struct robotraconteurlite_connection* c = connections_head;
+    while (c)
+    {
+        robotraconteurlite_tcp_connection_init_connection_client(c);
         c = c->next;
     }
 }
