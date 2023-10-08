@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.3)
-project(robotraconteurlite)
+project(robotraconteurlite VERSION 0.1.0)
 
 #if(CMAKE_COMPILER_IS_GNUCC)
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -ansi -pedantic -Werror -Werror=return-type -Wimplicit-function-declaration -Wint-conversion -Wincompatible-pointer-types")
@@ -9,8 +9,6 @@ find_package(OpenSSL REQUIRED)
 find_package(PkgConfig REQUIRED)
 
 pkg_check_modules(uuid REQUIRED IMPORTED_TARGET uuid)
-
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 add_definitions(-DROBOTRACONTEURLITE_USE_OPENSSL=1)
 
@@ -37,7 +35,29 @@ add_library(robotraconteurlite
 
 target_link_libraries(robotraconteurlite PUBLIC OpenSSL::Crypto uuid)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(robotraconteurlite PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/>
+		$<INSTALL_INTERFACE:include/>)
+
+		include(GNUInstallDirs)
+
+install(TARGETS robotraconteurlite
+	EXPORT robotraconteurliteTargets
+    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib
+    RUNTIME DESTINATION bin
+)
+
+install(
+	DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/
+	DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+	FILES_MATCHING
+	PATTERN "*.h*")
+
+export(TARGETS robotraconteurlite FILE "${CMAKE_CURRENT_BINARY_DIR}/robotraconteurliteTargets.cmake")
+configure_file(cmake/robotraconteurliteConfig.cmake.in "${CMAKE_CURRENT_BINARY_DIR}/robotraconteurliteConfig.cmake" @ONLY)
+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/robotraconteurliteConfig.cmake" DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${CMAKE_PROJECT_NAME})
+install(EXPORT robotraconteurliteTargets FILE robotraconteurliteTargets.cmake DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${CMAKE_PROJECT_NAME})
+
 
 include(CTest)
 if (BUILD_TESTING)
