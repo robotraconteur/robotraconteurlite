@@ -13,15 +13,17 @@ Other implementations of Robot Raconteur:
 
 Robot Raconteur Lite is designed to be as fast, compact, and portable. It is being designed with the 
 [NASA/JPL Rule of 10](https://en.wikipedia.org/wiki/The_Power_of_10:_Rules_for_Developing_Safety-Critical_Code#:~:text=The%20Power%20of%2010%20Rules,to%20review%20or%20statically%20analyze.) in mind to allow for eventual certification for safety-critical use, although it currently does
-not fully comply. Robot Raconteur Lite is not designed for ease of use. Robot Raconteur Core and Robot Raconteur Lite
+not fully comply. Robot Raconteur Lite is not designed for ease of use. Robot Raconteur Core and Robot Raconteur Web
 are intended to be easy to use and resilient to inexperienced users. Robot Raconteur Lite is designed for experts,
 and requires advanced programming skills and knowledge of how Robot Raconteur communication works.
 
-The Robot Raconteur is an object protocol built on top of a simple message passing system. Robot Raconteur Lite
+**Robot Raconteur Lite does not allocate memory, spawn threads, or mutex lock.**
+
+Robot Raconteur is an object protocol built on top of a simple message passing system. Robot Raconteur Lite
 does not implement the object protocol layer, and instead provides a minimal implementation of the message passing
 and serialization system. `array.h` and `message.h` contain the functions for reading and writing messages to
 a buffer. `node.h` and `connection.h` provide the core of the message passing capability. `tcp_transport.h`
-provide the implementation of the TCP transport. The TCP transport for communication. The TCP transport
+provide the implementation of the TCP transport. The TCP transport is for communication. The TCP transport
 supports the Robot Raconteur protocol and WebSockets, but does not currently support TLS. This feature
 will be added in the future.
 
@@ -42,6 +44,7 @@ Incomplete or missing features:
 * TLS encryption
 * Full API documentation and user instructions
 * Support for platforms other thar Linux
+* Exhaustive unit testing
 
 These missing features are all actively being developed.
 
