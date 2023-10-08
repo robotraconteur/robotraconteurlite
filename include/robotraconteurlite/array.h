@@ -21,6 +21,7 @@
 #include "robotraconteurlite/err.h"
 #include "robotraconteurlite/config.h"
 #include <stddef.h>
+#include <string.h>
 
 struct robotraconteurlite_array_storage
 {
@@ -258,6 +259,10 @@ struct robotraconteurlite_string_vec
 	struct robotraconteurlite_array_storage _scalar_storage;
 };
 
+ROBOTRACONTEURLITE_DECL int robotraconteurlite_buffer_init_scalar(struct robotraconteurlite_buffer* buffer, void* data, size_t len);
+
+ROBOTRACONTEURLITE_DECL int robotraconteurlite_buffer_vec_init_scalar(struct robotraconteurlite_buffer_vec* buffer_vec, struct robotraconteurlite_buffer* buffer);
+
 ROBOTRACONTEURLITE_DECL int robotraconteurlite_buffer_len(const struct robotraconteurlite_buffer* source, size_t* len);
 
 ROBOTRACONTEURLITE_DECL int robotraconteurlite_buffer_vec_len(const struct robotraconteurlite_buffer_vec* source, size_t* len);
@@ -467,6 +472,52 @@ ROBOTRACONTEURLITE_DECL int robotraconteurlite_buffer_vec_copy_from_string(const
 
 ROBOTRACONTEURLITE_DECL int robotraconteurlite_string_cmp(const struct robotraconteurlite_string* str1, const struct robotraconteurlite_string* str2);
 
+static int robotraconteurlite_string_cmp_c_str(const struct robotraconteurlite_string* str1, const char* str2)
+{
+	size_t strlen_str2 = strlen(str2);
+	if (strlen_str2 == 0 && str1->len == 0)
+	{
+	 return 0;
+	}
+
+	if (str1->len == 0)
+	{
+		return -1;
+	}
+
+	if (strlen_str2 == 0)
+	{
+		return 1;
+	}
+
+	if (str1->len < strlen_str2)
+	{
+		return -1;
+	}
+
+	if (str1->len > strlen_str2)
+	{
+		return 1;
+	}
+
+	return memcmp(str1->data, str2, str1->len);
+}
+
 ROBOTRACONTEURLITE_DECL uint32_t robotraconteurlite_string_hash(const struct robotraconteurlite_string* str);
 
+ROBOTRACONTEURLITE_DECL int robotraconteurlite_string_copy_to(const struct robotraconteurlite_string* source, struct robotraconteurlite_string* dest);
+
+ROBOTRACONTEURLITE_DECL int robotraconteurlite_string_shallow_copy_to(const struct robotraconteurlite_string* source, struct robotraconteurlite_string* dest);
+
+static void robotraconteurlite_string_from_c_str(const char* source, struct robotraconteurlite_string* dest)
+{
+	if (source == NULL)
+	{
+		dest->data = NULL;
+		dest->len = 0;
+		return;
+	}
+	dest->data = (char*)source;
+	dest->len = strlen(source);
+}
 #endif /* __ROBOTRACONTEURLITE_ARRAY_H__ */

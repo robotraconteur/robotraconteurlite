@@ -1,4 +1,4 @@
-/* Copyright 2011-2019 Wason Technology, LLC
+/* Copyright 2011-2023 Wason Technology, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,19 +13,24 @@
  * limitations under the License.
  */
 
+#ifndef __ROBOTRACONTEURLITE_POLL_H__
+#define __ROBOTRACONTEURLITE_POLL_H__
 
-#ifndef __ROBOTRACONTEURLITE_H__
-#define __ROBOTRACONTEURLITE_H__
-
-#include "robotraconteurlite/array.h"
+#include <stdint.h>
+#include <stdlib.h>
 #include "robotraconteurlite/clock.h"
-#include "robotraconteurlite/config.h"
-#include "robotraconteurlite/connection.h"
-#include "robotraconteurlite/err.h"
-#include "robotraconteurlite/message.h"
-#include "robotraconteurlite/node.h"
-#include "robotraconteurlite/nodeid.h"
-#include "robotraconteurlite/tcp_transport.h"
-#include "robotraconteurlite/util.h"
 
-#endif /* __ROBOTRACONTEURLITE_H__ */
+struct robotraconteurlite_pollfd
+{
+    int fd;
+    short int events;
+    short int revents;
+};
+
+int robotraconteurlite_poll(struct robotraconteurlite_pollfd* fds, int nfds, int timeout);
+
+ROBOTRACONTEURLITE_DECL int robotraconteurlite_wait_next_wake(struct robotraconteurlite_clock* clock, struct robotraconteurlite_pollfd* pollfds, size_t pollfd_count, robotraconteurlite_timespec wake_time);
+
+
+
+#endif /* __ROBOTRACONTEURLITE_POLL_H__ */

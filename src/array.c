@@ -17,6 +17,26 @@
 #include <string.h>
 #include <assert.h>
 
+int robotraconteurlite_buffer_init_scalar(struct robotraconteurlite_buffer* buffer, void* data, size_t len)
+{
+	assert(buffer != NULL);
+	assert(data != NULL);
+
+	buffer->data = (uint8_t*)data;
+	buffer->len = len;
+	return ROBOTRACONTEURLITE_ERROR_SUCCESS;
+}
+
+int robotraconteurlite_buffer_vec_init_scalar(struct robotraconteurlite_buffer_vec* buffer_vec, struct robotraconteurlite_buffer* buffer)
+{
+	assert(buffer_vec != NULL);
+	assert(buffer != NULL);
+
+	buffer_vec->buffer_vec = (struct robotraconteurlite_buffer*)buffer;
+	buffer_vec->buffer_vec_cnt = 1;
+	return ROBOTRACONTEURLITE_ERROR_SUCCESS;
+}
+
 int robotraconteurlite_buffer_len(const struct robotraconteurlite_buffer* source, size_t* len)
 {
 	assert(source != NULL);
@@ -957,4 +977,43 @@ uint32_t robotraconteurlite_string_hash(const struct robotraconteurlite_string* 
 	default:
 		return (str_len & 0xFFFF) | (str->data[0] << 24) | ((str->data[str_len - 1] ^ str->data[str_len - 2]) << 16);
 	}
+}
+
+int robotraconteurlite_string_copy_to(const struct robotraconteurlite_string* source, struct robotraconteurlite_string* dest)
+{
+
+	assert(source != NULL);
+	assert(dest != NULL);
+	if (source->len == 0)
+	{
+		dest->len = 0;
+		return ROBOTRACONTEURLITE_ERROR_SUCCESS;
+	}
+
+	if (!source->data)
+	{
+		return ROBOTRACONTEURLITE_ERROR_INVALID_ARGUMENT;
+	}
+	assert(source->data != NULL);
+	assert(dest->data != NULL);
+
+	if (source->len > dest->len)
+	{
+		return ROBOTRACONTEURLITE_ERROR_INVALID_ARGUMENT;
+	}
+
+	memcpy(dest->data, source->data, source->len);
+	dest->len = source->len;
+	return ROBOTRACONTEURLITE_ERROR_SUCCESS;
+}
+
+int robotraconteurlite_string_shallow_copy_to(const struct robotraconteurlite_string* source, struct robotraconteurlite_string* dest)
+{
+	
+	assert(source != NULL);
+	assert(dest != NULL);
+	
+	dest->data = source->data;
+	dest->len = source->len;
+	return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }

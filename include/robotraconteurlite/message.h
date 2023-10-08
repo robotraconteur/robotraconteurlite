@@ -316,7 +316,7 @@ ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageentry_reader_find_element_
 	const struct robotraconteurlite_string* element_name, struct robotraconteurlite_messageelement_reader* element_reader, uint16_t expected_data_type, 
 	uint32_t expected_len, uint8_t var_length);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageentry_reader_find_element_verrify_string(struct robotraconteurlite_messageentry_reader* entry_reader,
+ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageentry_reader_find_element_verify_string(struct robotraconteurlite_messageentry_reader* entry_reader,
 	const struct robotraconteurlite_string* element_name, struct robotraconteurlite_messageelement_reader* element_reader, uint32_t expected_max_len);
 
 ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageelement_reader_read_header(struct robotraconteurlite_messageelement_reader* element_reader, 
@@ -528,6 +528,16 @@ ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageelement_writer_write_bool_
 
 ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageelement_writer_write_string(struct robotraconteurlite_messageelement_writer* element_writer,
 	const struct robotraconteurlite_string* element_name, const struct robotraconteurlite_string* value);
+
+static int robotraconteurlite_messageelement_writer_write_string_c_str(struct robotraconteurlite_messageelement_writer* element_writer,
+	const char* element_name, const char* value)
+{
+	struct robotraconteurlite_string element_name_str;
+	struct robotraconteurlite_string value_str;
+	robotraconteurlite_string_from_c_str(element_name, &element_name_str);
+	robotraconteurlite_string_from_c_str(value, &value_str);
+	return robotraconteurlite_messageelement_writer_write_string(element_writer, &element_name_str, &value_str);
+}
 
 #endif /* __ROBOTRACONTEURLITE_MESSAGE_H__ */
 
