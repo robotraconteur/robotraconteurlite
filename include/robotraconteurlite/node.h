@@ -18,6 +18,11 @@
 
 #include "robotraconteurlite/message.h"
 #include "robotraconteurlite/connection.h"
+#include "robotraconteurlite/clock.h"
+#include "robotraconteurlite/util.h"
+#include "robotraconteurlite/poll.h"
+
+#define ROBOTRACONTEURLITE_NODE_DEFAULT_SLEEP_TIME 5000
 
 enum robotraconteurlite_event_type
 {
@@ -187,6 +192,11 @@ ROBOTRACONTEURLITE_DECL int robotraconteurlite_client_send_request(struct robotr
 ROBOTRACONTEURLITE_DECL int robotraconteurlite_client_end_request(struct robotraconteurlite_node_send_messageentry_data* send_data, struct robotraconteurlite_event* event);
 
 ROBOTRACONTEURLITE_DECL int robotraconteurlite_client_send_heartbeat(struct robotraconteurlite_node* node, struct robotraconteurlite_connection* connection);
+
+ROBOTRACONTEURLITE_DECL int robotraconteurlite_node_next_wake(struct robotraconteurlite_node* node, robotraconteurlite_timespec now, robotraconteurlite_timespec* wake_time);
+
+/* Note: does not add connection fds */
+ROBOTRACONTEURLITE_DECL int robotraconteurlite_node_poll_add_fd(struct robotraconteurlite_node* node, struct robotraconteurlite_pollfd* pollfds, size_t* pollfd_count, size_t max_pollfds);
 
 /*ROBOTRACONTEURLITE_DECL int robotraconteurlite_client_process_request(struct robotraconteurlite_node_send_messageentry_data* request_data, struct robotraconteurlite_node_receive_messageentry_data* response_data);*/
 

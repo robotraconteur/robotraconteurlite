@@ -13,26 +13,24 @@
  * limitations under the License.
  */
 
-#ifndef __ROBOTRACONTEURLITE_UTIL_H__
-#define __ROBOTRACONTEURLITE_UTIL_H__
+#ifndef __ROBOTRACONTEURLITE_POLL_H__
+#define __ROBOTRACONTEURLITE_POLL_H__
 
 #include <stdint.h>
-#include <string.h>
+#include <stdlib.h>
+#include "robotraconteurlite/clock.h"
 
-#include "robotraconteurlite/config.h"
-
-static uint32_t robotraconteurlite_util_read_uint32(const void* p)
+struct robotraconteurlite_pollfd
 {
-    uint32_t ret;
-    memcpy(&ret, p, sizeof(uint32_t));
-    return ret;
-}
+    int fd;
+    short int events;
+    short int revents;
+};
 
-static uint16_t robotraconteurlite_util_read_uint16(const void* p)
-{
-    uint16_t ret;
-    memcpy(&ret, p, sizeof(uint16_t));
-    return ret;
-}
+int robotraconteurlite_poll(struct robotraconteurlite_pollfd* fds, int nfds, int timeout);
 
-#endif /* __ROBOTRACONTEURLITE_UTIL_H__ */
+ROBOTRACONTEURLITE_DECL int robotraconteurlite_wait_next_wake(struct robotraconteurlite_clock* clock, struct robotraconteurlite_pollfd* pollfds, size_t pollfd_count, robotraconteurlite_timespec wake_time);
+
+
+
+#endif /* __ROBOTRACONTEURLITE_POLL_H__ */

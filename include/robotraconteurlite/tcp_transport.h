@@ -84,6 +84,8 @@ ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_acceptor_close(struct robotra
 
 ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_acceptor_communicate(struct robotraconteurlite_connection_acceptor* acceptor, struct robotraconteurlite_connection* connection_head, robotraconteurlite_timespec now);
 
+ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_acceptor_poll_add_fd(struct robotraconteurlite_connection_acceptor* acceptor, struct robotraconteurlite_connection* connection_head, struct robotraconteurlite_pollfd* pollfds, size_t* pollfd_count, size_t max_pollfds);
+
 ROBOTRACONTEURLITE_DECL void robotraconteurlite_tcp_connection_init_connection_server(struct robotraconteurlite_connection* connection);
 
 ROBOTRACONTEURLITE_DECL void robotraconteurlite_tcp_connection_init_connections_server(struct robotraconteurlite_connection* connections_head);
@@ -112,6 +114,9 @@ ROBOTRACONTEURLITE_DECL void robotraconteurlite_tcp_connection_init_connection_c
 
 ROBOTRACONTEURLITE_DECL void robotraconteurlite_tcp_connection_init_connections_client(struct robotraconteurlite_connection* connections_head);
 
+ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_connection_poll_add_fd(struct robotraconteurlite_connection* connection, struct robotraconteurlite_pollfd* pollfds, size_t* pollfd_count, size_t max_pollfds);
+
+ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_connections_poll_add_fds(struct robotraconteurlite_connection* connection_head, struct robotraconteurlite_pollfd* pollfds, size_t* pollfd_count, size_t max_pollfds);
 
 /* TCP socket functions */
 

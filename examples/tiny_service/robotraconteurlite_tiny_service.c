@@ -102,7 +102,7 @@ int handle_message(struct robotraconteurlite_node* node, struct robotraconteurli
                 ret = robotraconteurlite_node_begin_send_messageentry_response(&send_data, &event->received_message.received_message_entry_header);
                 if (ret == ROBOTRACONTEURLITE_ERROR_RETRY)
                 {
-                    return 0;
+                    return ROBOTRACONTEURLITE_ERROR_RETRY;
                 }
                 if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
                 {
@@ -413,10 +413,13 @@ int main(int argc, char *argv[])
 
     do
     {
+        /* One socket per connection plus acceptor and node. May vary, check documentation */
+        struct robotraconteurlite_pollfd pollfds[NUM_CONNECTIONS + 2];
+        size_t num_pollfds = 0;
         int ret;
+        robotraconteurlite_timespec next_wake = 0;
 
         robotraconteurlite_clock_gettime(&clock, &now);
-
         /* Accept TCP connections */
         if (robotraconteurlite_tcp_acceptor_communicate(&tcp_acceptor, connections_head, now))
         {
@@ -430,6 +433,55 @@ int main(int argc, char *argv[])
             printf("Could not communicate with connections\n");
             return -1;
         }
+        ret = robotraconteurlite_node_next_wake(&node, now, &next_wake);
+        if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+        {
+            printf("Could not get next wake\n");
+            return -1;
+        }
+        
+        if (next_wake > now)
+        {
+            ret = robotraconteurlite_tcp_acceptor_poll_add_fd(&tcp_acceptor, connections_head, pollfds, &num_pollfds, NUM_CONNECTIONS + 2);
+            if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+            {
+                printf("Could not add acceptor to poll\n");
+                return -1;
+            }
+            ret = robotraconteurlite_tcp_connections_poll_add_fds(connections_head, pollfds, &num_pollfds, NUM_CONNECTIONS + 2);
+            if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+            {
+                printf("Could not add connections to poll\n");
+                return -1;
+            }
+            ret = robotraconteurlite_node_poll_add_fd(&node, pollfds, &num_pollfds, NUM_CONNECTIONS + 2);
+            if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+            {
+                printf("Could not add node to poll\n");
+                return -1;
+            }
+
+            ret = robotraconteurlite_wait_next_wake(&clock, pollfds, num_pollfds, next_wake);
+            if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+            {
+                printf("Could not wait for next wake\n");
+                return -1;
+            }
+            /* Accept TCP connections */
+            if (robotraconteurlite_tcp_acceptor_communicate(&tcp_acceptor, connections_head, now))
+            {
+                printf("Could not accept TCP connections\n");
+                return -1;
+            }
+
+            /* Communicate with all connections */
+            if (robotraconteurlite_tcp_connections_communicate(connections_head, now))
+            {
+                printf("Could not communicate with connections\n");
+                return -1;
+            }
+        }
+
 
         /* Run the event loop. Exit if no events are available*/
         
@@ -457,10 +509,6 @@ int main(int argc, char *argv[])
                 }
             }
         } while (1);
-
-        /* Sleep for 1ms */
-        /* TODO: socket polling for activity*/
-        usleep(1000);
 
         if (signal_received)
         {

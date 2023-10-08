@@ -29,7 +29,7 @@ def async_error_handler(i,err):
     async_events[i].set()
 
 for i in range(10):
-    c.async_set_d1(i,lambda err: async_error_handler(i,err))
+    c.async_set_d1(i,lambda err, i=i: async_error_handler(i,err))
 
 for i in range(10):
     async_events[i].wait()

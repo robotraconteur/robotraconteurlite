@@ -244,161 +244,217 @@ int main(int argc, char *argv[])
             }
         }
 
-        /* get next event */
-        robotraconteurlite_clock_gettime(&rr_clock, &now);
-        robotraconteurlite_tcp_connections_communicate(connections_head, now);
-        ret = robotraconteurlite_node_next_event(&node, &event, now);
-        if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+        do
         {
-            printf("Could not get next event\n");
-            return -1;
-        }
-
-        ret = robotraconteurlite_node_event_special_request(&node, &event);
-        if (ret == ROBOTRACONTEURLITE_ERROR_CONSUMED)
-        {
-            continue;
-        }
-
-        if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
-        {
-            printf("Could not handle special request\n");
-            return -1;
-        }
-
-        /* Handle event */
-        switch (event.event_type)
-        {
-            case ROBOTRACONTEURLITE_EVENT_TYPE_MESSAGE_RECEIVED:
+            robotraconteurlite_clock_gettime(&rr_clock, &now);
+            ret = robotraconteurlite_tcp_connections_communicate(connections_head, now);
+            if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
             {
-                switch (state)
-                {
-                    case TINY_CLIENT_STATE_GET_D1_SENT:
-                    {
-                        ret = robotraconteurlite_client_end_request(&request_data, &event);
-                        switch (ret)
-                        {
-                            case ROBOTRACONTEURLITE_ERROR_SUCCESS:
-                            {
-                                struct robotraconteurlite_messageelement_reader reader;
-                                struct robotraconteurlite_string element_name;
-                                double d1_val;
-
-                                printf("Received get_d1 response\n");
-                                state = TINY_CLIENT_STATE_GET_D1_RECEIVED;
-
-                                /* Read d1 value from the message */
-                                robotraconteurlite_string_from_c_str("value", &element_name);
-                                if (robotraconteurlite_messageentry_reader_find_element_verify_scalar(&event.received_message.entry_reader, &element_name, &reader, ROBOTRACONTEURLITE_DATATYPE_DOUBLE))
-                                {
-                                    printf("Could not find element\n");
-                                    return -1;
-                                }
-                                if (robotraconteurlite_messageelement_reader_read_data_double(&reader, &d1_val))
-                                {
-                                    printf("Could not read double\n");
-                                    return -1;
-                                }
-
-                                printf("Got d1 value: %f\n", d1_val);
-                                break;
-                            }
-                            case ROBOTRACONTEURLITE_ERROR_UNHANDLED_EVENT:                        
-                            {
-                                printf("Unexpected message received!\n");
-                                break;
-                            }
-                            case ROBOTRACONTEURLITE_ERROR_REQUEST_REMOTE_ERROR:
-                            {
-                                state = TINY_CLIENT_STATE_ERROR;
-                                printf("Remote error received!\n");
-                                break;
-                            }
-                            default:
-                            {
-                                printf("Error ending request\n");
-                                return -1;
-                            }
-                        }
-                        break;
-                    }
-                    case TINY_CLIENT_STATE_SET_D1_SENT:
-                    {
-                        ret = robotraconteurlite_client_end_request(&request_data, &event);
-                        switch(ret)
-                        {
-                            case ROBOTRACONTEURLITE_ERROR_SUCCESS:
-                            {
-                                printf("Received set_d1 response\n");
-                                state = TINY_CLIENT_STATE_SET_D1_RECEIVED;
-                                break;
-                            }
-                            case ROBOTRACONTEURLITE_ERROR_UNHANDLED_EVENT:
-                            {
-                                printf("Unexpected message received!\n");
-                                break;
-                            }
-                            case ROBOTRACONTEURLITE_ERROR_REQUEST_REMOTE_ERROR:
-                            {
-                                state = TINY_CLIENT_STATE_ERROR;
-                                printf("Remote error received!\n");
-                                break;
-                            }
-                            default:
-                            {
-                                printf("Error ending request\n");
-                                return -1;
-                            }
-                        }
-                        break;
-                    }
-                    default:
-                    {
-                        printf("Unexpected message received!\n");
-                        break;
-                    }
-                }
-                robotraconteurlite_node_consume_event(&node, &event);
-                break;
-            }
-            case ROBOTRACONTEURLITE_EVENT_TYPE_CONNECTION_ERROR:
-            {
-                robotraconteurlite_connection_close(event.connection);
-                robotraconteurlite_node_consume_event(&node, &event);
-                break;
-            }
-            case ROBOTRACONTEURLITE_EVENT_TYPE_CONNECTION_CLOSED:
-            {
-                printf("Connection error\n");
-                robotraconteurlite_node_consume_event(&node, &event);
+                printf("Could not communicate with connections\n");
                 return -1;
             }
-            case ROBOTRACONTEURLITE_EVENT_TYPE_CONNECTION_HEARTBEAT_TIMEOUT:
+            if (state == TINY_CLIENT_STATE_SET_D1_SENT || state == TINY_CLIENT_STATE_GET_D1_SENT)
             {
-                printf("Connection heartbeat timeout, sending heartbeat\n");
-                robotraconteurlite_client_send_heartbeat(&node, event.connection);
-                robotraconteurlite_node_consume_event(&node, &event);
-                break;
+                /* Only expect to wait in these states */
+
+                /* One socket per connection plus acceptor and node. May vary, check documentation */
+                struct robotraconteurlite_pollfd pollfds[NUM_CONNECTIONS + 2];
+                size_t num_pollfds = 0;
+                robotraconteurlite_timespec next_wake = 0;
+                ret = robotraconteurlite_node_next_wake(&node, now, &next_wake);
+                if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+                {
+                    printf("Could not get next wake\n");
+                    return -1;
+                }
+                
+                if (next_wake > now)
+                {
+                    ret = robotraconteurlite_tcp_connections_poll_add_fds(connections_head, pollfds, &num_pollfds, NUM_CONNECTIONS + 1);
+                    if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+                    {
+                        printf("Could not add connections to poll\n");
+                        return -1;
+                    }
+                    ret = robotraconteurlite_node_poll_add_fd(&node, pollfds, &num_pollfds, NUM_CONNECTIONS + 1);
+                    if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+                    {
+                        printf("Could not add node to poll\n");
+                        return -1;
+                    }
+
+                    ret = robotraconteurlite_wait_next_wake(&rr_clock, pollfds, num_pollfds, next_wake);
+                    if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+                    {
+                        printf("Could not wait for next wake\n");
+                        return -1;
+                    }
+                    robotraconteurlite_clock_gettime(&rr_clock, &now);
+                    ret = robotraconteurlite_tcp_connections_communicate(connections_head, now);
+                    if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+                    {
+                        printf("Could not communicate with connections\n");
+                        return -1;
+                    }
+                }
             }
-            case ROBOTRACONTEURLITE_EVENT_TYPE_CONNECTION_TIMEOUT:
+            /* get next event */
+
+            ret = robotraconteurlite_node_next_event(&node, &event, now);
+            if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
             {
-                printf("Connection timeout\n");
-                /* close connection */
-                robotraconteurlite_connection_close(event.connection);
-                robotraconteurlite_node_consume_event(&node, &event);
-                break;
+                printf("Could not get next event\n");
+                return -1;
             }
-            case ROBOTRACONTEURLITE_EVENT_TYPE_NEXT_CYCLE:
+
+            ret = robotraconteurlite_node_event_special_request(&node, &event);
+            if (ret == ROBOTRACONTEURLITE_ERROR_CONSUMED)
             {
-                robotraconteurlite_node_consume_event(&node, &event);
-                usleep(1000);
+                continue;
             }
-            default:
+
+            if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
             {
-                robotraconteurlite_node_consume_event(&node, &event);
-                break;
+                printf("Could not handle special request\n");
+                return -1;
+            }
+
+            /* Handle event */
+            switch (event.event_type)
+            {
+                case ROBOTRACONTEURLITE_EVENT_TYPE_MESSAGE_RECEIVED:
+                {
+                    switch (state)
+                    {
+                        case TINY_CLIENT_STATE_GET_D1_SENT:
+                        {
+                            ret = robotraconteurlite_client_end_request(&request_data, &event);
+                            switch (ret)
+                            {
+                                case ROBOTRACONTEURLITE_ERROR_SUCCESS:
+                                {
+                                    struct robotraconteurlite_messageelement_reader reader;
+                                    struct robotraconteurlite_string element_name;
+                                    double d1_val;
+
+                                    printf("Received get_d1 response\n");
+                                    state = TINY_CLIENT_STATE_GET_D1_RECEIVED;
+
+                                    /* Read d1 value from the message */
+                                    robotraconteurlite_string_from_c_str("value", &element_name);
+                                    if (robotraconteurlite_messageentry_reader_find_element_verify_scalar(&event.received_message.entry_reader, &element_name, &reader, ROBOTRACONTEURLITE_DATATYPE_DOUBLE))
+                                    {
+                                        printf("Could not find element\n");
+                                        return -1;
+                                    }
+                                    if (robotraconteurlite_messageelement_reader_read_data_double(&reader, &d1_val))
+                                    {
+                                        printf("Could not read double\n");
+                                        return -1;
+                                    }
+
+                                    printf("Got d1 value: %f\n", d1_val);
+                                    break;
+                                }
+                                case ROBOTRACONTEURLITE_ERROR_UNHANDLED_EVENT:                        
+                                {
+                                    printf("Unexpected message received!\n");
+                                    break;
+                                }
+                                case ROBOTRACONTEURLITE_ERROR_REQUEST_REMOTE_ERROR:
+                                {
+                                    state = TINY_CLIENT_STATE_ERROR;
+                                    printf("Remote error received!\n");
+                                    break;
+                                }
+                                default:
+                                {
+                                    printf("Error ending request\n");
+                                    return -1;
+                                }
+                            }
+                            break;
+                        }
+                        case TINY_CLIENT_STATE_SET_D1_SENT:
+                        {
+                            ret = robotraconteurlite_client_end_request(&request_data, &event);
+                            switch(ret)
+                            {
+                                case ROBOTRACONTEURLITE_ERROR_SUCCESS:
+                                {
+                                    printf("Received set_d1 response\n");
+                                    state = TINY_CLIENT_STATE_SET_D1_RECEIVED;
+                                    break;
+                                }
+                                case ROBOTRACONTEURLITE_ERROR_UNHANDLED_EVENT:
+                                {
+                                    printf("Unexpected message received!\n");
+                                    break;
+                                }
+                                case ROBOTRACONTEURLITE_ERROR_REQUEST_REMOTE_ERROR:
+                                {
+                                    state = TINY_CLIENT_STATE_ERROR;
+                                    printf("Remote error received!\n");
+                                    break;
+                                }
+                                default:
+                                {
+                                    printf("Error ending request\n");
+                                    return -1;
+                                }
+                            }
+                            break;
+                        }
+                        default:
+                        {
+                            printf("Unexpected message received!\n");
+                            break;
+                        }
+                    }
+                    robotraconteurlite_node_consume_event(&node, &event);
+                    break;
+                }
+                case ROBOTRACONTEURLITE_EVENT_TYPE_CONNECTION_ERROR:
+                {
+                    robotraconteurlite_connection_close(event.connection);
+                    robotraconteurlite_node_consume_event(&node, &event);
+                    break;
+                }
+                case ROBOTRACONTEURLITE_EVENT_TYPE_CONNECTION_CLOSED:
+                {
+                    printf("Connection error\n");
+                    robotraconteurlite_node_consume_event(&node, &event);
+                    return -1;
+                }
+                case ROBOTRACONTEURLITE_EVENT_TYPE_CONNECTION_HEARTBEAT_TIMEOUT:
+                {
+                    printf("Connection heartbeat timeout, sending heartbeat\n");
+                    robotraconteurlite_client_send_heartbeat(&node, event.connection);
+                    robotraconteurlite_node_consume_event(&node, &event);
+                    break;
+                }
+                case ROBOTRACONTEURLITE_EVENT_TYPE_CONNECTION_TIMEOUT:
+                {
+                    printf("Connection timeout\n");
+                    /* close connection */
+                    robotraconteurlite_connection_close(event.connection);
+                    robotraconteurlite_node_consume_event(&node, &event);
+                    break;
+                }
+                case ROBOTRACONTEURLITE_EVENT_TYPE_NEXT_CYCLE:
+                {
+                    /* Loop will be broken after next_cycle */
+                    robotraconteurlite_node_consume_event(&node, &event);
+                    break;
+                }
+                default:
+                {
+                    robotraconteurlite_node_consume_event(&node, &event);
+                    break;
+                }
             }
         }
+        while (event.event_type != ROBOTRACONTEURLITE_EVENT_TYPE_NEXT_CYCLE);
     }
 
 

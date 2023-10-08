@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <string.h>
+#include <limits.h>
 
 int robotraconteurlite_node_init(struct robotraconteurlite_node* node, struct robotraconteurlite_nodeid* nodeid, struct robotraconteurlite_string* nodename, struct robotraconteurlite_connection* connections_head)
 {
@@ -486,9 +487,9 @@ int robotraconteurlite_node_send_messageentry_empty_response(struct robotraconte
     struct robotraconteurlite_node_send_messageentry_data send_data;
     struct robotraconteurlite_messageentry_header send_message_header;
     int ret;
+    memset(&send_data, 0, sizeof(struct robotraconteurlite_node_send_messageentry_data));
     memcpy(&send_message_header, recv_message_header, sizeof(struct robotraconteurlite_messageentry_header));
     send_message_header.entry_type++;
-    memset(&send_data, 0, sizeof(struct robotraconteurlite_node_send_messageentry_data));
     send_data.node = node;
     send_data.connection = connection;
     send_data.message_entry_header = &send_message_header;
@@ -1126,5 +1127,33 @@ int robotraconteurlite_client_send_heartbeat(struct robotraconteurlite_node* nod
     {
         return ret;
     }
+    return ROBOTRACONTEURLITE_ERROR_SUCCESS;
+}
+
+int robotraconteurlite_node_next_wake(struct robotraconteurlite_node* node, robotraconteurlite_timespec now, robotraconteurlite_timespec* wake_time)
+{
+    /* Check each connection */
+    int ret;
+    struct robotraconteurlite_connection* c = node->connections_head;
+    if (*wake_time == 0)
+    {
+        *wake_time = now + ROBOTRACONTEURLITE_NODE_DEFAULT_SLEEP_TIME;
+    }
+    while (c)
+    {
+        ret = robotraconteurlite_connection_next_wake(c, now, wake_time);
+        if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+        {
+            return ret;
+        }
+        c = c->next;
+    }
+
+    return ROBOTRACONTEURLITE_ERROR_SUCCESS;
+}
+
+int robotraconteurlite_node_poll_add_fd(struct robotraconteurlite_node* node, struct robotraconteurlite_pollfd* pollfds, size_t* pollfd_count, size_t max_pollfds)
+{
+    /* Reserved for future use */
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }

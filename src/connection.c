@@ -169,3 +169,54 @@ struct robotraconteurlite_connection* robotraconteurlite_connections_init_from_a
 
     return &connections_fixed_storage[0];
 }
+
+ROBOTRACONTEURLITE_DECL int robotraconteurlite_connection_next_wake(struct robotraconteurlite_connection* connection, robotraconteurlite_timespec now, robotraconteurlite_timespec* next_wake)
+{
+    if ((connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_IDLE)!=0)
+    {
+        return ROBOTRACONTEURLITE_ERROR_SUCCESS;
+    }
+
+    if (((connection->connection_state & (ROBOTRACONTEURLITE_STATUS_FLAGS_CLOSE_REQUESTED | ROBOTRACONTEURLITE_STATUS_FLAGS_ERROR)) !=0))
+    {
+        *next_wake = now;
+        return ROBOTRACONTEURLITE_ERROR_SUCCESS;
+    }
+
+    if ((connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_MESSAGE_SENT))
+    {
+        *next_wake = now;
+        return ROBOTRACONTEURLITE_ERROR_SUCCESS;
+    }
+
+    if ((connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_MESSAGE_RECEIVED))
+    {
+        *next_wake = now;
+        return ROBOTRACONTEURLITE_ERROR_SUCCESS;
+    }
+
+    if (connection->heartbeat_next_check_ms >0)
+    {
+        if ((now > connection->heartbeat_next_check_ms)
+        || (connection->heartbeat_next_check_ms == 0 && connection->heartbeat_period_ms > 0))
+        {
+            *next_wake = now;
+            return ROBOTRACONTEURLITE_ERROR_SUCCESS;
+        }
+
+        if (connection->heartbeat_next_check_ms < *next_wake)
+        {
+            *next_wake = connection->heartbeat_next_check_ms;
+        }
+    }
+
+    if (connection->transport_next_wake > 0)
+    {
+        if (connection->transport_next_wake < *next_wake)
+        {
+            *next_wake = connection->transport_next_wake;
+        }
+    }
+
+    return ROBOTRACONTEURLITE_ERROR_SUCCESS;
+}

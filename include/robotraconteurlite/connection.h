@@ -84,7 +84,7 @@ struct robotraconteurlite_connection
     /* Parameters */
     uint32_t heartbeat_period_ms;
     uint32_t heartbeat_timeout_ms;
-    uint64_t heartbeat_next_check_ms;
+    robotraconteurlite_timespec heartbeat_next_check_ms;
 
     /* Robot Raconteur information */
     uint32_t local_endpoint;
@@ -107,6 +107,9 @@ struct robotraconteurlite_connection
 
     /* User storage */
     struct robotraconteurlite_user_storage user_storage;
+
+    /* Transport next wake request time */
+    robotraconteurlite_timespec transport_next_wake;
 };
 
 struct robotraconteurlite_connection_acceptor
@@ -269,5 +272,7 @@ static int robotraconteurlite_connection_is_idle(struct robotraconteurlite_conne
 {
     return (connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_IDLE) != 0;
 }
+
+ROBOTRACONTEURLITE_DECL int robotraconteurlite_connection_next_wake(struct robotraconteurlite_connection* connection, robotraconteurlite_timespec now, robotraconteurlite_timespec* next_wake);
 
 #endif /*__ROBOTRACONTEURLITE_CONNECTION_H__*/

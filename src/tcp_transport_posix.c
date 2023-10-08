@@ -13,6 +13,7 @@
 #include <errno.h>
 #include <unistd.h>
 #include <assert.h>
+#include <poll.h>
 
 #ifdef ROBOTRACONTEURLITE_USE_OPENSSL
 #include <openssl/sha.h>
@@ -277,4 +278,75 @@ int robotraconteurlite_tcp_socket_connect(struct robotraconteurlite_sockaddr_sto
         return -1;
     }
     return sock;
+}
+
+static int robotraconteurlite_poll_add_fd(int sock, short extra_events, struct robotraconteurlite_pollfd* pollfds, size_t* pollfd_count, size_t max_pollfds)
+{
+    struct pollfd pollfds1;
+    int i = *pollfd_count;
+    if (i >= max_pollfds)
+    {
+        return ROBOTRACONTEURLITE_ERROR_INVALID_PARAMETER;
+    }    
+    (*pollfd_count) = (*pollfd_count) + 1;
+
+    pollfds[i].fd = sock;
+    pollfds[i].events = extra_events;
+    pollfds[i].revents = 0;
+
+    return ROBOTRACONTEURLITE_ERROR_SUCCESS;
+}
+
+int robotraconteurlite_tcp_acceptor_poll_add_fd(struct robotraconteurlite_connection_acceptor* acceptor, struct robotraconteurlite_connection* connection_head, struct robotraconteurlite_pollfd* pollfds, size_t* pollfd_count, size_t max_pollfds)
+{
+    int extra_events = 0;
+    struct robotraconteurlite_connection* c = connection_head;
+    while (c != NULL)
+    {
+        if (c->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_IDLE)
+        {
+            extra_events = POLLIN;
+            break;
+        }
+        c = c->next;
+    }
+
+    return robotraconteurlite_poll_add_fd(acceptor->sock, extra_events, pollfds, pollfd_count, max_pollfds);
+}
+
+int robotraconteurlite_tcp_connection_poll_add_fd(struct robotraconteurlite_connection* connection, struct robotraconteurlite_pollfd* pollfds, size_t* pollfd_count, size_t max_pollfds)
+{
+    int i = 0;
+    short extra_events = 0;
+    if (((connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_IDLE)!=0) || connection-> sock< 0)
+    {
+        return ROBOTRACONTEURLITE_ERROR_SUCCESS;
+    }
+
+    if (connection->connection_state & (ROBOTRACONTEURLITE_STATUS_FLAGS_SEND_REQUESTED | ROBOTRACONTEURLITE_STATUS_FLAGS_SENDING))
+    {
+        extra_events |= POLLOUT;
+    }
+
+    if (connection->connection_state & (ROBOTRACONTEURLITE_STATUS_FLAGS_RECEIVE_REQUESTED | ROBOTRACONTEURLITE_STATUS_FLAGS_RECEIVING | ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTING))
+    {
+        extra_events |= POLLIN;
+    }
+
+    return robotraconteurlite_poll_add_fd(connection->sock, extra_events, pollfds, pollfd_count, max_pollfds);
+}
+
+int robotraconteurlite_tcp_connections_poll_add_fds(struct robotraconteurlite_connection* connection_head, struct robotraconteurlite_pollfd* pollfds, size_t* pollfd_count, size_t max_pollfds)
+{
+    struct robotraconteurlite_connection* c = connection_head;
+    while (c != NULL)
+    {
+        int ret = robotraconteurlite_tcp_connection_poll_add_fd(c, pollfds, pollfd_count, max_pollfds);
+        if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+        {
+            return ret;
+        }
+        c = c->next;
+    }
+    return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }

@@ -31,7 +31,9 @@ add_library(robotraconteurlite
 							   src/nodeid.c
 							   src/tcp_transport_posix.c
 							   src/tcp_transport.c
-							   src/clock_posix.c)
+							   src/clock_posix.c
+							   src/poll.c
+							   src/poll_posix.c)
 
 target_link_libraries(robotraconteurlite PUBLIC OpenSSL::Crypto uuid)
 
