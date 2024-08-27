@@ -55,7 +55,7 @@ jobs:
       run: |
         mkdir -p build
         cd build
-        cmake -DCMAKE_DISABLE_PRECOMPILE_HEADERS=ON -DCMAKE_CXX_CLANG_TIDY=clang-tidy-14 \
+        cmake -DCMAKE_DISABLE_PRECOMPILE_HEADERS=ON -DCMAKE_C_CLANG_TIDY=clang-tidy-14 \
               -DCMAKE_BUILD_TYPE=Debug ..
     - name: make
       run: |
