@@ -29,8 +29,9 @@ struct robotraconteurlite_pollfd
 
 int robotraconteurlite_poll(struct robotraconteurlite_pollfd* fds, int nfds, int timeout);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_wait_next_wake(struct robotraconteurlite_clock* clock, struct robotraconteurlite_pollfd* pollfds, size_t pollfd_count, robotraconteurlite_timespec wake_time);
-
-
+ROBOTRACONTEURLITE_DECL int robotraconteurlite_wait_next_wake(struct robotraconteurlite_clock* clock,
+                                                              struct robotraconteurlite_pollfd* pollfds,
+                                                              size_t pollfd_count,
+                                                              robotraconteurlite_timespec wake_time);
 
 #endif /* __ROBOTRACONTEURLITE_POLL_H__ */

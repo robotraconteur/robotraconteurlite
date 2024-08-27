@@ -6,7 +6,6 @@
 #include <unistd.h>
 #include <errno.h>
 
-
 int robotraconteurlite_poll(struct robotraconteurlite_pollfd* fds, int nfds, int timeout)
 {
     int ret;

@@ -2,7 +2,8 @@
 #include "robotraconteurlite/err.h"
 #include <limits.h>
 
-int robotraconteurlite_wait_next_wake(struct robotraconteurlite_clock* clock, struct robotraconteurlite_pollfd* pollfds, size_t pollfd_count, robotraconteurlite_timespec wake_time)
+int robotraconteurlite_wait_next_wake(struct robotraconteurlite_clock* clock, struct robotraconteurlite_pollfd* pollfds,
+                                      size_t pollfd_count, robotraconteurlite_timespec wake_time)
 {
     robotraconteurlite_timespec now;
     int ret;
@@ -38,5 +39,4 @@ int robotraconteurlite_wait_next_wake(struct robotraconteurlite_clock* clock, st
     }
 
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
-
 }

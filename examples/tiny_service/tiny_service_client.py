@@ -22,14 +22,16 @@ c2.d1 = 4
 async_errors = []
 async_events = [threading.Event() for i in range(10)]
 
-def async_error_handler(i,err):
+
+def async_error_handler(i, err):
     print(f"Async error {i}: {err}")
     if err is not None:
         async_errors.append(err)
     async_events[i].set()
 
+
 for i in range(10):
-    c.async_set_d1(i,lambda err, i=i: async_error_handler(i,err))
+    c.async_set_d1(i, lambda err, i=i: async_error_handler(i, err))
 
 for i in range(10):
     async_events[i].wait()
@@ -37,4 +39,3 @@ for i in range(10):
 assert len(async_errors) == 0
 
 print("Done!")
-

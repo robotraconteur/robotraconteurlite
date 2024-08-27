@@ -6,8 +6,6 @@
 #include "robotraconteurlite/clock.h"
 #include "robotraconteurlite/err.h"
 
-
-
 int robotraconteurlite_clock_init(struct robotraconteurlite_clock* clock)
 {
     struct timespec monotonic_time;
@@ -25,7 +23,6 @@ int robotraconteurlite_clock_init(struct robotraconteurlite_clock* clock)
     clock->clock_epoch_offset = realtime_ms - monotonic_ms;
 
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
-
 }
 
 int robotraconteurlite_clock_gettime(struct robotraconteurlite_clock* clock, robotraconteurlite_timespec* now)
