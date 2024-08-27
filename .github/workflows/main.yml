@@ -36,6 +36,32 @@ jobs:
       run: |
         python3 test/tiny_test/tiny_client_ci_test.py
         python3 test/tiny_test/tiny_service_ci_test.py
+  clang-tidy:
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@v3
+    - name: apt update
+      run: |
+        sudo apt-get update
+    - name: apt
+      run: |
+        sudo apt-get install build-essential uuid-dev libssl-dev libcmocka-dev -y
+    - name: clang-tidy-14
+      run: |
+        wget https://apt.llvm.org/llvm.sh
+        chmod +x llvm.sh
+        sudo ./llvm.sh 14 all
+    - name: cmake
+      run: |
+        mkdir -p build
+        cd build
+        cmake -DCMAKE_DISABLE_PRECOMPILE_HEADERS=ON -DCMAKE_CXX_CLANG_TIDY=clang-tidy-14 \
+              -DCMAKE_BUILD_TYPE=Debug ..
+    - name: make
+      run: |
+        cd build
+        make -j2
+
   pre-commit:
     runs-on: ubuntu-22.04
     env:
