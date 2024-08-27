@@ -17,6 +17,12 @@
 #include <string.h>
 #include <assert.h>
 
+/* Disable assert if using cppcheck to prevent false positives */
+#ifdef CPPCHECK
+#undef assert
+#define assert(x)
+#endif
+
 /* Message Reader */
 
 int robotraconteurlite_message_reader_init(struct robotraconteurlite_message_reader* reader,

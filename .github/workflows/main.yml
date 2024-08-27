@@ -74,3 +74,26 @@ jobs:
         sudo apt update
         sudo apt install -y dos2unix
     - uses: pre-commit/action@v3.0.1
+
+  cppcheck:
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@v3
+    - name: apt update
+      run: |
+        sudo apt-get update
+    - name: apt
+      run: |
+        sudo apt-get install build-essential uuid-dev libssl-dev libcmocka-dev cppcheck  -y
+    - name: cmake
+      run: |
+        mkdir -p build
+        cd build
+        cmake -DCMAKE_BUILD_TYPE=Debug \
+        -DCMAKE_DISABLE_PRECOMPILE_HEADERS=ON -DCMAKE_C_FLAGS="-DCPPCHECK=1" \
+        -DCMAKE_C_CPPCHECK="/usr/bin/cppcheck;--enable=warning;--inconclusive;--force;--inline-suppr;--error-exitcode=1;--std=c99;" \
+        ..
+    - name: make
+      run: |
+        cd build
+        make -j2
