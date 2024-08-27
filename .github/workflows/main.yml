@@ -90,7 +90,7 @@ jobs:
         mkdir -p build
         cd build
         cmake -DCMAKE_BUILD_TYPE=Debug \
-        -DCMAKE_DISABLE_PRECOMPILE_HEADERS=ON \
+        -DCMAKE_DISABLE_PRECOMPILE_HEADERS=ON -DCMAKE_C_FLAGS="-DCPPCHECK=1" \
         -DCMAKE_C_CPPCHECK="/usr/bin/cppcheck;--enable=warning;--inconclusive;--force;--inline-suppr;--error-exitcode=1;--std=c99;" \
         ..
     - name: make
