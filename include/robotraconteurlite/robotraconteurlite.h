@@ -13,7 +13,6 @@
  * limitations under the License.
  */
 
-
 #ifndef __ROBOTRACONTEURLITE_H__
 #define __ROBOTRACONTEURLITE_H__
 

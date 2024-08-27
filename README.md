@@ -11,7 +11,7 @@ Other implementations of Robot Raconteur:
 * Robot Raconteur Core: https://github.com/robotraconteur/robotraconteur
 * Robot Raconteur Web: https://github.com/robotraconteur/RobotRaconteurWeb
 
-Robot Raconteur Lite is designed to be as fast, compact, and portable. It is being designed with the 
+Robot Raconteur Lite is designed to be as fast, compact, and portable. It is being designed with the
 [NASA/JPL Rule of 10](https://en.wikipedia.org/wiki/The_Power_of_10:_Rules_for_Developing_Safety-Critical_Code#:~:text=The%20Power%20of%2010%20Rules,to%20review%20or%20statically%20analyze.) in mind to allow for eventual certification for safety-critical use, although it currently does
 not fully comply. Robot Raconteur Lite is not designed for ease of use. Robot Raconteur Core and Robot Raconteur Web
 are intended to be easy to use and resilient to inexperienced users. Robot Raconteur Lite is designed for experts,
@@ -54,7 +54,6 @@ Robot Raconteur Lite is developed by Wason Technology, LLC, New York, USA
 
 This work was supported in part by the Advanced Robotics for Manufacturing ("ARM") Institute under Agreement Number W911NF-17-3-0004 sponsored by the Office of the Secretary of Defense. The views and conclusions contained in this document are those of the authors and should not be interpreted as representing the official policies, either expressed or implied, of either ARM or the Office of the Secretary of Defense of the U.S. Government. The U.S. Government is authorized to reproduce and distribute reprints for Government purposes, notwithstanding any copyright notation herein.
 
-This work was supported in part by the New York State Empire State Development Division of Science, Technology and Innovation (NYSTAR) under contract C160142. 
+This work was supported in part by the New York State Empire State Development Division of Science, Technology and Innovation (NYSTAR) under contract C160142.
 
 ![](docs/figures/arm_logo.jpg) ![](docs/figures/nys_logo.jpg)
-

@@ -7,13 +7,16 @@ tiny_service_robdef = "service example.tiny_service\n\n" \
     "property double d1\n" \
     "end\n\n"
 
+
 class tiny_object:
     @property
     def d1(self):
         return 3.14
+
     @d1.setter
     def d1(self, value):
         print(f"Setting d1 to {value}")
+
 
 obj = tiny_object()
 
