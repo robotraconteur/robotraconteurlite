@@ -675,7 +675,7 @@ void robotraconteurlite_message_reader_basictest(void** state)
         }
 
         {
-            double el4_scalar_data;
+            double el4_scalar_data = 0.0;
             assert_return_code(
                 robotraconteurlite_messageelement_reader_read_data_double(&element_reader4, &el4_scalar_data), 0);
         }

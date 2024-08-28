@@ -55,7 +55,7 @@ int robotraconteurlite_buffer_len(const struct robotraconteurlite_buffer* source
 
 int robotraconteurlite_buffer_vec_len(const struct robotraconteurlite_buffer_vec* source, size_t* len)
 {
-    size_t i;
+    size_t i = 0;
 
     assert(source != NULL);
     assert(len != NULL);
@@ -99,12 +99,12 @@ int robotraconteurlite_buffer_vec_copy_vec(const struct robotraconteurlite_buffe
     size_t dest_len = 0;
     size_t source_current_pos = 0;
     size_t dest_current_pos = 0;
-    size_t i;
-    size_t source_i;
-    size_t dest_i;
-    size_t source_i_pos;
-    size_t dest_i_pos;
-    size_t count_remaining;
+    size_t i = 0;
+    size_t source_i = 0;
+    size_t dest_i = 0;
+    size_t source_i_pos = 0;
+    size_t dest_i_pos = 0;
+    size_t count_remaining = 0;
 
     assert(source != NULL);
     assert(dest != NULL);
@@ -166,7 +166,7 @@ int robotraconteurlite_buffer_vec_copy_vec(const struct robotraconteurlite_buffe
     {
         size_t source_i_delta = source->buffer_vec[source_i].len - source_i_pos;
         size_t dest_i_delta = dest->buffer_vec[dest_i].len - dest_i_pos;
-        size_t delta;
+        size_t delta = 0;
 
         if (source_i_delta <= 0)
         {
@@ -237,14 +237,14 @@ int robotraconteurlite_buffer_vec_copy_vec_ex(const struct robotraconteurlite_bu
     size_t dest_len = 0;
     size_t source_current_byte_pos = 0;
     size_t dest_current_byte_pos = 0;
-    size_t i;
-    size_t source_i;
-    size_t dest_i;
-    size_t source_i_byte_pos;
-    size_t dest_i_byte_pos;
-    size_t bytes_remaining;
-    size_t source_byte_pos;
-    size_t dest_byte_pos;
+    size_t i = 0;
+    size_t source_i = 0;
+    size_t dest_i = 0;
+    size_t source_i_byte_pos = 0;
+    size_t dest_i_byte_pos = 0;
+    size_t bytes_remaining = 0;
+    size_t source_byte_pos = 0;
+    size_t dest_byte_pos = 0;
 
     assert(source != NULL);
     assert(dest != NULL);
@@ -314,7 +314,7 @@ int robotraconteurlite_buffer_vec_copy_vec_ex(const struct robotraconteurlite_bu
     {
         size_t source_i_delta = (source->buffer_vec[source_i].len * source_elem_size) - source_i_byte_pos;
         size_t dest_i_delta = (dest->buffer_vec[dest_i].len * dest_elem_size) - dest_i_byte_pos;
-        size_t delta;
+        size_t delta = 0;
 
         if (source_i_delta <= 0)
         {
@@ -1072,7 +1072,7 @@ int robotraconteurlite_string_cmp(const struct robotraconteurlite_string* str1,
 uint32_t robotraconteurlite_string_hash(const struct robotraconteurlite_string* str)
 {
 
-    uint32_t str_len;
+    uint32_t str_len = 0;
 
     assert(str != NULL);
     assert(str->data != NULL);

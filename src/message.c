@@ -16,6 +16,7 @@
 #include <robotraconteurlite/message.h>
 #include <string.h>
 #include <assert.h>
+#include <math.h>
 
 /* Disable assert if using cppcheck to prevent false positives */
 #ifdef CPPCHECK
@@ -28,12 +29,12 @@
 int robotraconteurlite_message_reader_init(struct robotraconteurlite_message_reader* reader,
                                            struct robotraconteurlite_buffer_vec* buffer, size_t offset, size_t count)
 {
-    size_t buffer_len;
-    int rv;
+    size_t buffer_len = 0;
+    int rv = -1;
     uint8_t magic_data[4];
     struct robotraconteurlite_array_uint8 magic_array;
     uint8_t expected_magic[4] = "RRAC";
-    uint32_t message_size;
+    uint32_t message_size = 0;
 
     magic_array.data = magic_data;
     magic_array.len = 4;
@@ -86,7 +87,7 @@ int robotraconteurlite_message_reader_init(struct robotraconteurlite_message_rea
 static int robotraconteurlite_message_read_header_string(struct robotraconteurlite_buffer_vec* buffer, size_t offset,
                                                          uint16_t str_len, struct robotraconteurlite_string* str)
 {
-    int rv;
+    int rv = -1;
 
     if (str_len == 0)
     {
@@ -122,13 +123,13 @@ int robotraconteurlite_message_reader_read_header(struct robotraconteurlite_mess
                                                   struct robotraconteurlite_message_header* header)
 {
     size_t o = reader->buffer_offset;
-    int rv;
+    int rv = -1;
     struct robotraconteurlite_array_uint8 sender_nodeid_array;
     struct robotraconteurlite_array_uint8 recv_nodeid_array;
-    uint16_t sender_nodename_len;
-    uint16_t receiver_nodename_len;
-    uint16_t extended_len;
-    size_t str_len;
+    uint16_t sender_nodename_len = 0;
+    uint16_t receiver_nodename_len = 0;
+    uint16_t extended_len = 0;
+    size_t str_len = 0;
 
     sender_nodeid_array.data = header->sender_nodeid.data;
     sender_nodeid_array.len = 16;
@@ -267,13 +268,13 @@ int robotraconteurlite_message_reader_begin_read_entries(struct robotraconteurli
                                                          struct robotraconteurlite_messageentry_reader* entry_reader)
 {
     size_t o = reader->buffer_offset;
-    int rv;
-    uint32_t message_size;
-    uint16_t message_version;
-    uint16_t header_size;
-    size_t entry_count_offset;
-    uint16_t entry_count;
-    uint32_t entry_size;
+    int rv = -1;
+    uint32_t message_size = 0;
+    uint16_t message_version = 0;
+    uint16_t header_size = 0;
+    size_t entry_count_offset = 0;
+    uint16_t entry_count = 0;
+    uint32_t entry_size = 0;
 
     rv = robotraconteurlite_buffer_vec_copy_to_uint32(reader->buffer, o + 4, &message_size);
     if (rv < 0)
@@ -336,10 +337,10 @@ int robotraconteurlite_message_reader_begin_read_entries(struct robotraconteurli
 int robotraconteurlite_messageentry_reader_move_next(struct robotraconteurlite_messageentry_reader* entry_reader)
 {
     size_t o = entry_reader->buffer_offset + entry_reader->buffer_count;
-    uint32_t entry_size;
-    int rv;
+    uint32_t entry_size = 0;
+    int rv = -1;
 
-    uint16_t entry_count;
+    uint16_t entry_count = 0;
     rv = robotraconteurlite_buffer_vec_copy_to_uint16(entry_reader->buffer, entry_reader->entry_count_offset,
                                                       &entry_count);
     if (rv < 0)
@@ -376,7 +377,7 @@ int robotraconteurlite_messageentry_reader_find_element(struct robotraconteurlit
                                                         struct robotraconteurlite_messageelement_reader* element_reader)
 {
     char temp_str_data[16];
-    int rv;
+    int rv = -1;
 
     assert(element_name != NULL);
     assert(element_name->data != NULL);
@@ -392,7 +393,7 @@ int robotraconteurlite_messageentry_reader_find_element(struct robotraconteurlit
     }
     while (1)
     {
-        uint16_t str_len;
+        uint16_t str_len = 0;
         uint16_t str_offset = 0;
         rv = robotraconteurlite_buffer_vec_copy_to_uint16(element_reader->buffer, element_reader->buffer_offset + 4,
                                                           &str_len);
@@ -448,7 +449,7 @@ int robotraconteurlite_messageentry_reader_find_element_verify_scalar(
     struct robotraconteurlite_messageelement_reader* element_reader, uint16_t expected_data_type)
 {
     struct robotraconteurlite_messageelement_header header;
-    int rv;
+    int rv = -1;
 
     rv = robotraconteurlite_messageentry_reader_find_element(entry_reader, element_name, element_reader);
     if (rv < 0)
@@ -482,7 +483,7 @@ int robotraconteurlite_messageentry_reader_find_element_verify_array(
     uint8_t var_length)
 {
     struct robotraconteurlite_messageelement_header header;
-    int rv;
+    int rv = -1;
 
     rv = robotraconteurlite_messageentry_reader_find_element(entry_reader, element_name, element_reader);
     if (rv < 0)
@@ -525,7 +526,7 @@ int robotraconteurlite_messageentry_reader_find_element_verify_string(
     struct robotraconteurlite_messageelement_reader* element_reader, uint32_t expected_max_len)
 {
     struct robotraconteurlite_messageelement_header header;
-    int rv;
+    int rv = -1;
 
     rv = robotraconteurlite_messageentry_reader_find_element(entry_reader, element_name, element_reader);
     if (rv < 0)
@@ -557,12 +558,12 @@ int robotraconteurlite_messageentry_reader_read_header(struct robotraconteurlite
                                                        struct robotraconteurlite_messageentry_header* header)
 {
     size_t o = entry_reader->buffer_offset;
-    int rv;
-    uint16_t servicepath_len;
-    uint16_t membername_len;
-    size_t strlen_2;
-    uint16_t extended_len;
-    size_t strlen_3;
+    int rv = -1;
+    uint16_t servicepath_len = 0;
+    uint16_t membername_len = 0;
+    size_t strlen_2 = 0;
+    uint16_t extended_len = 0;
+    size_t strlen_3 = 0;
 
     rv = robotraconteurlite_buffer_vec_copy_to_uint32(entry_reader->buffer, o, &header->entry_size);
     if (rv < 0)
@@ -642,15 +643,15 @@ int robotraconteurlite_messageentry_reader_begin_read_elements(
     struct robotraconteurlite_messageelement_reader* element_reader)
 {
     size_t o = entry_reader->buffer_offset;
-    int rv;
-    uint32_t entry_size;
-    uint16_t servicepath_len;
-    uint16_t membername_len;
-    uint16_t extended_len;
-    size_t header_size;
-    size_t element_count_offset;
-    uint16_t element_count;
-    uint32_t element_size;
+    int rv = -1;
+    uint32_t entry_size = 0;
+    uint16_t servicepath_len = 0;
+    uint16_t membername_len = 0;
+    uint16_t extended_len = 0;
+    size_t header_size = 0;
+    size_t element_count_offset = 0;
+    uint16_t element_count = 0;
+    uint32_t element_size = 0;
 
     rv = robotraconteurlite_buffer_vec_copy_to_uint32(entry_reader->buffer, o, &entry_size);
     if (rv < 0)
@@ -719,13 +720,13 @@ int robotraconteurlite_messageentry_reader_begin_read_elements(
 int robotraconteurlite_messageelement_reader_move_next(struct robotraconteurlite_messageelement_reader* element_reader)
 {
     size_t o = element_reader->buffer_offset + element_reader->buffer_count;
-    uint32_t element_size;
-    int rv;
+    uint32_t element_size = 0;
+    int rv = -1;
 
-    size_t element_count;
+    size_t element_count = 0;
     if (element_reader->element_count_uint32)
     {
-        uint16_t element_count_32;
+        uint16_t element_count_32 = 0;
         rv = robotraconteurlite_buffer_vec_copy_to_uint16(element_reader->buffer, element_reader->element_count_offset,
                                                           &element_count_32);
         if (rv < 0)
@@ -736,7 +737,7 @@ int robotraconteurlite_messageelement_reader_move_next(struct robotraconteurlite
     }
     else
     {
-        uint16_t element_count_16;
+        uint16_t element_count_16 = 0;
         rv = robotraconteurlite_buffer_vec_copy_to_uint16(element_reader->buffer, element_reader->element_count_offset,
                                                           &element_count_16);
         if (rv < 0)
@@ -775,12 +776,12 @@ int robotraconteurlite_messageelement_reader_read_header(
     struct robotraconteurlite_messageelement_header* header)
 {
     size_t o = element_reader->buffer_offset;
-    int rv;
-    uint16_t elementname_len;
-    uint16_t elementtypename_len;
-    uint16_t strlen_2;
-    uint16_t extended_len;
-    size_t strlen_3;
+    int rv = -1;
+    uint16_t elementname_len = 0;
+    uint16_t elementtypename_len = 0;
+    uint16_t strlen_2 = 0;
+    uint16_t extended_len = 0;
+    size_t strlen_3 = 0;
 
     rv = robotraconteurlite_buffer_vec_copy_to_uint32(element_reader->buffer, o, &header->element_size);
     if (rv < 0)
@@ -853,8 +854,8 @@ static int robotraconteurlite_messageelement_reader_get_data_info(
     uint32_t* data_count, uint16_t data_type, size_t data_element_size)
 {
     struct robotraconteurlite_messageelement_header element_header;
-    int rv;
-    size_t header_size;
+    int rv = -1;
+    size_t header_size = 0;
 
     assert(element_reader != NULL);
 
@@ -889,9 +890,10 @@ static int robotraconteurlite_messageelement_reader_read_data_ex(
     struct robotraconteurlite_messageelement_reader* element_reader, struct robotraconteurlite_buffer* dest_buf,
     uint16_t dest_elem_type, size_t dest_elem_size)
 {
-    size_t data_offset, data_size;
-    uint32_t data_count;
-    int rv;
+    size_t data_offset = 0;
+    size_t data_size = 0;
+    uint32_t data_count = 0;
+    int rv = -1;
 
     struct robotraconteurlite_buffer_vec dest_vec;
     dest_vec.buffer_vec = dest_buf;
@@ -920,9 +922,10 @@ static int robotraconteurlite_messageelement_reader_read_data_scalar_ex(
     struct robotraconteurlite_messageelement_reader* element_reader, void* dest_scalar, uint16_t dest_elem_type,
     size_t dest_elem_size)
 {
-    size_t data_offset, data_size;
-    uint32_t data_count;
-    int rv;
+    size_t data_offset = 0;
+    size_t data_size = 0;
+    uint32_t data_count = 0;
+    int rv = -1;
 
     struct robotraconteurlite_buffer dest_buf;
     struct robotraconteurlite_buffer_vec dest_vec;
@@ -1156,13 +1159,13 @@ int robotraconteurlite_messageelement_reader_begin_read_nested_elements(
     struct robotraconteurlite_messageelement_reader* element_reader,
     struct robotraconteurlite_messageelement_reader* nested_element_reader)
 {
-    int rv;
+    int rv = -1;
     struct robotraconteurlite_messageelement_header header;
-    size_t o;
-    size_t header_size;
-    size_t data_size;
-    size_t element_count_offset;
-    uint32_t nested_element_size;
+    size_t o = 0;
+    size_t header_size = 0;
+    size_t data_size = 0;
+    size_t element_count_offset = 0;
+    uint32_t nested_element_size = 0;
 
     memset(&header, 0, sizeof(header));
     rv = robotraconteurlite_messageelement_reader_read_header(element_reader, &header);
@@ -1223,7 +1226,7 @@ int robotraconteurlite_messageelement_reader_find_nested_element(
     struct robotraconteurlite_messageelement_reader* nested_element_reader)
 {
     char temp_str_data[16];
-    int rv;
+    int rv = -1;
 
     assert(nested_element_name != NULL);
     assert(nested_element_name->data != NULL);
@@ -1239,7 +1242,7 @@ int robotraconteurlite_messageelement_reader_find_nested_element(
     }
     while (1)
     {
-        uint16_t str_len;
+        uint16_t str_len = 0;
         uint16_t str_offset = 0;
         rv = robotraconteurlite_buffer_vec_copy_to_uint16(nested_element_reader->buffer,
                                                           nested_element_reader->buffer_offset + 4, &str_len);
@@ -1296,7 +1299,7 @@ int robotraconteurlite_messageelement_reader_find_nested_element_verify_scalar(
     const struct robotraconteurlite_string* nested_element_name,
     struct robotraconteurlite_messageelement_reader* nested_element_reader, uint16_t expected_data_type)
 {
-    int rv;
+    int rv = -1;
     struct robotraconteurlite_messageelement_header header;
     rv = robotraconteurlite_messageelement_reader_find_nested_element(element_reader, nested_element_name,
                                                                       nested_element_reader);
@@ -1332,7 +1335,7 @@ int robotraconteurlite_messageelement_reader_find_nested_element_verify_array(
     uint32_t expected_len, uint8_t var_length)
 {
     struct robotraconteurlite_messageelement_header header;
-    int rv;
+    int rv = -1;
 
     rv = robotraconteurlite_messageelement_reader_find_nested_element(element_reader, nested_element_name,
                                                                       nested_element_reader);
@@ -1377,7 +1380,7 @@ int robotraconteurlite_messageelement_reader_find_nested_element_verify_string(
     struct robotraconteurlite_messageelement_reader* nested_element_reader, uint32_t expected_max_len)
 {
     struct robotraconteurlite_messageelement_header header;
-    int rv;
+    int rv = -1;
     rv = robotraconteurlite_messageelement_reader_find_nested_element(element_reader, nested_element_name,
                                                                       nested_element_reader);
     if (rv < 0)
@@ -1410,8 +1413,8 @@ int robotraconteurlite_messageelement_reader_find_nested_element_verify_string(
 int robotraconteurlite_message_writer_init(struct robotraconteurlite_message_writer* writer,
                                            struct robotraconteurlite_buffer_vec* buffer, size_t offset, size_t count)
 {
-    size_t buffer_len;
-    int rv;
+    size_t buffer_len = 0;
+    int rv = -1;
 
     assert(writer != NULL);
     assert(buffer != NULL);
@@ -1451,10 +1454,10 @@ int robotraconteurlite_message_writer_begin_message(struct robotraconteurlite_me
     size_t str2_len = header->receiver_nodename.len;
     size_t str3_len = header->extended.len;
     size_t str4_len = str1_len + str2_len + str3_len;
-    uint16_t header_size;
+    uint16_t header_size = 0;
     char magic_raw[] = "RRAC";
     struct robotraconteurlite_string magic;
-    int rv;
+    int rv = -1;
     struct robotraconteurlite_array_uint8 sender_nodeid_array;
     struct robotraconteurlite_array_uint8 recv_nodeid_array;
 
@@ -1615,8 +1618,8 @@ int robotraconteurlite_message_writer_end_message(struct robotraconteurlite_mess
                                                   struct robotraconteurlite_message_header* header,
                                                   struct robotraconteurlite_messageentry_writer* entry_writer)
 {
-    size_t message_size;
-    int rv;
+    size_t message_size = 0;
+    int rv = -1;
 
     assert(writer != NULL);
     assert(header != NULL);
@@ -1647,12 +1650,12 @@ int robotraconteurlite_messageentry_writer_begin_entry(struct robotraconteurlite
                                                        struct robotraconteurlite_messageentry_header* header,
                                                        struct robotraconteurlite_messageelement_writer* element_writer)
 {
-    size_t str1_len;
-    size_t str2_len;
-    size_t str3_len;
-    size_t str4_len;
-    size_t header_size;
-    int rv;
+    size_t str1_len = 0;
+    size_t str2_len = 0;
+    size_t str3_len = 0;
+    size_t str4_len = 0;
+    size_t header_size = 0;
+    int rv = -1;
 
     assert(entry_writer != NULL);
     assert(header != NULL);
@@ -1777,13 +1780,13 @@ int robotraconteurlite_messageentry_writer_end_entry(struct robotraconteurlite_m
                                                      struct robotraconteurlite_messageentry_header* header,
                                                      struct robotraconteurlite_messageelement_writer* element_writer)
 {
-    size_t str1_len;
-    size_t str2_len;
-    size_t str3_len;
-    size_t str4_len;
-    size_t header_size;
-    int rv;
-    uint32_t entry_size;
+    size_t str1_len = 0;
+    size_t str2_len = 0;
+    size_t str3_len = 0;
+    size_t str4_len = 0;
+    size_t header_size = 0;
+    int rv = -1;
+    uint32_t entry_size = 0;
 
     assert(entry_writer != NULL);
     assert(header != NULL);
@@ -1826,12 +1829,12 @@ int robotraconteurlite_messageelement_writer_begin_nested_element(
     struct robotraconteurlite_messageelement_writer* nested_element_writer)
 {
 
-    size_t str1_len;
-    size_t str2_len;
-    size_t str3_len;
-    size_t str4_len;
-    size_t header_size;
-    int rv;
+    size_t str1_len = 0;
+    size_t str2_len = 0;
+    size_t str3_len = 0;
+    size_t str4_len = 0;
+    size_t header_size = 0;
+    int rv = -1;
 
     assert(element_writer != NULL);
     assert(header != NULL);
@@ -1939,13 +1942,13 @@ int robotraconteurlite_messageelement_writer_end_nested_element(
     struct robotraconteurlite_messageelement_header* header,
     struct robotraconteurlite_messageelement_writer* nested_element_writer)
 {
-    size_t str1_len;
-    size_t str2_len;
-    size_t str3_len;
-    size_t str4_len;
-    size_t header_size;
-    int rv;
-    size_t written_size;
+    size_t str1_len = 0;
+    size_t str2_len = 0;
+    size_t str3_len = 0;
+    size_t str4_len = 0;
+    size_t header_size = 0;
+    int rv = -1;
+    size_t written_size = 0;
 
     assert(element_writer != NULL);
     assert(header != NULL);
@@ -1989,10 +1992,10 @@ static int robotraconteurlite_messageelement_writer_write_raw(
 {
 
     struct robotraconteurlite_buffer_vec data_vec;
-    size_t str1_len;
-    size_t data_size;
-    size_t elem_size;
-    int rv;
+    size_t str1_len = 0;
+    size_t data_size = 0;
+    size_t elem_size = 0;
+    int rv = -1;
 
     assert(element_writer != NULL);
     assert(element_name != NULL);

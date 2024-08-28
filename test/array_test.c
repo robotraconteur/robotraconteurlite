@@ -6,6 +6,7 @@
 #include <string.h>
 #include <time.h>
 #include <stdlib.h>
+#include <math.h>
 
 #include "robotraconteurlite/array.h"
 #define inline
@@ -22,7 +23,7 @@ void robotraconteurlite_arraytest_buffer(void** state)
     struct robotraconteurlite_buffer bufb;
     struct robotraconteurlite_buffer bufc;
     struct robotraconteurlite_buffer bufd;
-    size_t bufa_len;
+    size_t bufa_len = 0;
 
     bufa.data = a;
     bufa.len = sizeof(a);
@@ -53,13 +54,13 @@ void robotraconteurlite_arraytest_buffer_vec_copy_vec(void** state)
     uint8_t a1[100];
     uint8_t a2[100];
     uint8_t* a[2];
-    uint8_t i;
+    uint8_t i = 0;
     struct robotraconteurlite_buffer bufa[8];
     struct robotraconteurlite_buffer bufb[8];
     struct robotraconteurlite_buffer_vec bufa_vec;
     struct robotraconteurlite_buffer_vec bufb_vec;
     struct robotraconteurlite_buffer_vec* buf_vecs[2];
-    size_t iter;
+    size_t iter = 0;
 
     a[0] = &a1[0];
     a[1] = &a2[0];
@@ -81,12 +82,12 @@ void robotraconteurlite_arraytest_buffer_vec_copy_vec(void** state)
 
     for (iter = 0; iter < 10000; iter++)
     {
-        size_t buf_i;
-        size_t len_bufa;
-        size_t len_bufb;
-        size_t bufa_vec_start;
-        size_t bufb_vec_start;
-        size_t count;
+        size_t buf_i = 0;
+        size_t len_bufa = 0;
+        size_t len_bufb = 0;
+        size_t bufa_vec_start = 0;
+        size_t bufb_vec_start = 0;
+        size_t count = 0;
 
         memset(a2, 0, sizeof(a2));
 
@@ -94,12 +95,12 @@ void robotraconteurlite_arraytest_buffer_vec_copy_vec(void** state)
         {
             struct robotraconteurlite_buffer_vec* buf_vec = buf_vecs[buf_i];
             size_t pos = 0;
-            size_t i;
+            size_t i = 0;
             buf_vec->buffer_vec_cnt = 0;
 
             for (i = 0; i < 8; i++)
             {
-                size_t c;
+                size_t c = 0;
                 if (i == 7)
                 {
                     c = sizeof(a1) - pos;
@@ -141,17 +142,17 @@ void robotraconteurlite_arraytest_buffer_vec_copy_vec_ex(void** state)
 {
     uint8_t a1[255];
     uint8_t a2[255];
-    uint8_t i;
+    uint8_t i = 0;
     uint8_t* a[2];
     struct robotraconteurlite_buffer bufa[8];
     struct robotraconteurlite_buffer bufb[8];
     struct robotraconteurlite_buffer_vec bufa_vec;
     struct robotraconteurlite_buffer_vec bufb_vec;
     struct robotraconteurlite_buffer_vec* buf_vecs[2];
-    size_t bufa_vec_el;
-    size_t bufb_vec_el;
+    size_t bufa_vec_el = 0;
+    size_t bufb_vec_el = 0;
     size_t* buf_vec_els[2];
-    size_t iter;
+    size_t iter = 0;
 
     assert_true(sizeof(a1) == sizeof(a2));
 
@@ -179,18 +180,18 @@ void robotraconteurlite_arraytest_buffer_vec_copy_vec_ex(void** state)
 
     for (iter = 0; iter < 100000; iter++)
     {
-        size_t buf_i;
-        size_t len_bufa;
-        size_t len_bufb;
-        size_t bufa_vec_start;
-        size_t bufb_vec_start;
-        size_t bufa_vec_count;
-        size_t bufb_vec_count;
-        size_t bufa_vec_count_b;
-        size_t bufb_vec_count_b;
+        size_t buf_i = 0;
+        size_t len_bufa = 0;
+        size_t len_bufb = 0;
+        size_t bufa_vec_start = 0;
+        size_t bufb_vec_start = 0;
+        size_t bufa_vec_count = 0;
+        size_t bufb_vec_count = 0;
+        size_t bufa_vec_count_b = 0;
+        size_t bufb_vec_count_b = 0;
 
-        size_t count_bytes;
-        size_t big_el;
+        size_t count_bytes = 0;
+        size_t big_el = 0;
 
         memset(a2, 0, sizeof(a2));
 
@@ -198,12 +199,12 @@ void robotraconteurlite_arraytest_buffer_vec_copy_vec_ex(void** state)
         {
             struct robotraconteurlite_buffer_vec* buf_vec = buf_vecs[buf_i];
             size_t pos = 0;
-            size_t i;
+            size_t i = 0;
             buf_vec->buffer_vec_cnt = 0;
 
             for (i = 0; i < 8; i++)
             {
-                size_t c;
+                size_t c = 0;
                 if (i == 7)
                 {
                     c = (sizeof(a1) / *buf_vec_els[buf_i]) - pos;
@@ -257,14 +258,14 @@ void robotraconteurlite_buffer_copy_to_double_test(void** state)
     double a1[256];
     double a2[256];
     uint8_t buf_data[256 * sizeof(double)];
-    size_t i;
+    size_t i = 0;
     struct robotraconteurlite_buffer buf;
     struct robotraconteurlite_buffer_vec buf_vec;
     struct robotraconteurlite_array_double doubles;
     struct robotraconteurlite_array_double doubles2;
 
     double d1 = 10.23;
-    double d2;
+    double d2 = 0.0;
 
     for (i = 0; i < sizeof(a1) / sizeof(double); i++)
         a1[i] = (double)i;
