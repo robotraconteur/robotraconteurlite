@@ -425,6 +425,9 @@ int robotraconteurlite_node_verify_incoming_message(struct robotraconteurlite_no
                                                     struct robotraconteurlite_connection* connection,
                                                     struct robotraconteurlite_message_header* message_header)
 {
+    ROBOTRACONTEURLITE_UNUSED(node);
+    ROBOTRACONTEURLITE_UNUSED(connection);
+    ROBOTRACONTEURLITE_UNUSED(message_header);
     /* TODO: verify address information */
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
@@ -649,6 +652,10 @@ int robotraconteurlite_node_event_special_request_service_definition(
     struct robotraconteurlite_node_service_definition service_defs[], size_t service_defs_len)
 {
 
+    /* TODO: Use service_defs and service_defs_len? */
+    ROBOTRACONTEURLITE_UNUSED(service_defs);
+    ROBOTRACONTEURLITE_UNUSED(service_defs_len);
+
     size_t i = -1;
     assert(node);
     assert(event);
@@ -810,6 +817,7 @@ int robotraconteurlite_event_is_member(struct robotraconteurlite_event* event, c
 int robotraconteurlite_client_is_connected(struct robotraconteurlite_node* node,
                                            struct robotraconteurlite_connection* connection)
 {
+    ROBOTRACONTEURLITE_UNUSED(node);
     if ((connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_ERROR) != 0)
     {
         return ROBOTRACONTEURLITE_ERROR_CONNECTION_ERROR;
@@ -857,6 +865,7 @@ static int robotraconteurlite_client_handshake_begin_request(
 int robotraconteurlite_client_handshake(struct robotraconteurlite_client_handshake_data* handshake_data,
                                         struct robotraconteurlite_event* event, robotraconteurlite_timespec now)
 {
+    ROBOTRACONTEURLITE_UNUSED(now);
     int ret = -1;
 
     if (event->event_type != ROBOTRACONTEURLITE_EVENT_TYPE_NEXT_CYCLE &&
@@ -1200,6 +1209,10 @@ int robotraconteurlite_node_next_wake(struct robotraconteurlite_node* node, robo
 int robotraconteurlite_node_poll_add_fd(struct robotraconteurlite_node* node, struct robotraconteurlite_pollfd* pollfds,
                                         size_t* pollfd_count, size_t max_pollfds)
 {
+    ROBOTRACONTEURLITE_UNUSED(node);
+    ROBOTRACONTEURLITE_UNUSED(pollfds);
+    ROBOTRACONTEURLITE_UNUSED(pollfd_count);
+    ROBOTRACONTEURLITE_UNUSED(max_pollfds);
     /* Reserved for future use */
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }

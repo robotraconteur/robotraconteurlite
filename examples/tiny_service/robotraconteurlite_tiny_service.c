@@ -336,10 +336,16 @@ int handle_event(struct robotraconteurlite_node* node, struct robotraconteurlite
 
 volatile sig_atomic_t signal_received = 0;
 
-void signal_handler(int signum) { signal_received = 1; }
+void signal_handler(int signum)
+{
+    ROBOTRACONTEURLITE_UNUSED(signum);
+    signal_received = 1;
+}
 
 int main(int argc, char* argv[])
 {
+    ROBOTRACONTEURLITE_UNUSED(argc);
+    ROBOTRACONTEURLITE_UNUSED(argv);
 
     /* Variable storage */
     struct robotraconteurlite_connection connections_storage[NUM_CONNECTIONS];

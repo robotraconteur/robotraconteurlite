@@ -49,6 +49,8 @@ enum tiny_client_state
 
 int main(int argc, char* argv[])
 {
+    ROBOTRACONTEURLITE_UNUSED(argc);
+    ROBOTRACONTEURLITE_UNUSED(argv);
 
     /* Variable storage */
     struct robotraconteurlite_connection connections_storage[NUM_CONNECTIONS];

@@ -65,6 +65,7 @@ uint8_t message2[] = {
 
 void robotraconteurlite_message_reader_basictest(void** state)
 {
+    ROBOTRACONTEURLITE_UNUSED(state);
     struct robotraconteurlite_buffer buffer1;
     struct robotraconteurlite_buffer_vec buffer;
 
@@ -716,6 +717,7 @@ void robotraconteurlite_message_reader_basictest(void** state)
 
 void robotraconteurlite_message_writer_basictest(void** state)
 {
+    ROBOTRACONTEURLITE_UNUSED(state);
     uint8_t buffer_data[5000];
 
     struct robotraconteurlite_buffer buffer1;

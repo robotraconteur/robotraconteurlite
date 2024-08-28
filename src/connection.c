@@ -33,6 +33,7 @@ int robotraconteurlite_connection_verify_preamble(struct robotraconteurlite_conn
             return ROBOTRACONTEURLITE_ERROR_CONNECTION_ERROR;
         }
         connection->recv_message_len = robotraconteurlite_util_read_uint32(connection->recv_buffer + 4);
+        *message_len = connection->recv_message_len;
 
         /* Check the message version */
         message_version = robotraconteurlite_util_read_uint16(connection->recv_buffer + 8);
@@ -130,6 +131,7 @@ int robotraconteurlite_connection_end_send_message(struct robotraconteurlite_con
 
 int robotraconteurlite_connection_abort_send_message(struct robotraconteurlite_connection* connection)
 {
+    ROBOTRACONTEURLITE_UNUSED(connection);
     /* Don't need to do anything, for future use */
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
