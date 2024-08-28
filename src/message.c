@@ -189,7 +189,7 @@ int robotraconteurlite_message_reader_read_header(struct robotraconteurlite_mess
         return rv;
     }
 
-    if (header->message_size < (sender_nodename_len + 64u))
+    if (header->message_size < (sender_nodename_len + 64U))
     {
         return ROBOTRACONTEURLITE_ERROR_OUT_OF_RANGE;
     }
@@ -201,7 +201,7 @@ int robotraconteurlite_message_reader_read_header(struct robotraconteurlite_mess
         return rv;
     }
 
-    if (header->message_size < (sender_nodename_len + receiver_nodename_len + 64u))
+    if (header->message_size < (sender_nodename_len + receiver_nodename_len + 64U))
     {
         return ROBOTRACONTEURLITE_ERROR_OUT_OF_RANGE;
     }
