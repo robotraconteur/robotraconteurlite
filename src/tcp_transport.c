@@ -628,10 +628,13 @@ static int robotraconteurlite_tcp_connection_handshake_http_handshake(struct rob
 
     /* Generate the return key */
 
+    /* NOLINTBEGIN(bugprone-not-null-terminated-result) */
     /* Copy the client key to the buffer */
     memcpy(sha1_input_bytes, recv_data + i_sec_websocket, WEBSOCKET_KEY_BASE64_LEN);
     /* Copy the UUID to the buffer */
     memcpy(sha1_input_bytes + WEBSOCKET_KEY_BASE64_LEN, STRCONST_HTTP_KEY_UUID, STRCONST_HTTP_KEY_UUID_LEN);
+    /* NOLINTEND(bugprone-not-null-terminated-result) */
+
     /* Compute the SHA1 hash */
     robotraconteurlite_tcp_sha1(sha1_input_bytes, sizeof(sha1_input_bytes), &sha1_storage);
     /* Convert the SHA1 hash to base64 */
@@ -644,12 +647,15 @@ static int robotraconteurlite_tcp_connection_handshake_http_handshake(struct rob
     connection->send_buffer_pos = 0;
 
     /* Send the first part of the response */
+    /* NOLINTBEGIN(bugprone-not-null-terminated-result) */
     memcpy(connection->send_buffer, STRCONST_HTTP_RESPONSE_1, STRCONST_HTTP_RESPONSE_1_LEN);
     /* Send the accept hash */
     memcpy(connection->send_buffer + STRCONST_HTTP_RESPONSE_1_LEN, sha1_base64, sha1_base64_len);
     /* Send the second part of the response */
     memcpy(connection->send_buffer + STRCONST_HTTP_RESPONSE_1_LEN + sha1_base64_len, STRCONST_HTTP_RESPONSE_2,
            STRCONST_HTTP_RESPONSE_2_LEN);
+    /* NOLINTEND(bugprone-not-null-terminated-result) */
+
     /* Set the send message length */
     connection->send_message_len = STRCONST_HTTP_RESPONSE_1_LEN + sha1_base64_len + STRCONST_HTTP_RESPONSE_2_LEN;
     assert(connection->send_message_len <= connection->send_buffer_len);
@@ -1045,6 +1051,7 @@ int robotraconteurlite_tcp_connect_service_send_websocket_http_header(
         return ROBOTRACONTEURLITE_ERROR_INVALID_PARAMETER;
     }
 
+    /* NOLINTBEGIN(bugprone-not-null-terminated-result) */
     send_buf = connect_data->client_out->send_buffer;
     memcpy(send_buf, STRCONST_HTTP_REQUEST_1, STRCONST_HTTP_REQUEST_1_LEN);
     send_buf += STRCONST_HTTP_REQUEST_1_LEN;
@@ -1065,6 +1072,7 @@ int robotraconteurlite_tcp_connect_service_send_websocket_http_header(
     send_buf += WEBSOCKET_KEY_BASE64_LEN;
     memcpy(send_buf, STRCONST_HTTP_REQUEST_4, STRCONST_HTTP_REQUEST_4_LEN);
     send_buf += STRCONST_HTTP_REQUEST_4_LEN;
+    /* NOLINTEND(bugprone-not-null-terminated-result) */
 
     connect_data->client_out->send_message_len = send_len;
     connect_data->client_out->send_buffer_pos = 0;
