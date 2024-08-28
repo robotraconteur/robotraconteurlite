@@ -32,7 +32,7 @@ int robotraconteurlite_wait_next_wake(struct robotraconteurlite_clock* clock, st
         timeout = (int)timeout_i64;
     }
 
-    ret = robotraconteurlite_poll(pollfds, pollfd_count, timeout);
+    ret = robotraconteurlite_poll(pollfds, (int)pollfd_count, timeout);
     if (ret < 0)
     {
         return ROBOTRACONTEURLITE_ERROR_SYSTEM_ERROR;

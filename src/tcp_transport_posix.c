@@ -46,7 +46,7 @@ int robotraconteurlite_tcp_base64_encode(const uint8_t* binary_data, size_t bina
     BIO* b64 = BIO_new(BIO_f_base64());
     BIO_set_flags(b64, BIO_FLAGS_BASE64_NO_NL);
     b64 = BIO_push(b64, bmem);
-    BIO_write(b64, binary_data, binary_len);
+    BIO_write(b64, binary_data, (int)binary_len);
     BIO_flush(b64);
     len = BIO_get_mem_data(bmem, &base64_data_ptr);
     assert(len <= *base64_len);
@@ -162,7 +162,7 @@ int robotraconteurlite_tcp_socket_begin_server(const struct sockaddr_storage* se
     }
 
     /* Listen */
-    if (listen(sock, backlog) < 0)
+    if (listen(sock, (int)backlog) < 0)
     {
         *errno_out = errno;
         close(sock);
@@ -280,7 +280,7 @@ static int robotraconteurlite_poll_add_fd(int sock, short extra_events, struct r
                                           size_t* pollfd_count, size_t max_pollfds)
 {
     struct pollfd pollfds1;
-    int i = *pollfd_count;
+    int i = (int)*pollfd_count;
     if (i >= max_pollfds)
     {
         return ROBOTRACONTEURLITE_ERROR_INVALID_PARAMETER;
