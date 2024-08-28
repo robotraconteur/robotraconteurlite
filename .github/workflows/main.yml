@@ -60,20 +60,7 @@ jobs:
     - name: make
       run: |
         cd build
-        make -j2
-
-  pre-commit:
-    runs-on: ubuntu-22.04
-    env:
-      SKIP: no-commit-to-branch
-    steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-python@v3
-    - name: apt
-      run: |
-        sudo apt update
-        sudo apt install -y dos2unix
-    - uses: pre-commit/action@v3.0.1
+        make -j2 -k
 
   cppcheck:
     runs-on: ubuntu-20.04
@@ -96,4 +83,17 @@ jobs:
     - name: make
       run: |
         cd build
-        make -j2
+        make -j2 -k
+
+  pre-commit:
+    runs-on: ubuntu-22.04
+    env:
+      SKIP: no-commit-to-branch
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v3
+    - name: apt
+      run: |
+        sudo apt update
+        sudo apt install -y dos2unix
+    - uses: pre-commit/action@v3.0.1
