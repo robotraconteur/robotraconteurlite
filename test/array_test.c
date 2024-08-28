@@ -68,7 +68,7 @@ void robotraconteurlite_arraytest_buffer_vec_copy_vec(void** state)
     srand((unsigned int)time(0));
     assert_true(sizeof(a1) == sizeof(a2));
 
-    for (i = 0; i < sizeof(a1); i++)
+    for (i = 0; i < (uint8_t)sizeof(a1); i++)
         a1[i] = i;
 
     bufa_vec.buffer_vec = bufa;
@@ -158,7 +158,7 @@ void robotraconteurlite_arraytest_buffer_vec_copy_vec_ex(void** state)
 
     srand((unsigned int)time(0));
 
-    for (i = 0; i < sizeof(a1); i++)
+    for (i = 0; i < (uint8_t)sizeof(a1); i++)
         a1[i] = i;
 
     a[0] = &a1[0];
