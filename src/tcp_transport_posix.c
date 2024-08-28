@@ -299,7 +299,7 @@ int robotraconteurlite_tcp_acceptor_poll_add_fd(struct robotraconteurlite_connec
                                                 struct robotraconteurlite_pollfd* pollfds, size_t* pollfd_count,
                                                 size_t max_pollfds)
 {
-    int extra_events = 0;
+    short extra_events = 0;
     struct robotraconteurlite_connection* c = connection_head;
     while (c != NULL)
     {
