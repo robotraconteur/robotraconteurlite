@@ -1,4 +1,7 @@
+#ifndef _POSIX_C_SOURCE
+/* NOLINTNEXTLINE(bugprone-reserved-identifier) */
 #define _POSIX_C_SOURCE 199309L
+#endif
 
 #include <time.h>
 #include <stdio.h>

@@ -1,5 +1,8 @@
-
+#ifndef _XOPEN_SOURCE
+/* NOLINTNEXTLINE(bugprone-reserved-identifier) */
 #define _XOPEN_SOURCE 500
+#endif
+
 #include "robotraconteurlite/poll.h"
 #include <poll.h>
 #include <stdio.h>

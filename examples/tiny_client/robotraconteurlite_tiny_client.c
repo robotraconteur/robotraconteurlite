@@ -13,7 +13,10 @@
  * limitations under the License.
  */
 
+#ifndef _XOPEN_SOURCE
+/* NOLINTNEXTLINE(bugprone-reserved-identifier) */
 #define _XOPEN_SOURCE 500
+#endif
 #include <signal.h>
 #include <stdlib.h>
 #include <time.h>
