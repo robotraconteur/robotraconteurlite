@@ -49,9 +49,6 @@ enum tiny_client_state
 
 int main(int argc, char* argv[])
 {
-    ROBOTRACONTEURLITE_UNUSED(argc);
-    ROBOTRACONTEURLITE_UNUSED(argv);
-
     /* Variable storage */
     struct robotraconteurlite_connection connections_storage[NUM_CONNECTIONS];
     uint8_t connection_buffers[NUM_CONNECTIONS * 2 * CONNECTION_BUFFER_SIZE];
@@ -72,6 +69,9 @@ int main(int argc, char* argv[])
     struct robotraconteurlite_node_send_messageentry_data request_data;
 
     double d1_set_val = 42.2;
+
+    ROBOTRACONTEURLITE_UNUSED(argc);
+    ROBOTRACONTEURLITE_UNUSED(argv);
 
     /* Disable sigpipe. This is a common source of errors. Some libraries will disable this for you, but not all. */
     /* robotraconteurlite does not automatically disable sigpipe. */

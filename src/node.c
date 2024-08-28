@@ -653,10 +653,11 @@ int robotraconteurlite_node_event_special_request_service_definition(
 {
 
     /* TODO: Use service_defs and service_defs_len? */
+    size_t i = -1;
+
     ROBOTRACONTEURLITE_UNUSED(service_defs);
     ROBOTRACONTEURLITE_UNUSED(service_defs_len);
 
-    size_t i = -1;
     assert(node);
     assert(event);
     assert(event->received_message.received_message_entry_header.entry_type ==
@@ -865,8 +866,8 @@ static int robotraconteurlite_client_handshake_begin_request(
 int robotraconteurlite_client_handshake(struct robotraconteurlite_client_handshake_data* handshake_data,
                                         struct robotraconteurlite_event* event, robotraconteurlite_timespec now)
 {
-    ROBOTRACONTEURLITE_UNUSED(now);
     int ret = -1;
+    ROBOTRACONTEURLITE_UNUSED(now);
 
     if (event->event_type != ROBOTRACONTEURLITE_EVENT_TYPE_NEXT_CYCLE &&
         event->connection != handshake_data->connection)

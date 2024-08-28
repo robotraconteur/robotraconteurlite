@@ -321,9 +321,9 @@ int robotraconteurlite_tcp_connection_communicate_recv(struct robotraconteurlite
 static int robotraconteurlite_tcp_websocket_random_mask(struct robotraconteurlite_connection* connection,
                                                         uint8_t mask[4])
 {
-    ROBOTRACONTEURLITE_UNUSED(connection);
     /* TODO: use better random source */
     uint32_t random_val = rand();
+    ROBOTRACONTEURLITE_UNUSED(connection);
     memcpy(mask, &random_val, 4);
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }

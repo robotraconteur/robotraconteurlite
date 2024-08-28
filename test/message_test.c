@@ -65,7 +65,6 @@ uint8_t message2[] = {
 
 void robotraconteurlite_message_reader_basictest(void** state)
 {
-    ROBOTRACONTEURLITE_UNUSED(state);
     struct robotraconteurlite_buffer buffer1;
     struct robotraconteurlite_buffer_vec buffer;
 
@@ -86,6 +85,8 @@ void robotraconteurlite_message_reader_basictest(void** state)
     char extended_expected_data[] = "extended_data\nblah blah";
     struct robotraconteurlite_string extended_expected;
     struct robotraconteurlite_messageentry_reader entry_reader;
+
+    ROBOTRACONTEURLITE_UNUSED(state);
 
     buffer1.data = message2;
     buffer1.len = sizeof(message2);
@@ -717,7 +718,6 @@ void robotraconteurlite_message_reader_basictest(void** state)
 
 void robotraconteurlite_message_writer_basictest(void** state)
 {
-    ROBOTRACONTEURLITE_UNUSED(state);
     uint8_t buffer_data[5000];
 
     struct robotraconteurlite_buffer buffer1;
@@ -736,6 +736,8 @@ void robotraconteurlite_message_writer_basictest(void** state)
                                0x84, 0xdb, 0xf0, 0x0a, 0x8f, 0xef, 0xd2, 0xfa};
     uint8_t receiver_nodeid[] = {0xae, 0x78, 0x48, 0x1b, 0xc2, 0xbe, 0x4f, 0x26,
                                  0x9f, 0xef, 0x74, 0xbb, 0x6e, 0x8a, 0x04, 0x3f};
+
+    ROBOTRACONTEURLITE_UNUSED(state);
 
     buffer1.data = buffer_data;
     buffer1.len = sizeof(buffer_data);

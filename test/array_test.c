@@ -14,7 +14,6 @@
 
 void robotraconteurlite_arraytest_buffer(void** state)
 {
-    ROBOTRACONTEURLITE_UNUSED(state);
     uint8_t a[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
     uint8_t b[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     uint8_t c[] = {0, 0, 5, 6, 7, 8, 0, 0, 0, 0};
@@ -25,6 +24,8 @@ void robotraconteurlite_arraytest_buffer(void** state)
     struct robotraconteurlite_buffer bufc;
     struct robotraconteurlite_buffer bufd;
     size_t bufa_len = 0;
+
+    ROBOTRACONTEURLITE_UNUSED(state);
 
     bufa.data = a;
     bufa.len = sizeof(a);
@@ -52,7 +53,6 @@ void robotraconteurlite_arraytest_buffer(void** state)
 
 void robotraconteurlite_arraytest_buffer_vec_copy_vec(void** state)
 {
-    ROBOTRACONTEURLITE_UNUSED(state);
     uint8_t a1[100];
     uint8_t a2[100];
     uint8_t* a[2];
@@ -63,6 +63,8 @@ void robotraconteurlite_arraytest_buffer_vec_copy_vec(void** state)
     struct robotraconteurlite_buffer_vec bufb_vec;
     struct robotraconteurlite_buffer_vec* buf_vecs[2];
     size_t iter = 0;
+
+    ROBOTRACONTEURLITE_UNUSED(state);
 
     a[0] = &a1[0];
     a[1] = &a2[0];
@@ -142,7 +144,6 @@ void robotraconteurlite_arraytest_buffer_vec_copy_vec(void** state)
 
 void robotraconteurlite_arraytest_buffer_vec_copy_vec_ex(void** state)
 {
-    ROBOTRACONTEURLITE_UNUSED(state);
     uint8_t a1[255];
     uint8_t a2[255];
     uint8_t i = 0;
@@ -156,6 +157,8 @@ void robotraconteurlite_arraytest_buffer_vec_copy_vec_ex(void** state)
     size_t bufb_vec_el = 0;
     size_t* buf_vec_els[2];
     size_t iter = 0;
+
+    ROBOTRACONTEURLITE_UNUSED(state);
 
     assert_true(sizeof(a1) == sizeof(a2));
 
@@ -258,7 +261,6 @@ void robotraconteurlite_arraytest_buffer_vec_copy_vec_ex(void** state)
 
 void robotraconteurlite_buffer_copy_to_double_test(void** state)
 {
-    ROBOTRACONTEURLITE_UNUSED(state);
     double a1[256];
     double a2[256];
     uint8_t buf_data[256 * sizeof(double)];
@@ -270,6 +272,8 @@ void robotraconteurlite_buffer_copy_to_double_test(void** state)
 
     double d1 = 10.23;
     double d2 = 0.0;
+
+    ROBOTRACONTEURLITE_UNUSED(state);
 
     for (i = 0; i < sizeof(a1) / sizeof(double); i++)
         a1[i] = (double)i;
@@ -304,7 +308,6 @@ void robotraconteurlite_buffer_copy_to_double_test(void** state)
 
 void robotraconteurlite_string_test(void** state)
 {
-    ROBOTRACONTEURLITE_UNUSED(state);
     char str1_data[] = "01234";
     struct robotraconteurlite_string str1;
     char str2_data[] = "012345";
@@ -313,6 +316,8 @@ void robotraconteurlite_string_test(void** state)
     struct robotraconteurlite_string str3;
     char str4_data[] = "01234";
     struct robotraconteurlite_string str4;
+
+    ROBOTRACONTEURLITE_UNUSED(state);
 
     str1.data = str1_data;
     str1.len = strlen(str1_data);
