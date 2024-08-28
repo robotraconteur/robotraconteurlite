@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-#ifndef __ROBOTRACONTEURLITE_UTIL_H__
-#define __ROBOTRACONTEURLITE_UTIL_H__
+#ifndef ROBOTRACONTEURLITE_UTIL_H
+#define ROBOTRACONTEURLITE_UTIL_H
 
 #include <stdint.h>
 #include <string.h>
@@ -35,4 +35,4 @@ static uint16_t robotraconteurlite_util_read_uint16(const void* p)
     return ret;
 }
 
-#endif /* __ROBOTRACONTEURLITE_UTIL_H__ */
+#endif /* ROBOTRACONTEURLITE_UTIL_H */

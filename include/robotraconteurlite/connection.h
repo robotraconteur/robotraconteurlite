@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-#ifndef __ROBOTRACONTEURLITE_CONNECTION_H__
-#define __ROBOTRACONTEURLITE_CONNECTION_H__
+#ifndef ROBOTRACONTEURLITE_CONNECTION_H
+#define ROBOTRACONTEURLITE_CONNECTION_H
 
 #include "robotraconteurlite/message.h"
 #include "robotraconteurlite/clock.h"
@@ -289,4 +289,4 @@ ROBOTRACONTEURLITE_DECL int robotraconteurlite_connection_next_wake(struct robot
                                                                     robotraconteurlite_timespec now,
                                                                     robotraconteurlite_timespec* next_wake);
 
-#endif /*__ROBOTRACONTEURLITE_CONNECTION_H__*/
+#endif /*ROBOTRACONTEURLITE_CONNECTION_H*/

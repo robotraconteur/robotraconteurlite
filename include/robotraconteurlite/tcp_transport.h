@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-#ifndef __ROBOTRACONTEURLITE_TCP_TRANSPORT_H__
-#define __ROBOTRACONTEURLITE_TCP_TRANSPORT_H__
+#ifndef ROBOTRACONTEURLITE_TCP_TRANSPORT_H
+#define ROBOTRACONTEURLITE_TCP_TRANSPORT_H
 
 #include "robotraconteurlite/node.h"
 
@@ -170,4 +170,4 @@ ROBOTRACONTEURLITE_DECL uint64_t robotraconteurlite_be64toh(uint64_t big_endian_
 
 ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_socket_connect(struct robotraconteurlite_sockaddr_storage* addr);
 
-#endif /*__ROBOTRACONTEURLITE_TCP_TRANSPORT_H__*/
+#endif /*ROBOTRACONTEURLITE_TCP_TRANSPORT_H*/

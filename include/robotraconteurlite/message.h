@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-#ifndef __ROBOTRACONTEURLITE_MESSAGE_H__
-#define __ROBOTRACONTEURLITE_MESSAGE_H__
+#ifndef ROBOTRACONTEURLITE_MESSAGE_H
+#define ROBOTRACONTEURLITE_MESSAGE_H
 
 #include "robotraconteurlite/config.h"
 #include "robotraconteurlite/err.h"
@@ -586,4 +586,4 @@ static int robotraconteurlite_messageelement_writer_write_string_c_str(
     return robotraconteurlite_messageelement_writer_write_string(element_writer, &element_name_str, &value_str);
 }
 
-#endif /* __ROBOTRACONTEURLITE_MESSAGE_H__ */
+#endif /* ROBOTRACONTEURLITE_MESSAGE_H */

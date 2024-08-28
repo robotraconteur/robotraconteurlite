@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-#ifndef __ROBOTRACONTEURLITE_H__
-#define __ROBOTRACONTEURLITE_H__
+#ifndef ROBOTRACONTEURLITE_H
+#define ROBOTRACONTEURLITE_H
 
 #include "robotraconteurlite/array.h"
 #include "robotraconteurlite/clock.h"
@@ -27,4 +27,4 @@
 #include "robotraconteurlite/tcp_transport.h"
 #include "robotraconteurlite/util.h"
 
-#endif /* __ROBOTRACONTEURLITE_H__ */
+#endif /* ROBOTRACONTEURLITE_H */
