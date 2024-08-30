@@ -234,11 +234,11 @@ robotraconteurlite_status robotraconteurlite_tcp_socket_close(int sock)
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
 
-ROBOTRACONTEURLITE_DECL uint16_t robotraconteurlite_ntohs(uint16_t netshort) { return ntohs(netshort); }
+uint16_t robotraconteurlite_ntohs(uint16_t netshort) { return ntohs(netshort); }
 
 uint16_t robotraconteurlite_htons(uint16_t hostshort) { return htons(hostshort); }
 
-ROBOTRACONTEURLITE_DECL uint64_t robotraconteurlite_be64toh(uint64_t big_endian_64bits)
+uint64_t robotraconteurlite_be64toh(uint64_t big_endian_64bits)
 {
     /* Implement byte swap */
     uint64_t ret = 0;
