@@ -15,41 +15,34 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: robotraconteur ppa
-      run: |
-        sudo add-apt-repository ppa:robotraconteur/ppa -y
+      run: sudo add-apt-repository ppa:robotraconteur/ppa -y
     - name: apt update
-      run: |
-        sudo apt-get update
+      run: sudo apt-get update
     - name: apt
-      run: |
-        sudo apt-get install build-essential uuid-dev libssl-dev libcmocka-dev python3-robotraconteur -y
+      run: sudo apt-get install build-essential uuid-dev libssl-dev libcmocka-dev python3-robotraconteur -y
     - name: cmake
       run: |
         mkdir -p build
         cd build
         cmake ..
     - name: make
-      run: |
-        cd build
-        make
+      working-directory: build
+      run: make -j2
     - name: ctest
-      run: |
-        cd build
-        ctest --output-on-failure
-    - name: tiny tests
-      run: |
-        python3 test/tiny_test/tiny_client_ci_test.py
-        python3 test/tiny_test/tiny_service_ci_test.py
+      working-directory: build
+      run: ctest --output-on-failure
+    - name: client tiny tests
+      run: python3 test/tiny_test/tiny_client_ci_test.py
+    - name: service tiny tests
+      run: python3 test/tiny_test/tiny_service_ci_test.py
   clang-tidy:
     runs-on: ubuntu-20.04
     steps:
     - uses: actions/checkout@v3
     - name: apt update
-      run: |
-        sudo apt-get update
+      run: sudo apt-get update
     - name: apt
-      run: |
-        sudo apt-get install build-essential uuid-dev libssl-dev libcmocka-dev -y
+      run: sudo apt-get install build-essential uuid-dev libssl-dev libcmocka-dev -y
     - name: clang-tidy-14
       run: |
         wget https://apt.llvm.org/llvm.sh
@@ -62,20 +55,17 @@ jobs:
         cmake -DCMAKE_DISABLE_PRECOMPILE_HEADERS=ON -DCMAKE_C_CLANG_TIDY=clang-tidy-14 \
               -DCMAKE_BUILD_TYPE=Debug ..
     - name: make
-      run: |
-        cd build
-        make -j2 -k
+      working-directory: build
+      run: make -j2 -k
 
   cppcheck:
     runs-on: ubuntu-20.04
     steps:
     - uses: actions/checkout@v3
     - name: apt update
-      run: |
-        sudo apt-get update
+      run: sudo apt-get update
     - name: apt
-      run: |
-        sudo apt-get install build-essential uuid-dev libssl-dev libcmocka-dev cppcheck  -y
+      run: sudo apt-get install build-essential uuid-dev libssl-dev libcmocka-dev cppcheck  -y
     - name: cmake
       run: |
         mkdir -p build
@@ -85,9 +75,8 @@ jobs:
         -DCMAKE_C_CPPCHECK="/usr/bin/cppcheck;--enable=warning;--inconclusive;--force;--inline-suppr;--error-exitcode=1;--std=c99;" \
         ..
     - name: make
-      run: |
-        cd build
-        make -j2 -k
+      working-directory: build
+      run: make -j2 -k
 
   pre-commit:
     runs-on: ubuntu-22.04
