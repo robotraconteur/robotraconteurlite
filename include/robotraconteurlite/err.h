@@ -16,6 +16,8 @@
 #ifndef ROBOTRACONTEURLITE_ERROR_H
 #define ROBOTRACONTEURLITE_ERROR_H
 
+#include <stdint.h>
+
 /* robotraconteurlite_error */
 
 #define ROBOTRACONTEURLITE_ERROR_SUCCESS 0
@@ -42,5 +44,12 @@
 #define ROBOTRACONTEURLITE_ERROR_REQUEST_REMOTE_ERROR (-21)
 #define ROBOTRACONTEURLITE_ERROR_INVALID_PARAMETER (-22)
 #define ROBOTRACONTEURLITE_ERROR_SYSTEM_ERROR (-23)
+
+typedef int32_t robotraconteurlite_status;
+
+static int32_t robotraconteurlite_is_success(robotraconteurlite_status status)
+{
+    return status >= ROBOTRACONTEURLITE_ERROR_SUCCESS;
+}
 
 #endif /* ROBOTRACONTEURLITE_ERROR_H */

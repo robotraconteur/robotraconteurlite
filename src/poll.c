@@ -2,18 +2,19 @@
 #include "robotraconteurlite/err.h"
 #include <limits.h>
 
-int robotraconteurlite_wait_next_wake(struct robotraconteurlite_clock* clock, struct robotraconteurlite_pollfd* pollfds,
-                                      size_t pollfd_count, robotraconteurlite_timespec wake_time)
+robotraconteurlite_status robotraconteurlite_wait_next_wake(struct robotraconteurlite_clock* clock,
+                                                            struct robotraconteurlite_pollfd* pollfds,
+                                                            size_t pollfd_count, robotraconteurlite_timespec wake_time)
 {
     robotraconteurlite_timespec now = 0;
-    int ret = -1;
+    robotraconteurlite_status rv = -1;
     int timeout = 0;
     int64_t timeout_i64 = 0;
 
-    ret = robotraconteurlite_clock_gettime(clock, &now);
-    if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+    rv = robotraconteurlite_clock_gettime(clock, &now);
+    if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
     {
-        return ret;
+        return rv;
     }
 
     if (wake_time < now)
@@ -32,8 +33,8 @@ int robotraconteurlite_wait_next_wake(struct robotraconteurlite_clock* clock, st
         timeout = (int)timeout_i64;
     }
 
-    ret = robotraconteurlite_poll(pollfds, (int)pollfd_count, timeout);
-    if (ret < 0)
+    rv = robotraconteurlite_poll(pollfds, (int)pollfd_count, timeout);
+    if (rv < 0)
     {
         return ROBOTRACONTEURLITE_ERROR_SYSTEM_ERROR;
     }

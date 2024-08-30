@@ -26,11 +26,12 @@
 
 /* Message Reader */
 
-int robotraconteurlite_message_reader_init(struct robotraconteurlite_message_reader* reader,
-                                           struct robotraconteurlite_buffer_vec* buffer, size_t offset, size_t count)
+robotraconteurlite_status robotraconteurlite_message_reader_init(struct robotraconteurlite_message_reader* reader,
+                                                                 struct robotraconteurlite_buffer_vec* buffer,
+                                                                 size_t offset, size_t count)
 {
     size_t buffer_len = 0;
-    int rv = -1;
+    robotraconteurlite_status rv = -1;
     uint8_t magic_data[4];
     struct robotraconteurlite_array_uint8 magic_array;
     uint8_t expected_magic[4] = "RRAC";
@@ -84,10 +85,11 @@ int robotraconteurlite_message_reader_init(struct robotraconteurlite_message_rea
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
 
-static int robotraconteurlite_message_read_header_string(struct robotraconteurlite_buffer_vec* buffer, size_t offset,
-                                                         uint16_t str_len, struct robotraconteurlite_string* str)
+static robotraconteurlite_status robotraconteurlite_message_read_header_string(
+    struct robotraconteurlite_buffer_vec* buffer, size_t offset, uint16_t str_len,
+    struct robotraconteurlite_string* str)
 {
-    int rv = -1;
+    robotraconteurlite_status rv = -1;
 
     if (str_len == 0U)
     {
@@ -119,11 +121,11 @@ static int robotraconteurlite_message_read_header_string(struct robotraconteurli
     }
 }
 
-int robotraconteurlite_message_reader_read_header(struct robotraconteurlite_message_reader* reader,
-                                                  struct robotraconteurlite_message_header* header)
+robotraconteurlite_status robotraconteurlite_message_reader_read_header(
+    struct robotraconteurlite_message_reader* reader, struct robotraconteurlite_message_header* header)
 {
     size_t o = reader->buffer_offset;
-    int rv = -1;
+    robotraconteurlite_status rv = -1;
     struct robotraconteurlite_array_uint8 sender_nodeid_array;
     struct robotraconteurlite_array_uint8 recv_nodeid_array;
     uint16_t sender_nodename_len = 0;
@@ -264,11 +266,11 @@ int robotraconteurlite_message_reader_read_header(struct robotraconteurlite_mess
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
 
-int robotraconteurlite_message_reader_begin_read_entries(struct robotraconteurlite_message_reader* reader,
-                                                         struct robotraconteurlite_messageentry_reader* entry_reader)
+robotraconteurlite_status robotraconteurlite_message_reader_begin_read_entries(
+    struct robotraconteurlite_message_reader* reader, struct robotraconteurlite_messageentry_reader* entry_reader)
 {
     size_t o = reader->buffer_offset;
-    int rv = -1;
+    robotraconteurlite_status rv = -1;
     uint32_t message_size = 0;
     uint16_t message_version = 0;
     uint16_t header_size = 0;
@@ -334,11 +336,12 @@ int robotraconteurlite_message_reader_begin_read_entries(struct robotraconteurli
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
 
-int robotraconteurlite_messageentry_reader_move_next(struct robotraconteurlite_messageentry_reader* entry_reader)
+robotraconteurlite_status robotraconteurlite_messageentry_reader_move_next(
+    struct robotraconteurlite_messageentry_reader* entry_reader)
 {
     size_t o = entry_reader->buffer_offset + entry_reader->buffer_count;
     uint32_t entry_size = 0;
-    int rv = -1;
+    robotraconteurlite_status rv = -1;
 
     uint16_t entry_count = 0;
     rv = robotraconteurlite_buffer_vec_copy_to_uint16(entry_reader->buffer, entry_reader->entry_count_offset,
@@ -372,12 +375,12 @@ int robotraconteurlite_messageentry_reader_move_next(struct robotraconteurlite_m
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
 
-int robotraconteurlite_messageentry_reader_find_element(struct robotraconteurlite_messageentry_reader* entry_reader,
-                                                        const struct robotraconteurlite_string* element_name,
-                                                        struct robotraconteurlite_messageelement_reader* element_reader)
+robotraconteurlite_status robotraconteurlite_messageentry_reader_find_element(
+    struct robotraconteurlite_messageentry_reader* entry_reader, const struct robotraconteurlite_string* element_name,
+    struct robotraconteurlite_messageelement_reader* element_reader)
 {
     char temp_str_data[16];
-    int rv = -1;
+    robotraconteurlite_status rv = -1;
 
     assert(element_name != NULL);
     assert(element_name->data != NULL);
@@ -444,12 +447,12 @@ int robotraconteurlite_messageentry_reader_find_element(struct robotraconteurlit
     }
 }
 
-int robotraconteurlite_messageentry_reader_find_element_verify_scalar(
+robotraconteurlite_status robotraconteurlite_messageentry_reader_find_element_verify_scalar(
     struct robotraconteurlite_messageentry_reader* entry_reader, const struct robotraconteurlite_string* element_name,
     struct robotraconteurlite_messageelement_reader* element_reader, uint16_t expected_data_type)
 {
     struct robotraconteurlite_messageelement_header header;
-    int rv = -1;
+    robotraconteurlite_status rv = -1;
 
     rv = robotraconteurlite_messageentry_reader_find_element(entry_reader, element_name, element_reader);
     if (rv < 0)
@@ -477,13 +480,13 @@ int robotraconteurlite_messageentry_reader_find_element_verify_scalar(
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
 
-int robotraconteurlite_messageentry_reader_find_element_verify_array(
+robotraconteurlite_status robotraconteurlite_messageentry_reader_find_element_verify_array(
     struct robotraconteurlite_messageentry_reader* entry_reader, const struct robotraconteurlite_string* element_name,
     struct robotraconteurlite_messageelement_reader* element_reader, uint16_t expected_data_type, uint32_t expected_len,
     uint8_t var_length)
 {
     struct robotraconteurlite_messageelement_header header;
-    int rv = -1;
+    robotraconteurlite_status rv = -1;
 
     rv = robotraconteurlite_messageentry_reader_find_element(entry_reader, element_name, element_reader);
     if (rv < 0)
@@ -521,12 +524,12 @@ int robotraconteurlite_messageentry_reader_find_element_verify_array(
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
 
-int robotraconteurlite_messageentry_reader_find_element_verify_string(
+robotraconteurlite_status robotraconteurlite_messageentry_reader_find_element_verify_string(
     struct robotraconteurlite_messageentry_reader* entry_reader, const struct robotraconteurlite_string* element_name,
     struct robotraconteurlite_messageelement_reader* element_reader, uint32_t expected_max_len)
 {
     struct robotraconteurlite_messageelement_header header;
-    int rv = -1;
+    robotraconteurlite_status rv = -1;
 
     rv = robotraconteurlite_messageentry_reader_find_element(entry_reader, element_name, element_reader);
     if (rv < 0)
@@ -554,11 +557,11 @@ int robotraconteurlite_messageentry_reader_find_element_verify_string(
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
 
-int robotraconteurlite_messageentry_reader_read_header(struct robotraconteurlite_messageentry_reader* entry_reader,
-                                                       struct robotraconteurlite_messageentry_header* header)
+robotraconteurlite_status robotraconteurlite_messageentry_reader_read_header(
+    struct robotraconteurlite_messageentry_reader* entry_reader, struct robotraconteurlite_messageentry_header* header)
 {
     size_t o = entry_reader->buffer_offset;
-    int rv = -1;
+    robotraconteurlite_status rv = -1;
     uint16_t servicepath_len = 0;
     uint16_t membername_len = 0;
     size_t strlen_2 = 0;
@@ -638,12 +641,12 @@ int robotraconteurlite_messageentry_reader_read_header(struct robotraconteurlite
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
 
-int robotraconteurlite_messageentry_reader_begin_read_elements(
+robotraconteurlite_status robotraconteurlite_messageentry_reader_begin_read_elements(
     struct robotraconteurlite_messageentry_reader* entry_reader,
     struct robotraconteurlite_messageelement_reader* element_reader)
 {
     size_t o = entry_reader->buffer_offset;
-    int rv = -1;
+    robotraconteurlite_status rv = -1;
     uint32_t entry_size = 0;
     uint16_t servicepath_len = 0;
     uint16_t membername_len = 0;
@@ -717,11 +720,12 @@ int robotraconteurlite_messageentry_reader_begin_read_elements(
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
 
-int robotraconteurlite_messageelement_reader_move_next(struct robotraconteurlite_messageelement_reader* element_reader)
+robotraconteurlite_status robotraconteurlite_messageelement_reader_move_next(
+    struct robotraconteurlite_messageelement_reader* element_reader)
 {
     size_t o = element_reader->buffer_offset + element_reader->buffer_count;
     uint32_t element_size = 0;
-    int rv = -1;
+    robotraconteurlite_status rv = -1;
 
     size_t element_count = 0;
     if (element_reader->element_count_uint32)
@@ -771,12 +775,12 @@ int robotraconteurlite_messageelement_reader_move_next(struct robotraconteurlite
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
 
-int robotraconteurlite_messageelement_reader_read_header(
+robotraconteurlite_status robotraconteurlite_messageelement_reader_read_header(
     struct robotraconteurlite_messageelement_reader* element_reader,
     struct robotraconteurlite_messageelement_header* header)
 {
     size_t o = element_reader->buffer_offset;
-    int rv = -1;
+    robotraconteurlite_status rv = -1;
     uint16_t elementname_len = 0;
     uint16_t elementtypename_len = 0;
     uint16_t strlen_2 = 0;
@@ -849,12 +853,12 @@ int robotraconteurlite_messageelement_reader_read_header(
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
 
-static int robotraconteurlite_messageelement_reader_get_data_info(
+static robotraconteurlite_status robotraconteurlite_messageelement_reader_get_data_info(
     struct robotraconteurlite_messageelement_reader* element_reader, size_t* data_offset, size_t* data_size,
     uint32_t* data_count, uint16_t data_type, size_t data_element_size)
 {
     struct robotraconteurlite_messageelement_header element_header;
-    int rv = -1;
+    robotraconteurlite_status rv = -1;
     size_t header_size = 0;
 
     assert(element_reader != NULL);
@@ -886,14 +890,14 @@ static int robotraconteurlite_messageelement_reader_get_data_info(
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
 
-static int robotraconteurlite_messageelement_reader_read_data_ex(
+static robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_ex(
     struct robotraconteurlite_messageelement_reader* element_reader, struct robotraconteurlite_buffer* dest_buf,
     uint16_t dest_elem_type, size_t dest_elem_size)
 {
     size_t data_offset = 0;
     size_t data_size = 0;
     uint32_t data_count = 0;
-    int rv = -1;
+    robotraconteurlite_status rv = -1;
 
     struct robotraconteurlite_buffer_vec dest_vec;
     dest_vec.buffer_vec = dest_buf;
@@ -918,14 +922,14 @@ static int robotraconteurlite_messageelement_reader_read_data_ex(
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
 
-static int robotraconteurlite_messageelement_reader_read_data_scalar_ex(
+static robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_scalar_ex(
     struct robotraconteurlite_messageelement_reader* element_reader, void* dest_scalar, uint16_t dest_elem_type,
     size_t dest_elem_size)
 {
     size_t data_offset = 0;
     size_t data_size = 0;
     uint32_t data_count = 0;
-    int rv = -1;
+    robotraconteurlite_status rv = -1;
 
     struct robotraconteurlite_buffer dest_buf;
     struct robotraconteurlite_buffer_vec dest_vec;
@@ -951,7 +955,7 @@ static int robotraconteurlite_messageelement_reader_read_data_scalar_ex(
                                                      0, dest_elem_size, 1);
 }
 
-int robotraconteurlite_messageelement_reader_read_data_double_array(
+robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_double_array(
     struct robotraconteurlite_messageelement_reader* element_reader, struct robotraconteurlite_array_double* dest_array)
 {
     return robotraconteurlite_messageelement_reader_read_data_ex(element_reader,
@@ -959,14 +963,14 @@ int robotraconteurlite_messageelement_reader_read_data_double_array(
                                                                  ROBOTRACONTEURLITE_DATATYPE_DOUBLE, sizeof(double));
 }
 
-int robotraconteurlite_messageelement_reader_read_data_double(
+robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_double(
     struct robotraconteurlite_messageelement_reader* element_reader, double* value)
 {
     return robotraconteurlite_messageelement_reader_read_data_scalar_ex(
         element_reader, value, ROBOTRACONTEURLITE_DATATYPE_DOUBLE, sizeof(double));
 }
 
-int robotraconteurlite_messageelement_reader_read_data_single_array(
+robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_single_array(
     struct robotraconteurlite_messageelement_reader* element_reader, struct robotraconteurlite_array_single* dest_array)
 {
     return robotraconteurlite_messageelement_reader_read_data_ex(element_reader,
@@ -974,14 +978,14 @@ int robotraconteurlite_messageelement_reader_read_data_single_array(
                                                                  ROBOTRACONTEURLITE_DATATYPE_SINGLE, sizeof(float));
 }
 
-int robotraconteurlite_messageelement_reader_read_data_single(
+robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_single(
     struct robotraconteurlite_messageelement_reader* element_reader, float* value)
 {
     return robotraconteurlite_messageelement_reader_read_data_scalar_ex(
         element_reader, value, ROBOTRACONTEURLITE_DATATYPE_SINGLE, sizeof(float));
 }
 
-int robotraconteurlite_messageelement_reader_read_data_int8_array(
+robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_int8_array(
     struct robotraconteurlite_messageelement_reader* element_reader, struct robotraconteurlite_array_int8* dest_array)
 {
     return robotraconteurlite_messageelement_reader_read_data_ex(element_reader,
@@ -989,14 +993,14 @@ int robotraconteurlite_messageelement_reader_read_data_int8_array(
                                                                  ROBOTRACONTEURLITE_DATATYPE_INT8, sizeof(int8_t));
 }
 
-int robotraconteurlite_messageelement_reader_read_data_int8(
+robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_int8(
     struct robotraconteurlite_messageelement_reader* element_reader, int8_t* value)
 {
     return robotraconteurlite_messageelement_reader_read_data_scalar_ex(
         element_reader, value, ROBOTRACONTEURLITE_DATATYPE_INT8, sizeof(int8_t));
 }
 
-int robotraconteurlite_messageelement_reader_read_data_uint8_array(
+robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_uint8_array(
     struct robotraconteurlite_messageelement_reader* element_reader, struct robotraconteurlite_array_uint8* dest_array)
 {
     return robotraconteurlite_messageelement_reader_read_data_ex(element_reader,
@@ -1004,14 +1008,14 @@ int robotraconteurlite_messageelement_reader_read_data_uint8_array(
                                                                  ROBOTRACONTEURLITE_DATATYPE_UINT8, sizeof(uint8_t));
 }
 
-int robotraconteurlite_messageelement_reader_read_data_uint8(
+robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_uint8(
     struct robotraconteurlite_messageelement_reader* element_reader, uint8_t* value)
 {
     return robotraconteurlite_messageelement_reader_read_data_scalar_ex(
         element_reader, value, ROBOTRACONTEURLITE_DATATYPE_UINT8, sizeof(uint8_t));
 }
 
-int robotraconteurlite_messageelement_reader_read_data_int16_array(
+robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_int16_array(
     struct robotraconteurlite_messageelement_reader* element_reader, struct robotraconteurlite_array_int16* dest_array)
 {
     return robotraconteurlite_messageelement_reader_read_data_ex(element_reader,
@@ -1019,14 +1023,14 @@ int robotraconteurlite_messageelement_reader_read_data_int16_array(
                                                                  ROBOTRACONTEURLITE_DATATYPE_INT16, sizeof(int16_t));
 }
 
-int robotraconteurlite_messageelement_reader_read_data_int16(
+robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_int16(
     struct robotraconteurlite_messageelement_reader* element_reader, int16_t* value)
 {
     return robotraconteurlite_messageelement_reader_read_data_scalar_ex(
         element_reader, value, ROBOTRACONTEURLITE_DATATYPE_INT16, sizeof(int16_t));
 }
 
-int robotraconteurlite_messageelement_reader_read_data_uint16_array(
+robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_uint16_array(
     struct robotraconteurlite_messageelement_reader* element_reader, struct robotraconteurlite_array_uint16* dest_array)
 {
     return robotraconteurlite_messageelement_reader_read_data_ex(element_reader,
@@ -1034,14 +1038,14 @@ int robotraconteurlite_messageelement_reader_read_data_uint16_array(
                                                                  ROBOTRACONTEURLITE_DATATYPE_UINT16, sizeof(uint16_t));
 }
 
-int robotraconteurlite_messageelement_reader_read_data_uint16(
+robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_uint16(
     struct robotraconteurlite_messageelement_reader* element_reader, uint16_t* value)
 {
     return robotraconteurlite_messageelement_reader_read_data_scalar_ex(
         element_reader, value, ROBOTRACONTEURLITE_DATATYPE_UINT16, sizeof(uint16_t));
 }
 
-int robotraconteurlite_messageelement_reader_read_data_int32_array(
+robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_int32_array(
     struct robotraconteurlite_messageelement_reader* element_reader, struct robotraconteurlite_array_int32* dest_array)
 {
     return robotraconteurlite_messageelement_reader_read_data_ex(element_reader,
@@ -1049,14 +1053,14 @@ int robotraconteurlite_messageelement_reader_read_data_int32_array(
                                                                  ROBOTRACONTEURLITE_DATATYPE_INT32, sizeof(int32_t));
 }
 
-int robotraconteurlite_messageelement_reader_read_data_int32(
+robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_int32(
     struct robotraconteurlite_messageelement_reader* element_reader, int32_t* value)
 {
     return robotraconteurlite_messageelement_reader_read_data_scalar_ex(
         element_reader, value, ROBOTRACONTEURLITE_DATATYPE_INT32, sizeof(int32_t));
 }
 
-int robotraconteurlite_messageelement_reader_read_data_uint32_array(
+robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_uint32_array(
     struct robotraconteurlite_messageelement_reader* element_reader, struct robotraconteurlite_array_uint32* dest_array)
 {
     return robotraconteurlite_messageelement_reader_read_data_ex(element_reader,
@@ -1064,14 +1068,14 @@ int robotraconteurlite_messageelement_reader_read_data_uint32_array(
                                                                  ROBOTRACONTEURLITE_DATATYPE_UINT32, sizeof(uint32_t));
 }
 
-int robotraconteurlite_messageelement_reader_read_data_uint32(
+robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_uint32(
     struct robotraconteurlite_messageelement_reader* element_reader, uint32_t* value)
 {
     return robotraconteurlite_messageelement_reader_read_data_scalar_ex(
         element_reader, value, ROBOTRACONTEURLITE_DATATYPE_UINT32, sizeof(uint32_t));
 }
 
-int robotraconteurlite_messageelement_reader_read_data_int64_array(
+robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_int64_array(
     struct robotraconteurlite_messageelement_reader* element_reader, struct robotraconteurlite_array_int64* dest_array)
 {
     return robotraconteurlite_messageelement_reader_read_data_ex(element_reader,
@@ -1079,14 +1083,14 @@ int robotraconteurlite_messageelement_reader_read_data_int64_array(
                                                                  ROBOTRACONTEURLITE_DATATYPE_INT64, sizeof(int64_t));
 }
 
-int robotraconteurlite_messageelement_reader_read_data_int64(
+robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_int64(
     struct robotraconteurlite_messageelement_reader* element_reader, int64_t* value)
 {
     return robotraconteurlite_messageelement_reader_read_data_scalar_ex(
         element_reader, value, ROBOTRACONTEURLITE_DATATYPE_INT64, sizeof(int64_t));
 }
 
-int robotraconteurlite_messageelement_reader_read_data_uint64_array(
+robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_uint64_array(
     struct robotraconteurlite_messageelement_reader* element_reader, struct robotraconteurlite_array_uint64* dest_array)
 {
     return robotraconteurlite_messageelement_reader_read_data_ex(element_reader,
@@ -1094,14 +1098,14 @@ int robotraconteurlite_messageelement_reader_read_data_uint64_array(
                                                                  ROBOTRACONTEURLITE_DATATYPE_UINT64, sizeof(uint64_t));
 }
 
-int robotraconteurlite_messageelement_reader_read_data_uint64(
+robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_uint64(
     struct robotraconteurlite_messageelement_reader* element_reader, uint64_t* value)
 {
     return robotraconteurlite_messageelement_reader_read_data_scalar_ex(
         element_reader, value, ROBOTRACONTEURLITE_DATATYPE_UINT8, sizeof(uint8_t));
 }
 
-int robotraconteurlite_messageelement_reader_read_data_cdouble_array(
+robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_cdouble_array(
     struct robotraconteurlite_messageelement_reader* element_reader,
     struct robotraconteurlite_array_cdouble* dest_array)
 {
@@ -1110,14 +1114,14 @@ int robotraconteurlite_messageelement_reader_read_data_cdouble_array(
         sizeof(struct robotraconteurlite_cdouble));
 }
 
-int robotraconteurlite_messageelement_reader_read_data_cdouble(
+robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_cdouble(
     struct robotraconteurlite_messageelement_reader* element_reader, struct robotraconteurlite_cdouble* value)
 {
     return robotraconteurlite_messageelement_reader_read_data_scalar_ex(
         element_reader, value, ROBOTRACONTEURLITE_DATATYPE_CDOUBLE, sizeof(struct robotraconteurlite_cdouble));
 }
 
-int robotraconteurlite_messageelement_reader_read_data_csingle_array(
+robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_csingle_array(
     struct robotraconteurlite_messageelement_reader* element_reader,
     struct robotraconteurlite_array_csingle* dest_array)
 {
@@ -1126,14 +1130,14 @@ int robotraconteurlite_messageelement_reader_read_data_csingle_array(
         sizeof(struct robotraconteurlite_csingle));
 }
 
-int robotraconteurlite_messageelement_reader_read_data_csingle(
+robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_csingle(
     struct robotraconteurlite_messageelement_reader* element_reader, struct robotraconteurlite_csingle* value)
 {
     return robotraconteurlite_messageelement_reader_read_data_scalar_ex(
         element_reader, value, ROBOTRACONTEURLITE_DATATYPE_CSINGLE, sizeof(struct robotraconteurlite_csingle));
 }
 
-int robotraconteurlite_messageelement_reader_read_data_bool_array(
+robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_bool_array(
     struct robotraconteurlite_messageelement_reader* element_reader, struct robotraconteurlite_array_bool* dest_array)
 {
     return robotraconteurlite_messageelement_reader_read_data_ex(
@@ -1141,25 +1145,25 @@ int robotraconteurlite_messageelement_reader_read_data_bool_array(
         sizeof(struct robotraconteurlite_bool));
 }
 
-int robotraconteurlite_messageelement_reader_read_data_bool(
+robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_bool(
     struct robotraconteurlite_messageelement_reader* element_reader, struct robotraconteurlite_bool* value)
 {
     return robotraconteurlite_messageelement_reader_read_data_scalar_ex(
         element_reader, value, ROBOTRACONTEURLITE_DATATYPE_BOOL, sizeof(struct robotraconteurlite_bool));
 }
 
-int robotraconteurlite_messageelement_reader_read_data_string(
+robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_string(
     struct robotraconteurlite_messageelement_reader* element_reader, struct robotraconteurlite_string* dest_str)
 {
     return robotraconteurlite_messageelement_reader_read_data_ex(
         element_reader, (struct robotraconteurlite_buffer*)dest_str, ROBOTRACONTEURLITE_DATATYPE_STRING, sizeof(char));
 }
 
-int robotraconteurlite_messageelement_reader_begin_read_nested_elements(
+robotraconteurlite_status robotraconteurlite_messageelement_reader_begin_read_nested_elements(
     struct robotraconteurlite_messageelement_reader* element_reader,
     struct robotraconteurlite_messageelement_reader* nested_element_reader)
 {
-    int rv = -1;
+    robotraconteurlite_status rv = -1;
     struct robotraconteurlite_messageelement_header header;
     size_t o = 0;
     size_t header_size = 0;
@@ -1220,13 +1224,13 @@ int robotraconteurlite_messageelement_reader_begin_read_nested_elements(
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
 
-int robotraconteurlite_messageelement_reader_find_nested_element(
+robotraconteurlite_status robotraconteurlite_messageelement_reader_find_nested_element(
     struct robotraconteurlite_messageelement_reader* element_reader,
     const struct robotraconteurlite_string* nested_element_name,
     struct robotraconteurlite_messageelement_reader* nested_element_reader)
 {
     char temp_str_data[16];
-    int rv = -1;
+    robotraconteurlite_status rv = -1;
 
     assert(nested_element_name != NULL);
     assert(nested_element_name->data != NULL);
@@ -1294,12 +1298,12 @@ int robotraconteurlite_messageelement_reader_find_nested_element(
     }
 }
 
-int robotraconteurlite_messageelement_reader_find_nested_element_verify_scalar(
+robotraconteurlite_status robotraconteurlite_messageelement_reader_find_nested_element_verify_scalar(
     struct robotraconteurlite_messageelement_reader* element_reader,
     const struct robotraconteurlite_string* nested_element_name,
     struct robotraconteurlite_messageelement_reader* nested_element_reader, uint16_t expected_data_type)
 {
-    int rv = -1;
+    robotraconteurlite_status rv = -1;
     struct robotraconteurlite_messageelement_header header;
     rv = robotraconteurlite_messageelement_reader_find_nested_element(element_reader, nested_element_name,
                                                                       nested_element_reader);
@@ -1328,14 +1332,14 @@ int robotraconteurlite_messageelement_reader_find_nested_element_verify_scalar(
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
 
-int robotraconteurlite_messageelement_reader_find_nested_element_verify_array(
+robotraconteurlite_status robotraconteurlite_messageelement_reader_find_nested_element_verify_array(
     struct robotraconteurlite_messageelement_reader* element_reader,
     const struct robotraconteurlite_string* nested_element_name,
     struct robotraconteurlite_messageelement_reader* nested_element_reader, uint16_t expected_data_type,
     uint32_t expected_len, uint8_t var_length)
 {
     struct robotraconteurlite_messageelement_header header;
-    int rv = -1;
+    robotraconteurlite_status rv = -1;
 
     rv = robotraconteurlite_messageelement_reader_find_nested_element(element_reader, nested_element_name,
                                                                       nested_element_reader);
@@ -1374,13 +1378,13 @@ int robotraconteurlite_messageelement_reader_find_nested_element_verify_array(
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
 
-int robotraconteurlite_messageelement_reader_find_nested_element_verify_string(
+robotraconteurlite_status robotraconteurlite_messageelement_reader_find_nested_element_verify_string(
     struct robotraconteurlite_messageelement_reader* element_reader,
     const struct robotraconteurlite_string* nested_element_name,
     struct robotraconteurlite_messageelement_reader* nested_element_reader, uint32_t expected_max_len)
 {
     struct robotraconteurlite_messageelement_header header;
-    int rv = -1;
+    robotraconteurlite_status rv = -1;
     rv = robotraconteurlite_messageelement_reader_find_nested_element(element_reader, nested_element_name,
                                                                       nested_element_reader);
     if (rv < 0)
@@ -1410,11 +1414,12 @@ int robotraconteurlite_messageelement_reader_find_nested_element_verify_string(
 
 /* Message Writer */
 
-int robotraconteurlite_message_writer_init(struct robotraconteurlite_message_writer* writer,
-                                           struct robotraconteurlite_buffer_vec* buffer, size_t offset, size_t count)
+robotraconteurlite_status robotraconteurlite_message_writer_init(struct robotraconteurlite_message_writer* writer,
+                                                                 struct robotraconteurlite_buffer_vec* buffer,
+                                                                 size_t offset, size_t count)
 {
     size_t buffer_len = 0;
-    int rv = -1;
+    robotraconteurlite_status rv = -1;
 
     assert(writer != NULL);
     assert(buffer != NULL);
@@ -1446,9 +1451,9 @@ int robotraconteurlite_message_writer_init(struct robotraconteurlite_message_wri
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
 
-int robotraconteurlite_message_writer_begin_message(struct robotraconteurlite_message_writer* writer,
-                                                    struct robotraconteurlite_message_header* header,
-                                                    struct robotraconteurlite_messageentry_writer* entry_writer)
+robotraconteurlite_status robotraconteurlite_message_writer_begin_message(
+    struct robotraconteurlite_message_writer* writer, struct robotraconteurlite_message_header* header,
+    struct robotraconteurlite_messageentry_writer* entry_writer)
 {
     size_t str1_len = header->sender_nodename.len;
     size_t str2_len = header->receiver_nodename.len;
@@ -1457,7 +1462,7 @@ int robotraconteurlite_message_writer_begin_message(struct robotraconteurlite_me
     uint16_t header_size = 0;
     char magic_raw[] = "RRAC";
     struct robotraconteurlite_string magic;
-    int rv = -1;
+    robotraconteurlite_status rv = -1;
     struct robotraconteurlite_array_uint8 sender_nodeid_array;
     struct robotraconteurlite_array_uint8 recv_nodeid_array;
 
@@ -1615,12 +1620,12 @@ int robotraconteurlite_message_writer_begin_message(struct robotraconteurlite_me
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
 
-int robotraconteurlite_message_writer_end_message(struct robotraconteurlite_message_writer* writer,
-                                                  struct robotraconteurlite_message_header* header,
-                                                  struct robotraconteurlite_messageentry_writer* entry_writer)
+robotraconteurlite_status robotraconteurlite_message_writer_end_message(
+    struct robotraconteurlite_message_writer* writer, struct robotraconteurlite_message_header* header,
+    struct robotraconteurlite_messageentry_writer* entry_writer)
 {
     size_t message_size = 0;
-    int rv = -1;
+    robotraconteurlite_status rv = -1;
 
     assert(writer != NULL);
     assert(header != NULL);
@@ -1648,16 +1653,16 @@ int robotraconteurlite_message_writer_end_message(struct robotraconteurlite_mess
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
 
-int robotraconteurlite_messageentry_writer_begin_entry(struct robotraconteurlite_messageentry_writer* entry_writer,
-                                                       struct robotraconteurlite_messageentry_header* header,
-                                                       struct robotraconteurlite_messageelement_writer* element_writer)
+robotraconteurlite_status robotraconteurlite_messageentry_writer_begin_entry(
+    struct robotraconteurlite_messageentry_writer* entry_writer, struct robotraconteurlite_messageentry_header* header,
+    struct robotraconteurlite_messageelement_writer* element_writer)
 {
     size_t str1_len = 0;
     size_t str2_len = 0;
     size_t str3_len = 0;
     size_t str4_len = 0;
     size_t header_size = 0;
-    int rv = -1;
+    robotraconteurlite_status rv = -1;
 
     assert(entry_writer != NULL);
     assert(header != NULL);
@@ -1778,16 +1783,16 @@ int robotraconteurlite_messageentry_writer_begin_entry(struct robotraconteurlite
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
 
-int robotraconteurlite_messageentry_writer_end_entry(struct robotraconteurlite_messageentry_writer* entry_writer,
-                                                     struct robotraconteurlite_messageentry_header* header,
-                                                     struct robotraconteurlite_messageelement_writer* element_writer)
+robotraconteurlite_status robotraconteurlite_messageentry_writer_end_entry(
+    struct robotraconteurlite_messageentry_writer* entry_writer, struct robotraconteurlite_messageentry_header* header,
+    struct robotraconteurlite_messageelement_writer* element_writer)
 {
     size_t str1_len = 0;
     size_t str2_len = 0;
     size_t str3_len = 0;
     size_t str4_len = 0;
     size_t header_size = 0;
-    int rv = -1;
+    robotraconteurlite_status rv = -1;
     uint32_t entry_size = 0;
 
     assert(entry_writer != NULL);
@@ -1825,7 +1830,7 @@ int robotraconteurlite_messageentry_writer_end_entry(struct robotraconteurlite_m
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
 
-int robotraconteurlite_messageelement_writer_begin_nested_element(
+robotraconteurlite_status robotraconteurlite_messageelement_writer_begin_nested_element(
     struct robotraconteurlite_messageelement_writer* element_writer,
     struct robotraconteurlite_messageelement_header* header,
     struct robotraconteurlite_messageelement_writer* nested_element_writer)
@@ -1836,7 +1841,7 @@ int robotraconteurlite_messageelement_writer_begin_nested_element(
     size_t str3_len = 0;
     size_t str4_len = 0;
     size_t header_size = 0;
-    int rv = -1;
+    robotraconteurlite_status rv = -1;
 
     assert(element_writer != NULL);
     assert(header != NULL);
@@ -1939,7 +1944,7 @@ int robotraconteurlite_messageelement_writer_begin_nested_element(
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
 
-int robotraconteurlite_messageelement_writer_end_nested_element(
+robotraconteurlite_status robotraconteurlite_messageelement_writer_end_nested_element(
     struct robotraconteurlite_messageelement_writer* element_writer,
     struct robotraconteurlite_messageelement_header* header,
     struct robotraconteurlite_messageelement_writer* nested_element_writer)
@@ -1949,7 +1954,7 @@ int robotraconteurlite_messageelement_writer_end_nested_element(
     size_t str3_len = 0;
     size_t str4_len = 0;
     size_t header_size = 0;
-    int rv = -1;
+    robotraconteurlite_status rv = -1;
     size_t written_size = 0;
 
     assert(element_writer != NULL);
@@ -1987,7 +1992,7 @@ int robotraconteurlite_messageelement_writer_end_nested_element(
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
 
-static int robotraconteurlite_messageelement_writer_write_raw(
+static robotraconteurlite_status robotraconteurlite_messageelement_writer_write_raw(
     struct robotraconteurlite_messageelement_writer* element_writer,
     const struct robotraconteurlite_string* element_name, struct robotraconteurlite_buffer* data, uint16_t data_type,
     size_t data_elem_size)
@@ -1997,7 +2002,7 @@ static int robotraconteurlite_messageelement_writer_write_raw(
     size_t str1_len = 0;
     size_t data_size = 0;
     size_t elem_size = 0;
-    int rv = -1;
+    robotraconteurlite_status rv = -1;
 
     assert(element_writer != NULL);
     assert(element_name != NULL);
@@ -2092,7 +2097,7 @@ static int robotraconteurlite_messageelement_writer_write_raw(
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
 
-int robotraconteurlite_messageelement_writer_write_double(
+robotraconteurlite_status robotraconteurlite_messageelement_writer_write_double(
     struct robotraconteurlite_messageelement_writer* element_writer,
     const struct robotraconteurlite_string* element_name, double value)
 {
@@ -2104,7 +2109,7 @@ int robotraconteurlite_messageelement_writer_write_double(
                                                               ROBOTRACONTEURLITE_DATATYPE_DOUBLE, sizeof(double));
 }
 
-int robotraconteurlite_messageelement_writer_write_double_array(
+robotraconteurlite_status robotraconteurlite_messageelement_writer_write_double_array(
     struct robotraconteurlite_messageelement_writer* element_writer,
     const struct robotraconteurlite_string* element_name, const struct robotraconteurlite_array_double* value)
 {
@@ -2113,7 +2118,7 @@ int robotraconteurlite_messageelement_writer_write_double_array(
                                                               ROBOTRACONTEURLITE_DATATYPE_DOUBLE, sizeof(double));
 }
 
-int robotraconteurlite_messageelement_writer_write_single(
+robotraconteurlite_status robotraconteurlite_messageelement_writer_write_single(
     struct robotraconteurlite_messageelement_writer* element_writer,
     const struct robotraconteurlite_string* element_name, float value)
 {
@@ -2125,7 +2130,7 @@ int robotraconteurlite_messageelement_writer_write_single(
                                                               ROBOTRACONTEURLITE_DATATYPE_SINGLE, sizeof(float));
 }
 
-int robotraconteurlite_messageelement_writer_write_single_array(
+robotraconteurlite_status robotraconteurlite_messageelement_writer_write_single_array(
     struct robotraconteurlite_messageelement_writer* element_writer,
     const struct robotraconteurlite_string* element_name, const struct robotraconteurlite_array_single* value)
 {
@@ -2134,9 +2139,9 @@ int robotraconteurlite_messageelement_writer_write_single_array(
                                                               ROBOTRACONTEURLITE_DATATYPE_SINGLE, sizeof(float));
 }
 
-int robotraconteurlite_messageelement_writer_write_int8(struct robotraconteurlite_messageelement_writer* element_writer,
-                                                        const struct robotraconteurlite_string* element_name,
-                                                        int8_t value)
+robotraconteurlite_status robotraconteurlite_messageelement_writer_write_int8(
+    struct robotraconteurlite_messageelement_writer* element_writer,
+    const struct robotraconteurlite_string* element_name, int8_t value)
 {
     struct robotraconteurlite_array_int8 a;
     a.data = &value;
@@ -2146,7 +2151,7 @@ int robotraconteurlite_messageelement_writer_write_int8(struct robotraconteurlit
                                                               ROBOTRACONTEURLITE_DATATYPE_INT8, sizeof(int8_t));
 }
 
-int robotraconteurlite_messageelement_writer_write_int8_array(
+robotraconteurlite_status robotraconteurlite_messageelement_writer_write_int8_array(
     struct robotraconteurlite_messageelement_writer* element_writer,
     const struct robotraconteurlite_string* element_name, const struct robotraconteurlite_array_int8* value)
 {
@@ -2155,7 +2160,7 @@ int robotraconteurlite_messageelement_writer_write_int8_array(
                                                               ROBOTRACONTEURLITE_DATATYPE_INT8, sizeof(int8_t));
 }
 
-int robotraconteurlite_messageelement_writer_write_uint8(
+robotraconteurlite_status robotraconteurlite_messageelement_writer_write_uint8(
     struct robotraconteurlite_messageelement_writer* element_writer,
     const struct robotraconteurlite_string* element_name, uint8_t value)
 {
@@ -2167,7 +2172,7 @@ int robotraconteurlite_messageelement_writer_write_uint8(
                                                               ROBOTRACONTEURLITE_DATATYPE_UINT8, sizeof(uint8_t));
 }
 
-int robotraconteurlite_messageelement_writer_write_uint8_array(
+robotraconteurlite_status robotraconteurlite_messageelement_writer_write_uint8_array(
     struct robotraconteurlite_messageelement_writer* element_writer,
     const struct robotraconteurlite_string* element_name, const struct robotraconteurlite_array_uint8* value)
 {
@@ -2176,7 +2181,7 @@ int robotraconteurlite_messageelement_writer_write_uint8_array(
                                                               ROBOTRACONTEURLITE_DATATYPE_UINT8, sizeof(uint8_t));
 }
 
-int robotraconteurlite_messageelement_writer_write_int16(
+robotraconteurlite_status robotraconteurlite_messageelement_writer_write_int16(
     struct robotraconteurlite_messageelement_writer* element_writer,
     const struct robotraconteurlite_string* element_name, int16_t value)
 {
@@ -2188,7 +2193,7 @@ int robotraconteurlite_messageelement_writer_write_int16(
                                                               ROBOTRACONTEURLITE_DATATYPE_INT16, sizeof(int16_t));
 }
 
-int robotraconteurlite_messageelement_writer_write_int16_array(
+robotraconteurlite_status robotraconteurlite_messageelement_writer_write_int16_array(
     struct robotraconteurlite_messageelement_writer* element_writer,
     const struct robotraconteurlite_string* element_name, const struct robotraconteurlite_array_int16* value)
 {
@@ -2197,7 +2202,7 @@ int robotraconteurlite_messageelement_writer_write_int16_array(
                                                               ROBOTRACONTEURLITE_DATATYPE_INT16, sizeof(int16_t));
 }
 
-int robotraconteurlite_messageelement_writer_write_uint16(
+robotraconteurlite_status robotraconteurlite_messageelement_writer_write_uint16(
     struct robotraconteurlite_messageelement_writer* element_writer,
     const struct robotraconteurlite_string* element_name, uint16_t value)
 {
@@ -2209,7 +2214,7 @@ int robotraconteurlite_messageelement_writer_write_uint16(
                                                               ROBOTRACONTEURLITE_DATATYPE_UINT16, sizeof(uint16_t));
 }
 
-int robotraconteurlite_messageelement_writer_write_uint16_array(
+robotraconteurlite_status robotraconteurlite_messageelement_writer_write_uint16_array(
     struct robotraconteurlite_messageelement_writer* element_writer,
     const struct robotraconteurlite_string* element_name, const struct robotraconteurlite_array_uint16* value)
 {
@@ -2218,7 +2223,7 @@ int robotraconteurlite_messageelement_writer_write_uint16_array(
                                                               ROBOTRACONTEURLITE_DATATYPE_UINT16, sizeof(uint16_t));
 }
 
-int robotraconteurlite_messageelement_writer_write_int32(
+robotraconteurlite_status robotraconteurlite_messageelement_writer_write_int32(
     struct robotraconteurlite_messageelement_writer* element_writer,
     const struct robotraconteurlite_string* element_name, int32_t value)
 {
@@ -2230,7 +2235,7 @@ int robotraconteurlite_messageelement_writer_write_int32(
                                                               ROBOTRACONTEURLITE_DATATYPE_INT32, sizeof(int32_t));
 }
 
-int robotraconteurlite_messageelement_writer_write_int32_array(
+robotraconteurlite_status robotraconteurlite_messageelement_writer_write_int32_array(
     struct robotraconteurlite_messageelement_writer* element_writer,
     const struct robotraconteurlite_string* element_name, const struct robotraconteurlite_array_int32* value)
 {
@@ -2239,7 +2244,7 @@ int robotraconteurlite_messageelement_writer_write_int32_array(
                                                               ROBOTRACONTEURLITE_DATATYPE_INT32, sizeof(int32_t));
 }
 
-int robotraconteurlite_messageelement_writer_write_uint32(
+robotraconteurlite_status robotraconteurlite_messageelement_writer_write_uint32(
     struct robotraconteurlite_messageelement_writer* element_writer,
     const struct robotraconteurlite_string* element_name, uint32_t value)
 {
@@ -2251,7 +2256,7 @@ int robotraconteurlite_messageelement_writer_write_uint32(
                                                               ROBOTRACONTEURLITE_DATATYPE_UINT32, sizeof(uint32_t));
 }
 
-int robotraconteurlite_messageelement_writer_write_uint32_array(
+robotraconteurlite_status robotraconteurlite_messageelement_writer_write_uint32_array(
     struct robotraconteurlite_messageelement_writer* element_writer,
     const struct robotraconteurlite_string* element_name, const struct robotraconteurlite_array_uint32* value)
 {
@@ -2260,7 +2265,7 @@ int robotraconteurlite_messageelement_writer_write_uint32_array(
                                                               ROBOTRACONTEURLITE_DATATYPE_UINT32, sizeof(uint32_t));
 }
 
-int robotraconteurlite_messageelement_writer_write_int64(
+robotraconteurlite_status robotraconteurlite_messageelement_writer_write_int64(
     struct robotraconteurlite_messageelement_writer* element_writer,
     const struct robotraconteurlite_string* element_name, int64_t value)
 {
@@ -2272,7 +2277,7 @@ int robotraconteurlite_messageelement_writer_write_int64(
                                                               ROBOTRACONTEURLITE_DATATYPE_INT64, sizeof(int64_t));
 }
 
-int robotraconteurlite_messageelement_writer_write_int64_array(
+robotraconteurlite_status robotraconteurlite_messageelement_writer_write_int64_array(
     struct robotraconteurlite_messageelement_writer* element_writer,
     const struct robotraconteurlite_string* element_name, const struct robotraconteurlite_array_int64* value)
 {
@@ -2281,7 +2286,7 @@ int robotraconteurlite_messageelement_writer_write_int64_array(
                                                               ROBOTRACONTEURLITE_DATATYPE_INT64, sizeof(int64_t));
 }
 
-int robotraconteurlite_messageelement_writer_write_uint64(
+robotraconteurlite_status robotraconteurlite_messageelement_writer_write_uint64(
     struct robotraconteurlite_messageelement_writer* element_writer,
     const struct robotraconteurlite_string* element_name, uint64_t value)
 {
@@ -2293,7 +2298,7 @@ int robotraconteurlite_messageelement_writer_write_uint64(
                                                               ROBOTRACONTEURLITE_DATATYPE_UINT64, sizeof(uint64_t));
 }
 
-int robotraconteurlite_messageelement_writer_write_uint64_array(
+robotraconteurlite_status robotraconteurlite_messageelement_writer_write_uint64_array(
     struct robotraconteurlite_messageelement_writer* element_writer,
     const struct robotraconteurlite_string* element_name, const struct robotraconteurlite_array_uint64* value)
 {
@@ -2302,7 +2307,7 @@ int robotraconteurlite_messageelement_writer_write_uint64_array(
                                                               ROBOTRACONTEURLITE_DATATYPE_UINT64, sizeof(uint64_t));
 }
 
-int robotraconteurlite_messageelement_writer_write_cdouble(
+robotraconteurlite_status robotraconteurlite_messageelement_writer_write_cdouble(
     struct robotraconteurlite_messageelement_writer* element_writer,
     const struct robotraconteurlite_string* element_name, struct robotraconteurlite_cdouble value)
 {
@@ -2314,7 +2319,7 @@ int robotraconteurlite_messageelement_writer_write_cdouble(
         sizeof(struct robotraconteurlite_cdouble));
 }
 
-int robotraconteurlite_messageelement_writer_write_cdouble_array(
+robotraconteurlite_status robotraconteurlite_messageelement_writer_write_cdouble_array(
     struct robotraconteurlite_messageelement_writer* element_writer,
     const struct robotraconteurlite_string* element_name, const struct robotraconteurlite_array_cdouble* value)
 {
@@ -2323,7 +2328,7 @@ int robotraconteurlite_messageelement_writer_write_cdouble_array(
         sizeof(struct robotraconteurlite_cdouble));
 }
 
-int robotraconteurlite_messageelement_writer_write_csingle(
+robotraconteurlite_status robotraconteurlite_messageelement_writer_write_csingle(
     struct robotraconteurlite_messageelement_writer* element_writer,
     const struct robotraconteurlite_string* element_name, struct robotraconteurlite_csingle value)
 {
@@ -2335,7 +2340,7 @@ int robotraconteurlite_messageelement_writer_write_csingle(
         sizeof(struct robotraconteurlite_csingle));
 }
 
-int robotraconteurlite_messageelement_writer_write_csingle_array(
+robotraconteurlite_status robotraconteurlite_messageelement_writer_write_csingle_array(
     struct robotraconteurlite_messageelement_writer* element_writer,
     const struct robotraconteurlite_string* element_name, const struct robotraconteurlite_array_csingle* value)
 {
@@ -2344,9 +2349,9 @@ int robotraconteurlite_messageelement_writer_write_csingle_array(
         sizeof(struct robotraconteurlite_csingle));
 }
 
-int robotraconteurlite_messageelement_writer_write_bool(struct robotraconteurlite_messageelement_writer* element_writer,
-                                                        const struct robotraconteurlite_string* element_name,
-                                                        struct robotraconteurlite_bool value)
+robotraconteurlite_status robotraconteurlite_messageelement_writer_write_bool(
+    struct robotraconteurlite_messageelement_writer* element_writer,
+    const struct robotraconteurlite_string* element_name, struct robotraconteurlite_bool value)
 {
     struct robotraconteurlite_array_bool a;
     a.data = &value;
@@ -2356,7 +2361,7 @@ int robotraconteurlite_messageelement_writer_write_bool(struct robotraconteurlit
         sizeof(struct robotraconteurlite_bool));
 }
 
-int robotraconteurlite_messageelement_writer_write_bool_array(
+robotraconteurlite_status robotraconteurlite_messageelement_writer_write_bool_array(
     struct robotraconteurlite_messageelement_writer* element_writer,
     const struct robotraconteurlite_string* element_name, const struct robotraconteurlite_array_bool* value)
 {
@@ -2365,7 +2370,7 @@ int robotraconteurlite_messageelement_writer_write_bool_array(
         sizeof(struct robotraconteurlite_bool));
 }
 
-int robotraconteurlite_messageelement_writer_write_string(
+robotraconteurlite_status robotraconteurlite_messageelement_writer_write_string(
     struct robotraconteurlite_messageelement_writer* element_writer,
     const struct robotraconteurlite_string* element_name, const struct robotraconteurlite_string* value)
 {

@@ -140,29 +140,31 @@ struct robotraconteurlite_addr
     struct robotraconteurlite_string http_path;
 };
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_connection_reset(struct robotraconteurlite_connection* connection);
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status
+robotraconteurlite_connection_reset(struct robotraconteurlite_connection* connection);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_connection_verify_preamble(
-    struct robotraconteurlite_connection* connection, uint32_t* message_len);
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status
+robotraconteurlite_connection_verify_preamble(struct robotraconteurlite_connection* connection, uint32_t* message_len);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_connection_begin_send_message(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_connection_begin_send_message(
     struct robotraconteurlite_connection* connection, struct robotraconteurlite_message_writer* message_writer,
     struct robotraconteurlite_buffer_vec* buffer_storage);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_connection_end_send_message(
-    struct robotraconteurlite_connection* connection, size_t message_len);
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status
+robotraconteurlite_connection_end_send_message(struct robotraconteurlite_connection* connection, size_t message_len);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_connection_abort_send_message(
-    struct robotraconteurlite_connection* connection);
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status
+robotraconteurlite_connection_abort_send_message(struct robotraconteurlite_connection* connection);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_connection_message_receive(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_connection_message_receive(
     struct robotraconteurlite_connection* connection, struct robotraconteurlite_message_reader* message_reader,
     struct robotraconteurlite_buffer_vec* buffer_storage);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_connection_message_receive_consume(
-    struct robotraconteurlite_connection* connection);
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status
+robotraconteurlite_connection_message_receive_consume(struct robotraconteurlite_connection* connection);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_connection_close(struct robotraconteurlite_connection* connection);
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status
+robotraconteurlite_connection_close(struct robotraconteurlite_connection* connection);
 
 static int robotraconteurlite_connection_is_closed(struct robotraconteurlite_connection* connection)
 {
@@ -277,8 +279,8 @@ static int robotraconteurlite_connection_is_idle(struct robotraconteurlite_conne
     return (connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_IDLE) != 0U;
 }
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_connection_next_wake(struct robotraconteurlite_connection* connection,
-                                                                    robotraconteurlite_timespec now,
-                                                                    robotraconteurlite_timespec* next_wake);
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status
+robotraconteurlite_connection_next_wake(struct robotraconteurlite_connection* connection,
+                                        robotraconteurlite_timespec now, robotraconteurlite_timespec* next_wake);
 
 #endif /*ROBOTRACONTEURLITE_CONNECTION_H*/

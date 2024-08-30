@@ -284,298 +284,301 @@ struct robotraconteurlite_messageelement_writer
 
 /* Message Reader */
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_message_reader_init(struct robotraconteurlite_message_reader* reader,
-                                                                   struct robotraconteurlite_buffer_vec* buffer,
-                                                                   size_t offset, size_t count);
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status
+robotraconteurlite_message_reader_init(struct robotraconteurlite_message_reader* reader,
+                                       struct robotraconteurlite_buffer_vec* buffer, size_t offset, size_t count);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_message_reader_read_header(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_message_reader_read_header(
     struct robotraconteurlite_message_reader* reader, struct robotraconteurlite_message_header* header);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_message_reader_begin_read_entries(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_message_reader_begin_read_entries(
     struct robotraconteurlite_message_reader* reader, struct robotraconteurlite_messageentry_reader* entry_reader);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageentry_reader_move_next(
-    struct robotraconteurlite_messageentry_reader* entry_reader);
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status
+robotraconteurlite_messageentry_reader_move_next(struct robotraconteurlite_messageentry_reader* entry_reader);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageentry_reader_read_header(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_messageentry_reader_read_header(
     struct robotraconteurlite_messageentry_reader* entry_reader, struct robotraconteurlite_messageentry_header* header);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageentry_reader_begin_read_elements(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_messageentry_reader_begin_read_elements(
     struct robotraconteurlite_messageentry_reader* entry_reader,
     struct robotraconteurlite_messageelement_reader* element_reader);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageelement_reader_move_next(
-    struct robotraconteurlite_messageelement_reader* element_reader);
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status
+robotraconteurlite_messageelement_reader_move_next(struct robotraconteurlite_messageelement_reader* element_reader);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageentry_reader_find_element(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_messageentry_reader_find_element(
     struct robotraconteurlite_messageentry_reader* entry_reader, const struct robotraconteurlite_string* element_name,
     struct robotraconteurlite_messageelement_reader* element_reader);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageentry_reader_find_element_verify_scalar(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_messageentry_reader_find_element_verify_scalar(
     struct robotraconteurlite_messageentry_reader* entry_reader, const struct robotraconteurlite_string* element_name,
     struct robotraconteurlite_messageelement_reader* element_reader, uint16_t expected_data_type);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageentry_reader_find_element_verify_array(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_messageentry_reader_find_element_verify_array(
     struct robotraconteurlite_messageentry_reader* entry_reader, const struct robotraconteurlite_string* element_name,
     struct robotraconteurlite_messageelement_reader* element_reader, uint16_t expected_data_type, uint32_t expected_len,
     uint8_t var_length);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageentry_reader_find_element_verify_string(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_messageentry_reader_find_element_verify_string(
     struct robotraconteurlite_messageentry_reader* entry_reader, const struct robotraconteurlite_string* element_name,
     struct robotraconteurlite_messageelement_reader* element_reader, uint32_t expected_max_len);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageelement_reader_read_header(
-    struct robotraconteurlite_messageelement_reader* element_reader,
-    struct robotraconteurlite_messageelement_header* header);
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status
+robotraconteurlite_messageelement_reader_read_header(struct robotraconteurlite_messageelement_reader* element_reader,
+                                                     struct robotraconteurlite_messageelement_header* header);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageelement_reader_read_data_double_array(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_double_array(
     struct robotraconteurlite_messageelement_reader* element_reader, struct robotraconteurlite_array_double* array);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageelement_reader_read_data_double(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_double(
     struct robotraconteurlite_messageelement_reader* element_reader, double* value);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageelement_reader_read_data_single_array(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_single_array(
     struct robotraconteurlite_messageelement_reader* element_reader, struct robotraconteurlite_array_single* array);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageelement_reader_read_data_single(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_single(
     struct robotraconteurlite_messageelement_reader* element_reader, float* value);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageelement_reader_read_data_int8_array(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_int8_array(
     struct robotraconteurlite_messageelement_reader* element_reader, struct robotraconteurlite_array_int8* array);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageelement_reader_read_data_int8(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_int8(
     struct robotraconteurlite_messageelement_reader* element_reader, int8_t* value);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageelement_reader_read_data_uint8_array(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_uint8_array(
     struct robotraconteurlite_messageelement_reader* element_reader, struct robotraconteurlite_array_uint8* array);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageelement_reader_read_data_uint8(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_uint8(
     struct robotraconteurlite_messageelement_reader* element_reader, uint8_t* value);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageelement_reader_read_data_int16_array(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_int16_array(
     struct robotraconteurlite_messageelement_reader* element_reader, struct robotraconteurlite_array_int16* array);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageelement_reader_read_data_int16(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_int16(
     struct robotraconteurlite_messageelement_reader* element_reader, int16_t* value);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageelement_reader_read_data_uint16_array(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_uint16_array(
     struct robotraconteurlite_messageelement_reader* element_reader, struct robotraconteurlite_array_uint16* array);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageelement_reader_read_data_uint16(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_uint16(
     struct robotraconteurlite_messageelement_reader* element_reader, uint16_t* value);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageelement_reader_read_data_int32_array(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_int32_array(
     struct robotraconteurlite_messageelement_reader* element_reader, struct robotraconteurlite_array_int32* array);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageelement_reader_read_data_int32(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_int32(
     struct robotraconteurlite_messageelement_reader* element_reader, int32_t* value);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageelement_reader_read_data_uint32_array(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_uint32_array(
     struct robotraconteurlite_messageelement_reader* element_reader, struct robotraconteurlite_array_uint32* array);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageelement_reader_read_data_uint32(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_uint32(
     struct robotraconteurlite_messageelement_reader* element_reader, uint32_t* value);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageelement_reader_read_data_int64_array(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_int64_array(
     struct robotraconteurlite_messageelement_reader* element_reader, struct robotraconteurlite_array_int64* array);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageelement_reader_read_data_int64(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_int64(
     struct robotraconteurlite_messageelement_reader* element_reader, int64_t* value);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageelement_reader_read_data_uint64_array(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_uint64_array(
     struct robotraconteurlite_messageelement_reader* element_reader, struct robotraconteurlite_array_uint64* array);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageelement_reader_read_data_uint64(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_uint64(
     struct robotraconteurlite_messageelement_reader* element_reader, uint64_t* value);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageelement_reader_read_data_cdouble_array(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_cdouble_array(
     struct robotraconteurlite_messageelement_reader* element_reader, struct robotraconteurlite_array_cdouble* array);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageelement_reader_read_data_cdouble(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_cdouble(
     struct robotraconteurlite_messageelement_reader* element_reader, struct robotraconteurlite_cdouble* value);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageelement_reader_read_data_csingle_array(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_csingle_array(
     struct robotraconteurlite_messageelement_reader* element_reader,
     struct robotraconteurlite_array_csingle* dest_array);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageelement_reader_read_data_csingle(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_csingle(
     struct robotraconteurlite_messageelement_reader* element_reader, struct robotraconteurlite_csingle* value);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageelement_reader_read_data_bool_array(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_bool_array(
     struct robotraconteurlite_messageelement_reader* element_reader, struct robotraconteurlite_array_bool* dest_array);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageelement_reader_read_data_bool(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_bool(
     struct robotraconteurlite_messageelement_reader* element_reader, struct robotraconteurlite_bool* value);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageelement_reader_read_data_string(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_string(
     struct robotraconteurlite_messageelement_reader* element_reader, struct robotraconteurlite_string* dest_str);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageelement_reader_begin_read_nested_elements(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_messageelement_reader_begin_read_nested_elements(
     struct robotraconteurlite_messageelement_reader* element_reader,
     struct robotraconteurlite_messageelement_reader* nested_element_reader);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageelement_reader_find_nested_element(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_messageelement_reader_find_nested_element(
     struct robotraconteurlite_messageelement_reader* element_reader,
     const struct robotraconteurlite_string* nested_element_name,
     struct robotraconteurlite_messageelement_reader* nested_element_reader);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageelement_reader_find_nested_element_verify_scalar(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status
+robotraconteurlite_messageelement_reader_find_nested_element_verify_scalar(
     struct robotraconteurlite_messageelement_reader* element_reader,
     const struct robotraconteurlite_string* nested_element_name,
     struct robotraconteurlite_messageelement_reader* nested_element_reader, uint16_t expected_data_type);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageelement_reader_find_nested_element_verify_array(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status
+robotraconteurlite_messageelement_reader_find_nested_element_verify_array(
     struct robotraconteurlite_messageelement_reader* element_reader,
     const struct robotraconteurlite_string* nested_element_name,
     struct robotraconteurlite_messageelement_reader* nested_element_reader, uint16_t expected_data_type,
     uint32_t expected_len, uint8_t var_length);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageelement_reader_find_nested_element_verify_string(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status
+robotraconteurlite_messageelement_reader_find_nested_element_verify_string(
     struct robotraconteurlite_messageelement_reader* element_reader,
     const struct robotraconteurlite_string* nested_element_name,
     struct robotraconteurlite_messageelement_reader* nested_element_reader, uint32_t expected_max_len);
 
 /* Message Writer */
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_message_writer_init(struct robotraconteurlite_message_writer* writer,
-                                                                   struct robotraconteurlite_buffer_vec* buffer,
-                                                                   size_t offset, size_t count);
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status
+robotraconteurlite_message_writer_init(struct robotraconteurlite_message_writer* writer,
+                                       struct robotraconteurlite_buffer_vec* buffer, size_t offset, size_t count);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_message_writer_begin_message(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_message_writer_begin_message(
     struct robotraconteurlite_message_writer* writer, struct robotraconteurlite_message_header* header,
     struct robotraconteurlite_messageentry_writer* entry_writer);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_message_writer_end_message(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_message_writer_end_message(
     struct robotraconteurlite_message_writer* writer, struct robotraconteurlite_message_header* header,
     struct robotraconteurlite_messageentry_writer* entry_writer);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageentry_writer_begin_entry(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_messageentry_writer_begin_entry(
     struct robotraconteurlite_messageentry_writer* entry_writer, struct robotraconteurlite_messageentry_header* header,
     struct robotraconteurlite_messageelement_writer* element_writer);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageentry_writer_end_entry(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_messageentry_writer_end_entry(
     struct robotraconteurlite_messageentry_writer* entry_writer, struct robotraconteurlite_messageentry_header* header,
     struct robotraconteurlite_messageelement_writer* element_writer);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageelement_writer_begin_nested_element(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_messageelement_writer_begin_nested_element(
     struct robotraconteurlite_messageelement_writer* element_writer,
     struct robotraconteurlite_messageelement_header* header,
     struct robotraconteurlite_messageelement_writer* nested_element_writer);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageelement_writer_end_nested_element(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_messageelement_writer_end_nested_element(
     struct robotraconteurlite_messageelement_writer* element_writer,
     struct robotraconteurlite_messageelement_header* header,
     struct robotraconteurlite_messageelement_writer* nested_element_writer);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageelement_writer_write_double(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_messageelement_writer_write_double(
     struct robotraconteurlite_messageelement_writer* element_writer,
     const struct robotraconteurlite_string* element_name, double value);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageelement_writer_write_double_array(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_messageelement_writer_write_double_array(
     struct robotraconteurlite_messageelement_writer* element_writer,
     const struct robotraconteurlite_string* element_name, const struct robotraconteurlite_array_double* value);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageelement_writer_write_single(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_messageelement_writer_write_single(
     struct robotraconteurlite_messageelement_writer* element_writer,
     const struct robotraconteurlite_string* element_name, float value);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageelement_writer_write_single_array(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_messageelement_writer_write_single_array(
     struct robotraconteurlite_messageelement_writer* element_writer,
     const struct robotraconteurlite_string* element_name, const struct robotraconteurlite_array_single* value);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageelement_writer_write_int8(
-    struct robotraconteurlite_messageelement_writer* element_writer,
-    const struct robotraconteurlite_string* element_name, int8_t value);
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status
+robotraconteurlite_messageelement_writer_write_int8(struct robotraconteurlite_messageelement_writer* element_writer,
+                                                    const struct robotraconteurlite_string* element_name, int8_t value);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageelement_writer_write_int8_array(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_messageelement_writer_write_int8_array(
     struct robotraconteurlite_messageelement_writer* element_writer,
     const struct robotraconteurlite_string* element_name, const struct robotraconteurlite_array_int8* value);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageelement_writer_write_uint8(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_messageelement_writer_write_uint8(
     struct robotraconteurlite_messageelement_writer* element_writer,
     const struct robotraconteurlite_string* element_name, uint8_t value);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageelement_writer_write_uint8_array(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_messageelement_writer_write_uint8_array(
     struct robotraconteurlite_messageelement_writer* element_writer,
     const struct robotraconteurlite_string* element_name, const struct robotraconteurlite_array_uint8* value);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageelement_writer_write_int16(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_messageelement_writer_write_int16(
     struct robotraconteurlite_messageelement_writer* element_writer,
     const struct robotraconteurlite_string* element_name, int16_t value);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageelement_writer_write_int16_array(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_messageelement_writer_write_int16_array(
     struct robotraconteurlite_messageelement_writer* element_writer,
     const struct robotraconteurlite_string* element_name, const struct robotraconteurlite_array_int16* value);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageelement_writer_write_uint16(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_messageelement_writer_write_uint16(
     struct robotraconteurlite_messageelement_writer* element_writer,
     const struct robotraconteurlite_string* element_name, uint16_t value);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageelement_writer_write_uint16_array(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_messageelement_writer_write_uint16_array(
     struct robotraconteurlite_messageelement_writer* element_writer,
     const struct robotraconteurlite_string* element_name, const struct robotraconteurlite_array_uint16* value);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageelement_writer_write_int32(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_messageelement_writer_write_int32(
     struct robotraconteurlite_messageelement_writer* element_writer,
     const struct robotraconteurlite_string* element_name, int32_t value);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageelement_writer_write_int32_array(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_messageelement_writer_write_int32_array(
     struct robotraconteurlite_messageelement_writer* element_writer,
     const struct robotraconteurlite_string* element_name, const struct robotraconteurlite_array_int32* value);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageelement_writer_write_uint32(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_messageelement_writer_write_uint32(
     struct robotraconteurlite_messageelement_writer* element_writer,
     const struct robotraconteurlite_string* element_name, uint32_t value);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageelement_writer_write_uint32_array(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_messageelement_writer_write_uint32_array(
     struct robotraconteurlite_messageelement_writer* element_writer,
     const struct robotraconteurlite_string* element_name, const struct robotraconteurlite_array_uint32* value);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageelement_writer_write_int64(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_messageelement_writer_write_int64(
     struct robotraconteurlite_messageelement_writer* element_writer,
     const struct robotraconteurlite_string* element_name, int64_t value);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageelement_writer_write_int64_array(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_messageelement_writer_write_int64_array(
     struct robotraconteurlite_messageelement_writer* element_writer,
     const struct robotraconteurlite_string* element_name, const struct robotraconteurlite_array_int64* value);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageelement_writer_write_uint64(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_messageelement_writer_write_uint64(
     struct robotraconteurlite_messageelement_writer* element_writer,
     const struct robotraconteurlite_string* element_name, uint64_t value);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageelement_writer_write_uint64_array(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_messageelement_writer_write_uint64_array(
     struct robotraconteurlite_messageelement_writer* element_writer,
     const struct robotraconteurlite_string* element_name, const struct robotraconteurlite_array_uint64* value);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageelement_writer_write_cdouble(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_messageelement_writer_write_cdouble(
     struct robotraconteurlite_messageelement_writer* element_writer,
     const struct robotraconteurlite_string* element_name, struct robotraconteurlite_cdouble value);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageelement_writer_write_cdouble_array(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_messageelement_writer_write_cdouble_array(
     struct robotraconteurlite_messageelement_writer* element_writer,
     const struct robotraconteurlite_string* element_name, const struct robotraconteurlite_array_cdouble* value);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageelement_writer_write_csingle(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_messageelement_writer_write_csingle(
     struct robotraconteurlite_messageelement_writer* element_writer,
     const struct robotraconteurlite_string* element_name, struct robotraconteurlite_csingle value);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageelement_writer_write_csingle_array(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_messageelement_writer_write_csingle_array(
     struct robotraconteurlite_messageelement_writer* element_writer,
     const struct robotraconteurlite_string* element_name, const struct robotraconteurlite_array_csingle* value);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageelement_writer_write_bool(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_messageelement_writer_write_bool(
     struct robotraconteurlite_messageelement_writer* element_writer,
     const struct robotraconteurlite_string* element_name, struct robotraconteurlite_bool value);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageelement_writer_write_bool_array(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_messageelement_writer_write_bool_array(
     struct robotraconteurlite_messageelement_writer* element_writer,
     const struct robotraconteurlite_string* element_name, const struct robotraconteurlite_array_bool* value);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_messageelement_writer_write_string(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_messageelement_writer_write_string(
     struct robotraconteurlite_messageelement_writer* element_writer,
     const struct robotraconteurlite_string* element_name, const struct robotraconteurlite_string* value);
 
-static int robotraconteurlite_messageelement_writer_write_string_c_str(
+static robotraconteurlite_status robotraconteurlite_messageelement_writer_write_string_c_str(
     struct robotraconteurlite_messageelement_writer* element_writer, const char* element_name, const char* value)
 {
     struct robotraconteurlite_string element_name_str;
