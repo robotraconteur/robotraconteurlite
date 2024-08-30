@@ -12,6 +12,19 @@
 #define inline
 #include <cmocka.h>
 
+static int cmp_double(const double* a, const double* b, size_t len)
+{
+    size_t i = 0;
+    for (i = 0; i < len; i++)
+    {
+        if (a[i] != b[i])
+        {
+            return 1;
+        }
+    }
+    return 0;
+}
+
 void robotraconteurlite_arraytest_buffer(void** state)
 {
     uint8_t a[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
@@ -291,17 +304,17 @@ void robotraconteurlite_buffer_copy_to_double_test(void** state)
 
     assert_return_code(robotraconteurlite_buffer_vec_copy_from_double_array(&buf_vec, 32, &doubles, 10, 15), 0);
 
-    assert_true(memcmp(a1 + 10, buf_data + 32, 15 * sizeof(double)) == 0);
+    assert_true(cmp_double(a1 + 10, (double*)(buf_data + 32), 15) == 0);
 
     doubles2.data = a2;
     doubles2.len = sizeof(a2) / sizeof(double);
 
     assert_return_code(robotraconteurlite_buffer_vec_copy_to_double_array(&buf_vec, 32, &doubles2, 12, 12), 0);
 
-    assert_true(memcmp(a1 + 10, a2 + 12, 12 * sizeof(double)) == 0);
+    assert_true(cmp_double(a1 + 10, a2 + 12, 12) == 0);
 
     robotraconteurlite_buffer_vec_copy_from_double(&buf_vec, 128, d1);
-    assert_true(memcmp(&d1, buf_data + 128, sizeof(double)) == 0);
+    assert_true(cmp_double(&d1, (double*)(buf_data + 128), 1) == 0);
     robotraconteurlite_buffer_vec_copy_to_double(&buf_vec, 40, &d2);
     assert_true(d2 == 11.0);
 }

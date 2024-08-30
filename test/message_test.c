@@ -63,6 +63,60 @@ uint8_t message2[] = {
     0,   0,   0,   1,   0,   0,   0,   92,  143, 194, 245, 40,  44,  69,  64,  22,  0,   0,   0,   1,   0,   0,   0,
     0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0};
 
+static int cmp_double(const double* a, const double* b, size_t len)
+{
+    size_t i = 0;
+    for (i = 0; i < len; i++)
+    {
+        if (a[i] != b[i])
+        {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+static int cmp_float(const float* a, const float* b, size_t len)
+{
+    size_t i = 0;
+    for (i = 0; i < len; i++)
+    {
+        if (a[i] != b[i])
+        {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+static int cmp_cdouble(const struct robotraconteurlite_cdouble* a, const struct robotraconteurlite_cdouble* b,
+                       size_t len)
+{
+    size_t i = 0;
+    for (i = 0; i < len; i++)
+    {
+        if (a[i].real != b[i].real || a[i].imag != b[i].imag)
+        {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+static int cmp_csingle(const struct robotraconteurlite_csingle* a, const struct robotraconteurlite_csingle* b,
+                       size_t len)
+{
+    size_t i = 0;
+    for (i = 0; i < len; i++)
+    {
+        if (a[i].real != b[i].real || a[i].imag != b[i].imag)
+        {
+            return 1;
+        }
+    }
+    return 0;
+}
+
 void robotraconteurlite_message_reader_basictest(void** state)
 {
     struct robotraconteurlite_buffer buffer1;
@@ -298,8 +352,7 @@ void robotraconteurlite_message_reader_basictest(void** state)
                                    &nested_element1_reader, &nested_element1_read_data),
                                0);
             assert_true(nested_element1_read_data.len == 4);
-            assert_true(memcmp(nested_element1_read_data_storage, nested_element1_expected_data,
-                               sizeof(nested_element1_expected_data)) == 0);
+            assert_true(cmp_double(nested_element1_read_data_storage, nested_element1_expected_data, 4) == 0);
         }
 
         {
@@ -325,8 +378,8 @@ void robotraconteurlite_message_reader_basictest(void** state)
                                    &nested_element2_reader, &nested_element2_read_data),
                                0);
             assert_true(nested_element2_read_data.len == 4);
-            assert_true(memcmp(nested_element2_read_data_storage, nested_element2_expected_data,
-                               sizeof(nested_element2_expected_data)) == 0);
+            assert_true(cmp_float(nested_element2_read_data_storage, nested_element2_expected_data,
+                                  sizeof(nested_element2_expected_data)) == 0);
         }
 
         {
@@ -597,8 +650,7 @@ void robotraconteurlite_message_reader_basictest(void** state)
                                    &nested_element12_reader, &nested_element12_read_data),
                                0);
             assert_true(nested_element12_read_data.len == 4);
-            assert_true(memcmp(nested_element12_read_data_storage, nested_element12_expected_data,
-                               sizeof(nested_element12_expected_data)) == 0);
+            assert_true(cmp_cdouble(nested_element12_read_data_storage, nested_element12_expected_data, 4) == 0);
         }
 
         {
@@ -625,8 +677,7 @@ void robotraconteurlite_message_reader_basictest(void** state)
                                    &nested_element13_reader, &nested_element13_read_data),
                                0);
             assert_true(nested_element13_read_data.len == 4);
-            assert_true(memcmp(nested_element13_read_data_storage, nested_element13_expected_data,
-                               sizeof(nested_element13_expected_data)) == 0);
+            assert_true(cmp_csingle(nested_element13_read_data_storage, nested_element13_expected_data, 4) == 0);
         }
 
         {
