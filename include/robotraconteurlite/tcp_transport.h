@@ -18,7 +18,7 @@
 
 #include "robotraconteurlite/node.h"
 
-#define ROBOTRACONTEURLITE_TCP_TRANSPORT 0x10001
+#define ROBOTRACONTEURLITE_TCP_TRANSPORT 0x10001U
 
 /* robotraconteurlite_tcp_transport_state */
 #define ROBOTRACONTEURLITE_TCP_TRANSPORT_STATE_NULL 0U

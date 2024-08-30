@@ -76,7 +76,7 @@ int robotraconteurlite_buffer_copy(const struct robotraconteurlite_buffer* sourc
     assert(dest != NULL);
     assert(dest->data != NULL);
 
-    if (count == 0)
+    if (count == 0U)
     {
         return ROBOTRACONTEURLITE_ERROR_SUCCESS;
     }
@@ -111,7 +111,7 @@ int robotraconteurlite_buffer_vec_copy_vec(const struct robotraconteurlite_buffe
     assert(source->buffer_vec != NULL);
     assert(dest->buffer_vec != NULL);
 
-    if (source->buffer_vec_cnt == 1 && dest->buffer_vec_cnt == 1)
+    if (source->buffer_vec_cnt == 1U && dest->buffer_vec_cnt == 1U)
     {
         return robotraconteurlite_buffer_copy(&source->buffer_vec[0], source_pos, &dest->buffer_vec[0], dest_pos,
                                               count);
@@ -162,19 +162,19 @@ int robotraconteurlite_buffer_vec_copy_vec(const struct robotraconteurlite_buffe
     }
 
     count_remaining = count;
-    while (count_remaining > 0)
+    while (count_remaining > 0U)
     {
         size_t source_i_delta = source->buffer_vec[source_i].len - source_i_pos;
         size_t dest_i_delta = dest->buffer_vec[dest_i].len - dest_i_pos;
         size_t delta = 0;
 
-        if (source_i_delta <= 0)
+        if (source_i_delta <= 0U)
         {
             source_i++;
             source_i_pos = 0;
             continue;
         }
-        if (dest_i_delta <= 0)
+        if (dest_i_delta <= 0U)
         {
             dest_i++;
             dest_i_pos = 0;
@@ -207,7 +207,7 @@ int robotraconteurlite_buffer_copy_ex(const struct robotraconteurlite_buffer* so
     assert(dest != NULL);
     assert(dest->data != NULL);
 
-    if (source_count == 0 && dest_count == 0)
+    if (source_count == 0U && dest_count == 0U)
     {
         return ROBOTRACONTEURLITE_ERROR_SUCCESS;
     }
@@ -251,7 +251,7 @@ int robotraconteurlite_buffer_vec_copy_vec_ex(const struct robotraconteurlite_bu
     assert(source->buffer_vec != NULL);
     assert(dest->buffer_vec != NULL);
 
-    if (source->buffer_vec_cnt == 1 && dest->buffer_vec_cnt == 1)
+    if (source->buffer_vec_cnt == 1U && dest->buffer_vec_cnt == 1U)
     {
         return robotraconteurlite_buffer_copy_ex(&source->buffer_vec[0], source_pos, source_elem_size, source_count,
                                                  &dest->buffer_vec[0], dest_pos, dest_elem_size, dest_count);
@@ -310,19 +310,19 @@ int robotraconteurlite_buffer_vec_copy_vec_ex(const struct robotraconteurlite_bu
     }
 
     bytes_remaining = source_count * source_elem_size;
-    while (bytes_remaining > 0)
+    while (bytes_remaining > 0U)
     {
         size_t source_i_delta = (source->buffer_vec[source_i].len * source_elem_size) - source_i_byte_pos;
         size_t dest_i_delta = (dest->buffer_vec[dest_i].len * dest_elem_size) - dest_i_byte_pos;
         size_t delta = 0;
 
-        if (source_i_delta <= 0)
+        if (source_i_delta <= 0U)
         {
             source_i++;
             source_i_byte_pos = 0;
             continue;
         }
-        if (dest_i_delta <= 0)
+        if (dest_i_delta <= 0U)
         {
             dest_i++;
             dest_i_byte_pos = 0;
@@ -1124,7 +1124,7 @@ int robotraconteurlite_string_cmp(const struct robotraconteurlite_string* str1,
     assert(str1->data != NULL);
     assert(str2->data != NULL);
 
-    if (str1->len == 0 && str2->len == 0)
+    if (str1->len == 0U && str2->len == 0U)
     {
         return 0;
     }
@@ -1171,7 +1171,7 @@ int robotraconteurlite_string_copy_to(const struct robotraconteurlite_string* so
 
     assert(source != NULL);
     assert(dest != NULL);
-    if (source->len == 0)
+    if (source->len == 0U)
     {
         dest->len = 0;
         return ROBOTRACONTEURLITE_ERROR_SUCCESS;
