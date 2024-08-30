@@ -497,13 +497,13 @@ int robotraconteurlite_node_abort_send_messageentry(struct robotraconteurlite_no
 
 int robotraconteurlite_node_send_messageentry_empty_response(
     struct robotraconteurlite_node* node, struct robotraconteurlite_connection* connection,
-    struct robotraconteurlite_messageentry_header* recv_message_header)
+    struct robotraconteurlite_messageentry_header* request_message_entry_header)
 {
     struct robotraconteurlite_node_send_messageentry_data send_data;
     struct robotraconteurlite_messageentry_header send_message_header;
     int ret = -1;
     memset(&send_data, 0, sizeof(struct robotraconteurlite_node_send_messageentry_data));
-    memcpy(&send_message_header, recv_message_header, sizeof(struct robotraconteurlite_messageentry_header));
+    memcpy(&send_message_header, request_message_entry_header, sizeof(struct robotraconteurlite_messageentry_header));
     send_message_header.entry_type++;
     send_data.node = node;
     send_data.connection = connection;
