@@ -171,7 +171,7 @@ int robotraconteurlite_node_next_event(struct robotraconteurlite_node* node, str
         if (c->heartbeat_next_check_ms < now)
         {
             int heartbeat_ret = -1;
-            c->heartbeat_next_check_ms = now + ((uint64_t)c->heartbeat_period_ms);
+            c->heartbeat_next_check_ms = now + c->heartbeat_period_ms;
 
             heartbeat_ret = robotraconteurlite_connection_is_heartbeat_timeout(c, now);
 

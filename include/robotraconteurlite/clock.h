@@ -21,10 +21,10 @@
 
 struct robotraconteurlite_clock
 {
-    uint64_t clock_epoch_offset;
+    int64_t clock_epoch_offset;
 };
 
-typedef uint64_t robotraconteurlite_timespec;
+typedef int64_t robotraconteurlite_timespec;
 
 ROBOTRACONTEURLITE_DECL int robotraconteurlite_clock_init(struct robotraconteurlite_clock* clock);
 
