@@ -501,17 +501,17 @@ ROBOTRACONTEURLITE_DECL int robotraconteurlite_string_cmp(const struct robotraco
 static int robotraconteurlite_string_cmp_c_str(const struct robotraconteurlite_string* str1, const char* str2)
 {
     size_t strlen_str2 = strlen(str2);
-    if (strlen_str2 == 0 && str1->len == 0)
+    if (strlen_str2 == 0U && str1->len == 0U)
     {
         return 0;
     }
 
-    if (str1->len == 0)
+    if (str1->len == 0U)
     {
         return -1;
     }
 
-    if (strlen_str2 == 0)
+    if (strlen_str2 == 0U)
     {
         return 1;
     }

@@ -253,7 +253,7 @@ static int robotraconteurlite_node_event_special_request_handle_error(struct rob
 int robotraconteurlite_node_event_special_request(struct robotraconteurlite_node* node,
                                                   struct robotraconteurlite_event* event)
 {
-    if (event->received_message.received_message_entry_header.entry_type > 500)
+    if (event->received_message.received_message_entry_header.entry_type > 500U)
     {
         /* Special requests are below entry type 500 */
         return ROBOTRACONTEURLITE_ERROR_SUCCESS;
@@ -272,7 +272,7 @@ int robotraconteurlite_node_event_special_request(struct robotraconteurlite_node
         if ((robotraconteurlite_string_cmp_c_str(&event->received_message.received_message_entry_header.member_name,
                                                  "CreateConnection") == 0) &&
             robotraconteurlite_connection_is_server(event->connection) &&
-            ((event->connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_ESTABLISHED) == 0))
+            ((event->connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_ESTABLISHED) == 0U))
         {
             int ret = -1;
             /* TODO: Check the incoming target address and sender address */
@@ -305,7 +305,7 @@ int robotraconteurlite_node_event_special_request(struct robotraconteurlite_node
     }
     case ROBOTRACONTEURLITE_MESSAGEENTRYTYPE_CONNECTCLIENT: {
         int ret = -1;
-        if (event->connection->local_endpoint == 0)
+        if (event->connection->local_endpoint == 0U)
         {
             event->connection->local_endpoint = (uint32_t)rand();
         }
@@ -352,7 +352,7 @@ int robotraconteurlite_node_event_special_request(struct robotraconteurlite_node
         if ((robotraconteurlite_string_cmp_c_str(&event->received_message.received_message_entry_header.member_name,
                                                  "CreateConnection") == 0) &&
             !robotraconteurlite_connection_is_server(event->connection) &&
-            ((event->connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_ESTABLISHED) == 0))
+            ((event->connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_ESTABLISHED) == 0U))
         {
             int ret = -1;
             robotraconteurlite_nodeid_copy_to(&event->received_message.received_message_header.sender_nodeid,
@@ -371,7 +371,7 @@ int robotraconteurlite_node_event_special_request(struct robotraconteurlite_node
 
     case ROBOTRACONTEURLITE_MESSAGEENTRYTYPE_CONNECTCLIENTRET: {
         if (!robotraconteurlite_connection_is_server(event->connection) &&
-            ((event->connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_CLIENT_ESTABLISHED) == 0))
+            ((event->connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_CLIENT_ESTABLISHED) == 0U))
         {
             event->connection->remote_endpoint = event->received_message.received_message_header.sender_endpoint;
 
@@ -396,7 +396,7 @@ int robotraconteurlite_node_event_special_request(struct robotraconteurlite_node
     }
 
     /* If message is odd, it is a request, respond with error. Otherwise pass it on to the client */
-    if (event->received_message.received_message_entry_header.entry_type % 2 == 1)
+    if (event->received_message.received_message_entry_header.entry_type % 2U == 1U)
     {
         int ret = robotraconteurlite_connection_send_messageentry_error_response(
             node, event->connection, &event->received_message.received_message_entry_header,
@@ -819,12 +819,12 @@ int robotraconteurlite_client_is_connected(struct robotraconteurlite_node* node,
                                            struct robotraconteurlite_connection* connection)
 {
     ROBOTRACONTEURLITE_UNUSED(node);
-    if ((connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_ERROR) != 0)
+    if ((connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_ERROR) != 0U)
     {
         return ROBOTRACONTEURLITE_ERROR_CONNECTION_ERROR;
     }
 
-    if ((connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTED) == 0)
+    if ((connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTED) == 0U)
     {
         return ROBOTRACONTEURLITE_ERROR_RETRY;
     }
@@ -938,7 +938,7 @@ int robotraconteurlite_client_handshake(struct robotraconteurlite_client_handsha
                     return robotraconteurlite_client_handshake_error(handshake_data);
                 }
                 /* Set to connection "connected" connection_state flag if still connecting */
-                if ((handshake_data->connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTING) != 0)
+                if ((handshake_data->connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTING) != 0U)
                 {
                     handshake_data->connection->connection_state &= ~ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTING;
                     handshake_data->connection->connection_state |= ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTED;
@@ -1028,7 +1028,7 @@ int robotraconteurlite_client_handshake(struct robotraconteurlite_client_handsha
     case ROBOTRACONTEURLITE_CLIENT_HANDSHAKE_INIT: {
         struct robotraconteurlite_node_send_messageentry_data send_data;
         uint32_t old_connection_state = 0;
-        if (handshake_data->connection->local_endpoint == 0)
+        if (handshake_data->connection->local_endpoint == 0U)
         {
             handshake_data->connection->local_endpoint = rand();
         }
@@ -1142,7 +1142,7 @@ int robotraconteurlite_client_end_request(struct robotraconteurlite_node_send_me
     }
     if (event->received_message.received_message_entry_header.request_id == send_data->message_entry_header->request_id)
     {
-        if (event->received_message.received_message_entry_header.error != 0)
+        if (event->received_message.received_message_entry_header.error != 0U)
         {
             return ROBOTRACONTEURLITE_ERROR_REQUEST_REMOTE_ERROR;
         }

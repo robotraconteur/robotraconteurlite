@@ -320,7 +320,7 @@ int robotraconteurlite_tcp_connection_poll_add_fd(struct robotraconteurlite_conn
 {
     int i = 0;
     short extra_events = 0;
-    if (((connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_IDLE) != 0) || connection->sock < 0)
+    if (((connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_IDLE) != 0U) || connection->sock < 0)
     {
         return ROBOTRACONTEURLITE_ERROR_SUCCESS;
     }

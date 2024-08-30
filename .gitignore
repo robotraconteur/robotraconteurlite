@@ -354,3 +354,6 @@ build/
 generated_src/
 generated_src
 out/
+
+*.ctu-info
+*.dump
