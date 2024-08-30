@@ -365,8 +365,8 @@ int robotraconteurlite_buffer_vec_copy_from_double_array(const struct robotracon
                                                          size_t source_pos, size_t source_count)
 {
     struct robotraconteurlite_buffer_vec source_vec;
-    source_vec.buffer_vec = (struct robotraconteurlite_buffer*)source;
     memset(&source_vec, 0, sizeof(source_vec));
+    source_vec.buffer_vec = (struct robotraconteurlite_buffer*)source;
     source_vec.buffer_vec_cnt = 1;
     return robotraconteurlite_buffer_vec_copy_vec_ex(&source_vec, source_pos, sizeof(double), source_count, dest_buf,
                                                      dest_buf_pos, 1, source_count * sizeof(double));
@@ -419,8 +419,8 @@ int robotraconteurlite_buffer_vec_copy_from_single_array(const struct robotracon
                                                          size_t source_pos, size_t source_count)
 {
     struct robotraconteurlite_buffer_vec source_vec;
-    source_vec.buffer_vec = (struct robotraconteurlite_buffer*)source;
     memset(&source_vec, 0, sizeof(source_vec));
+    source_vec.buffer_vec = (struct robotraconteurlite_buffer*)source;
     source_vec.buffer_vec_cnt = 1;
     return robotraconteurlite_buffer_vec_copy_vec_ex(&source_vec, source_pos, sizeof(float), source_count, dest_buf,
                                                      dest_buf_pos, 1, source_count * sizeof(float));
@@ -473,8 +473,8 @@ int robotraconteurlite_buffer_vec_copy_from_int8_array(const struct robotraconte
                                                        size_t source_pos, size_t source_count)
 {
     struct robotraconteurlite_buffer_vec source_vec;
-    source_vec.buffer_vec = (struct robotraconteurlite_buffer*)source;
     memset(&source_vec, 0, sizeof(source_vec));
+    source_vec.buffer_vec = (struct robotraconteurlite_buffer*)source;
     source_vec.buffer_vec_cnt = 1;
     return robotraconteurlite_buffer_vec_copy_vec_ex(&source_vec, source_pos, sizeof(int8_t), source_count, dest_buf,
                                                      dest_buf_pos, 1, source_count * sizeof(int8_t));
