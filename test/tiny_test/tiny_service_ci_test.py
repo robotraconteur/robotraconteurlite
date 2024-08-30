@@ -3,10 +3,11 @@ import sys
 from pathlib import Path
 import time
 import signal
+import os
 
 script_dir = Path(__file__).parent
 repo_dir = script_dir.parent.parent.absolute()
-examples_build_dir = (repo_dir / "build" / "examples").absolute()
+examples_build_dir = Path(os.environ.get("RRLITE_EXAMPLES_BUILD_DIR", (repo_dir / "build" / "examples").absolute()))
 print(examples_build_dir)
 
 py_dir = (repo_dir / "examples" / "tiny_service").absolute()
