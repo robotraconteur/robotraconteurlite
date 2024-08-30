@@ -24,7 +24,7 @@ jobs:
       run: |
         mkdir -p build
         cd build
-        cmake ..
+        cmake -DRUN_TINY_TESTS=ON ..
     - name: make
       working-directory: build
       run: make -j2
