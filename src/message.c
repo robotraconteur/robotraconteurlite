@@ -1259,9 +1259,9 @@ int robotraconteurlite_messageelement_reader_find_nested_element(
             do
             {
                 uint16_t str_read = (uint16_t)(str_len <= temp_str.len ? str_len : temp_str.len);
-                rv = robotraconteurlite_buffer_vec_copy_to_string(nested_element_reader->buffer,
-                                                                  nested_element_reader->buffer_offset + 6U + str_offset,
-                                                                  &temp_str, 0, str_read);
+                rv = robotraconteurlite_buffer_vec_copy_to_string(
+                    nested_element_reader->buffer, nested_element_reader->buffer_offset + 6U + str_offset, &temp_str, 0,
+                    str_read);
                 if (rv < 0)
                 {
                     return rv;
@@ -1532,7 +1532,8 @@ int robotraconteurlite_message_writer_begin_message(struct robotraconteurlite_me
         return rv;
     }
 
-    rv = robotraconteurlite_buffer_vec_copy_from_uint16(writer->buffer, writer->buffer_offset + 52U, (uint16_t)str1_len);
+    rv =
+        robotraconteurlite_buffer_vec_copy_from_uint16(writer->buffer, writer->buffer_offset + 52U, (uint16_t)str1_len);
     if (rv < 0)
     {
         return rv;
@@ -1633,8 +1634,9 @@ int robotraconteurlite_message_writer_end_message(struct robotraconteurlite_mess
         return rv;
     }
 
-    rv = robotraconteurlite_buffer_vec_copy_from_uint16(writer->buffer, writer->buffer_offset + header->header_size - 6U,
-                                                        (uint16_t)entry_writer->entries_written_count);
+    rv =
+        robotraconteurlite_buffer_vec_copy_from_uint16(writer->buffer, writer->buffer_offset + header->header_size - 6U,
+                                                       (uint16_t)entry_writer->entries_written_count);
     if (rv < 0)
     {
         return rv;

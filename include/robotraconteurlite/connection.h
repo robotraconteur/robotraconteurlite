@@ -128,7 +128,6 @@ struct robotraconteurlite_sockaddr_storage
 #define ROBOTRACONTEURLITE_ADDR_FLAGS_NULL 0x0U
 #define ROBOTRACONTEURLITE_ADDR_FLAGS_WEBSOCKET 0x1U
 
-
 struct robotraconteurlite_addr
 {
     uint32_t transport_type;

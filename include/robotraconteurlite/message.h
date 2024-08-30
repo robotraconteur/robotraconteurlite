@@ -21,7 +21,6 @@
 #include "robotraconteurlite/array.h"
 #include "robotraconteurlite/nodeid.h"
 
-
 /* cppcheck-suppress-begin misra-c2012-2.5 */
 
 /* Data Types */
