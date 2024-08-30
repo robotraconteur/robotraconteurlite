@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-#ifndef __ROBOTRACONTEURLITE_CLOCK_H__
-#define __ROBOTRACONTEURLITE_CLOCK_H__
+#ifndef ROBOTRACONTEURLITE_CLOCK_H
+#define ROBOTRACONTEURLITE_CLOCK_H
 
 #include <stdint.h>
 #include "robotraconteurlite/config.h"
@@ -31,4 +31,4 @@ ROBOTRACONTEURLITE_DECL int robotraconteurlite_clock_init(struct robotraconteurl
 ROBOTRACONTEURLITE_DECL int robotraconteurlite_clock_gettime(struct robotraconteurlite_clock* clock,
                                                              robotraconteurlite_timespec* now);
 
-#endif /*__ROBOTRACONTEURLITE_CLOCK_H__ */
+#endif /*ROBOTRACONTEURLITE_CLOCK_H */

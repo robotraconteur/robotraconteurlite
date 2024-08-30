@@ -13,7 +13,10 @@
  * limitations under the License.
  */
 
+#ifndef _XOPEN_SOURCE
+/* NOLINTNEXTLINE(bugprone-reserved-identifier) */
 #define _XOPEN_SOURCE 500
+#endif
 #include <signal.h>
 #include <stdlib.h>
 #include <time.h>
@@ -91,7 +94,7 @@ int handle_message(struct robotraconteurlite_node* node, struct robotraconteurli
             double d1 = 1.234;
             struct robotraconteurlite_node_send_messageentry_data send_data;
             struct robotraconteurlite_string element_name;
-            int ret;
+            int ret = -1;
             send_data.node = node;
             send_data.connection = event->connection;
             ret = robotraconteurlite_node_begin_send_messageentry_response(
@@ -146,8 +149,8 @@ int handle_message(struct robotraconteurlite_node* node, struct robotraconteurli
 
             struct robotraconteurlite_string element_name;
             struct robotraconteurlite_messageelement_reader element_reader;
-            int ret;
-            double d1;
+            int ret = -1;
+            double d1 = 0.0;
             robotraconteurlite_string_from_c_str("value", &element_name);
 
             ret = robotraconteurlite_messageentry_reader_find_element_verify_scalar(
@@ -234,7 +237,7 @@ int handle_event(struct robotraconteurlite_node* node, struct robotraconteurlite
         return 1;
     }
     case ROBOTRACONTEURLITE_EVENT_TYPE_MESSAGE_RECEIVED: {
-        int ret;
+        int ret = -1;
         printf("Message received\n");
         /* Handle the message */
         ret = handle_message(node, event);
@@ -333,23 +336,29 @@ int handle_event(struct robotraconteurlite_node* node, struct robotraconteurlite
 
 volatile sig_atomic_t signal_received = 0;
 
-void signal_handler(int signum) { signal_received = 1; }
+void signal_handler(int signum)
+{
+    ROBOTRACONTEURLITE_UNUSED(signum);
+    signal_received = 1;
+}
 
 int main(int argc, char* argv[])
 {
-
     /* Variable storage */
     struct robotraconteurlite_connection connections_storage[NUM_CONNECTIONS];
     uint8_t connection_buffers[NUM_CONNECTIONS * 2 * CONNECTION_BUFFER_SIZE];
-    struct robotraconteurlite_connection* connections_head;
+    struct robotraconteurlite_connection* connections_head = NULL;
     struct robotraconteurlite_connection_acceptor tcp_acceptor;
     struct robotraconteurlite_node node;
     struct sockaddr_in listen_addr;
     struct robotraconteurlite_nodeid node_id;
     struct robotraconteurlite_string node_name;
     struct robotraconteurlite_clock clock;
-    robotraconteurlite_timespec now;
+    robotraconteurlite_timespec now = 0;
     struct sigaction sa;
+
+    ROBOTRACONTEURLITE_UNUSED(argc);
+    ROBOTRACONTEURLITE_UNUSED(argv);
 
     /* Disable sigpipe. This is a common source of errors. Some libraries will disable this for you, but not all. */
     /* robotraconteurlite does not automatically disable sigpipe. */
@@ -375,8 +384,9 @@ int main(int argc, char* argv[])
     robotraconteurlite_nodeid_newrandom(&node_id);
 
     /* Initialize connections and TCP transport */
-    connections_head = robotraconteurlite_connections_init_from_array(
-        connections_storage, NUM_CONNECTIONS, connection_buffers, CONNECTION_BUFFER_SIZE, NUM_CONNECTIONS * 2);
+    connections_head =
+        robotraconteurlite_connections_init_from_array(connections_storage, NUM_CONNECTIONS, connection_buffers,
+                                                       CONNECTION_BUFFER_SIZE, (size_t)(NUM_CONNECTIONS * 2));
     if (!connections_head)
     {
         printf("Could not initialize connections\n");
@@ -414,7 +424,7 @@ int main(int argc, char* argv[])
         /* One socket per connection plus acceptor and node. May vary, check documentation */
         struct robotraconteurlite_pollfd pollfds[NUM_CONNECTIONS + 2];
         size_t num_pollfds = 0;
-        int ret;
+        int ret = -1;
         robotraconteurlite_timespec next_wake = 0;
 
         robotraconteurlite_clock_gettime(&clock, &now);

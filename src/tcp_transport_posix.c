@@ -40,13 +40,13 @@ int robotraconteurlite_tcp_base64_encode(const uint8_t* binary_data, size_t bina
 {
 #ifdef ROBOTRACONTEURLITE_USE_OPENSSL
     /* Use OpenSSL base64 implementation */
-    size_t len;
-    char* base64_data_ptr; /* Make space for annoying null byte */
+    size_t len = 0;
+    char* base64_data_ptr = NULL; /* Make space for annoying null byte */
     BIO* bmem = BIO_new(BIO_s_mem());
     BIO* b64 = BIO_new(BIO_f_base64());
     BIO_set_flags(b64, BIO_FLAGS_BASE64_NO_NL);
     b64 = BIO_push(b64, bmem);
-    BIO_write(b64, binary_data, binary_len);
+    BIO_write(b64, binary_data, (int)binary_len);
     BIO_flush(b64);
     len = BIO_get_mem_data(bmem, &base64_data_ptr);
     assert(len <= *base64_len);
@@ -130,7 +130,7 @@ int robotraconteurlite_tcp_socket_begin_server(const struct sockaddr_storage* se
 {
     /* Create socket */
     int sock = socket(AF_INET, SOCK_STREAM, 0);
-    int flags;
+    int flags = 0;
     if (sock < 0)
     {
         *errno_out = errno;
@@ -162,7 +162,7 @@ int robotraconteurlite_tcp_socket_begin_server(const struct sockaddr_storage* se
     }
 
     /* Listen */
-    if (listen(sock, backlog) < 0)
+    if (listen(sock, (int)backlog) < 0)
     {
         *errno_out = errno;
         close(sock);
@@ -175,7 +175,7 @@ int robotraconteurlite_tcp_socket_begin_server(const struct sockaddr_storage* se
 
 int robotraconteurlite_tcp_configure_socket(int sock, int* errno_out)
 {
-    int flags;
+    int flags = 0;
     /* Make socket non-blocking */
     flags = fcntl(sock, F_GETFL, 0);
     if (flags < 0)
@@ -256,7 +256,7 @@ ROBOTRACONTEURLITE_DECL uint64_t robotraconteurlite_be64toh(uint64_t big_endian_
 int robotraconteurlite_tcp_socket_connect(struct robotraconteurlite_sockaddr_storage* addr)
 {
     int sock = socket(AF_INET, SOCK_STREAM, 0);
-    int errno_out;
+    int errno_out = -1;
     int ret = robotraconteurlite_tcp_configure_socket(sock, &errno_out);
     if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
     {
@@ -280,7 +280,7 @@ static int robotraconteurlite_poll_add_fd(int sock, short extra_events, struct r
                                           size_t* pollfd_count, size_t max_pollfds)
 {
     struct pollfd pollfds1;
-    int i = *pollfd_count;
+    int i = (int)*pollfd_count;
     if (i >= max_pollfds)
     {
         return ROBOTRACONTEURLITE_ERROR_INVALID_PARAMETER;
@@ -299,7 +299,7 @@ int robotraconteurlite_tcp_acceptor_poll_add_fd(struct robotraconteurlite_connec
                                                 struct robotraconteurlite_pollfd* pollfds, size_t* pollfd_count,
                                                 size_t max_pollfds)
 {
-    int extra_events = 0;
+    short extra_events = 0;
     struct robotraconteurlite_connection* c = connection_head;
     while (c != NULL)
     {

@@ -24,7 +24,7 @@ int robotraconteurlite_connection_verify_preamble(struct robotraconteurlite_conn
 {
     if (connection->recv_buffer_pos >= 12 && connection->recv_message_len == 0)
     {
-        uint16_t message_version;
+        uint16_t message_version = 0;
         /* Check the message RRAC */
         if (memcmp(connection->recv_buffer, "RRAC", 4) != 0)
         {
@@ -33,6 +33,7 @@ int robotraconteurlite_connection_verify_preamble(struct robotraconteurlite_conn
             return ROBOTRACONTEURLITE_ERROR_CONNECTION_ERROR;
         }
         connection->recv_message_len = robotraconteurlite_util_read_uint32(connection->recv_buffer + 4);
+        *message_len = connection->recv_message_len;
 
         /* Check the message version */
         message_version = robotraconteurlite_util_read_uint16(connection->recv_buffer + 8);
@@ -130,6 +131,7 @@ int robotraconteurlite_connection_end_send_message(struct robotraconteurlite_con
 
 int robotraconteurlite_connection_abort_send_message(struct robotraconteurlite_connection* connection)
 {
+    ROBOTRACONTEURLITE_UNUSED(connection);
     /* Don't need to do anything, for future use */
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
@@ -149,7 +151,7 @@ struct robotraconteurlite_connection* robotraconteurlite_connections_init_from_a
     struct robotraconteurlite_connection connections_fixed_storage[], size_t connections_fixed_storage_len,
     uint8_t buffers[], size_t buffer_size, size_t buffer_count)
 {
-    size_t i;
+    size_t i = 0;
     assert(connections_fixed_storage_len > 0);
     assert(buffer_count >= connections_fixed_storage_len * 2);
     assert(buffer_size > 1024);

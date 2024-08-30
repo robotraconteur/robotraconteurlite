@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-#ifndef __ROBOTRACONTEURLITE_POLL_H__
-#define __ROBOTRACONTEURLITE_POLL_H__
+#ifndef ROBOTRACONTEURLITE_POLL_H
+#define ROBOTRACONTEURLITE_POLL_H
 
 #include <stdint.h>
 #include <stdlib.h>
@@ -34,4 +34,4 @@ ROBOTRACONTEURLITE_DECL int robotraconteurlite_wait_next_wake(struct robotracont
                                                               size_t pollfd_count,
                                                               robotraconteurlite_timespec wake_time);
 
-#endif /* __ROBOTRACONTEURLITE_POLL_H__ */
+#endif /* ROBOTRACONTEURLITE_POLL_H */

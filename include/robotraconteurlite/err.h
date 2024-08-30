@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-#ifndef __ROBOTRACONTEURLITE_ERROR_H__
-#define __ROBOTRACONTEURLITE_ERROR_H__
+#ifndef ROBOTRACONTEURLITE_ERROR_H
+#define ROBOTRACONTEURLITE_ERROR_H
 
 enum robotraconteurlite_error
 {
@@ -44,4 +44,4 @@ enum robotraconteurlite_error
     ROBOTRACONTEURLITE_ERROR_SYSTEM_ERROR = -23
 };
 
-#endif /* __ROBOTRACONTEURLITE_ERROR_H__ */
+#endif /* ROBOTRACONTEURLITE_ERROR_H */

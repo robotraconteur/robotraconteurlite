@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-#ifndef __ROBOTRACONTEURLITE_NODEID_H__
-#define __ROBOTRACONTEURLITE_NODEID_H__
+#ifndef ROBOTRACONTEURLITE_NODEID_H
+#define ROBOTRACONTEURLITE_NODEID_H
 
 #include <stdint.h>
 #include "robotraconteurlite/config.h"
@@ -36,4 +36,4 @@ ROBOTRACONTEURLITE_DECL int robotraconteurlite_nodeid_reset(struct robotraconteu
 ROBOTRACONTEURLITE_DECL int robotraconteurlite_nodeid_copy_to(const struct robotraconteurlite_nodeid* src,
                                                               struct robotraconteurlite_nodeid* dst);
 
-#endif /* __ROBOTRACONTEURLITE_NODEID_H__ */
+#endif /* ROBOTRACONTEURLITE_NODEID_H */

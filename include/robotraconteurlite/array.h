@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-#ifndef __ROBOTRACONTEURLITE_ARRAY_H__
-#define __ROBOTRACONTEURLITE_ARRAY_H__
+#ifndef ROBOTRACONTEURLITE_ARRAY_H
+#define ROBOTRACONTEURLITE_ARRAY_H
 
 #include <stdint.h>
 #include "robotraconteurlite/err.h"
@@ -548,4 +548,4 @@ static void robotraconteurlite_string_from_c_str(const char* source, struct robo
     dest->data = (char*)source;
     dest->len = strlen(source);
 }
-#endif /* __ROBOTRACONTEURLITE_ARRAY_H__ */
+#endif /* ROBOTRACONTEURLITE_ARRAY_H */

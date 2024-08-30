@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-#ifndef __ROBOTRACONTEURLITE_NODE_H__
-#define __ROBOTRACONTEURLITE_NODE_H__
+#ifndef ROBOTRACONTEURLITE_NODE_H
+#define ROBOTRACONTEURLITE_NODE_H
 
 #include "robotraconteurlite/message.h"
 #include "robotraconteurlite/connection.h"
@@ -241,4 +241,4 @@ ROBOTRACONTEURLITE_DECL int robotraconteurlite_node_poll_add_fd(struct robotraco
  * robotraconteurlite_node_send_messageentry_data* request_data, struct
  * robotraconteurlite_node_receive_messageentry_data* response_data);*/
 
-#endif /* __ROBOTRACONTEURLITE_NODE_H__ */
+#endif /* ROBOTRACONTEURLITE_NODE_H */

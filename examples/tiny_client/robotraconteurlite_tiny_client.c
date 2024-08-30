@@ -13,7 +13,10 @@
  * limitations under the License.
  */
 
+#ifndef _XOPEN_SOURCE
+/* NOLINTNEXTLINE(bugprone-reserved-identifier) */
 #define _XOPEN_SOURCE 500
+#endif
 #include <signal.h>
 #include <stdlib.h>
 #include <time.h>
@@ -46,27 +49,29 @@ enum tiny_client_state
 
 int main(int argc, char* argv[])
 {
-
     /* Variable storage */
     struct robotraconteurlite_connection connections_storage[NUM_CONNECTIONS];
     uint8_t connection_buffers[NUM_CONNECTIONS * 2 * CONNECTION_BUFFER_SIZE];
-    struct robotraconteurlite_connection* connections_head;
-    struct robotraconteurlite_connection* connection;
+    struct robotraconteurlite_connection* connections_head = NULL;
+    struct robotraconteurlite_connection* connection = NULL;
     struct robotraconteurlite_node node;
     struct robotraconteurlite_nodeid node_id;
     struct robotraconteurlite_addr service_addr;
-    struct sockaddr_in* service_sockaddr;
+    struct sockaddr_in* service_sockaddr = NULL;
     struct robotraconteurlite_tcp_connect_service_data connect_data;
-    robotraconteurlite_timespec now;
+    robotraconteurlite_timespec now = 0;
     struct robotraconteurlite_clock rr_clock;
-    int ret;
+    int ret = -1;
     struct robotraconteurlite_event event;
     struct robotraconteurlite_string nodename_str;
-    uint64_t end_time;
+    uint64_t end_time = 0;
     enum tiny_client_state state = TINY_CLIENT_STATE_INIT;
     struct robotraconteurlite_node_send_messageentry_data request_data;
 
     double d1_set_val = 42.2;
+
+    ROBOTRACONTEURLITE_UNUSED(argc);
+    ROBOTRACONTEURLITE_UNUSED(argv);
 
     /* Disable sigpipe. This is a common source of errors. Some libraries will disable this for you, but not all. */
     /* robotraconteurlite does not automatically disable sigpipe. */
@@ -82,8 +87,9 @@ int main(int argc, char* argv[])
     robotraconteurlite_nodeid_newrandom(&node_id);
 
     /* Initialize connections and TCP transport */
-    connections_head = robotraconteurlite_connections_init_from_array(
-        connections_storage, NUM_CONNECTIONS, connection_buffers, CONNECTION_BUFFER_SIZE, NUM_CONNECTIONS * 2);
+    connections_head =
+        robotraconteurlite_connections_init_from_array(connections_storage, NUM_CONNECTIONS, connection_buffers,
+                                                       CONNECTION_BUFFER_SIZE, (size_t)(NUM_CONNECTIONS * 2));
     if (!connections_head)
     {
         printf("Could not initialize connections\n");
@@ -333,7 +339,7 @@ int main(int argc, char* argv[])
                     case ROBOTRACONTEURLITE_ERROR_SUCCESS: {
                         struct robotraconteurlite_messageelement_reader reader;
                         struct robotraconteurlite_string element_name;
-                        double d1_val;
+                        double d1_val = 0.0;
 
                         printf("Received get_d1 response\n");
                         state = TINY_CLIENT_STATE_GET_D1_RECEIVED;
