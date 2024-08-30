@@ -137,107 +137,105 @@ struct robotraconteurlite_client_handshake_data
     char root_object_type_char[128];
 };
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_node_init(struct robotraconteurlite_node* node,
-                                                         struct robotraconteurlite_nodeid* nodeid,
-                                                         struct robotraconteurlite_string* nodename,
-                                                         struct robotraconteurlite_connection* connections_head);
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_node_init(
+    struct robotraconteurlite_node* node, struct robotraconteurlite_nodeid* nodeid,
+    struct robotraconteurlite_string* nodename, struct robotraconteurlite_connection* connections_head);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_node_shutdown(struct robotraconteurlite_node* node);
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status
+robotraconteurlite_node_shutdown(struct robotraconteurlite_node* node);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_node_add_connection(struct robotraconteurlite_node* node,
-                                                                   struct robotraconteurlite_connection* connection);
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_node_add_connection(
+    struct robotraconteurlite_node* node, struct robotraconteurlite_connection* connection);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_node_remove_connection(struct robotraconteurlite_node* node,
-                                                                      struct robotraconteurlite_connection* connection);
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_node_remove_connection(
+    struct robotraconteurlite_node* node, struct robotraconteurlite_connection* connection);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_node_next_event(struct robotraconteurlite_node* node,
-                                                               struct robotraconteurlite_event* event,
-                                                               robotraconteurlite_timespec now);
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_node_next_event(
+    struct robotraconteurlite_node* node, struct robotraconteurlite_event* event, robotraconteurlite_timespec now);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_node_consume_event(struct robotraconteurlite_node* node,
-                                                                  struct robotraconteurlite_event* event);
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status
+robotraconteurlite_node_consume_event(struct robotraconteurlite_node* node, struct robotraconteurlite_event* event);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_node_event_special_request(struct robotraconteurlite_node* node,
-                                                                          struct robotraconteurlite_event* event);
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_node_event_special_request(
+    struct robotraconteurlite_node* node, struct robotraconteurlite_event* event);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_node_verify_incoming_message(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_node_verify_incoming_message(
     struct robotraconteurlite_node* node, struct robotraconteurlite_connection* connection,
     struct robotraconteurlite_message_header* message_header);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_node_begin_send_messageentry(
-    struct robotraconteurlite_node_send_messageentry_data* send_data);
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status
+robotraconteurlite_node_begin_send_messageentry(struct robotraconteurlite_node_send_messageentry_data* send_data);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_node_end_send_messageentry(
-    struct robotraconteurlite_node_send_messageentry_data* send_data);
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status
+robotraconteurlite_node_end_send_messageentry(struct robotraconteurlite_node_send_messageentry_data* send_data);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_node_abort_send_messageentry(
-    struct robotraconteurlite_node_send_messageentry_data* send_data);
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status
+robotraconteurlite_node_abort_send_messageentry(struct robotraconteurlite_node_send_messageentry_data* send_data);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_node_receive_messageentry(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status
+robotraconteurlite_node_receive_messageentry(struct robotraconteurlite_node_receive_messageentry_data* receive_data);
+
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_node_receive_messageentry_consume(
     struct robotraconteurlite_node_receive_messageentry_data* receive_data);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_node_receive_messageentry_consume(
-    struct robotraconteurlite_node_receive_messageentry_data* receive_data);
-
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_connection_send_messageentry_error_response(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_connection_send_messageentry_error_response(
     struct robotraconteurlite_node* node, struct robotraconteurlite_connection* connection,
     struct robotraconteurlite_messageentry_header* request_message_entry_header, uint16_t error_code,
     const char* error_name, const char* error_message);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_node_begin_send_messageentry_response(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_node_begin_send_messageentry_response(
     struct robotraconteurlite_node_send_messageentry_data* send_data,
     struct robotraconteurlite_messageentry_header* request_message_entry_header);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_node_send_messageentry_empty_response(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_node_send_messageentry_empty_response(
     struct robotraconteurlite_node* node, struct robotraconteurlite_connection* connection,
     struct robotraconteurlite_messageentry_header* request_message_entry_header);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_node_event_special_request_service_definition(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_node_event_special_request_service_definition(
     struct robotraconteurlite_node* node, struct robotraconteurlite_event* event,
     struct robotraconteurlite_node_service_object service_objects[], size_t service_objects_len,
     struct robotraconteurlite_node_service_definition service_defs[], size_t service_defs_len);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_node_event_special_request_object_type_name(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_node_event_special_request_object_type_name(
     struct robotraconteurlite_node* node, struct robotraconteurlite_event* event,
     struct robotraconteurlite_node_service_object service_objects[], size_t service_objects_len);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_event_is_member(struct robotraconteurlite_event* event,
-                                                               const char* service_path, const char* member_name);
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_event_is_member(
+    struct robotraconteurlite_event* event, const char* service_path, const char* member_name);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_client_is_connected(struct robotraconteurlite_node* node,
-                                                                   struct robotraconteurlite_connection* connection);
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_client_is_connected(
+    struct robotraconteurlite_node* node, struct robotraconteurlite_connection* connection);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_client_handshake(
-    struct robotraconteurlite_client_handshake_data* handshake_data, struct robotraconteurlite_event* event,
-    robotraconteurlite_timespec now);
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status
+robotraconteurlite_client_handshake(struct robotraconteurlite_client_handshake_data* handshake_data,
+                                    struct robotraconteurlite_event* event, robotraconteurlite_timespec now);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_client_begin_request(
-    struct robotraconteurlite_node_send_messageentry_data* send_data, uint16_t entry_type, const char* membername,
-    const char* servicepath);
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status
+robotraconteurlite_client_begin_request(struct robotraconteurlite_node_send_messageentry_data* send_data,
+                                        uint16_t entry_type, const char* membername, const char* servicepath);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_client_send_empty_request(
-    struct robotraconteurlite_node_send_messageentry_data* send_data, uint16_t entry_type, const char* membername,
-    const char* servicepath);
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status
+robotraconteurlite_client_send_empty_request(struct robotraconteurlite_node_send_messageentry_data* send_data,
+                                             uint16_t entry_type, const char* membername, const char* servicepath);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_client_send_request(
-    struct robotraconteurlite_node_send_messageentry_data* send_data);
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status
+robotraconteurlite_client_send_request(struct robotraconteurlite_node_send_messageentry_data* send_data);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_client_end_request(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_client_end_request(
     struct robotraconteurlite_node_send_messageentry_data* send_data, struct robotraconteurlite_event* event);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_client_send_heartbeat(struct robotraconteurlite_node* node,
-                                                                     struct robotraconteurlite_connection* connection);
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_client_send_heartbeat(
+    struct robotraconteurlite_node* node, struct robotraconteurlite_connection* connection);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_node_next_wake(struct robotraconteurlite_node* node,
-                                                              robotraconteurlite_timespec now,
-                                                              robotraconteurlite_timespec* wake_time);
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_node_next_wake(
+    struct robotraconteurlite_node* node, robotraconteurlite_timespec now, robotraconteurlite_timespec* wake_time);
 
 /* Note: does not add connection fds */
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_node_poll_add_fd(struct robotraconteurlite_node* node,
-                                                                struct robotraconteurlite_pollfd* pollfds,
-                                                                size_t* pollfd_count, size_t max_pollfds);
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status
+robotraconteurlite_node_poll_add_fd(struct robotraconteurlite_node* node, struct robotraconteurlite_pollfd* pollfds,
+                                    size_t* pollfd_count, size_t max_pollfds);
 
-/*ROBOTRACONTEURLITE_DECL int robotraconteurlite_client_process_request(struct
+/*ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_client_process_request(struct
  * robotraconteurlite_node_send_messageentry_data* request_data, struct
  * robotraconteurlite_node_receive_messageentry_data* response_data);*/
 

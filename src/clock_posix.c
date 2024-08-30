@@ -9,7 +9,7 @@
 #include "robotraconteurlite/clock.h"
 #include "robotraconteurlite/err.h"
 
-int robotraconteurlite_clock_init(struct robotraconteurlite_clock* clock)
+robotraconteurlite_status robotraconteurlite_clock_init(struct robotraconteurlite_clock* clock)
 {
     struct timespec monotonic_time;
     struct timespec realtime_time;
@@ -28,7 +28,8 @@ int robotraconteurlite_clock_init(struct robotraconteurlite_clock* clock)
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
 
-int robotraconteurlite_clock_gettime(struct robotraconteurlite_clock* clock, robotraconteurlite_timespec* now)
+robotraconteurlite_status robotraconteurlite_clock_gettime(struct robotraconteurlite_clock* clock,
+                                                           robotraconteurlite_timespec* now)
 {
     struct timespec monotonic_time;
     int64_t monotonic_ms = 0;

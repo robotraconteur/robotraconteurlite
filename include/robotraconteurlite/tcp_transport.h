@@ -74,17 +74,17 @@ struct robotraconteurlite_tcp_connect_service_data
 
 struct sockaddr_storage;
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_acceptor_listen(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_tcp_acceptor_listen(
     struct robotraconteurlite_connection_acceptor* acceptor, const struct sockaddr_storage* serv_addr, int backlog);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_acceptor_close(
-    struct robotraconteurlite_connection_acceptor* acceptor);
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status
+robotraconteurlite_tcp_acceptor_close(struct robotraconteurlite_connection_acceptor* acceptor);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_acceptor_communicate(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_tcp_acceptor_communicate(
     struct robotraconteurlite_connection_acceptor* acceptor, struct robotraconteurlite_connection* connection_head,
     robotraconteurlite_timespec now);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_acceptor_poll_add_fd(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_tcp_acceptor_poll_add_fd(
     struct robotraconteurlite_connection_acceptor* acceptor, struct robotraconteurlite_connection* connection_head,
     struct robotraconteurlite_pollfd* pollfds, size_t* pollfd_count, size_t max_pollfds);
 
@@ -99,28 +99,28 @@ ROBOTRACONTEURLITE_DECL void robotraconteurlite_tcp_connection_close(struct robo
 ROBOTRACONTEURLITE_DECL void robotraconteurlite_tcp_connections_close(
     struct robotraconteurlite_connection* connections_head);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_connection_buffer_recv(
-    struct robotraconteurlite_connection* connection, size_t len);
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status
+robotraconteurlite_tcp_connection_buffer_recv(struct robotraconteurlite_connection* connection, size_t len);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_connection_communicate_recv(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_tcp_connection_communicate_recv(
     struct robotraconteurlite_connection* connection, robotraconteurlite_timespec now);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_connection_buffer_send(
-    struct robotraconteurlite_connection* connection, size_t len);
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status
+robotraconteurlite_tcp_connection_buffer_send(struct robotraconteurlite_connection* connection, size_t len);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_connection_communicate_send(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_tcp_connection_communicate_send(
     struct robotraconteurlite_connection* connection, robotraconteurlite_timespec now);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_connection_handshake(
-    struct robotraconteurlite_connection* connection);
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status
+robotraconteurlite_tcp_connection_handshake(struct robotraconteurlite_connection* connection);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_connection_communicate(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_tcp_connection_communicate(
     struct robotraconteurlite_connection* connection, robotraconteurlite_timespec now);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_connections_communicate(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_tcp_connections_communicate(
     struct robotraconteurlite_connection* connections_head, robotraconteurlite_timespec now);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_connect_service(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_tcp_connect_service(
     struct robotraconteurlite_tcp_connect_service_data* connect_data, robotraconteurlite_timespec now);
 
 ROBOTRACONTEURLITE_DECL void robotraconteurlite_tcp_connection_init_connection_client(
@@ -129,34 +129,38 @@ ROBOTRACONTEURLITE_DECL void robotraconteurlite_tcp_connection_init_connection_c
 ROBOTRACONTEURLITE_DECL void robotraconteurlite_tcp_connection_init_connections_client(
     struct robotraconteurlite_connection* connections_head);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_connection_poll_add_fd(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_tcp_connection_poll_add_fd(
     struct robotraconteurlite_connection* connection, struct robotraconteurlite_pollfd* pollfds, size_t* pollfd_count,
     size_t max_pollfds);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_connections_poll_add_fds(
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_tcp_connections_poll_add_fds(
     struct robotraconteurlite_connection* connection_head, struct robotraconteurlite_pollfd* pollfds,
     size_t* pollfd_count, size_t max_pollfds);
 
 /* TCP socket functions */
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_sha1(const uint8_t* data, size_t len,
-                                                        struct robotraconteurlite_tcp_sha1_storage* storage);
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status
+robotraconteurlite_tcp_sha1(const uint8_t* data, size_t len, struct robotraconteurlite_tcp_sha1_storage* storage);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_base64_encode(const uint8_t* binary_data, size_t binary_len,
-                                                                 char* base64_data, size_t* base64_len);
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_tcp_base64_encode(const uint8_t* binary_data,
+                                                                                       size_t binary_len,
+                                                                                       char* base64_data,
+                                                                                       size_t* base64_len);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_socket_recv_nonblocking(int sock, uint8_t* buffer, uint32_t* pos,
-                                                                           size_t len, int* errno_out);
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status
+robotraconteurlite_tcp_socket_recv_nonblocking(int sock, uint8_t* buffer, uint32_t* pos, size_t len, int* errno_out);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_socket_send_nonblocking(int sock, const uint8_t* buffer,
-                                                                           uint32_t* pos, size_t len, int* errno_out);
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_tcp_socket_send_nonblocking(
+    int sock, const uint8_t* buffer, uint32_t* pos, size_t len, int* errno_out);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_socket_begin_server(const struct sockaddr_storage* serv_addr,
-                                                                       size_t backlog, int* sock_out, int* errno_out);
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_tcp_socket_begin_server(
+    const struct sockaddr_storage* serv_addr, size_t backlog, int* sock_out, int* errno_out);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_socket_accept(int acceptor_sock, int* client_sock, int* errno_out);
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_tcp_socket_accept(int acceptor_sock,
+                                                                                       int* client_sock,
+                                                                                       int* errno_out);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_socket_close(int sock);
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_tcp_socket_close(int sock);
 
 ROBOTRACONTEURLITE_DECL uint16_t robotraconteurlite_ntohs(uint16_t netshort);
 
@@ -164,6 +168,7 @@ ROBOTRACONTEURLITE_DECL uint16_t robotraconteurlite_htons(uint16_t hostshort);
 
 ROBOTRACONTEURLITE_DECL uint64_t robotraconteurlite_be64toh(uint64_t big_endian_64bits);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_tcp_socket_connect(struct robotraconteurlite_sockaddr_storage* addr);
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status
+robotraconteurlite_tcp_socket_connect(struct robotraconteurlite_sockaddr_storage* addr);
 
 #endif /*ROBOTRACONTEURLITE_TCP_TRANSPORT_H*/

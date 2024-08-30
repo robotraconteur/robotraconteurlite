@@ -18,6 +18,7 @@
 
 #include <stdint.h>
 #include "robotraconteurlite/config.h"
+#include "robotraconteurlite/err.h"
 
 struct robotraconteurlite_clock
 {
@@ -26,9 +27,9 @@ struct robotraconteurlite_clock
 
 typedef int64_t robotraconteurlite_timespec;
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_clock_init(struct robotraconteurlite_clock* clock);
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_clock_init(struct robotraconteurlite_clock* clock);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_clock_gettime(struct robotraconteurlite_clock* clock,
-                                                             robotraconteurlite_timespec* now);
+ROBOTRACONTEURLITE_DECL robotraconteurlite_status
+robotraconteurlite_clock_gettime(struct robotraconteurlite_clock* clock, robotraconteurlite_timespec* now);
 
 #endif /*ROBOTRACONTEURLITE_CLOCK_H */

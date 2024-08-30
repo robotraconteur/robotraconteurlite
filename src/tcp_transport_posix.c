@@ -22,7 +22,8 @@
 #include <openssl/evp.h>
 #endif
 
-int robotraconteurlite_tcp_sha1(const uint8_t* data, size_t len, struct robotraconteurlite_tcp_sha1_storage* storage)
+robotraconteurlite_status robotraconteurlite_tcp_sha1(const uint8_t* data, size_t len,
+                                                      struct robotraconteurlite_tcp_sha1_storage* storage)
 {
 #ifdef ROBOTRACONTEURLITE_USE_OPENSSL
     SHA1(data, len, storage->sha1_bytes);
@@ -35,8 +36,8 @@ int robotraconteurlite_tcp_sha1(const uint8_t* data, size_t len, struct robotrac
 #endif
 }
 
-int robotraconteurlite_tcp_base64_encode(const uint8_t* binary_data, size_t binary_len, char* base64_data,
-                                         size_t* base64_len)
+robotraconteurlite_status robotraconteurlite_tcp_base64_encode(const uint8_t* binary_data, size_t binary_len,
+                                                               char* base64_data, size_t* base64_len)
 {
 #ifdef ROBOTRACONTEURLITE_USE_OPENSSL
     /* Use OpenSSL base64 implementation */
@@ -61,7 +62,8 @@ int robotraconteurlite_tcp_base64_encode(const uint8_t* binary_data, size_t bina
 #endif
 }
 
-int robotraconteurlite_tcp_socket_recv_nonblocking(int sock, uint8_t* buffer, uint32_t* pos, size_t len, int* errno_out)
+robotraconteurlite_status robotraconteurlite_tcp_socket_recv_nonblocking(int sock, uint8_t* buffer, uint32_t* pos,
+                                                                         size_t len, int* errno_out)
 {
     size_t pos1 = *pos;
     while (*pos < len)
@@ -93,8 +95,8 @@ int robotraconteurlite_tcp_socket_recv_nonblocking(int sock, uint8_t* buffer, ui
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
 
-int robotraconteurlite_tcp_socket_send_nonblocking(int sock, const uint8_t* buffer, uint32_t* pos, size_t len,
-                                                   int* errno_out)
+robotraconteurlite_status robotraconteurlite_tcp_socket_send_nonblocking(int sock, const uint8_t* buffer, uint32_t* pos,
+                                                                         size_t len, int* errno_out)
 {
     size_t pos1 = *pos;
     while (*pos < len)
@@ -125,8 +127,8 @@ int robotraconteurlite_tcp_socket_send_nonblocking(int sock, const uint8_t* buff
     return 0;
 }
 
-int robotraconteurlite_tcp_socket_begin_server(const struct sockaddr_storage* serv_addr, size_t backlog, int* sock_out,
-                                               int* errno_out)
+robotraconteurlite_status robotraconteurlite_tcp_socket_begin_server(const struct sockaddr_storage* serv_addr,
+                                                                     size_t backlog, int* sock_out, int* errno_out)
 {
     /* Create socket */
     int sock = socket(AF_INET, SOCK_STREAM, 0);
@@ -173,7 +175,7 @@ int robotraconteurlite_tcp_socket_begin_server(const struct sockaddr_storage* se
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
 
-int robotraconteurlite_tcp_configure_socket(int sock, int* errno_out)
+robotraconteurlite_status robotraconteurlite_tcp_configure_socket(int sock, int* errno_out)
 {
     int flags = 0;
     /* Make socket non-blocking */
@@ -205,7 +207,7 @@ int robotraconteurlite_tcp_configure_socket(int sock, int* errno_out)
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
 
-int robotraconteurlite_tcp_socket_accept(int acceptor_sock, int* client_sock, int* errno_out)
+robotraconteurlite_status robotraconteurlite_tcp_socket_accept(int acceptor_sock, int* client_sock, int* errno_out)
 {
     /* Accept connection */
     struct sockaddr_in cli_addr;
@@ -226,7 +228,7 @@ int robotraconteurlite_tcp_socket_accept(int acceptor_sock, int* client_sock, in
     return robotraconteurlite_tcp_configure_socket(newsockfd, errno_out);
 }
 
-int robotraconteurlite_tcp_socket_close(int sock)
+robotraconteurlite_status robotraconteurlite_tcp_socket_close(int sock)
 {
     close(sock);
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
@@ -253,18 +255,18 @@ ROBOTRACONTEURLITE_DECL uint64_t robotraconteurlite_be64toh(uint64_t big_endian_
     return ret;
 }
 
-int robotraconteurlite_tcp_socket_connect(struct robotraconteurlite_sockaddr_storage* addr)
+robotraconteurlite_status robotraconteurlite_tcp_socket_connect(struct robotraconteurlite_sockaddr_storage* addr)
 {
     int sock = socket(AF_INET, SOCK_STREAM, 0);
     int errno_out = -1;
-    int ret = robotraconteurlite_tcp_configure_socket(sock, &errno_out);
-    if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+    robotraconteurlite_status rv = robotraconteurlite_tcp_configure_socket(sock, &errno_out);
+    if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
     {
         return -1;
     }
 
-    ret = connect(sock, (struct sockaddr*)addr, sizeof(struct sockaddr_storage));
-    if (ret < 0)
+    rv = connect(sock, (struct sockaddr*)addr, sizeof(struct sockaddr_storage));
+    if (rv < 0)
     {
         if (errno == EINPROGRESS)
         {
@@ -276,8 +278,9 @@ int robotraconteurlite_tcp_socket_connect(struct robotraconteurlite_sockaddr_sto
     return sock;
 }
 
-static int robotraconteurlite_poll_add_fd(int sock, short extra_events, struct robotraconteurlite_pollfd* pollfds,
-                                          size_t* pollfd_count, size_t max_pollfds)
+static robotraconteurlite_status robotraconteurlite_poll_add_fd(int sock, short extra_events,
+                                                                struct robotraconteurlite_pollfd* pollfds,
+                                                                size_t* pollfd_count, size_t max_pollfds)
 {
     struct pollfd pollfds1;
     int i = (int)*pollfd_count;
@@ -294,10 +297,9 @@ static int robotraconteurlite_poll_add_fd(int sock, short extra_events, struct r
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
 
-int robotraconteurlite_tcp_acceptor_poll_add_fd(struct robotraconteurlite_connection_acceptor* acceptor,
-                                                struct robotraconteurlite_connection* connection_head,
-                                                struct robotraconteurlite_pollfd* pollfds, size_t* pollfd_count,
-                                                size_t max_pollfds)
+robotraconteurlite_status robotraconteurlite_tcp_acceptor_poll_add_fd(
+    struct robotraconteurlite_connection_acceptor* acceptor, struct robotraconteurlite_connection* connection_head,
+    struct robotraconteurlite_pollfd* pollfds, size_t* pollfd_count, size_t max_pollfds)
 {
     short extra_events = 0;
     struct robotraconteurlite_connection* c = connection_head;
@@ -314,9 +316,9 @@ int robotraconteurlite_tcp_acceptor_poll_add_fd(struct robotraconteurlite_connec
     return robotraconteurlite_poll_add_fd(acceptor->sock, extra_events, pollfds, pollfd_count, max_pollfds);
 }
 
-int robotraconteurlite_tcp_connection_poll_add_fd(struct robotraconteurlite_connection* connection,
-                                                  struct robotraconteurlite_pollfd* pollfds, size_t* pollfd_count,
-                                                  size_t max_pollfds)
+robotraconteurlite_status robotraconteurlite_tcp_connection_poll_add_fd(
+    struct robotraconteurlite_connection* connection, struct robotraconteurlite_pollfd* pollfds, size_t* pollfd_count,
+    size_t max_pollfds)
 {
     int i = 0;
     short extra_events = 0;
@@ -341,17 +343,18 @@ int robotraconteurlite_tcp_connection_poll_add_fd(struct robotraconteurlite_conn
     return robotraconteurlite_poll_add_fd(connection->sock, extra_events, pollfds, pollfd_count, max_pollfds);
 }
 
-int robotraconteurlite_tcp_connections_poll_add_fds(struct robotraconteurlite_connection* connection_head,
-                                                    struct robotraconteurlite_pollfd* pollfds, size_t* pollfd_count,
-                                                    size_t max_pollfds)
+robotraconteurlite_status robotraconteurlite_tcp_connections_poll_add_fds(
+    struct robotraconteurlite_connection* connection_head, struct robotraconteurlite_pollfd* pollfds,
+    size_t* pollfd_count, size_t max_pollfds)
 {
     struct robotraconteurlite_connection* c = connection_head;
     while (c != NULL)
     {
-        int ret = robotraconteurlite_tcp_connection_poll_add_fd(c, pollfds, pollfd_count, max_pollfds);
-        if (ret != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+        robotraconteurlite_status rv =
+            robotraconteurlite_tcp_connection_poll_add_fd(c, pollfds, pollfd_count, max_pollfds);
+        if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
         {
-            return ret;
+            return rv;
         }
         c = c->next;
     }
