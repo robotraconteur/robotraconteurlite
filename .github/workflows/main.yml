@@ -31,10 +31,6 @@ jobs:
     - name: ctest
       working-directory: build
       run: ctest --output-on-failure
-    - name: client tiny tests
-      run: python3 test/tiny_test/tiny_client_ci_test.py
-    - name: service tiny tests
-      run: python3 test/tiny_test/tiny_service_ci_test.py
   clang-tidy:
     runs-on: ubuntu-20.04
     steps:

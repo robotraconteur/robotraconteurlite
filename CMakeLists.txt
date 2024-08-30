@@ -81,3 +81,7 @@ option(BUILD_EXAMPLES "Build examples" ON)
 if(BUILD_EXAMPLES)
     add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/examples)
 endif()
+
+if(RUN_TINY_TESTS)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/test/tiny_test)
+endif()
