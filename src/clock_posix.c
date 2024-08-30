@@ -13,8 +13,8 @@ int robotraconteurlite_clock_init(struct robotraconteurlite_clock* clock)
 {
     struct timespec monotonic_time;
     struct timespec realtime_time;
-    uint64_t monotonic_ms = 0;
-    uint64_t realtime_ms = 0;
+    int64_t monotonic_ms = 0;
+    int64_t realtime_ms = 0;
     clock_gettime(CLOCK_MONOTONIC, &monotonic_time);
     clock_gettime(CLOCK_REALTIME, &realtime_time);
 
