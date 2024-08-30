@@ -32,6 +32,10 @@ jobs:
       run: |
         cd build
         make
+    - name: ctest
+      run: |
+        cd build
+        ctest --output-on-failure
     - name: tiny tests
       run: |
         python3 test/tiny_test/tiny_client_ci_test.py
