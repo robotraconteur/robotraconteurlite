@@ -27,9 +27,9 @@ struct robotraconteurlite_clock
 
 typedef int64_t robotraconteurlite_timespec;
 
-ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_clock_init(struct robotraconteurlite_clock* clock);
+ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_clock_init(struct robotraconteurlite_clock* clock);
 
-ROBOTRACONTEURLITE_DECL robotraconteurlite_status
+ROBOTRACONTEURLITE_API robotraconteurlite_status
 robotraconteurlite_clock_gettime(struct robotraconteurlite_clock* clock, robotraconteurlite_timespec* now);
 
 #endif /*ROBOTRACONTEURLITE_CLOCK_H */

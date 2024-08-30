@@ -24,16 +24,16 @@ struct robotraconteurlite_nodeid
     uint8_t data[16];
 };
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_nodeid_equal(const struct robotraconteurlite_nodeid* a,
-                                                            const struct robotraconteurlite_nodeid* b);
+ROBOTRACONTEURLITE_API int robotraconteurlite_nodeid_equal(const struct robotraconteurlite_nodeid* a,
+                                                           const struct robotraconteurlite_nodeid* b);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_nodeid_isany(const struct robotraconteurlite_nodeid* a);
+ROBOTRACONTEURLITE_API int robotraconteurlite_nodeid_isany(const struct robotraconteurlite_nodeid* a);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_nodeid_newrandom(struct robotraconteurlite_nodeid* a);
+ROBOTRACONTEURLITE_API int robotraconteurlite_nodeid_newrandom(struct robotraconteurlite_nodeid* a);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_nodeid_reset(struct robotraconteurlite_nodeid* a);
+ROBOTRACONTEURLITE_API int robotraconteurlite_nodeid_reset(struct robotraconteurlite_nodeid* a);
 
-ROBOTRACONTEURLITE_DECL int robotraconteurlite_nodeid_copy_to(const struct robotraconteurlite_nodeid* src,
-                                                              struct robotraconteurlite_nodeid* dst);
+ROBOTRACONTEURLITE_API int robotraconteurlite_nodeid_copy_to(const struct robotraconteurlite_nodeid* src,
+                                                             struct robotraconteurlite_nodeid* dst);
 
 #endif /* ROBOTRACONTEURLITE_NODEID_H */

@@ -140,30 +140,30 @@ struct robotraconteurlite_addr
     struct robotraconteurlite_string http_path;
 };
 
-ROBOTRACONTEURLITE_DECL robotraconteurlite_status
+ROBOTRACONTEURLITE_API robotraconteurlite_status
 robotraconteurlite_connection_reset(struct robotraconteurlite_connection* connection);
 
-ROBOTRACONTEURLITE_DECL robotraconteurlite_status
+ROBOTRACONTEURLITE_API robotraconteurlite_status
 robotraconteurlite_connection_verify_preamble(struct robotraconteurlite_connection* connection, uint32_t* message_len);
 
-ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_connection_begin_send_message(
+ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_connection_begin_send_message(
     struct robotraconteurlite_connection* connection, struct robotraconteurlite_message_writer* message_writer,
     struct robotraconteurlite_buffer_vec* buffer_storage);
 
-ROBOTRACONTEURLITE_DECL robotraconteurlite_status
+ROBOTRACONTEURLITE_API robotraconteurlite_status
 robotraconteurlite_connection_end_send_message(struct robotraconteurlite_connection* connection, size_t message_len);
 
-ROBOTRACONTEURLITE_DECL robotraconteurlite_status
+ROBOTRACONTEURLITE_API robotraconteurlite_status
 robotraconteurlite_connection_abort_send_message(struct robotraconteurlite_connection* connection);
 
-ROBOTRACONTEURLITE_DECL robotraconteurlite_status robotraconteurlite_connection_message_receive(
+ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_connection_message_receive(
     struct robotraconteurlite_connection* connection, struct robotraconteurlite_message_reader* message_reader,
     struct robotraconteurlite_buffer_vec* buffer_storage);
 
-ROBOTRACONTEURLITE_DECL robotraconteurlite_status
+ROBOTRACONTEURLITE_API robotraconteurlite_status
 robotraconteurlite_connection_message_receive_consume(struct robotraconteurlite_connection* connection);
 
-ROBOTRACONTEURLITE_DECL robotraconteurlite_status
+ROBOTRACONTEURLITE_API robotraconteurlite_status
 robotraconteurlite_connection_close(struct robotraconteurlite_connection* connection);
 
 static int robotraconteurlite_connection_is_closed(struct robotraconteurlite_connection* connection)
@@ -248,7 +248,7 @@ static int robotraconteurlite_connection_is_server(struct robotraconteurlite_con
     return (connection->config_flags & ROBOTRACONTEURLITE_CONFIG_FLAGS_ISSERVER) != 0U;
 }
 
-ROBOTRACONTEURLITE_DECL struct robotraconteurlite_connection* robotraconteurlite_connections_init_from_array(
+ROBOTRACONTEURLITE_API struct robotraconteurlite_connection* robotraconteurlite_connections_init_from_array(
     struct robotraconteurlite_connection connections_fixed_storage[], size_t connections_fixed_storage_len,
     uint8_t buffers[], size_t buffer_size, size_t buffer_count);
 
@@ -279,7 +279,7 @@ static int robotraconteurlite_connection_is_idle(struct robotraconteurlite_conne
     return (connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_IDLE) != 0U;
 }
 
-ROBOTRACONTEURLITE_DECL robotraconteurlite_status
+ROBOTRACONTEURLITE_API robotraconteurlite_status
 robotraconteurlite_connection_next_wake(struct robotraconteurlite_connection* connection,
                                         robotraconteurlite_timespec now, robotraconteurlite_timespec* next_wake);
 
