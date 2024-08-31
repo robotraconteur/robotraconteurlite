@@ -374,7 +374,7 @@ static robotraconteurlite_status robotraconteurlite_tcp_connection_buffer_send_w
             {
                 return ROBOTRACONTEURLITE_ERROR_INTERNAL_ERROR;
             }
-            storage->send_websocket_header_buffer[1] |= 0x80;
+            storage->send_websocket_header_buffer[1] |= 0x80U;
             (void)memcpy(storage->send_websocket_header_buffer + storage->send_websocket_header_len - 4U,
                          storage->send_websocket_mask, 4);
         }
@@ -1075,7 +1075,7 @@ robotraconteurlite_status robotraconteurlite_tcp_connect_service_send_websocket_
 
     for (i = 0; i < (int)sizeof(websocket_key); i++)
     {
-        websocket_key[i] = rand() % 256;
+        websocket_key[i] = rand() % 256U;
     }
 
     if (send_len > connect_data->client_out->send_buffer_len)
