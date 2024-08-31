@@ -1063,7 +1063,7 @@ void robotraconteurlite_tcp_connections_close(struct robotraconteurlite_connecti
 static robotraconteurlite_status robotraconteurlite_tcp_connect_service_send_websocket_http_header(
     struct robotraconteurlite_tcp_connect_service_data* connect_data)
 {
-    uint8_t* send_buf = 0;
+    uint8_t* send_buf = NULL;
     int i = 0;
     uint8_t websocket_key[STRCONST_HTTP_SEC_WEBSOCKET_KEY_LEN];
     uint32_t send_len = STRCONST_HTTP_REQUEST_1_LEN + connect_data->service_address->http_path.len +
