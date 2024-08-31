@@ -18,7 +18,7 @@ int robotraconteurlite_nodeid_newrandom(struct robotraconteurlite_nodeid* a)
     /* Use uuid.h to generate a random UUID */
     uuid_t uuid;
     uuid_generate_random(uuid);
-    memcpy(a->data, uuid, sizeof(a->data));
+    (void)memcpy(a->data, uuid, sizeof(a->data));
     return 0;
 }
 
@@ -31,6 +31,6 @@ int robotraconteurlite_nodeid_reset(struct robotraconteurlite_nodeid* a)
 int robotraconteurlite_nodeid_copy_to(const struct robotraconteurlite_nodeid* src,
                                       struct robotraconteurlite_nodeid* dst)
 {
-    memcpy(dst->data, src->data, sizeof(dst->data));
+    (void)memcpy(dst->data, src->data, sizeof(dst->data));
     return 0;
 }

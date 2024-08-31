@@ -24,14 +24,14 @@
 static uint32_t robotraconteurlite_util_read_uint32(const void* p)
 {
     uint32_t ret = 0;
-    memcpy(&ret, p, sizeof(uint32_t));
+    (void)memcpy(&ret, p, sizeof(uint32_t));
     return ret;
 }
 
 static uint16_t robotraconteurlite_util_read_uint16(const void* p)
 {
     uint16_t ret = 0;
-    memcpy(&ret, p, sizeof(uint16_t));
+    (void)memcpy(&ret, p, sizeof(uint16_t));
     return ret;
 }
 

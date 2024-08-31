@@ -52,7 +52,7 @@ robotraconteurlite_status robotraconteurlite_tcp_base64_encode(const uint8_t* bi
     len = BIO_get_mem_data(bmem, &base64_data_ptr);
     assert(len <= *base64_len);
     *base64_len = len;
-    memcpy(base64_data, base64_data_ptr, len);
+    (void)memcpy(base64_data, base64_data_ptr, len);
     BIO_free_all(b64);
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 #else

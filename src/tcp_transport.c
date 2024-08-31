@@ -23,7 +23,7 @@ robotraconteurlite_status robotraconteurlite_tcp_acceptor_close(struct robotraco
 {
     if (acceptor->sock >= 0)
     {
-        robotraconteurlite_tcp_socket_close(acceptor->sock);
+        (void)robotraconteurlite_tcp_socket_close(acceptor->sock);
         acceptor->sock = -1;
     }
 
@@ -194,7 +194,8 @@ static robotraconteurlite_status robotraconteurlite_tcp_connection_buffer_recv_w
 
         if (masked)
         {
-            memcpy(storage->recv_websocket_mask, storage->recv_websocket_header_buffer + websocket_header_len - 4U, 4U);
+            (void)memcpy(storage->recv_websocket_mask,
+                         storage->recv_websocket_header_buffer + websocket_header_len - 4U, 4U);
             storage->tcp_transport_state |= ROBOTRACONTEURLITE_TCP_TRANSPORT_STATE_RECV_WEBSOCKET_ENABLE_MASK;
         }
         else
@@ -267,8 +268,8 @@ robotraconteurlite_status robotraconteurlite_tcp_connection_communicate_recv(
     {
         if (connection->recv_buffer_pos > connection->recv_message_len)
         {
-            memmove(connection->recv_buffer, connection->recv_buffer + connection->recv_message_len,
-                    connection->recv_buffer_pos - connection->recv_message_len);
+            (void)memmove(connection->recv_buffer, connection->recv_buffer + connection->recv_message_len,
+                          connection->recv_buffer_pos - connection->recv_message_len);
         }
         connection->recv_buffer_pos -= connection->recv_message_len;
         connection->recv_message_len = 0;
@@ -325,7 +326,7 @@ static robotraconteurlite_status robotraconteurlite_tcp_websocket_random_mask(
     /* TODO: use better random source */
     uint32_t random_val = rand();
     ROBOTRACONTEURLITE_UNUSED(connection);
-    memcpy(mask, &random_val, 4);
+    (void)memcpy(mask, &random_val, 4);
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
 
@@ -363,10 +364,13 @@ static robotraconteurlite_status robotraconteurlite_tcp_connection_buffer_send_w
         {
             storage->send_websocket_header_len += 4U;
             storage->tcp_transport_state |= ROBOTRACONTEURLITE_TCP_TRANSPORT_STATE_SEND_WEBSOCKET_ENABLE_MASK;
-            robotraconteurlite_tcp_websocket_random_mask(connection, storage->send_websocket_mask);
+            if (robotraconteurlite_tcp_websocket_random_mask(connection, storage->send_websocket_mask) != 0)
+            {
+                return ROBOTRACONTEURLITE_ERROR_INTERNAL_ERROR;
+            }
             storage->send_websocket_header_buffer[1] |= 0x80;
-            memcpy(storage->send_websocket_header_buffer + storage->send_websocket_header_len - 4U,
-                   storage->send_websocket_mask, 4);
+            (void)memcpy(storage->send_websocket_header_buffer + storage->send_websocket_header_len - 4U,
+                         storage->send_websocket_mask, 4);
         }
 
         storage->send_websocket_frame_len = send_len;
@@ -633,16 +637,22 @@ static robotraconteurlite_status robotraconteurlite_tcp_connection_handshake_htt
 
     /* NOLINTBEGIN(bugprone-not-null-terminated-result) */
     /* Copy the client key to the buffer */
-    memcpy(sha1_input_bytes, recv_data + i_sec_websocket, WEBSOCKET_KEY_BASE64_LEN);
+    (void)memcpy(sha1_input_bytes, recv_data + i_sec_websocket, WEBSOCKET_KEY_BASE64_LEN);
     /* Copy the UUID to the buffer */
-    memcpy(sha1_input_bytes + WEBSOCKET_KEY_BASE64_LEN, STRCONST_HTTP_KEY_UUID, STRCONST_HTTP_KEY_UUID_LEN);
+    (void)memcpy(sha1_input_bytes + WEBSOCKET_KEY_BASE64_LEN, STRCONST_HTTP_KEY_UUID, STRCONST_HTTP_KEY_UUID_LEN);
     /* NOLINTEND(bugprone-not-null-terminated-result) */
 
     /* Compute the SHA1 hash */
-    robotraconteurlite_tcp_sha1(sha1_input_bytes, sizeof(sha1_input_bytes), &sha1_storage);
+    if (robotraconteurlite_tcp_sha1(sha1_input_bytes, sizeof(sha1_input_bytes), &sha1_storage) != 0)
+    {
+        return ROBOTRACONTEURLITE_ERROR_INTERNAL_ERROR;
+    }
     /* Convert the SHA1 hash to base64 */
-    robotraconteurlite_tcp_base64_encode(sha1_storage.sha1_bytes, sizeof(sha1_storage.sha1_bytes), sha1_base64,
-                                         &sha1_base64_len);
+    if (robotraconteurlite_tcp_base64_encode(sha1_storage.sha1_bytes, sizeof(sha1_storage.sha1_bytes), sha1_base64,
+                                             &sha1_base64_len) != 0)
+    {
+        return ROBOTRACONTEURLITE_ERROR_INTERNAL_ERROR;
+    }
     assert(sha1_base64_len == sizeof(sha1_base64));
 
     connection->recv_buffer_pos = 0;
@@ -651,12 +661,12 @@ static robotraconteurlite_status robotraconteurlite_tcp_connection_handshake_htt
 
     /* Send the first part of the response */
     /* NOLINTBEGIN(bugprone-not-null-terminated-result) */
-    memcpy(connection->send_buffer, STRCONST_HTTP_RESPONSE_1, STRCONST_HTTP_RESPONSE_1_LEN);
+    (void)memcpy(connection->send_buffer, STRCONST_HTTP_RESPONSE_1, STRCONST_HTTP_RESPONSE_1_LEN);
     /* Send the accept hash */
-    memcpy(connection->send_buffer + STRCONST_HTTP_RESPONSE_1_LEN, sha1_base64, sha1_base64_len);
+    (void)memcpy(connection->send_buffer + STRCONST_HTTP_RESPONSE_1_LEN, sha1_base64, sha1_base64_len);
     /* Send the second part of the response */
-    memcpy(connection->send_buffer + STRCONST_HTTP_RESPONSE_1_LEN + sha1_base64_len, STRCONST_HTTP_RESPONSE_2,
-           STRCONST_HTTP_RESPONSE_2_LEN);
+    (void)memcpy(connection->send_buffer + STRCONST_HTTP_RESPONSE_1_LEN + sha1_base64_len, STRCONST_HTTP_RESPONSE_2,
+                 STRCONST_HTTP_RESPONSE_2_LEN);
     /* NOLINTEND(bugprone-not-null-terminated-result) */
 
     /* Set the send message length */
@@ -943,7 +953,10 @@ robotraconteurlite_status robotraconteurlite_tcp_connection_communicate(
     if (connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_CLOSED_CONSUMED)
     {
         connection->connection_state = ROBOTRACONTEURLITE_STATUS_FLAGS_IDLE;
-        robotraconteurlite_connection_reset(connection);
+        if (robotraconteurlite_connection_reset(connection) != 0)
+        {
+            return ROBOTRACONTEURLITE_ERROR_INTERNAL_ERROR;
+        }
     }
 
     if (connection->connection_state & (ROBOTRACONTEURLITE_STATUS_FLAGS_CLOSED | ROBOTRACONTEURLITE_STATUS_FLAGS_IDLE))
@@ -955,7 +968,7 @@ robotraconteurlite_status robotraconteurlite_tcp_connection_communicate(
         (ROBOTRACONTEURLITE_STATUS_FLAGS_CLOSE_REQUESTED | ROBOTRACONTEURLITE_STATUS_FLAGS_CLOSING))
     {
         /* TODO: graceful shutdown */
-        robotraconteurlite_tcp_socket_close(connection->sock);
+        (void)robotraconteurlite_tcp_socket_close(connection->sock);
         connection->sock = -1;
         connection->connection_state = ROBOTRACONTEURLITE_STATUS_FLAGS_CLOSED;
         return ROBOTRACONTEURLITE_ERROR_SUCCESS;
@@ -987,7 +1000,8 @@ robotraconteurlite_status robotraconteurlite_tcp_connections_communicate(
     struct robotraconteurlite_connection* c = connections_head;
     while (c)
     {
-        robotraconteurlite_tcp_connection_communicate(c, now);
+        /* TODO: pass failure warning back to caller */
+        (void)robotraconteurlite_tcp_connection_communicate(c, now);
         c = c->next;
     }
 
@@ -1003,7 +1017,7 @@ void robotraconteurlite_tcp_connection_close(struct robotraconteurlite_connectio
 
     if (connection->sock != -1)
     {
-        robotraconteurlite_tcp_socket_close(connection->sock);
+        (void)robotraconteurlite_tcp_socket_close(connection->sock);
         connection->sock = -1;
     }
 }
@@ -1058,24 +1072,28 @@ robotraconteurlite_status robotraconteurlite_tcp_connect_service_send_websocket_
 
     /* NOLINTBEGIN(bugprone-not-null-terminated-result) */
     send_buf = connect_data->client_out->send_buffer;
-    memcpy(send_buf, STRCONST_HTTP_REQUEST_1, STRCONST_HTTP_REQUEST_1_LEN);
+    (void)memcpy(send_buf, STRCONST_HTTP_REQUEST_1, STRCONST_HTTP_REQUEST_1_LEN);
     send_buf += STRCONST_HTTP_REQUEST_1_LEN;
-    memcpy(send_buf, connect_data->service_address->http_path.data, connect_data->service_address->http_path.len);
+    (void)memcpy(send_buf, connect_data->service_address->http_path.data, connect_data->service_address->http_path.len);
     send_buf += connect_data->service_address->http_path.len;
-    memcpy(send_buf, STRCONST_HTTP_REQUEST_2, STRCONST_HTTP_REQUEST_2_LEN);
+    (void)memcpy(send_buf, STRCONST_HTTP_REQUEST_2, STRCONST_HTTP_REQUEST_2_LEN);
     send_buf += STRCONST_HTTP_REQUEST_2_LEN;
-    memcpy(send_buf, connect_data->service_address->http_host.data, connect_data->service_address->http_host.len);
+    (void)memcpy(send_buf, connect_data->service_address->http_host.data, connect_data->service_address->http_host.len);
     send_buf += connect_data->service_address->http_host.len;
-    memcpy(send_buf, STRCONST_HTTP_REQUEST_3, STRCONST_HTTP_REQUEST_3_LEN);
+    (void)memcpy(send_buf, STRCONST_HTTP_REQUEST_3, STRCONST_HTTP_REQUEST_3_LEN);
     send_buf += STRCONST_HTTP_REQUEST_3_LEN;
 
-    robotraconteurlite_tcp_base64_encode(websocket_key, sizeof(websocket_key), (char*)send_buf, &sec_b64_send_len);
+    if (robotraconteurlite_tcp_base64_encode(websocket_key, sizeof(websocket_key), (char*)send_buf,
+                                             &sec_b64_send_len) != 0)
+    {
+        return ROBOTRACONTEURLITE_ERROR_INTERNAL_ERROR;
+    }
     if (sec_b64_send_len != WEBSOCKET_KEY_BASE64_LEN)
     {
         return ROBOTRACONTEURLITE_ERROR_INTERNAL_ERROR;
     }
     send_buf += WEBSOCKET_KEY_BASE64_LEN;
-    memcpy(send_buf, STRCONST_HTTP_REQUEST_4, STRCONST_HTTP_REQUEST_4_LEN);
+    (void)memcpy(send_buf, STRCONST_HTTP_REQUEST_4, STRCONST_HTTP_REQUEST_4_LEN);
     send_buf += STRCONST_HTTP_REQUEST_4_LEN;
     /* NOLINTEND(bugprone-not-null-terminated-result) */
 
@@ -1133,9 +1151,18 @@ robotraconteurlite_status robotraconteurlite_tcp_connect_service(
     c->remote_nodename.len = sizeof(c->remote_nodename_char);
     c->remote_service_name.data = c->remote_service_name_char;
     c->remote_service_name.len = sizeof(c->remote_service_name_char);
-    robotraconteurlite_nodeid_copy_to(&connect_data->service_address->nodeid, &c->remote_nodeid);
-    robotraconteurlite_string_copy_to(&connect_data->service_address->nodename, &c->remote_nodename);
-    robotraconteurlite_string_copy_to(&connect_data->service_address->service_name, &c->remote_service_name);
+    if (robotraconteurlite_nodeid_copy_to(&connect_data->service_address->nodeid, &c->remote_nodeid) != 0)
+    {
+        return ROBOTRACONTEURLITE_ERROR_INTERNAL_ERROR;
+    }
+    if (robotraconteurlite_string_copy_to(&connect_data->service_address->nodename, &c->remote_nodename) != 0)
+    {
+        return ROBOTRACONTEURLITE_ERROR_INTERNAL_ERROR;
+    }
+    if (robotraconteurlite_string_copy_to(&connect_data->service_address->service_name, &c->remote_service_name) != 0)
+    {
+        return ROBOTRACONTEURLITE_ERROR_INTERNAL_ERROR;
+    }
 
     c->last_recv_message_time = now;
     c->last_send_message_time = now;
