@@ -183,8 +183,6 @@
 #define ROBOTRACONTEURLITE_MESSAGEERRORTYPE_OBJECTLOCKEDERROR 151U
 #define ROBOTRACONTEURLITE_MESSAGEERRORTYPE_PERMISSIONDENIED 152U
 
-/* cppcheck-suppress-end misra-c2012-2.5 */
-
 struct robotraconteurlite_message_header
 {
     uint32_t message_size;
