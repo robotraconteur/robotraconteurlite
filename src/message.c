@@ -929,6 +929,8 @@ static robotraconteurlite_status robotraconteurlite_messageelement_reader_read_d
     struct robotraconteurlite_buffer dest_buf;
     struct robotraconteurlite_buffer_vec dest_vec;
 
+    /* TODO: Fix cppcheck warning */
+    /* cppcheck-suppress misra-c2012-11.5 */
     dest_buf.data = dest_scalar;
     dest_buf.len = 1;
     dest_vec.buffer_vec = &dest_buf;

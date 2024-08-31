@@ -717,6 +717,8 @@ robotraconteurlite_status robotraconteurlite_node_event_special_request_service_
                 /* Write service definition */
                 struct robotraconteurlite_string element_name_str;
                 struct robotraconteurlite_string desc_str;
+                /* TODO: Fix misra violation */
+                /* cppcheck-suppress misra-c2012-7.4 */
                 element_name_str.data = "servicedef";
                 element_name_str.len = 10;
                 desc_str.data = service_objects[i].service_def->service_definition.data;

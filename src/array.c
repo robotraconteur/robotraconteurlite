@@ -23,6 +23,8 @@ robotraconteurlite_status robotraconteurlite_buffer_init_scalar(struct robotraco
     assert(buffer != NULL);
     assert(data != NULL);
 
+    /* TODO: Fix cppcheck warning */
+    /* cppcheck-suppress misra-c2012-11.5 */
     buffer->data = (uint8_t*)data;
     buffer->len = len;
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
@@ -371,6 +373,8 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_double(
 {
     struct robotraconteurlite_buffer dest_buf;
     struct robotraconteurlite_buffer_vec dest_vec;
+    /* TODO: Fix cppcheck warning */
+    /* cppcheck-suppress invalidPointerCast */
     dest_buf.data = (uint8_t*)dest;
     dest_buf.len = 1;
     dest_vec.buffer_vec = &dest_buf;
@@ -386,6 +390,8 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_double(
     struct robotraconteurlite_buffer_vec source_vec;
     (void)memset(&source_buf, 0, sizeof(source_buf));
     (void)memset(&source_vec, 0, sizeof(source_vec));
+    /* TODO: Fix cppcheck warning */
+    /* cppcheck-suppress invalidPointerCast */
     source_buf.data = (uint8_t*)&source;
     source_buf.len = 1;
     source_vec.buffer_vec = &source_buf;
@@ -423,6 +429,8 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_single(
 {
     struct robotraconteurlite_buffer dest_buf;
     struct robotraconteurlite_buffer_vec dest_vec;
+    /* TODO: Fix cppcheck warning */
+    /* cppcheck-suppress invalidPointerCast */
     dest_buf.data = (uint8_t*)dest;
     dest_buf.len = 1;
     dest_vec.buffer_vec = &dest_buf;
@@ -438,6 +446,8 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_single(
     struct robotraconteurlite_buffer_vec source_vec;
     (void)memset(&source_buf, 0, sizeof(source_buf));
     (void)memset(&source_vec, 0, sizeof(source_vec));
+    /* TODO: Fix cppcheck warning */
+    /* cppcheck-suppress invalidPointerCast */
     source_buf.data = (uint8_t*)&source;
     source_buf.len = 1;
     source_vec.buffer_vec = &source_buf;
