@@ -1,10 +1,11 @@
 #ifndef _POSIX_C_SOURCE
+/* cppcheck-suppress misra-c2012-21.1 */
 /* NOLINTNEXTLINE(bugprone-reserved-identifier) */
 #define _POSIX_C_SOURCE 199309L
 #endif
 
+/* cppcheck-suppress misra-c2012-21.10 */
 #include <time.h>
-#include <stdio.h>
 
 #include "robotraconteurlite/clock.h"
 #include "robotraconteurlite/err.h"

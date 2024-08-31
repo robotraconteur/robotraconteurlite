@@ -4,7 +4,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,6 +23,8 @@ robotraconteurlite_status robotraconteurlite_buffer_init_scalar(struct robotraco
     assert(buffer != NULL);
     assert(data != NULL);
 
+    /* TODO: Fix cppcheck warning */
+    /* cppcheck-suppress misra-c2012-11.5 */
     buffer->data = (uint8_t*)data;
     buffer->len = len;
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
@@ -80,12 +82,12 @@ robotraconteurlite_status robotraconteurlite_buffer_copy(const struct robotracon
     }
 
     if (!(source_pos < source->len) || ((source_pos + count) > source->len) || !(dest_pos < dest->len) ||
-        (dest_pos + count > dest->len))
+        ((dest_pos + count) > dest->len))
     {
         return ROBOTRACONTEURLITE_ERROR_OUT_OF_RANGE;
     }
 
-    memcpy(dest->data + dest_pos, source->data + source_pos, count);
+    (void)memcpy(dest->data + dest_pos, source->data + source_pos, count);
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
 
@@ -110,7 +112,7 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_vec(const struct ro
     assert(source->buffer_vec != NULL);
     assert(dest->buffer_vec != NULL);
 
-    if (source->buffer_vec_cnt == 1U && dest->buffer_vec_cnt == 1U)
+    if ((source->buffer_vec_cnt == 1U) && (dest->buffer_vec_cnt == 1U))
     {
         return robotraconteurlite_buffer_copy(&source->buffer_vec[0], source_pos, &dest->buffer_vec[0], dest_pos,
                                               count);
@@ -127,7 +129,7 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_vec(const struct ro
     }
 
     if (!(source_pos < source_len) || ((source_pos + count) > source_len) || !(dest_pos < dest_len) ||
-        (dest_pos + count > dest_len))
+        ((dest_pos + count) > dest_len))
     {
         return ROBOTRACONTEURLITE_ERROR_OUT_OF_RANGE;
     }
@@ -136,13 +138,13 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_vec(const struct ro
     dest_i = 0;
     source_i_pos = 0;
     dest_i_pos = 0;
-    while (source_current_pos + source->buffer_vec[source_i].len < source_pos)
+    while ((source_current_pos + source->buffer_vec[source_i].len) < source_pos)
     {
         source_current_pos += source->buffer_vec[source_i].len;
         source_i++;
     }
 
-    while (dest_current_pos + dest->buffer_vec[dest_i].len < dest_pos)
+    while ((dest_current_pos + dest->buffer_vec[dest_i].len) < dest_pos)
     {
         dest_current_pos += dest->buffer_vec[dest_i].len;
         dest_i++;
@@ -178,13 +180,14 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_vec(const struct ro
             continue;
         }
 
-        delta = source_i_delta < dest_i_delta ? source_i_delta : dest_i_delta;
-        delta = count_remaining < delta ? count_remaining : delta;
+        delta = (source_i_delta < dest_i_delta) ? source_i_delta : dest_i_delta;
+        delta = (count_remaining < delta) ? count_remaining : delta;
 
         assert(source->buffer_vec[source_i].data != NULL);
         assert(dest->buffer_vec[dest_i].data != NULL);
 
-        memcpy(dest->buffer_vec[dest_i].data + dest_i_pos, source->buffer_vec[source_i].data + source_i_pos, delta);
+        (void)memcpy(dest->buffer_vec[dest_i].data + dest_i_pos, source->buffer_vec[source_i].data + source_i_pos,
+                     delta);
 
         count_remaining -= delta;
         source_i_pos += delta;
@@ -205,24 +208,24 @@ robotraconteurlite_status robotraconteurlite_buffer_copy_ex(const struct robotra
     assert(dest != NULL);
     assert(dest->data != NULL);
 
-    if (source_count == 0U && dest_count == 0U)
+    if ((source_count == 0U) && (dest_count == 0U))
     {
         return ROBOTRACONTEURLITE_ERROR_SUCCESS;
     }
 
-    if (source_count * source_elem_size != dest_count * dest_elem_size)
+    if ((source_count * source_elem_size) != (dest_count * dest_elem_size))
     {
         return ROBOTRACONTEURLITE_ERROR_OUT_OF_RANGE;
     }
 
     if (!(source_pos < source->len) || ((source_pos + source_count) > source->len) || !(dest_pos < dest->len) ||
-        (dest_pos + dest_count > dest->len))
+        ((dest_pos + dest_count) > dest->len))
     {
         return ROBOTRACONTEURLITE_ERROR_OUT_OF_RANGE;
     }
 
-    memcpy(dest->data + dest_pos * dest_elem_size, source->data + source_pos * source_elem_size,
-           source_count * source_elem_size);
+    (void)memcpy(dest->data + (dest_pos * dest_elem_size), source->data + (source_pos * source_elem_size),
+                 source_count * source_elem_size);
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
 
@@ -248,13 +251,13 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_vec_ex(
     assert(source->buffer_vec != NULL);
     assert(dest->buffer_vec != NULL);
 
-    if (source->buffer_vec_cnt == 1U && dest->buffer_vec_cnt == 1U)
+    if ((source->buffer_vec_cnt == 1U) && (dest->buffer_vec_cnt == 1U))
     {
         return robotraconteurlite_buffer_copy_ex(&source->buffer_vec[0], source_pos, source_elem_size, source_count,
                                                  &dest->buffer_vec[0], dest_pos, dest_elem_size, dest_count);
     }
 
-    if (source_count * source_elem_size != dest_count * dest_elem_size)
+    if ((source_count * source_elem_size) != (dest_count * dest_elem_size))
     {
         return ROBOTRACONTEURLITE_ERROR_OUT_OF_RANGE;
     }
@@ -270,7 +273,7 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_vec_ex(
     }
 
     if (!(source_pos < source_len) || ((source_pos + source_count) > source_len) || !(dest_pos < dest_len) ||
-        (dest_pos + dest_count > dest_len))
+        ((dest_pos + dest_count) > dest_len))
     {
         return ROBOTRACONTEURLITE_ERROR_OUT_OF_RANGE;
     }
@@ -324,14 +327,14 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_vec_ex(
             continue;
         }
 
-        delta = source_i_delta < dest_i_delta ? source_i_delta : dest_i_delta;
-        delta = bytes_remaining < delta ? bytes_remaining : delta;
+        delta = (source_i_delta < dest_i_delta) ? source_i_delta : dest_i_delta;
+        delta = (bytes_remaining < delta) ? bytes_remaining : delta;
 
         assert(source->buffer_vec[source_i].data != NULL);
         assert(dest->buffer_vec[dest_i].data != NULL);
 
-        memcpy(dest->buffer_vec[dest_i].data + dest_i_byte_pos, source->buffer_vec[source_i].data + source_i_byte_pos,
-               delta);
+        (void)memcpy(dest->buffer_vec[dest_i].data + dest_i_byte_pos,
+                     source->buffer_vec[source_i].data + source_i_byte_pos, delta);
 
         bytes_remaining -= delta;
         source_i_byte_pos += delta;
@@ -358,7 +361,7 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_double_array(
     const struct robotraconteurlite_array_double* source, size_t source_pos, size_t source_count)
 {
     struct robotraconteurlite_buffer_vec source_vec;
-    memset(&source_vec, 0, sizeof(source_vec));
+    (void)memset(&source_vec, 0, sizeof(source_vec));
     source_vec.buffer_vec = (struct robotraconteurlite_buffer*)source;
     source_vec.buffer_vec_cnt = 1;
     return robotraconteurlite_buffer_vec_copy_vec_ex(&source_vec, source_pos, sizeof(double), source_count, dest_buf,
@@ -370,6 +373,8 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_double(
 {
     struct robotraconteurlite_buffer dest_buf;
     struct robotraconteurlite_buffer_vec dest_vec;
+    /* TODO: Fix cppcheck warning */
+    /* cppcheck-suppress invalidPointerCast */
     dest_buf.data = (uint8_t*)dest;
     dest_buf.len = 1;
     dest_vec.buffer_vec = &dest_buf;
@@ -383,8 +388,10 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_double(
 {
     struct robotraconteurlite_buffer source_buf;
     struct robotraconteurlite_buffer_vec source_vec;
-    memset(&source_buf, 0, sizeof(source_buf));
-    memset(&source_vec, 0, sizeof(source_vec));
+    (void)memset(&source_buf, 0, sizeof(source_buf));
+    (void)memset(&source_vec, 0, sizeof(source_vec));
+    /* TODO: Fix cppcheck warning */
+    /* cppcheck-suppress invalidPointerCast */
     source_buf.data = (uint8_t*)&source;
     source_buf.len = 1;
     source_vec.buffer_vec = &source_buf;
@@ -410,7 +417,7 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_single_array(
     const struct robotraconteurlite_array_single* source, size_t source_pos, size_t source_count)
 {
     struct robotraconteurlite_buffer_vec source_vec;
-    memset(&source_vec, 0, sizeof(source_vec));
+    (void)memset(&source_vec, 0, sizeof(source_vec));
     source_vec.buffer_vec = (struct robotraconteurlite_buffer*)source;
     source_vec.buffer_vec_cnt = 1;
     return robotraconteurlite_buffer_vec_copy_vec_ex(&source_vec, source_pos, sizeof(float), source_count, dest_buf,
@@ -422,6 +429,8 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_single(
 {
     struct robotraconteurlite_buffer dest_buf;
     struct robotraconteurlite_buffer_vec dest_vec;
+    /* TODO: Fix cppcheck warning */
+    /* cppcheck-suppress invalidPointerCast */
     dest_buf.data = (uint8_t*)dest;
     dest_buf.len = 1;
     dest_vec.buffer_vec = &dest_buf;
@@ -435,8 +444,10 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_single(
 {
     struct robotraconteurlite_buffer source_buf;
     struct robotraconteurlite_buffer_vec source_vec;
-    memset(&source_buf, 0, sizeof(source_buf));
-    memset(&source_vec, 0, sizeof(source_vec));
+    (void)memset(&source_buf, 0, sizeof(source_buf));
+    (void)memset(&source_vec, 0, sizeof(source_vec));
+    /* TODO: Fix cppcheck warning */
+    /* cppcheck-suppress invalidPointerCast */
     source_buf.data = (uint8_t*)&source;
     source_buf.len = 1;
     source_vec.buffer_vec = &source_buf;
@@ -462,7 +473,7 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_int8_array(
     const struct robotraconteurlite_array_int8* source, size_t source_pos, size_t source_count)
 {
     struct robotraconteurlite_buffer_vec source_vec;
-    memset(&source_vec, 0, sizeof(source_vec));
+    (void)memset(&source_vec, 0, sizeof(source_vec));
     source_vec.buffer_vec = (struct robotraconteurlite_buffer*)source;
     source_vec.buffer_vec_cnt = 1;
     return robotraconteurlite_buffer_vec_copy_vec_ex(&source_vec, source_pos, sizeof(int8_t), source_count, dest_buf,
@@ -474,8 +485,8 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_int8(
 {
     struct robotraconteurlite_buffer dest_buf;
     struct robotraconteurlite_buffer_vec dest_vec;
-    memset(&dest_buf, 0, sizeof(dest_buf));
-    memset(&dest_vec, 0, sizeof(dest_vec));
+    (void)memset(&dest_buf, 0, sizeof(dest_buf));
+    (void)memset(&dest_vec, 0, sizeof(dest_vec));
     dest_buf.data = (uint8_t*)dest;
     dest_buf.len = 1;
     dest_vec.buffer_vec = &dest_buf;
@@ -489,8 +500,8 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_int8(
 {
     struct robotraconteurlite_buffer source_buf;
     struct robotraconteurlite_buffer_vec source_vec;
-    memset(&source_buf, 0, sizeof(source_buf));
-    memset(&source_vec, 0, sizeof(source_vec));
+    (void)memset(&source_buf, 0, sizeof(source_buf));
+    (void)memset(&source_vec, 0, sizeof(source_vec));
     source_buf.data = (uint8_t*)&source;
     source_buf.len = 1;
     source_vec.buffer_vec = &source_buf;
@@ -505,7 +516,7 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_uint8_array(
     const struct robotraconteurlite_array_uint8* dest, size_t dest_pos, size_t dest_count)
 {
     struct robotraconteurlite_buffer_vec dest_vec;
-    memset(&dest_vec, 0, sizeof(dest_vec));
+    (void)memset(&dest_vec, 0, sizeof(dest_vec));
     dest_vec.buffer_vec = (struct robotraconteurlite_buffer*)dest;
     dest_vec.buffer_vec_cnt = 1;
     return robotraconteurlite_buffer_vec_copy_vec_ex(source_buf, source_buf_pos, 1, dest_count * sizeof(uint8_t),
@@ -517,7 +528,7 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_uint8_array(
     const struct robotraconteurlite_array_uint8* source, size_t source_pos, size_t source_count)
 {
     struct robotraconteurlite_buffer_vec source_vec;
-    memset(&source_vec, 0, sizeof(source_vec));
+    (void)memset(&source_vec, 0, sizeof(source_vec));
     source_vec.buffer_vec = (struct robotraconteurlite_buffer*)source;
     source_vec.buffer_vec_cnt = 1;
     return robotraconteurlite_buffer_vec_copy_vec_ex(&source_vec, source_pos, sizeof(uint8_t), source_count, dest_buf,
@@ -529,8 +540,8 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_uint8(
 {
     struct robotraconteurlite_buffer dest_buf;
     struct robotraconteurlite_buffer_vec dest_vec;
-    memset(&dest_buf, 0, sizeof(dest_buf));
-    memset(&dest_vec, 0, sizeof(dest_vec));
+    (void)memset(&dest_buf, 0, sizeof(dest_buf));
+    (void)memset(&dest_vec, 0, sizeof(dest_vec));
     dest_buf.data = (uint8_t*)dest;
     dest_buf.len = 1;
     dest_vec.buffer_vec = &dest_buf;
@@ -544,8 +555,8 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_uint8(
 {
     struct robotraconteurlite_buffer source_buf;
     struct robotraconteurlite_buffer_vec source_vec;
-    memset(&source_buf, 0, sizeof(source_buf));
-    memset(&source_vec, 0, sizeof(source_vec));
+    (void)memset(&source_buf, 0, sizeof(source_buf));
+    (void)memset(&source_vec, 0, sizeof(source_vec));
     source_buf.data = (uint8_t*)&source;
     source_buf.len = 1;
     source_vec.buffer_vec = &source_buf;
@@ -560,7 +571,7 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_int16_array(
     const struct robotraconteurlite_array_int16* dest, size_t dest_pos, size_t dest_count)
 {
     struct robotraconteurlite_buffer_vec dest_vec;
-    memset(&dest_vec, 0, sizeof(dest_vec));
+    (void)memset(&dest_vec, 0, sizeof(dest_vec));
     dest_vec.buffer_vec = (struct robotraconteurlite_buffer*)dest;
     dest_vec.buffer_vec_cnt = 1;
     return robotraconteurlite_buffer_vec_copy_vec_ex(source_buf, source_buf_pos, 1, dest_count * sizeof(int16_t),
@@ -572,7 +583,7 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_int16_array(
     const struct robotraconteurlite_array_int16* source, size_t source_pos, size_t source_count)
 {
     struct robotraconteurlite_buffer_vec source_vec;
-    memset(&source_vec, 0, sizeof(source_vec));
+    (void)memset(&source_vec, 0, sizeof(source_vec));
     source_vec.buffer_vec = (struct robotraconteurlite_buffer*)source;
     source_vec.buffer_vec_cnt = 1;
     return robotraconteurlite_buffer_vec_copy_vec_ex(&source_vec, source_pos, sizeof(int16_t), source_count, dest_buf,
@@ -584,8 +595,8 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_int16(
 {
     struct robotraconteurlite_buffer dest_buf;
     struct robotraconteurlite_buffer_vec dest_vec;
-    memset(&dest_buf, 0, sizeof(dest_buf));
-    memset(&dest_vec, 0, sizeof(dest_vec));
+    (void)memset(&dest_buf, 0, sizeof(dest_buf));
+    (void)memset(&dest_vec, 0, sizeof(dest_vec));
     dest_buf.data = (uint8_t*)dest;
     dest_buf.len = 1;
     dest_vec.buffer_vec = &dest_buf;
@@ -599,8 +610,8 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_int16(
 {
     struct robotraconteurlite_buffer source_buf;
     struct robotraconteurlite_buffer_vec source_vec;
-    memset(&source_buf, 0, sizeof(source_buf));
-    memset(&source_vec, 0, sizeof(source_vec));
+    (void)memset(&source_buf, 0, sizeof(source_buf));
+    (void)memset(&source_vec, 0, sizeof(source_vec));
     source_buf.data = (uint8_t*)&source;
     source_buf.len = 1;
     source_vec.buffer_vec = &source_buf;
@@ -615,7 +626,7 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_uint16_array(
     const struct robotraconteurlite_array_uint16* dest, size_t dest_pos, size_t dest_count)
 {
     struct robotraconteurlite_buffer_vec dest_vec;
-    memset(&dest_vec, 0, sizeof(dest_vec));
+    (void)memset(&dest_vec, 0, sizeof(dest_vec));
     dest_vec.buffer_vec = (struct robotraconteurlite_buffer*)dest;
     dest_vec.buffer_vec_cnt = 1;
     return robotraconteurlite_buffer_vec_copy_vec_ex(source_buf, source_buf_pos, 1, dest_count * sizeof(uint16_t),
@@ -627,7 +638,7 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_uint16_array(
     const struct robotraconteurlite_array_uint16* source, size_t source_pos, size_t source_count)
 {
     struct robotraconteurlite_buffer_vec source_vec;
-    memset(&source_vec, 0, sizeof(source_vec));
+    (void)memset(&source_vec, 0, sizeof(source_vec));
     source_vec.buffer_vec = (struct robotraconteurlite_buffer*)source;
     source_vec.buffer_vec_cnt = 1;
     return robotraconteurlite_buffer_vec_copy_vec_ex(&source_vec, source_pos, sizeof(uint16_t), source_count, dest_buf,
@@ -639,8 +650,8 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_uint16(
 {
     struct robotraconteurlite_buffer dest_buf;
     struct robotraconteurlite_buffer_vec dest_vec;
-    memset(&dest_buf, 0, sizeof(dest_buf));
-    memset(&dest_vec, 0, sizeof(dest_vec));
+    (void)memset(&dest_buf, 0, sizeof(dest_buf));
+    (void)memset(&dest_vec, 0, sizeof(dest_vec));
     dest_buf.data = (uint8_t*)dest;
     dest_buf.len = 1;
     dest_vec.buffer_vec = &dest_buf;
@@ -654,8 +665,8 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_uint16(
 {
     struct robotraconteurlite_buffer source_buf;
     struct robotraconteurlite_buffer_vec source_vec;
-    memset(&source_buf, 0, sizeof(source_buf));
-    memset(&source_vec, 0, sizeof(source_vec));
+    (void)memset(&source_buf, 0, sizeof(source_buf));
+    (void)memset(&source_vec, 0, sizeof(source_vec));
     source_buf.data = (uint8_t*)&source;
     source_buf.len = 1;
     source_vec.buffer_vec = &source_buf;
@@ -670,7 +681,7 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_int32_array(
     const struct robotraconteurlite_array_int32* dest, size_t dest_pos, size_t dest_count)
 {
     struct robotraconteurlite_buffer_vec dest_vec;
-    memset(&dest_vec, 0, sizeof(dest_vec));
+    (void)memset(&dest_vec, 0, sizeof(dest_vec));
     dest_vec.buffer_vec = (struct robotraconteurlite_buffer*)dest;
     dest_vec.buffer_vec_cnt = 1;
     return robotraconteurlite_buffer_vec_copy_vec_ex(source_buf, source_buf_pos, 1, dest_count * sizeof(int32_t),
@@ -682,7 +693,7 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_int32_array(
     const struct robotraconteurlite_array_int32* source, size_t source_pos, size_t source_count)
 {
     struct robotraconteurlite_buffer_vec source_vec;
-    memset(&source_vec, 0, sizeof(source_vec));
+    (void)memset(&source_vec, 0, sizeof(source_vec));
     source_vec.buffer_vec = (struct robotraconteurlite_buffer*)source;
     source_vec.buffer_vec_cnt = 1;
     return robotraconteurlite_buffer_vec_copy_vec_ex(&source_vec, source_pos, sizeof(int32_t), source_count, dest_buf,
@@ -694,8 +705,8 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_int32(
 {
     struct robotraconteurlite_buffer dest_buf;
     struct robotraconteurlite_buffer_vec dest_vec;
-    memset(&dest_buf, 0, sizeof(dest_buf));
-    memset(&dest_vec, 0, sizeof(dest_vec));
+    (void)memset(&dest_buf, 0, sizeof(dest_buf));
+    (void)memset(&dest_vec, 0, sizeof(dest_vec));
     dest_buf.data = (uint8_t*)dest;
     dest_buf.len = 1;
     dest_vec.buffer_vec = &dest_buf;
@@ -709,8 +720,8 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_int32(
 {
     struct robotraconteurlite_buffer source_buf;
     struct robotraconteurlite_buffer_vec source_vec;
-    memset(&source_buf, 0, sizeof(source_buf));
-    memset(&source_vec, 0, sizeof(source_vec));
+    (void)memset(&source_buf, 0, sizeof(source_buf));
+    (void)memset(&source_vec, 0, sizeof(source_vec));
     source_buf.data = (uint8_t*)&source;
     source_buf.len = 1;
     source_vec.buffer_vec = &source_buf;
@@ -725,7 +736,7 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_uint32_array(
     const struct robotraconteurlite_array_uint32* dest, size_t dest_pos, size_t dest_count)
 {
     struct robotraconteurlite_buffer_vec dest_vec;
-    memset(&dest_vec, 0, sizeof(dest_vec));
+    (void)memset(&dest_vec, 0, sizeof(dest_vec));
     dest_vec.buffer_vec = (struct robotraconteurlite_buffer*)dest;
     dest_vec.buffer_vec_cnt = 1;
     return robotraconteurlite_buffer_vec_copy_vec_ex(source_buf, source_buf_pos, 1, dest_count * sizeof(uint32_t),
@@ -737,7 +748,7 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_uint32_array(
     const struct robotraconteurlite_array_uint32* source, size_t source_pos, size_t source_count)
 {
     struct robotraconteurlite_buffer_vec source_vec;
-    memset(&source_vec, 0, sizeof(source_vec));
+    (void)memset(&source_vec, 0, sizeof(source_vec));
     source_vec.buffer_vec = (struct robotraconteurlite_buffer*)source;
     source_vec.buffer_vec_cnt = 1;
     return robotraconteurlite_buffer_vec_copy_vec_ex(&source_vec, source_pos, sizeof(uint32_t), source_count, dest_buf,
@@ -749,8 +760,8 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_uint32(
 {
     struct robotraconteurlite_buffer dest_buf;
     struct robotraconteurlite_buffer_vec dest_vec;
-    memset(&dest_buf, 0, sizeof(dest_buf));
-    memset(&dest_vec, 0, sizeof(dest_vec));
+    (void)memset(&dest_buf, 0, sizeof(dest_buf));
+    (void)memset(&dest_vec, 0, sizeof(dest_vec));
     dest_buf.data = (uint8_t*)dest;
     dest_buf.len = 1;
     dest_vec.buffer_vec = &dest_buf;
@@ -764,8 +775,8 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_uint32(
 {
     struct robotraconteurlite_buffer source_buf;
     struct robotraconteurlite_buffer_vec source_vec;
-    memset(&source_buf, 0, sizeof(source_buf));
-    memset(&source_vec, 0, sizeof(source_vec));
+    (void)memset(&source_buf, 0, sizeof(source_buf));
+    (void)memset(&source_vec, 0, sizeof(source_vec));
     source_buf.data = (uint8_t*)&source;
     source_buf.len = 1;
     source_vec.buffer_vec = &source_buf;
@@ -780,7 +791,7 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_int64_array(
     const struct robotraconteurlite_array_int64* dest, size_t dest_pos, size_t dest_count)
 {
     struct robotraconteurlite_buffer_vec dest_vec;
-    memset(&dest_vec, 0, sizeof(dest_vec));
+    (void)memset(&dest_vec, 0, sizeof(dest_vec));
     dest_vec.buffer_vec = (struct robotraconteurlite_buffer*)dest;
     dest_vec.buffer_vec_cnt = 1;
     return robotraconteurlite_buffer_vec_copy_vec_ex(source_buf, source_buf_pos, 1, dest_count * sizeof(int64_t),
@@ -792,7 +803,7 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_int64_array(
     const struct robotraconteurlite_array_int64* source, size_t source_pos, size_t source_count)
 {
     struct robotraconteurlite_buffer_vec source_vec;
-    memset(&source_vec, 0, sizeof(source_vec));
+    (void)memset(&source_vec, 0, sizeof(source_vec));
     source_vec.buffer_vec = (struct robotraconteurlite_buffer*)source;
     source_vec.buffer_vec_cnt = 1;
     return robotraconteurlite_buffer_vec_copy_vec_ex(&source_vec, source_pos, sizeof(int64_t), source_count, dest_buf,
@@ -804,8 +815,8 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_int64(
 {
     struct robotraconteurlite_buffer dest_buf;
     struct robotraconteurlite_buffer_vec dest_vec;
-    memset(&dest_buf, 0, sizeof(dest_buf));
-    memset(&dest_vec, 0, sizeof(dest_vec));
+    (void)memset(&dest_buf, 0, sizeof(dest_buf));
+    (void)memset(&dest_vec, 0, sizeof(dest_vec));
     dest_buf.data = (uint8_t*)dest;
     dest_buf.len = 1;
     dest_vec.buffer_vec = &dest_buf;
@@ -819,8 +830,8 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_int64(
 {
     struct robotraconteurlite_buffer source_buf;
     struct robotraconteurlite_buffer_vec source_vec;
-    memset(&source_buf, 0, sizeof(source_buf));
-    memset(&source_vec, 0, sizeof(source_vec));
+    (void)memset(&source_buf, 0, sizeof(source_buf));
+    (void)memset(&source_vec, 0, sizeof(source_vec));
     source_buf.data = (uint8_t*)&source;
     source_buf.len = 1;
     source_vec.buffer_vec = &source_buf;
@@ -835,7 +846,7 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_uint64_array(
     const struct robotraconteurlite_array_uint64* dest, size_t dest_pos, size_t dest_count)
 {
     struct robotraconteurlite_buffer_vec dest_vec;
-    memset(&dest_vec, 0, sizeof(dest_vec));
+    (void)memset(&dest_vec, 0, sizeof(dest_vec));
     dest_vec.buffer_vec = (struct robotraconteurlite_buffer*)dest;
     dest_vec.buffer_vec_cnt = 1;
     return robotraconteurlite_buffer_vec_copy_vec_ex(source_buf, source_buf_pos, 1, dest_count * sizeof(uint64_t),
@@ -847,7 +858,7 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_uint64_array(
     const struct robotraconteurlite_array_uint64* source, size_t source_pos, size_t source_count)
 {
     struct robotraconteurlite_buffer_vec source_vec;
-    memset(&source_vec, 0, sizeof(source_vec));
+    (void)memset(&source_vec, 0, sizeof(source_vec));
     source_vec.buffer_vec = (struct robotraconteurlite_buffer*)source;
     source_vec.buffer_vec_cnt = 1;
     return robotraconteurlite_buffer_vec_copy_vec_ex(&source_vec, source_pos, sizeof(uint64_t), source_count, dest_buf,
@@ -859,8 +870,8 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_uint64(
 {
     struct robotraconteurlite_buffer dest_buf;
     struct robotraconteurlite_buffer_vec dest_vec;
-    memset(&dest_buf, 0, sizeof(dest_buf));
-    memset(&dest_vec, 0, sizeof(dest_vec));
+    (void)memset(&dest_buf, 0, sizeof(dest_buf));
+    (void)memset(&dest_vec, 0, sizeof(dest_vec));
     dest_buf.data = (uint8_t*)dest;
     dest_buf.len = 1;
     dest_vec.buffer_vec = &dest_buf;
@@ -874,8 +885,8 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_uint64(
 {
     struct robotraconteurlite_buffer source_buf;
     struct robotraconteurlite_buffer_vec source_vec;
-    memset(&source_buf, 0, sizeof(source_buf));
-    memset(&source_vec, 0, sizeof(source_vec));
+    (void)memset(&source_buf, 0, sizeof(source_buf));
+    (void)memset(&source_vec, 0, sizeof(source_vec));
     source_buf.data = (uint8_t*)&source;
     source_buf.len = 1;
     source_vec.buffer_vec = &source_buf;
@@ -890,7 +901,7 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_cdouble_array(
     const struct robotraconteurlite_array_cdouble* dest, size_t dest_pos, size_t dest_count)
 {
     struct robotraconteurlite_buffer_vec dest_vec;
-    memset(&dest_vec, 0, sizeof(dest_vec));
+    (void)memset(&dest_vec, 0, sizeof(dest_vec));
     dest_vec.buffer_vec = (struct robotraconteurlite_buffer*)dest;
     dest_vec.buffer_vec_cnt = 1;
     return robotraconteurlite_buffer_vec_copy_vec_ex(source_buf, source_buf_pos, 1,
@@ -903,7 +914,7 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_cdouble_array(
     const struct robotraconteurlite_array_cdouble* source, size_t source_pos, size_t source_count)
 {
     struct robotraconteurlite_buffer_vec source_vec;
-    memset(&source_vec, 0, sizeof(source_vec));
+    (void)memset(&source_vec, 0, sizeof(source_vec));
     source_vec.buffer_vec = (struct robotraconteurlite_buffer*)source;
     source_vec.buffer_vec_cnt = 1;
     return robotraconteurlite_buffer_vec_copy_vec_ex(&source_vec, source_pos, sizeof(struct robotraconteurlite_cdouble),
@@ -917,8 +928,8 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_cdouble(
 {
     struct robotraconteurlite_buffer dest_buf;
     struct robotraconteurlite_buffer_vec dest_vec;
-    memset(&dest_buf, 0, sizeof(dest_buf));
-    memset(&dest_vec, 0, sizeof(dest_vec));
+    (void)memset(&dest_buf, 0, sizeof(dest_buf));
+    (void)memset(&dest_vec, 0, sizeof(dest_vec));
     dest_buf.data = (uint8_t*)dest;
     dest_buf.len = 1;
     dest_vec.buffer_vec = &dest_buf;
@@ -933,8 +944,8 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_cdouble(
 {
     struct robotraconteurlite_buffer source_buf;
     struct robotraconteurlite_buffer_vec source_vec;
-    memset(&source_buf, 0, sizeof(source_buf));
-    memset(&source_vec, 0, sizeof(source_vec));
+    (void)memset(&source_buf, 0, sizeof(source_buf));
+    (void)memset(&source_vec, 0, sizeof(source_vec));
     source_buf.data = (uint8_t*)&source;
     source_buf.len = 1;
     source_vec.buffer_vec = &source_buf;
@@ -950,7 +961,7 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_csingle_array(
     const struct robotraconteurlite_array_csingle* dest, size_t dest_pos, size_t dest_count)
 {
     struct robotraconteurlite_buffer_vec dest_vec;
-    memset(&dest_vec, 0, sizeof(dest_vec));
+    (void)memset(&dest_vec, 0, sizeof(dest_vec));
     dest_vec.buffer_vec = (struct robotraconteurlite_buffer*)dest;
     dest_vec.buffer_vec_cnt = 1;
     return robotraconteurlite_buffer_vec_copy_vec_ex(source_buf, source_buf_pos, 1,
@@ -963,7 +974,7 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_csingle_array(
     const struct robotraconteurlite_array_csingle* source, size_t source_pos, size_t source_count)
 {
     struct robotraconteurlite_buffer_vec source_vec;
-    memset(&source_vec, 0, sizeof(source_vec));
+    (void)memset(&source_vec, 0, sizeof(source_vec));
     source_vec.buffer_vec = (struct robotraconteurlite_buffer*)source;
     source_vec.buffer_vec_cnt = 1;
     return robotraconteurlite_buffer_vec_copy_vec_ex(&source_vec, source_pos, sizeof(struct robotraconteurlite_csingle),
@@ -977,8 +988,8 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_csingle(
 {
     struct robotraconteurlite_buffer dest_buf;
     struct robotraconteurlite_buffer_vec dest_vec;
-    memset(&dest_buf, 0, sizeof(dest_buf));
-    memset(&dest_vec, 0, sizeof(dest_vec));
+    (void)memset(&dest_buf, 0, sizeof(dest_buf));
+    (void)memset(&dest_vec, 0, sizeof(dest_vec));
     dest_buf.data = (uint8_t*)dest;
     dest_buf.len = 1;
     dest_vec.buffer_vec = &dest_buf;
@@ -993,8 +1004,8 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_csingle(
 {
     struct robotraconteurlite_buffer source_buf;
     struct robotraconteurlite_buffer_vec source_vec;
-    memset(&source_buf, 0, sizeof(source_buf));
-    memset(&source_vec, 0, sizeof(source_vec));
+    (void)memset(&source_buf, 0, sizeof(source_buf));
+    (void)memset(&source_vec, 0, sizeof(source_vec));
     source_buf.data = (uint8_t*)&source;
     source_buf.len = 1;
     source_vec.buffer_vec = &source_buf;
@@ -1010,7 +1021,7 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_bool_array(
     const struct robotraconteurlite_array_bool* dest, size_t dest_pos, size_t dest_count)
 {
     struct robotraconteurlite_buffer_vec dest_vec;
-    memset(&dest_vec, 0, sizeof(dest_vec));
+    (void)memset(&dest_vec, 0, sizeof(dest_vec));
     dest_vec.buffer_vec = (struct robotraconteurlite_buffer*)dest;
     dest_vec.buffer_vec_cnt = 1;
     return robotraconteurlite_buffer_vec_copy_vec_ex(source_buf, source_buf_pos, 1,
@@ -1023,7 +1034,7 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_bool_array(
     const struct robotraconteurlite_array_bool* source, size_t source_pos, size_t source_count)
 {
     struct robotraconteurlite_buffer_vec source_vec;
-    memset(&source_vec, 0, sizeof(source_vec));
+    (void)memset(&source_vec, 0, sizeof(source_vec));
     source_vec.buffer_vec = (struct robotraconteurlite_buffer*)source;
     source_vec.buffer_vec_cnt = 1;
     return robotraconteurlite_buffer_vec_copy_vec_ex(&source_vec, source_pos, sizeof(struct robotraconteurlite_bool),
@@ -1036,8 +1047,8 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_bool(
 {
     struct robotraconteurlite_buffer dest_buf;
     struct robotraconteurlite_buffer_vec dest_vec;
-    memset(&dest_buf, 0, sizeof(dest_buf));
-    memset(&dest_vec, 0, sizeof(dest_vec));
+    (void)memset(&dest_buf, 0, sizeof(dest_buf));
+    (void)memset(&dest_vec, 0, sizeof(dest_vec));
     dest_buf.data = (uint8_t*)dest;
     dest_buf.len = 1;
     dest_vec.buffer_vec = &dest_buf;
@@ -1052,8 +1063,8 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_bool(
 {
     struct robotraconteurlite_buffer source_buf;
     struct robotraconteurlite_buffer_vec source_vec;
-    memset(&source_buf, 0, sizeof(source_buf));
-    memset(&source_vec, 0, sizeof(source_vec));
+    (void)memset(&source_buf, 0, sizeof(source_buf));
+    (void)memset(&source_vec, 0, sizeof(source_vec));
     source_buf.data = (uint8_t*)&source;
     source_buf.len = 1;
     source_vec.buffer_vec = &source_buf;
@@ -1068,7 +1079,7 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_string(
     const struct robotraconteurlite_string* dest, size_t dest_pos, size_t dest_count)
 {
     struct robotraconteurlite_buffer_vec dest_vec;
-    memset(&dest_vec, 0, sizeof(dest_vec));
+    (void)memset(&dest_vec, 0, sizeof(dest_vec));
     dest_vec.buffer_vec = (struct robotraconteurlite_buffer*)dest;
     dest_vec.buffer_vec_cnt = 1;
     return robotraconteurlite_buffer_vec_copy_vec_ex(source_buf, source_buf_pos, 1, dest_count * sizeof(char),
@@ -1080,7 +1091,7 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_string(
     const struct robotraconteurlite_string* source, size_t source_pos, size_t source_count)
 {
     struct robotraconteurlite_buffer_vec source_vec;
-    memset(&source_vec, 0, sizeof(source_vec));
+    (void)memset(&source_vec, 0, sizeof(source_vec));
     source_vec.buffer_vec = (struct robotraconteurlite_buffer*)source;
     source_vec.buffer_vec_cnt = 1;
     return robotraconteurlite_buffer_vec_copy_vec_ex(&source_vec, source_pos, sizeof(char), source_count, dest_buf,
@@ -1095,7 +1106,7 @@ robotraconteurlite_status robotraconteurlite_string_cmp(const struct robotracont
     assert(str1->data != NULL);
     assert(str2->data != NULL);
 
-    if (str1->len == 0U && str2->len == 0U)
+    if ((str1->len == 0U) && (str2->len == 0U))
     {
         return 0;
     }
@@ -1128,11 +1139,12 @@ uint32_t robotraconteurlite_string_hash(const struct robotraconteurlite_string* 
     case 0:
         return 0;
     case 1:
-        return (str_len & 0xFFFF) | (str->data[0] << 24);
+        return (str_len & 0xFFFFU) | ((uint32_t)str->data[0] << 24);
     case 2:
-        return (str_len & 0xFFFF) | (str->data[0] << 24) | (str->data[str_len - 1] << 16);
+        return (str_len & 0xFFFFU) | ((uint32_t)str->data[0] << 24) | ((uint32_t)str->data[str_len - 1U] << 16);
     default:
-        return (str_len & 0xFFFF) | (str->data[0] << 24) | ((str->data[str_len - 1] ^ str->data[str_len - 2]) << 16);
+        return (str_len & 0xFFFFU) | ((uint32_t)str->data[0] << 24) |
+               (((uint32_t)str->data[str_len - 1U] ^ (uint32_t)str->data[str_len - 2U]) << 16);
     }
 }
 
@@ -1160,7 +1172,7 @@ robotraconteurlite_status robotraconteurlite_string_copy_to(const struct robotra
         return ROBOTRACONTEURLITE_ERROR_INVALID_ARGUMENT;
     }
 
-    memcpy(dest->data, source->data, source->len);
+    (void)memcpy(dest->data, source->data, source->len);
     dest->len = source->len;
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }

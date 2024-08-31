@@ -159,7 +159,7 @@ void robotraconteurlite_message_reader_basictest(void** state)
 
     /* Read message header */
 
-    memset(&header, 0, sizeof(header));
+    (void)memset(&header, 0, sizeof(header));
     assert_return_code(robotraconteurlite_message_reader_read_header(&reader, &header), 0);
 
     assert_true(header.message_size == 1118);
@@ -204,7 +204,7 @@ void robotraconteurlite_message_reader_basictest(void** state)
 
     {
         struct robotraconteurlite_messageentry_header entry_header;
-        memset(&entry_header, 0, sizeof(entry_header));
+        (void)memset(&entry_header, 0, sizeof(entry_header));
         assert_return_code(robotraconteurlite_messageentry_reader_read_header(&entry_reader, &entry_header), 0);
 
         assert_true(entry_header.entry_size == 70);
@@ -263,7 +263,7 @@ void robotraconteurlite_message_reader_basictest(void** state)
     {
         struct robotraconteurlite_messageentry_header entry_header3;
         assert_return_code(robotraconteurlite_messageentry_reader_move_next(&entry_reader), 0);
-        memset(&entry_header3, 0, sizeof(entry_header3));
+        (void)memset(&entry_header3, 0, sizeof(entry_header3));
         assert_return_code(robotraconteurlite_messageentry_reader_read_header(&entry_reader, &entry_header3), 0);
 
         assert_true(entry_header3.entry_size == 919);
@@ -280,7 +280,7 @@ void robotraconteurlite_message_reader_basictest(void** state)
         struct robotraconteurlite_messageelement_header element_header;
         assert_return_code(robotraconteurlite_messageentry_reader_begin_read_elements(&entry_reader, &element_reader),
                            0);
-        memset(&element_header, 0, sizeof(element_header));
+        (void)memset(&element_header, 0, sizeof(element_header));
         assert_return_code(robotraconteurlite_messageelement_reader_read_header(&element_reader, &element_header), 0);
     }
 
@@ -297,7 +297,7 @@ void robotraconteurlite_message_reader_basictest(void** state)
         assert_return_code(
             robotraconteurlite_messageentry_reader_find_element(&entry_reader, &element2_name, &element_reader2), 0);
 
-        memset(&element_header2, 0, sizeof(element_header2));
+        (void)memset(&element_header2, 0, sizeof(element_header2));
         element_header2.element_name.data = element_name2_header_data;
         element_header2.element_name.len = sizeof(element_name2_header_data);
         assert_return_code(robotraconteurlite_messageelement_reader_read_header(&element_reader2, &element_header2), 0);
@@ -737,7 +737,7 @@ void robotraconteurlite_message_reader_basictest(void** state)
         assert_return_code(robotraconteurlite_messageentry_reader_move_next(&entry_reader), 0);
         {
             struct robotraconteurlite_messageentry_header entry_header4;
-            memset(&entry_header4, 0, sizeof(entry_header4));
+            (void)memset(&entry_header4, 0, sizeof(entry_header4));
             assert_return_code(robotraconteurlite_messageentry_reader_read_header(&entry_reader, &entry_header4), 0);
 
             assert_true(entry_header4.entry_size == 22);
@@ -889,7 +889,7 @@ void robotraconteurlite_message_writer_basictest(void** state)
             char type_string_data[] = "some_struct_type";
             struct robotraconteurlite_messageelement_header element_header;
             struct robotraconteurlite_messageelement_writer nested_element_writer;
-            memset(&element_header, 0, sizeof(element_header));
+            (void)memset(&element_header, 0, sizeof(element_header));
 
             element_header.element_name.data = element_name_data;
             element_header.element_name.len = strlen(element_name_data);
@@ -1132,7 +1132,7 @@ void robotraconteurlite_message_writer_basictest(void** state)
     {
         struct robotraconteurlite_messageentry_header entry_header;
         struct robotraconteurlite_messageelement_writer element_writer;
-        memset(&entry_header, 0, sizeof(entry_header));
+        (void)memset(&entry_header, 0, sizeof(entry_header));
         entry_header.entry_type = ROBOTRACONTEURLITE_MESSAGEENTRYTYPE_STREAMOP;
 
         assert_return_code(

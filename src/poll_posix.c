@@ -1,11 +1,11 @@
 #ifndef _XOPEN_SOURCE
+/* cppcheck-suppress misra-c2012-21.1 */
 /* NOLINTNEXTLINE(bugprone-reserved-identifier) */
 #define _XOPEN_SOURCE 500
 #endif
 
 #include "robotraconteurlite/poll.h"
 #include <poll.h>
-#include <stdio.h>
 #include <unistd.h>
 #include <errno.h>
 
@@ -13,7 +13,9 @@ int robotraconteurlite_poll(struct robotraconteurlite_pollfd* fds, int nfds, int
 {
     int ret = -1;
     ret = poll((struct pollfd*)fds, (int)nfds, (int)timeout);
-    if (ret < 0 && errno == EINTR)
+    /* False positive cppcheck warning for errno not set */
+    /* cppcheck-suppress misra-c2012-22.10 */
+    if ((ret < 0) && (errno == EINTR))
     {
         return 0;
     }

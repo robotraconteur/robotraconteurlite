@@ -21,8 +21,6 @@
 #include "robotraconteurlite/array.h"
 #include "robotraconteurlite/nodeid.h"
 
-/* cppcheck-suppress-begin misra-c2012-2.5 */
-
 /* Data Types */
 #define ROBOTRACONTEURLITE_DATATYPE_VOID 0U
 #define ROBOTRACONTEURLITE_DATATYPE_DOUBLE 1U
@@ -184,8 +182,6 @@
 #define ROBOTRACONTEURLITE_MESSAGEERRORTYPE_AUTHENTICATIONERROR 150U
 #define ROBOTRACONTEURLITE_MESSAGEERRORTYPE_OBJECTLOCKEDERROR 151U
 #define ROBOTRACONTEURLITE_MESSAGEERRORTYPE_PERMISSIONDENIED 152U
-
-/* cppcheck-suppress-end misra-c2012-2.5 */
 
 struct robotraconteurlite_message_header
 {

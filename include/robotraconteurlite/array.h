@@ -500,7 +500,7 @@ ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_string_cmp(
 static int robotraconteurlite_string_cmp_c_str(const struct robotraconteurlite_string* str1, const char* str2)
 {
     size_t strlen_str2 = strlen(str2);
-    if (strlen_str2 == 0U && str1->len == 0U)
+    if ((strlen_str2 == 0U) && (str1->len == 0U))
     {
         return 0;
     }
@@ -525,6 +525,8 @@ static int robotraconteurlite_string_cmp_c_str(const struct robotraconteurlite_s
         return 1;
     }
 
+    /* The char null terminator is not used by this function */
+    /* cppcheck-suppress misra-c2012-21.14 */
     return memcmp(str1->data, str2, str1->len);
 }
 
