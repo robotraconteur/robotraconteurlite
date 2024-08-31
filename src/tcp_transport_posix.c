@@ -305,7 +305,7 @@ robotraconteurlite_status robotraconteurlite_tcp_acceptor_poll_add_fd(
     struct robotraconteurlite_connection* c = connection_head;
     while (c != NULL)
     {
-        if (c->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_IDLE)
+        if ((c->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_IDLE) != 0U)
         {
             extra_events = POLLIN;
             break;
@@ -327,15 +327,15 @@ robotraconteurlite_status robotraconteurlite_tcp_connection_poll_add_fd(
         return ROBOTRACONTEURLITE_ERROR_SUCCESS;
     }
 
-    if (connection->connection_state &
-        (ROBOTRACONTEURLITE_STATUS_FLAGS_SEND_REQUESTED | ROBOTRACONTEURLITE_STATUS_FLAGS_SENDING))
+    if ((connection->connection_state &
+         (ROBOTRACONTEURLITE_STATUS_FLAGS_SEND_REQUESTED | ROBOTRACONTEURLITE_STATUS_FLAGS_SENDING)) != 0U)
     {
         extra_events |= POLLOUT;
     }
 
-    if (connection->connection_state &
-        (ROBOTRACONTEURLITE_STATUS_FLAGS_RECEIVE_REQUESTED | ROBOTRACONTEURLITE_STATUS_FLAGS_RECEIVING |
-         ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTING))
+    if ((connection->connection_state &
+         (ROBOTRACONTEURLITE_STATUS_FLAGS_RECEIVE_REQUESTED | ROBOTRACONTEURLITE_STATUS_FLAGS_RECEIVING |
+          ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTING)) != 0U)
     {
         extra_events |= POLLIN;
     }

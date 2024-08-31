@@ -12,7 +12,7 @@ robotraconteurlite_status robotraconteurlite_connection_reset(struct robotracont
     connection->sock = -1;
     connection->local_endpoint = 0;
     connection->remote_endpoint = 0;
-    if (robotraconteurlite_nodeid_reset(&connection->remote_nodeid))
+    if (robotraconteurlite_nodeid_reset(&connection->remote_nodeid) != 0)
     {
         return ROBOTRACONTEURLITE_ERROR_INTERNAL_ERROR;
     }
@@ -61,12 +61,12 @@ robotraconteurlite_status robotraconteurlite_connection_message_receive(
 
     assert(buffer_storage->buffer_vec_cnt >= 1U);
     if (robotraconteurlite_buffer_init_scalar(&buffer_storage->buffer_vec[0], connection->recv_buffer,
-                                              connection->recv_buffer_pos))
+                                              connection->recv_buffer_pos) != 0)
     {
         return ROBOTRACONTEURLITE_ERROR_INTERNAL_ERROR;
     }
     buffer_storage->buffer_vec_cnt = 1U;
-    if (robotraconteurlite_message_reader_init(message_reader, buffer_storage, 0U, connection->recv_buffer_pos))
+    if (robotraconteurlite_message_reader_init(message_reader, buffer_storage, 0U, connection->recv_buffer_pos) != 0)
     {
         return ROBOTRACONTEURLITE_ERROR_INTERNAL_ERROR;
     }
@@ -109,12 +109,12 @@ robotraconteurlite_status robotraconteurlite_connection_begin_send_message(
     }
 
     if (robotraconteurlite_buffer_init_scalar(&buffer_storage->buffer_vec[0], connection->send_buffer,
-                                              connection->send_buffer_len))
+                                              connection->send_buffer_len) != 0)
     {
         return ROBOTRACONTEURLITE_ERROR_INTERNAL_ERROR;
     }
 
-    if (robotraconteurlite_message_writer_init(message_writer, buffer_storage, 0U, connection->send_buffer_pos))
+    if (robotraconteurlite_message_writer_init(message_writer, buffer_storage, 0U, connection->send_buffer_pos) != 0)
     {
         return ROBOTRACONTEURLITE_ERROR_INTERNAL_ERROR;
     }
@@ -193,13 +193,13 @@ robotraconteurlite_status robotraconteurlite_connection_next_wake(struct robotra
         return ROBOTRACONTEURLITE_ERROR_SUCCESS;
     }
 
-    if ((connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_MESSAGE_SENT))
+    if ((connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_MESSAGE_SENT) != 0U)
     {
         *next_wake = now;
         return ROBOTRACONTEURLITE_ERROR_SUCCESS;
     }
 
-    if ((connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_MESSAGE_RECEIVED))
+    if ((connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_MESSAGE_RECEIVED) != 0U)
     {
         *next_wake = now;
         return ROBOTRACONTEURLITE_ERROR_SUCCESS;

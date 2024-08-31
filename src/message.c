@@ -722,7 +722,7 @@ robotraconteurlite_status robotraconteurlite_messageelement_reader_move_next(
     robotraconteurlite_status rv = -1;
 
     size_t element_count = 0;
-    if (element_reader->element_count_uint32)
+    if (element_reader->element_count_uint32 != 0U)
     {
         uint16_t element_count_32 = 0;
         rv = robotraconteurlite_buffer_vec_copy_to_uint16(element_reader->buffer, element_reader->element_count_offset,
