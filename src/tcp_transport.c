@@ -1075,7 +1075,7 @@ static robotraconteurlite_status robotraconteurlite_tcp_connect_service_send_web
 
     for (i = 0; i < (int)sizeof(websocket_key); i++)
     {
-        websocket_key[i] = rand() % 256U;
+        websocket_key[i] = (uint8_t)((uint32_t)rand() % 256U);
     }
 
     if (send_len > connect_data->client_out->send_buffer_len)
