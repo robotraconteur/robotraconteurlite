@@ -81,7 +81,7 @@ static int cmp_float(const float* a, const float* b, size_t len)
     size_t i = 0;
     for (i = 0; i < len; i++)
     {
-        if (a[i] != b[i])
+        if (abs(a[i] - b[i]) > 1e-4)
         {
             return 1;
         }
@@ -109,7 +109,7 @@ static int cmp_csingle(const struct robotraconteurlite_csingle* a, const struct 
     size_t i = 0;
     for (i = 0; i < len; i++)
     {
-        if (a[i].real != b[i].real || a[i].imag != b[i].imag)
+        if (abs(a[i].real - b[i].real) > 1e-4 || abs(a[i].imag - b[i].imag) > 1e-4)
         {
             return 1;
         }

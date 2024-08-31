@@ -328,7 +328,7 @@ robotraconteurlite_status robotraconteurlite_message_reader_begin_read_entries(
 
     entry_reader->buffer = reader->buffer;
     entry_reader->buffer_offset = reader->buffer_offset + o;
-    entry_reader->buffer_count = reader->buffer_count;
+    entry_reader->buffer_count = entry_size;
     entry_reader->buffer_remaining = reader->buffer_count - o - entry_size;
     entry_reader->current_entry = 0;
     entry_reader->entry_count_offset = entry_count_offset;
@@ -704,7 +704,7 @@ robotraconteurlite_status robotraconteurlite_messageentry_reader_begin_read_elem
         return rv;
     }
 
-    if (o + element_size > entry_reader->buffer_count)
+    if ((o - entry_reader->buffer_offset) + element_size > entry_reader->buffer_count)
     {
         return ROBOTRACONTEURLITE_ERROR_PROTOCOL;
     }
