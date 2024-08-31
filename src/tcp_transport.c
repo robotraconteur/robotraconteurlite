@@ -4,6 +4,12 @@
 #include <string.h>
 #include <assert.h>
 
+/* memcmp is used between uint8_t* buffer and const char literals in this function
+   The char null terminator is not used for this comparison, and the comparison between
+   char and uint8_t is safe. Disabling misra warnings for this file.
+*/
+/* cppcheck-suppress-file [misra-c2012-21.14, misra-c2012-21.16] */
+
 robotraconteurlite_status robotraconteurlite_tcp_acceptor_listen(
     struct robotraconteurlite_connection_acceptor* acceptor, const struct sockaddr_storage* serv_addr, int backlog)
 {
@@ -560,6 +566,7 @@ static robotraconteurlite_status robotraconteurlite_tcp_connection_handshake_htt
 static robotraconteurlite_status robotraconteurlite_tcp_connection_handshake_http_handshake(
     struct robotraconteurlite_connection* connection)
 {
+    /* cppcheck-suppress-begin [misra-c2012-21.14, misra-c2012-21.16] */
     const char* recv_data = (const char*)connection->recv_buffer;
     size_t recv_data_len = connection->recv_buffer_pos;
 
@@ -586,6 +593,7 @@ static robotraconteurlite_status robotraconteurlite_tcp_connection_handshake_htt
         if (recv_data[i_next] == 'S')
         {
             if (((i_next + STRCONST_HTTP_SEC_WEBSOCKET_KEY_LEN) < recv_data_len) &&
+                /* cppcheck-suppress [misra-c2012-21.14, misra-c2012-21.16] */
                 (memcmp(recv_data + i_next, STRCONST_HTTP_SEC_WEBSOCKET_KEY, STRCONST_HTTP_SEC_WEBSOCKET_KEY_LEN) == 0))
             {
                 i_sec_websocket = i_next + STRCONST_HTTP_SEC_WEBSOCKET_KEY_LEN;
@@ -706,6 +714,7 @@ static robotraconteurlite_status robotraconteurlite_tcp_connection_handshake_htt
         if (connection->recv_buffer_pos >= 4U)
         {
             uint8_t* end_minus_4 = connection->recv_buffer + connection->recv_buffer_pos - 4U;
+            /* cppcheck-suppress [misra-c2012-21.14, misra-c2012-21.16] */
             if ((memcmp(end_minus_4, "\r\n\r\n", 4) == 0) || (memcmp(end_minus_4, "\n\r\n\r", 4) == 0))
             {
                 newline_found = 1;
@@ -716,6 +725,7 @@ static robotraconteurlite_status robotraconteurlite_tcp_connection_handshake_htt
         if (connection->recv_buffer_pos >= 2U)
         {
             uint8_t* end_minus_2 = connection->recv_buffer + connection->recv_buffer_pos - 2U;
+            /* cppcheck-suppress [misra-c2012-21.14, misra-c2012-21.16] */
             if ((memcmp(end_minus_2, "\n\n", 2) == 0) || (memcmp(end_minus_2, "\r\r", 2) == 0))
             {
                 newline_found = 1;
@@ -736,6 +746,8 @@ static robotraconteurlite_status robotraconteurlite_tcp_connection_handshake_htt
 static robotraconteurlite_status robotraconteurlite_tcp_connection_handshake_server(
     struct robotraconteurlite_connection* connection)
 {
+    const char rrac_magic[4] = {'R', 'R', 'A', 'C'};
+
     struct robotraconteurlite_tcp_transport_storage* storage =
         (struct robotraconteurlite_tcp_transport_storage*)&connection->transport_storage;
     robotraconteurlite_status rv = -1;
@@ -793,7 +805,7 @@ static robotraconteurlite_status robotraconteurlite_tcp_connection_handshake_ser
     }
 
     /* Check if first 4 bytes are RRAC */
-    if (memcmp(connection->recv_buffer, "RRAC", 4) == 0)
+    if (memcmp(connection->recv_buffer, rrac_magic, sizeof(rrac_magic)) == 0)
     {
         /* We are connected with a non-websocket client */
         storage->tcp_transport_state &= ~ROBOTRACONTEURLITE_TCP_TRANSPORT_STATE_IS_WEBSOCKET;
@@ -804,6 +816,7 @@ static robotraconteurlite_status robotraconteurlite_tcp_connection_handshake_ser
     }
 
     /* Check if first 4 bytes are GET */
+    /* cppcheck-suppress [misra-c2012-21.14, misra-c2012-21.16] */
     if (memcmp(connection->recv_buffer, "GET ", 4) == 0)
     {
         /* We are connected with a websocket client, begin handshake */
@@ -900,6 +913,7 @@ static robotraconteurlite_status robotraconteurlite_tcp_connection_handshake_cli
     }
 
     /* Make sure we actually upgraded */
+    /* cppcheck-suppress [misra-c2012-21.14, misra-c2012-21.16] */
     if (memcmp(connection->recv_buffer, "HTTP/1.1 101", 12) != 0)
     {
         return ROBOTRACONTEURLITE_ERROR_CONNECTION_ERROR;

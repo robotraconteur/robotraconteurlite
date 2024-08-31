@@ -22,11 +22,13 @@ robotraconteurlite_status robotraconteurlite_connection_reset(struct robotracont
 robotraconteurlite_status robotraconteurlite_connection_verify_preamble(
     struct robotraconteurlite_connection* connection, uint32_t* message_len)
 {
+    const char rrac_magic[4] = {'R', 'R', 'A', 'C'};
+
     if ((connection->recv_buffer_pos >= 12U) && (connection->recv_message_len == 0U))
     {
         uint16_t message_version = 0U;
         /* Check the message RRAC */
-        if (memcmp(connection->recv_buffer, "RRAC", 4) != 0)
+        if (memcmp(connection->recv_buffer, rrac_magic, sizeof(rrac_magic)) != 0)
         {
             connection->connection_state |= ROBOTRACONTEURLITE_STATUS_FLAGS_ERROR;
             connection->connection_state &= ~ROBOTRACONTEURLITE_STATUS_FLAGS_RECEIVE_REQUESTED;

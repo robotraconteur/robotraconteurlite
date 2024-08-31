@@ -525,6 +525,8 @@ static int robotraconteurlite_string_cmp_c_str(const struct robotraconteurlite_s
         return 1;
     }
 
+    /* The char null terminator is not used by this function */
+    /* cppcheck-suppress misra-c2012-21.14 */
     return memcmp(str1->data, str2, str1->len);
 }
 

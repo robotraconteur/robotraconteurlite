@@ -18,6 +18,8 @@
 #include <assert.h>
 #include <math.h>
 
+static const char rrac_magic[4] = {'R', 'R', 'A', 'C'};
+
 /* Message Reader */
 
 robotraconteurlite_status robotraconteurlite_message_reader_init(struct robotraconteurlite_message_reader* reader,
@@ -28,7 +30,6 @@ robotraconteurlite_status robotraconteurlite_message_reader_init(struct robotrac
     robotraconteurlite_status rv = -1;
     uint8_t magic_data[4];
     struct robotraconteurlite_array_uint8 magic_array;
-    uint8_t expected_magic[4] = "RRAC";
     uint32_t message_size = 0;
 
     magic_array.data = magic_data;
@@ -56,7 +57,7 @@ robotraconteurlite_status robotraconteurlite_message_reader_init(struct robotrac
         return rv;
     }
 
-    if (memcmp(magic_data, expected_magic, 4) != 0)
+    if (memcmp(magic_data, rrac_magic, 4) != 0)
     {
         return ROBOTRACONTEURLITE_ERROR_PROTOCOL;
     }
@@ -1456,7 +1457,6 @@ robotraconteurlite_status robotraconteurlite_message_writer_begin_message(
     size_t str3_len = header->extended.len;
     size_t str4_len = str1_len + str2_len + str3_len;
     uint16_t header_size = 0;
-    char magic_raw[] = "RRAC";
     struct robotraconteurlite_string magic;
     robotraconteurlite_status rv = -1;
     struct robotraconteurlite_array_uint8 sender_nodeid_array;
@@ -1474,8 +1474,8 @@ robotraconteurlite_status robotraconteurlite_message_writer_begin_message(
 
     header_size = (uint16_t)(str4_len + 64U);
 
-    magic.data = magic_raw;
-    magic.len = 4;
+    magic.data = (char*)rrac_magic;
+    magic.len = sizeof(rrac_magic);
 
     rv = robotraconteurlite_buffer_vec_copy_from_string(writer->buffer, writer->buffer_offset, &magic, 0, 4);
     if (rv < 0)

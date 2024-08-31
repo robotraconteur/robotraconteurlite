@@ -10,7 +10,8 @@ int robotraconteurlite_nodeid_equal(const struct robotraconteurlite_nodeid* a,
 
 int robotraconteurlite_nodeid_isany(const struct robotraconteurlite_nodeid* a)
 {
-    return memcmp(a->data, "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01", sizeof(a->data)) == 0;
+    uint8_t zero_uuid[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    return memcmp(a->data, zero_uuid, sizeof(a->data)) == 0;
 }
 
 int robotraconteurlite_nodeid_newrandom(struct robotraconteurlite_nodeid* a)
