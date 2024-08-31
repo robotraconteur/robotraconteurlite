@@ -1223,7 +1223,7 @@ robotraconteurlite_status robotraconteurlite_node_next_wake(struct robotraconteu
 
 robotraconteurlite_status robotraconteurlite_node_poll_add_fd(struct robotraconteurlite_node* node,
                                                               struct robotraconteurlite_pollfd* pollfds,
-                                                              size_t* pollfd_count, size_t max_pollfds)
+                                                              const size_t* pollfd_count, size_t max_pollfds)
 {
     ROBOTRACONTEURLITE_UNUSED(node);
     ROBOTRACONTEURLITE_UNUSED(pollfds);

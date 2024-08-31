@@ -434,6 +434,7 @@ int main(int argc, char* argv[])
                 robotraconteurlite_node_consume_event(&node, &event);
                 break;
             }
+            /* NOLINTNEXTLINE(bugprone-branch-clone) */
             case ROBOTRACONTEURLITE_EVENT_TYPE_NEXT_CYCLE: {
                 /* Loop will be broken after next_cycle */
                 robotraconteurlite_node_consume_event(&node, &event);
