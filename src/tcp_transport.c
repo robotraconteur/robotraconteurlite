@@ -108,7 +108,7 @@ static size_t robotraconteurlite_tcp_connection_recv_websocket_header_size(uint8
     {
         websocket_header_len += 2U;
     }
-    else if (len1 == 127U)
+    if (len1 == 127U)
     {
         websocket_header_len += 8U;
     }
@@ -718,7 +718,6 @@ static robotraconteurlite_status robotraconteurlite_tcp_connection_handshake_htt
             if ((memcmp(end_minus_4, "\r\n\r\n", 4) == 0) || (memcmp(end_minus_4, "\n\r\n\r", 4) == 0))
             {
                 newline_found = 1;
-                break;
             }
         }
 
@@ -729,8 +728,12 @@ static robotraconteurlite_status robotraconteurlite_tcp_connection_handshake_htt
             if ((memcmp(end_minus_2, "\n\n", 2) == 0) || (memcmp(end_minus_2, "\r\r", 2) == 0))
             {
                 newline_found = 1;
-                break;
             }
+        }
+
+        if (newline_found != 0)
+        {
+            break;
         }
     }
 

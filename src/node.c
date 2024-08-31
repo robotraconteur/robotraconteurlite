@@ -307,6 +307,8 @@ robotraconteurlite_status robotraconteurlite_node_event_special_request(struct r
             break;
         }
     }
+    /* False positive cppcheck warning */
+    /* cppcheck-suppress misra-c2012-16.3 */
     case ROBOTRACONTEURLITE_MESSAGEENTRYTYPE_GETSERVICEDESC:
     case ROBOTRACONTEURLITE_MESSAGEENTRYTYPE_OBJECTTYPENAME: {
         /* These need to be handled by the user to avoid memory handling */
@@ -380,7 +382,8 @@ robotraconteurlite_status robotraconteurlite_node_event_special_request(struct r
             break;
         }
     }
-
+    /* False positive cppcheck warning */
+    /* cppcheck-suppress misra-c2012-16.3 */
     case ROBOTRACONTEURLITE_MESSAGEENTRYTYPE_CONNECTCLIENTRET: {
         if (!robotraconteurlite_connection_is_server(event->connection) &&
             ((event->connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_CLIENT_ESTABLISHED) == 0U))
@@ -392,10 +395,7 @@ robotraconteurlite_status robotraconteurlite_node_event_special_request(struct r
 
             return ROBOTRACONTEURLITE_ERROR_SUCCESS;
         }
-        else
-        {
-            break;
-        }
+        break;
     }
     case ROBOTRACONTEURLITE_MESSAGEENTRYTYPE_CONNECTIONTESTRET: {
         /* Consume the return, handled by the connection */
@@ -920,6 +920,10 @@ robotraconteurlite_status robotraconteurlite_client_handshake(
         else if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
         {
             return robotraconteurlite_client_handshake_handle_error(handshake_data, rv);
+        }
+        else
+        {
+            /* noop */
         }
 
         switch (event->event_type)
