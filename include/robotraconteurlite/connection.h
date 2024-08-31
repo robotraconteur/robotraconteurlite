@@ -56,6 +56,7 @@ struct robotraconteurlite_user_storage
     void* user_data;
 };
 
+/* NOLINTNEXTLINE(clang-analyzer-optin.performance.Padding) */
 struct robotraconteurlite_connection
 {
     uint32_t transport_type;

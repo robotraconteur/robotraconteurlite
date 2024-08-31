@@ -157,13 +157,11 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_vec(const struct ro
     if (source_current_pos < source_pos)
     {
         source_i_pos = source_pos - source_current_pos;
-        source_current_pos += source_i_pos;
     }
 
     if (dest_current_pos < dest_pos)
     {
         dest_i_pos = dest_pos - dest_current_pos;
-        dest_current_pos += dest_i_pos;
     }
 
     count_remaining = count;
@@ -305,13 +303,11 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_vec_ex(
     if (source_current_byte_pos < source_byte_pos)
     {
         source_i_byte_pos = source_byte_pos - source_current_byte_pos;
-        source_current_byte_pos += source_i_byte_pos;
     }
 
     if (dest_current_byte_pos < dest_byte_pos)
     {
         dest_i_byte_pos = dest_byte_pos - dest_current_byte_pos;
-        dest_current_byte_pos += dest_i_byte_pos;
     }
 
     bytes_remaining = source_count * source_elem_size;

@@ -232,7 +232,7 @@ ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_node_next_wa
 /* Note: does not add connection fds */
 ROBOTRACONTEURLITE_API robotraconteurlite_status
 robotraconteurlite_node_poll_add_fd(struct robotraconteurlite_node* node, struct robotraconteurlite_pollfd* pollfds,
-                                    size_t* pollfd_count, size_t max_pollfds);
+                                    const size_t* pollfd_count, size_t max_pollfds);
 
 /*ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_client_process_request(struct
  * robotraconteurlite_node_send_messageentry_data* request_data, struct

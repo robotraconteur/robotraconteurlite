@@ -1079,6 +1079,7 @@ robotraconteurlite_status robotraconteurlite_tcp_connect_service_send_websocket_
     send_buf += STRCONST_HTTP_REQUEST_4_LEN;
     /* NOLINTEND(bugprone-not-null-terminated-result) */
 
+    assert(send_buf - connect_data->client_out->send_buffer == (int)send_len);
     connect_data->client_out->send_message_len = send_len;
     connect_data->client_out->send_buffer_pos = 0;
 

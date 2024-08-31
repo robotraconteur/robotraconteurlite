@@ -1167,12 +1167,15 @@ robotraconteurlite_status robotraconteurlite_messageelement_reader_begin_read_ne
     struct robotraconteurlite_messageelement_header header;
     size_t o = 0;
     size_t header_size = 0;
-    size_t data_size = 0;
     size_t element_count_offset = 0;
     uint32_t nested_element_size = 0;
 
     memset(&header, 0, sizeof(header));
     rv = robotraconteurlite_messageelement_reader_read_header(element_reader, &header);
+    if (rv < 0)
+    {
+        return rv;
+    }
 
     switch (header.element_type)
     {
@@ -1198,7 +1201,6 @@ robotraconteurlite_status robotraconteurlite_messageelement_reader_begin_read_ne
 
     o = element_reader->buffer_offset;
     header_size = 16U + header.element_name.len + header.element_type_name.len + header.extended.len;
-    data_size = header.element_size - header_size;
     element_count_offset = o + header_size - 4U;
 
     o += header_size;
