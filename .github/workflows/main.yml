@@ -55,7 +55,7 @@ jobs:
       run: make -j2 -k
 
   cppcheck:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
     - uses: actions/checkout@v3
     - name: apt update
