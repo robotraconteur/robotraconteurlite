@@ -8,7 +8,6 @@
    The char null terminator is not used for this comparison, and the comparison between
    char and uint8_t is safe. Disabling misra warnings for this file.
 */
-/* cppcheck-suppress-file [misra-c2012-21.14, misra-c2012-21.16] */
 
 robotraconteurlite_status robotraconteurlite_tcp_acceptor_listen(
     struct robotraconteurlite_connection_acceptor* acceptor, const struct sockaddr_storage* serv_addr, int backlog)
@@ -569,7 +568,7 @@ static robotraconteurlite_status robotraconteurlite_tcp_connection_handshake_htt
 static robotraconteurlite_status robotraconteurlite_tcp_connection_handshake_http_handshake(
     struct robotraconteurlite_connection* connection)
 {
-    /* cppcheck-suppress-begin [misra-c2012-21.14, misra-c2012-21.16] */
+    /* cppcheck-suppress [misra-c2012-21.14, misra-c2012-21.16] */
     const char* recv_data = (const char*)connection->recv_buffer;
     size_t recv_data_len = connection->recv_buffer_pos;
 
