@@ -17,12 +17,6 @@
 #include <string.h>
 #include <assert.h>
 
-/* Disable assert if using cppcheck to prevent false positives */
-#ifdef CPPCHECK
-#undef assert
-#define assert(x)
-#endif
-
 robotraconteurlite_status robotraconteurlite_buffer_init_scalar(struct robotraconteurlite_buffer* buffer, void* data,
                                                                 size_t len)
 {
