@@ -332,7 +332,10 @@ static robotraconteurlite_status robotraconteurlite_tcp_websocket_random_mask(
     /* TODO: use better random source */
     uint32_t random_val = rand();
     ROBOTRACONTEURLITE_UNUSED(connection);
-    (void)memcpy(mask, &random_val, 4);
+    mask[0] = (random_val >> 24) & 0xFFU;
+    mask[1] = (random_val >> 16) & 0xFFU;
+    mask[2] = (random_val >> 8) & 0xFFU;
+    mask[3] = random_val & 0xFFU;
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
 
