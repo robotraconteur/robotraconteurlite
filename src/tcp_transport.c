@@ -46,7 +46,7 @@ robotraconteurlite_status robotraconteurlite_tcp_acceptor_communicate(
     robotraconteurlite_status rv = -1;
     while (c != NULL)
     {
-        if ((c->transport_type = ROBOTRACONTEURLITE_TCP_TRANSPORT) &&
+        if ((c->transport_type == ROBOTRACONTEURLITE_TCP_TRANSPORT) &&
             ((c->config_flags & ROBOTRACONTEURLITE_CONFIG_FLAGS_ISSERVER) != 0U) &&
             ((c->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_IDLE) != 0U))
         {
@@ -1128,7 +1128,7 @@ robotraconteurlite_status robotraconteurlite_tcp_connect_service(
     int sock = 0;
     while (c != NULL)
     {
-        if ((c->transport_type = ROBOTRACONTEURLITE_TCP_TRANSPORT) &&
+        if ((c->transport_type == ROBOTRACONTEURLITE_TCP_TRANSPORT) &&
             ((c->config_flags & ROBOTRACONTEURLITE_CONFIG_FLAGS_ISSERVER) == 0U) &&
             ((c->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_IDLE) != 0U))
         {
