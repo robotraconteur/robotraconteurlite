@@ -22,7 +22,7 @@ robotraconteurlite_status robotraconteurlite_connection_reset(struct robotracont
 robotraconteurlite_status robotraconteurlite_connection_verify_preamble(
     struct robotraconteurlite_connection* connection, uint32_t* message_len)
 {
-    if (connection->recv_buffer_pos >= 12U && connection->recv_message_len == 0U)
+    if ((connection->recv_buffer_pos >= 12U) && (connection->recv_message_len == 0U))
     {
         uint16_t message_version = 0U;
         /* Check the message RRAC */
@@ -53,8 +53,8 @@ robotraconteurlite_status robotraconteurlite_connection_message_receive(
     struct robotraconteurlite_buffer_vec* buffer_storage)
 {
 
-    if ((connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_MESSAGE_RECEIVED) == 0U ||
-        (connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_MESSAGE_CONSUMED) != 0U)
+    if (((connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_MESSAGE_RECEIVED) == 0U) ||
+        ((connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_MESSAGE_CONSUMED) != 0U))
     {
         return ROBOTRACONTEURLITE_ERROR_RETRY;
     }
@@ -90,11 +90,11 @@ robotraconteurlite_status robotraconteurlite_connection_begin_send_message(
     struct robotraconteurlite_connection* connection, struct robotraconteurlite_message_writer* message_writer,
     struct robotraconteurlite_buffer_vec* buffer_storage)
 {
-    if ((connection->connection_state &
-         (ROBOTRACONTEURLITE_STATUS_FLAGS_ERROR | ROBOTRACONTEURLITE_STATUS_FLAGS_CLOSED |
-          ROBOTRACONTEURLITE_STATUS_FLAGS_CLOSE_REQUESTED | ROBOTRACONTEURLITE_STATUS_FLAGS_IDLE)
+    if (((connection->connection_state &
+          (ROBOTRACONTEURLITE_STATUS_FLAGS_ERROR | ROBOTRACONTEURLITE_STATUS_FLAGS_CLOSED |
+           ROBOTRACONTEURLITE_STATUS_FLAGS_CLOSE_REQUESTED | ROBOTRACONTEURLITE_STATUS_FLAGS_IDLE)
 
-             ) != 0U ||
+              ) != 0U) ||
         ((connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTED) == 0U))
     {
         return ROBOTRACONTEURLITE_ERROR_INVALID_OPERATION;
@@ -156,7 +156,7 @@ struct robotraconteurlite_connection* robotraconteurlite_connections_init_from_a
 {
     size_t i = 0U;
     assert(connections_fixed_storage_len > 0U);
-    assert(buffer_count >= connections_fixed_storage_len * 2U);
+    assert(buffer_count >= (connections_fixed_storage_len * 2U));
     assert(buffer_size > 1024U);
 
     for (i = 0; i < connections_fixed_storage_len; i++)
@@ -208,7 +208,7 @@ robotraconteurlite_status robotraconteurlite_connection_next_wake(struct robotra
     if (connection->heartbeat_next_check_ms > 0)
     {
         if ((now > connection->heartbeat_next_check_ms) ||
-            (connection->heartbeat_next_check_ms == 0 && connection->heartbeat_period_ms > 0))
+            ((connection->heartbeat_next_check_ms == 0) && (connection->heartbeat_period_ms > 0)))
         {
             *next_wake = now;
             return ROBOTRACONTEURLITE_ERROR_SUCCESS;

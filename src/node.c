@@ -181,8 +181,8 @@ robotraconteurlite_status robotraconteurlite_node_next_event(struct robotraconte
             {
                 robotraconteurlite_clear_event(event);
                 node->events_serviced++;
-                event->event_type = heartbeat_ret == 1 ? ROBOTRACONTEURLITE_EVENT_TYPE_CONNECTION_HEARTBEAT_TIMEOUT
-                                                       : ROBOTRACONTEURLITE_EVENT_TYPE_CONNECTION_TIMEOUT;
+                event->event_type = (heartbeat_ret == 1) ? ROBOTRACONTEURLITE_EVENT_TYPE_CONNECTION_HEARTBEAT_TIMEOUT
+                                                         : ROBOTRACONTEURLITE_EVENT_TYPE_CONNECTION_TIMEOUT;
                 event->connection = c;
                 return ROBOTRACONTEURLITE_ERROR_SUCCESS;
             }
@@ -399,7 +399,7 @@ robotraconteurlite_status robotraconteurlite_node_event_special_request(struct r
     }
 
     /* If message is odd, it is a request, respond with error. Otherwise pass it on to the client */
-    if (event->received_message.received_message_entry_header.entry_type % 2U == 1U)
+    if ((event->received_message.received_message_entry_header.entry_type % 2U) == 1U)
     {
         robotraconteurlite_status rv = robotraconteurlite_connection_send_messageentry_error_response(
             node, event->connection, &event->received_message.received_message_entry_header,
@@ -878,8 +878,8 @@ robotraconteurlite_status robotraconteurlite_client_handshake(
     robotraconteurlite_status rv = -1;
     ROBOTRACONTEURLITE_UNUSED(now);
 
-    if (event->event_type != ROBOTRACONTEURLITE_EVENT_TYPE_NEXT_CYCLE &&
-        event->connection != handshake_data->connection)
+    if ((event->event_type != ROBOTRACONTEURLITE_EVENT_TYPE_NEXT_CYCLE) &&
+        (event->connection != handshake_data->connection))
     {
         return ROBOTRACONTEURLITE_ERROR_UNHANDLED_EVENT;
     }

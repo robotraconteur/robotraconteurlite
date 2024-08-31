@@ -259,14 +259,14 @@ static int robotraconteurlite_connection_is_heartbeat_timeout(struct robotracont
     int64_t recv_diff_ms = now - connection->last_recv_message_time;
     int64_t send_diff_ms = now - connection->last_send_message_time;
 
-    if (recv_diff_ms > connection->heartbeat_timeout_ms || send_diff_ms > connection->heartbeat_timeout_ms)
+    if ((recv_diff_ms > connection->heartbeat_timeout_ms) || (send_diff_ms > connection->heartbeat_timeout_ms))
     {
         return 2;
     }
 
     if ((connection->config_flags & ROBOTRACONTEURLITE_CONFIG_FLAGS_ISSERVER) == 0U)
     {
-        if (recv_diff_ms > connection->heartbeat_period_ms || send_diff_ms > connection->heartbeat_period_ms)
+        if ((recv_diff_ms > connection->heartbeat_period_ms) || (send_diff_ms > connection->heartbeat_period_ms))
         {
             return 1;
         }

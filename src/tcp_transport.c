@@ -120,8 +120,8 @@ static robotraconteurlite_status robotraconteurlite_tcp_connection_buffer_recv_w
 {
     struct robotraconteurlite_tcp_transport_storage* storage =
         (struct robotraconteurlite_tcp_transport_storage*)&connection->transport_storage;
-    if (storage->recv_websocket_frame_pos == storage->recv_websocket_frame_len &&
-        (storage->tcp_transport_state & ROBOTRACONTEURLITE_TCP_TRANSPORT_STATE_RECV_WEBSOCKET_IN_FRAME) != 0U)
+    if ((storage->recv_websocket_frame_pos == storage->recv_websocket_frame_len) &&
+        ((storage->tcp_transport_state & ROBOTRACONTEURLITE_TCP_TRANSPORT_STATE_RECV_WEBSOCKET_IN_FRAME) != 0U))
     {
         /* reset for next websocket frame */
         storage->recv_websocket_frame_pos = 0;
@@ -282,7 +282,7 @@ robotraconteurlite_status robotraconteurlite_tcp_connection_communicate_recv(
 
         /* Receive data */
         size_t recv_op_len =
-            connection->recv_message_len == 0U ? 64U : connection->recv_buffer_len - connection->recv_buffer_pos;
+            (connection->recv_message_len == 0U) ? 64U : (connection->recv_buffer_len - connection->recv_buffer_pos);
 
         /* Receive data */
         robotraconteurlite_status rv = robotraconteurlite_tcp_connection_buffer_recv(connection, recv_op_len);
@@ -304,7 +304,7 @@ robotraconteurlite_status robotraconteurlite_tcp_connection_communicate_recv(
         }
 
         /* If we have received the entire message, set the message received flag */
-        if (connection->recv_message_len > 0U && connection->recv_buffer_pos >= connection->recv_message_len)
+        if ((connection->recv_message_len > 0U) && (connection->recv_buffer_pos >= connection->recv_message_len))
         {
             connection->connection_state &= ~ROBOTRACONTEURLITE_STATUS_FLAGS_RECEIVE_REQUESTED;
             connection->connection_state |= ROBOTRACONTEURLITE_STATUS_FLAGS_MESSAGE_RECEIVED;
@@ -337,7 +337,7 @@ static robotraconteurlite_status robotraconteurlite_tcp_connection_buffer_send_w
     size_t send_len = len - connection->send_buffer_pos;
     int last_errno = -1;
     robotraconteurlite_status rv = -1;
-    if (storage->send_websocket_frame_len == 0U && send_len > 0U)
+    if ((storage->send_websocket_frame_len == 0U) && (send_len > 0U))
     {
         /* Prepare new frame */
         if (send_len >= UINT16_MAX)
@@ -385,8 +385,8 @@ static robotraconteurlite_status robotraconteurlite_tcp_connection_buffer_send_w
     }
 
     /* Send header nonblocking */
-    if (storage->send_websocket_header_len > 0U &&
-        storage->send_websocket_header_pos < storage->send_websocket_header_len)
+    if ((storage->send_websocket_header_len > 0U) &&
+        (storage->send_websocket_header_pos < storage->send_websocket_header_len))
     {
         int last_errno = -1;
         robotraconteurlite_status rv = robotraconteurlite_tcp_socket_send_nonblocking(
@@ -481,7 +481,7 @@ robotraconteurlite_status robotraconteurlite_tcp_connection_communicate_send(
         }
 
         /* If we have not sent the entire message, set the message sending flag */
-        if (connection->send_message_len > 0U && connection->send_buffer_pos < connection->send_message_len)
+        if ((connection->send_message_len > 0U) && (connection->send_buffer_pos < connection->send_message_len))
         {
             connection->connection_state |= ROBOTRACONTEURLITE_STATUS_FLAGS_SENDING;
         }
@@ -496,7 +496,7 @@ robotraconteurlite_status robotraconteurlite_tcp_connection_communicate_send(
     {
         /* Send data */
         size_t send_op_len =
-            connection->send_message_len == 0U ? 64U : connection->send_message_len - connection->send_buffer_pos;
+            (connection->send_message_len == 0U) ? 64U : (connection->send_message_len - connection->send_buffer_pos);
         robotraconteurlite_status rv = robotraconteurlite_tcp_connection_buffer_send(connection, send_op_len);
         if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
         {
@@ -505,7 +505,7 @@ robotraconteurlite_status robotraconteurlite_tcp_connection_communicate_send(
         }
 
         /* If we have sent the entire message, set the message sent flag */
-        if (connection->send_message_len > 0U && connection->send_buffer_pos >= connection->send_message_len)
+        if ((connection->send_message_len > 0U) && (connection->send_buffer_pos >= connection->send_message_len))
         {
             connection->connection_state &= ~ROBOTRACONTEURLITE_STATUS_FLAGS_SENDING;
             connection->connection_state |= ROBOTRACONTEURLITE_STATUS_FLAGS_MESSAGE_SENT;
@@ -523,7 +523,7 @@ static robotraconteurlite_status robotraconteurlite_tcp_connection_handshake_htt
     const char* recv_data, size_t recv_data_len, size_t* i_end, size_t* i_next)
 {
     size_t i = *i_next;
-    while (i < recv_data_len && recv_data[i] != '\n' && recv_data[i] != '\r')
+    while ((i < recv_data_len) && (recv_data[i] != '\n') && (recv_data[i] != '\r'))
     {
         i++;
     }
@@ -533,7 +533,7 @@ static robotraconteurlite_status robotraconteurlite_tcp_connection_handshake_htt
         return ROBOTRACONTEURLITE_ERROR_CONNECTION_ERROR;
     }
     *i_end = i;
-    while (i < recv_data_len && (recv_data[i] == '\n' || recv_data[i] == '\r'))
+    while ((i < recv_data_len) && ((recv_data[i] == '\n') || (recv_data[i] == '\r')))
     {
         i++;
     }
@@ -581,8 +581,8 @@ static robotraconteurlite_status robotraconteurlite_tcp_connection_handshake_htt
     {
         if (recv_data[i_next] == 'S')
         {
-            if (i_next + STRCONST_HTTP_SEC_WEBSOCKET_KEY_LEN < recv_data_len &&
-                memcmp(recv_data + i_next, STRCONST_HTTP_SEC_WEBSOCKET_KEY, STRCONST_HTTP_SEC_WEBSOCKET_KEY_LEN) == 0)
+            if (((i_next + STRCONST_HTTP_SEC_WEBSOCKET_KEY_LEN) < recv_data_len) &&
+                (memcmp(recv_data + i_next, STRCONST_HTTP_SEC_WEBSOCKET_KEY, STRCONST_HTTP_SEC_WEBSOCKET_KEY_LEN) == 0))
             {
                 i_sec_websocket = i_next + STRCONST_HTTP_SEC_WEBSOCKET_KEY_LEN;
                 break;
@@ -610,21 +610,21 @@ static robotraconteurlite_status robotraconteurlite_tcp_connection_handshake_htt
     }
 
     /* Skip any whitespace */
-    while (i_sec_websocket < i_end && (recv_data[i_sec_websocket] == ' ' || recv_data[i_sec_websocket] == '\t'))
+    while ((i_sec_websocket < i_end) && ((recv_data[i_sec_websocket] == ' ') || (recv_data[i_sec_websocket] == '\t')))
     {
         i_sec_websocket++;
     }
 
     /* Find end of sec key */
     i_sec_websocket_end = i_sec_websocket;
-    while (i_sec_websocket_end < i_end && recv_data[i_sec_websocket_end] != ' ' &&
-           recv_data[i_sec_websocket_end] != '\t')
+    while ((i_sec_websocket_end < i_end) && (recv_data[i_sec_websocket_end] != ' ') &&
+           (recv_data[i_sec_websocket_end] != '\t'))
     {
         i_sec_websocket_end++;
     }
 
     /* Check the client key length */
-    if (i_sec_websocket_end - i_sec_websocket != WEBSOCKET_KEY_BASE64_LEN)
+    if ((i_sec_websocket_end - i_sec_websocket) != WEBSOCKET_KEY_BASE64_LEN)
     {
         return ROBOTRACONTEURLITE_ERROR_CONNECTION_ERROR;
     }
@@ -696,7 +696,7 @@ static robotraconteurlite_status robotraconteurlite_tcp_connection_handshake_htt
         if (connection->recv_buffer_pos >= 4U)
         {
             uint8_t* end_minus_4 = connection->recv_buffer + connection->recv_buffer_pos - 4U;
-            if (memcmp(end_minus_4, "\r\n\r\n", 4) == 0 || memcmp(end_minus_4, "\n\r\n\r", 4) == 0)
+            if ((memcmp(end_minus_4, "\r\n\r\n", 4) == 0) || (memcmp(end_minus_4, "\n\r\n\r", 4) == 0))
             {
                 newline_found = 1;
                 break;
@@ -706,7 +706,7 @@ static robotraconteurlite_status robotraconteurlite_tcp_connection_handshake_htt
         if (connection->recv_buffer_pos >= 2U)
         {
             uint8_t* end_minus_2 = connection->recv_buffer + connection->recv_buffer_pos - 2U;
-            if (memcmp(end_minus_2, "\n\n", 2) == 0 || memcmp(end_minus_2, "\r\r", 2) == 0)
+            if ((memcmp(end_minus_2, "\n\n", 2) == 0) || (memcmp(end_minus_2, "\r\r", 2) == 0))
             {
                 newline_found = 1;
                 break;
@@ -825,7 +825,7 @@ static robotraconteurlite_status robotraconteurlite_tcp_connection_handshake_ser
     }
 
     /* Check if the response was sent */
-    if (connection->send_message_len > 0U && connection->send_buffer_pos == connection->send_message_len)
+    if ((connection->send_message_len > 0U) && (connection->send_buffer_pos == connection->send_message_len))
     {
         /* We are connected using websockets! */
         connection->connection_state |=
@@ -881,7 +881,7 @@ static robotraconteurlite_status robotraconteurlite_tcp_connection_handshake_cli
     rv = robotraconteurlite_tcp_connection_handshake_http_recv_header(connection);
     if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
     {
-        if (rv == ROBOTRACONTEURLITE_ERROR_RETRY || rv == ROBOTRACONTEURLITE_ERROR_CONSUMED)
+        if ((rv == ROBOTRACONTEURLITE_ERROR_RETRY) || (rv == ROBOTRACONTEURLITE_ERROR_CONSUMED))
         {
             return rv;
         }
@@ -1051,7 +1051,7 @@ robotraconteurlite_status robotraconteurlite_tcp_connect_service_send_websocket_
         return ROBOTRACONTEURLITE_ERROR_INVALID_PARAMETER;
     }
 
-    if (connect_data->service_address->http_path.len == 0U || connect_data->service_address->http_host.len == 0U)
+    if ((connect_data->service_address->http_path.len == 0U) || (connect_data->service_address->http_host.len == 0U))
     {
         return ROBOTRACONTEURLITE_ERROR_INVALID_PARAMETER;
     }
@@ -1079,7 +1079,7 @@ robotraconteurlite_status robotraconteurlite_tcp_connect_service_send_websocket_
     send_buf += STRCONST_HTTP_REQUEST_4_LEN;
     /* NOLINTEND(bugprone-not-null-terminated-result) */
 
-    assert(send_buf - connect_data->client_out->send_buffer == (int)send_len);
+    assert((send_buf - connect_data->client_out->send_buffer) == (int)send_len);
     connect_data->client_out->send_message_len = send_len;
     connect_data->client_out->send_buffer_pos = 0;
 

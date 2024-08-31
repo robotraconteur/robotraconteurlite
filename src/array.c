@@ -80,7 +80,7 @@ robotraconteurlite_status robotraconteurlite_buffer_copy(const struct robotracon
     }
 
     if (!(source_pos < source->len) || ((source_pos + count) > source->len) || !(dest_pos < dest->len) ||
-        (dest_pos + count > dest->len))
+        ((dest_pos + count) > dest->len))
     {
         return ROBOTRACONTEURLITE_ERROR_OUT_OF_RANGE;
     }
@@ -110,7 +110,7 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_vec(const struct ro
     assert(source->buffer_vec != NULL);
     assert(dest->buffer_vec != NULL);
 
-    if (source->buffer_vec_cnt == 1U && dest->buffer_vec_cnt == 1U)
+    if ((source->buffer_vec_cnt == 1U) && (dest->buffer_vec_cnt == 1U))
     {
         return robotraconteurlite_buffer_copy(&source->buffer_vec[0], source_pos, &dest->buffer_vec[0], dest_pos,
                                               count);
@@ -127,7 +127,7 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_vec(const struct ro
     }
 
     if (!(source_pos < source_len) || ((source_pos + count) > source_len) || !(dest_pos < dest_len) ||
-        (dest_pos + count > dest_len))
+        ((dest_pos + count) > dest_len))
     {
         return ROBOTRACONTEURLITE_ERROR_OUT_OF_RANGE;
     }
@@ -136,13 +136,13 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_vec(const struct ro
     dest_i = 0;
     source_i_pos = 0;
     dest_i_pos = 0;
-    while (source_current_pos + source->buffer_vec[source_i].len < source_pos)
+    while ((source_current_pos + source->buffer_vec[source_i].len) < source_pos)
     {
         source_current_pos += source->buffer_vec[source_i].len;
         source_i++;
     }
 
-    while (dest_current_pos + dest->buffer_vec[dest_i].len < dest_pos)
+    while ((dest_current_pos + dest->buffer_vec[dest_i].len) < dest_pos)
     {
         dest_current_pos += dest->buffer_vec[dest_i].len;
         dest_i++;
@@ -178,8 +178,8 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_vec(const struct ro
             continue;
         }
 
-        delta = source_i_delta < dest_i_delta ? source_i_delta : dest_i_delta;
-        delta = count_remaining < delta ? count_remaining : delta;
+        delta = (source_i_delta < dest_i_delta) ? source_i_delta : dest_i_delta;
+        delta = (count_remaining < delta) ? count_remaining : delta;
 
         assert(source->buffer_vec[source_i].data != NULL);
         assert(dest->buffer_vec[dest_i].data != NULL);
@@ -205,23 +205,23 @@ robotraconteurlite_status robotraconteurlite_buffer_copy_ex(const struct robotra
     assert(dest != NULL);
     assert(dest->data != NULL);
 
-    if (source_count == 0U && dest_count == 0U)
+    if ((source_count == 0U) && (dest_count == 0U))
     {
         return ROBOTRACONTEURLITE_ERROR_SUCCESS;
     }
 
-    if (source_count * source_elem_size != dest_count * dest_elem_size)
+    if ((source_count * source_elem_size) != (dest_count * dest_elem_size))
     {
         return ROBOTRACONTEURLITE_ERROR_OUT_OF_RANGE;
     }
 
     if (!(source_pos < source->len) || ((source_pos + source_count) > source->len) || !(dest_pos < dest->len) ||
-        (dest_pos + dest_count > dest->len))
+        ((dest_pos + dest_count) > dest->len))
     {
         return ROBOTRACONTEURLITE_ERROR_OUT_OF_RANGE;
     }
 
-    memcpy(dest->data + dest_pos * dest_elem_size, source->data + source_pos * source_elem_size,
+    memcpy(dest->data + (dest_pos * dest_elem_size), source->data + (source_pos * source_elem_size),
            source_count * source_elem_size);
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
@@ -248,13 +248,13 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_vec_ex(
     assert(source->buffer_vec != NULL);
     assert(dest->buffer_vec != NULL);
 
-    if (source->buffer_vec_cnt == 1U && dest->buffer_vec_cnt == 1U)
+    if ((source->buffer_vec_cnt == 1U) && (dest->buffer_vec_cnt == 1U))
     {
         return robotraconteurlite_buffer_copy_ex(&source->buffer_vec[0], source_pos, source_elem_size, source_count,
                                                  &dest->buffer_vec[0], dest_pos, dest_elem_size, dest_count);
     }
 
-    if (source_count * source_elem_size != dest_count * dest_elem_size)
+    if ((source_count * source_elem_size) != (dest_count * dest_elem_size))
     {
         return ROBOTRACONTEURLITE_ERROR_OUT_OF_RANGE;
     }
@@ -270,7 +270,7 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_vec_ex(
     }
 
     if (!(source_pos < source_len) || ((source_pos + source_count) > source_len) || !(dest_pos < dest_len) ||
-        (dest_pos + dest_count > dest_len))
+        ((dest_pos + dest_count) > dest_len))
     {
         return ROBOTRACONTEURLITE_ERROR_OUT_OF_RANGE;
     }
@@ -324,8 +324,8 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_vec_ex(
             continue;
         }
 
-        delta = source_i_delta < dest_i_delta ? source_i_delta : dest_i_delta;
-        delta = bytes_remaining < delta ? bytes_remaining : delta;
+        delta = (source_i_delta < dest_i_delta) ? source_i_delta : dest_i_delta;
+        delta = (bytes_remaining < delta) ? bytes_remaining : delta;
 
         assert(source->buffer_vec[source_i].data != NULL);
         assert(dest->buffer_vec[dest_i].data != NULL);
@@ -1095,7 +1095,7 @@ robotraconteurlite_status robotraconteurlite_string_cmp(const struct robotracont
     assert(str1->data != NULL);
     assert(str2->data != NULL);
 
-    if (str1->len == 0U && str2->len == 0U)
+    if ((str1->len == 0U) && (str2->len == 0U))
     {
         return 0;
     }
