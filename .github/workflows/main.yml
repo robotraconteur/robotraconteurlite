@@ -74,26 +74,6 @@ jobs:
       working-directory: build
       run: make -j2 -k
 
-  cppcheck-misra:
-    runs-on: ubuntu-24.04
-    steps:
-    - uses: actions/checkout@v3
-    - name: apt update
-      run: sudo apt-get update
-    - name: apt
-      run: sudo apt-get install build-essential uuid-dev libssl-dev libcmocka-dev cppcheck  -y
-    - name: cmake
-      run: |
-        mkdir -p build
-        cd build
-        cmake -DCMAKE_BUILD_TYPE=Debug \
-        -DCMAKE_DISABLE_PRECOMPILE_HEADERS=ON -DCMAKE_C_FLAGS="-DCPPCHECK=1" \
-        -DCMAKE_C_CPPCHECK="/usr/bin/cppcheck;--enable=warning;--inconclusive;--force;--inline-suppr;--error-exitcode=1;--std=c99;--addon=misra" \
-        ..
-    - name: make
-      working-directory: build
-      run: make -j2 -k
-
   pre-commit:
     runs-on: ubuntu-22.04
     env:

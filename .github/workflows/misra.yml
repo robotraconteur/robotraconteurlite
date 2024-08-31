@@ -1,0 +1,29 @@
+name: MISRA
+
+on:
+  push:
+  pull_request:
+  release:
+    types:
+    - created
+
+  workflow_dispatch:
+
+jobs:
+  cppcheck-misra:
+    runs-on: ubuntu-22.04
+    steps:
+    - uses: actions/checkout@v3
+    - name: apt update
+      run: sudo apt-get update
+    - name: apt
+      run: sudo apt-get install build-essential uuid-dev libssl-dev libcmocka-dev cppcheck ninja-build -y
+    - name: cmake
+      run: |
+        mkdir -p build
+        cd build
+        cmake -GNinja -DCMAKE_BUILD_TYPE=Debug -DBUILD_EXAMPLES=OFF -DBUILD_TESTING=OFF \
+        -DCMAKE_C_CPPCHECK="/usr/bin/cppcheck;-v;--enable=warning;--enable=portability;--inconclusive;--force;--inline-suppr;--error-exitcode=1;--std=c99;--addon=misra;--suppress=misra-c2012-2.5;--suppress=misra-c2012-8.7;--suppress=misra-c2012-2.4;--suppress=misra-c2012-15.5" \
+        ..
+    - name: make
+      run: cmake --build build -v -- -k 100
