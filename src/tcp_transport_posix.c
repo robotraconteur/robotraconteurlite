@@ -175,7 +175,7 @@ robotraconteurlite_status robotraconteurlite_tcp_socket_begin_server(const struc
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
 
-robotraconteurlite_status robotraconteurlite_tcp_configure_socket(int sock, int* errno_out)
+static robotraconteurlite_status robotraconteurlite_tcp_configure_socket(int sock, int* errno_out)
 {
     int flags = 0;
     /* Make socket non-blocking */

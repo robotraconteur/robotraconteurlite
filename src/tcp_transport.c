@@ -1060,7 +1060,7 @@ void robotraconteurlite_tcp_connections_close(struct robotraconteurlite_connecti
     "\r\nSec-WebSocket-Protocol: robotraconteur.robotraconteur.com\r\nSec-WebSocket-Version: 13\r\n\r\n"
 #define STRCONST_HTTP_REQUEST_4_LEN 90U
 
-robotraconteurlite_status robotraconteurlite_tcp_connect_service_send_websocket_http_header(
+static robotraconteurlite_status robotraconteurlite_tcp_connect_service_send_websocket_http_header(
     struct robotraconteurlite_tcp_connect_service_data* connect_data)
 {
     uint8_t* send_buf = 0;
