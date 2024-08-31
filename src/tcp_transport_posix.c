@@ -284,7 +284,7 @@ static robotraconteurlite_status robotraconteurlite_poll_add_fd(int sock, short 
 {
     struct pollfd pollfds1;
     int i = (int)*pollfd_count;
-    if (i >= max_pollfds)
+    if (i >= (int)max_pollfds)
     {
         return ROBOTRACONTEURLITE_ERROR_INVALID_PARAMETER;
     }

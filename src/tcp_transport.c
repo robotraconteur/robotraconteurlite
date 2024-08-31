@@ -216,7 +216,7 @@ static robotraconteurlite_status robotraconteurlite_tcp_connection_buffer_recv_w
         size_t i = 0;
         if (recv_len > len)
         {
-            recv_len = len;
+            recv_len = (uint32_t)len;
         }
 
         prev_recv_buffer_pos = connection->recv_buffer_pos;
@@ -1135,7 +1135,7 @@ robotraconteurlite_status robotraconteurlite_tcp_connect_service(
     }
     c->sock = sock;
     c->connection_state =
-        ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTING | ROBOTRACONTEURLITE_STATUS_FLAGS_RECEIVE_REQUESTED;
+        (uint32_t)ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTING | ROBOTRACONTEURLITE_STATUS_FLAGS_RECEIVE_REQUESTED;
     (void)memset(&c->transport_storage, 0, sizeof(c->transport_storage));
     if ((connect_data->service_address->flags & ROBOTRACONTEURLITE_ADDR_FLAGS_WEBSOCKET) != 0U)
     {

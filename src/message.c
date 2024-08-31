@@ -209,7 +209,7 @@ robotraconteurlite_status robotraconteurlite_message_reader_read_header(
         return rv;
     }
 
-    str_len = sender_nodename_len + receiver_nodename_len + extended_len;
+    str_len = (size_t)sender_nodename_len + receiver_nodename_len + extended_len;
 
     if (header->message_size < (str_len + 64U))
     {
@@ -586,7 +586,7 @@ robotraconteurlite_status robotraconteurlite_messageentry_reader_read_header(
         return rv;
     }
 
-    strlen_2 = servicepath_len + membername_len;
+    strlen_2 = (size_t)servicepath_len + membername_len;
 
     rv = robotraconteurlite_buffer_vec_copy_to_uint32(entry_reader->buffer, o + 12U + strlen_2, &header->request_id);
     if (rv < 0)
@@ -668,7 +668,7 @@ robotraconteurlite_status robotraconteurlite_messageentry_reader_begin_read_elem
         return rv;
     }
 
-    header_size = servicepath_len + membername_len;
+    header_size = (size_t)servicepath_len + membername_len;
 
     rv = robotraconteurlite_buffer_vec_copy_to_uint16(entry_reader->buffer, o + 18U + header_size, &extended_len);
     if (rv < 0)
@@ -676,7 +676,7 @@ robotraconteurlite_status robotraconteurlite_messageentry_reader_begin_read_elem
         return rv;
     }
 
-    header_size += extended_len + 22U;
+    header_size += (size_t)extended_len + 22U;
 
     element_count_offset = o + header_size - 2U;
 
@@ -717,7 +717,7 @@ robotraconteurlite_status robotraconteurlite_messageentry_reader_begin_read_elem
 robotraconteurlite_status robotraconteurlite_messageelement_reader_move_next(
     struct robotraconteurlite_messageelement_reader* element_reader)
 {
-    size_t o = element_reader->buffer_offset + element_reader->buffer_count;
+    size_t o = (size_t)(element_reader->buffer_offset + element_reader->buffer_count);
     uint32_t element_size = 0;
     robotraconteurlite_status rv = -1;
 
@@ -815,7 +815,7 @@ robotraconteurlite_status robotraconteurlite_messageelement_reader_read_header(
         return rv;
     }
 
-    strlen_3 = strlen_2 + extended_len;
+    strlen_3 = (size_t)strlen_2 + extended_len;
 
     rv = robotraconteurlite_buffer_vec_copy_to_uint32(element_reader->buffer, o + 12U + strlen_3, &header->data_count);
     if (rv < 0)

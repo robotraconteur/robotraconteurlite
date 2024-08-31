@@ -1129,11 +1129,12 @@ uint32_t robotraconteurlite_string_hash(const struct robotraconteurlite_string* 
     case 0:
         return 0;
     case 1:
-        return (str_len & 0xFFFF) | (str->data[0] << 24);
+        return (str_len & 0xFFFFU) | ((uint32_t)str->data[0] << 24);
     case 2:
-        return (str_len & 0xFFFF) | (str->data[0] << 24) | (str->data[str_len - 1] << 16);
+        return (str_len & 0xFFFFU) | ((uint32_t)str->data[0] << 24) | ((uint32_t)str->data[str_len - 1U] << 16);
     default:
-        return (str_len & 0xFFFF) | (str->data[0] << 24) | ((str->data[str_len - 1] ^ str->data[str_len - 2]) << 16);
+        return (str_len & 0xFFFFU) | ((uint32_t)str->data[0] << 24) |
+               (((uint32_t)str->data[str_len - 1U] ^ (uint32_t)str->data[str_len - 2U]) << 16);
     }
 }
 
