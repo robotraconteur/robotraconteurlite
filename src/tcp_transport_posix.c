@@ -71,10 +71,14 @@ robotraconteurlite_status robotraconteurlite_tcp_socket_recv_nonblocking(int soc
         ssize_t ret = recv(sock, buffer + *pos, len - *pos, MSG_DONTWAIT);
         if (ret < 0)
         {
+            /* False positive cppcheck warning for errno not set */
+            /* cppcheck-suppress misra-c2012-22.10 */
             if (errno == EWOULDBLOCK)
             {
                 return ROBOTRACONTEURLITE_ERROR_SUCCESS;
             }
+            /* False positive cppcheck warning for errno not set */
+            /* cppcheck-suppress misra-c2012-22.10 */
             *errno_out = errno;
             return ROBOTRACONTEURLITE_ERROR_CONNECTION_ERROR;
         }
@@ -104,10 +108,14 @@ robotraconteurlite_status robotraconteurlite_tcp_socket_send_nonblocking(int soc
         ssize_t ret = send(sock, buffer + *pos, len - *pos, MSG_DONTWAIT);
         if (ret < 0)
         {
+            /* False positive cppcheck warning for errno not set */
+            /* cppcheck-suppress misra-c2012-22.10 */
             if (errno == EWOULDBLOCK)
             {
                 return ROBOTRACONTEURLITE_ERROR_SUCCESS;
             }
+            /* False positive cppcheck warning for errno not set */
+            /* cppcheck-suppress misra-c2012-22.10 */
             *errno_out = errno;
             return ROBOTRACONTEURLITE_ERROR_CONNECTION_ERROR;
         }
@@ -156,6 +164,7 @@ robotraconteurlite_status robotraconteurlite_tcp_socket_begin_server(const struc
     }
 
     /* Bind socket */
+    /* cppcheck-suppress misra-c2012-11.2 */
     if (bind(sock, (struct sockaddr*)serv_addr, sizeof(struct sockaddr_storage)) < 0)
     {
         *errno_out = errno;
@@ -215,10 +224,14 @@ robotraconteurlite_status robotraconteurlite_tcp_socket_accept(int acceptor_sock
     int newsockfd = accept(acceptor_sock, (struct sockaddr*)&cli_addr, &clilen);
     if (newsockfd < 0)
     {
+        /* False positive cppcheck warning for errno not set */
+        /* cppcheck-suppress misra-c2012-22.10 */
         if (errno == EWOULDBLOCK)
         {
             return ROBOTRACONTEURLITE_ERROR_RETRY;
         }
+        /* False positive cppcheck warning for errno not set */
+        /* cppcheck-suppress misra-c2012-22.10 */
         *errno_out = errno;
         return ROBOTRACONTEURLITE_ERROR_SUCCESS;
     }
@@ -268,6 +281,8 @@ robotraconteurlite_status robotraconteurlite_tcp_socket_connect(struct robotraco
     rv = connect(sock, (struct sockaddr*)addr, sizeof(struct sockaddr_storage));
     if (rv < 0)
     {
+        /* False positive cppcheck warning for errno not set */
+        /* cppcheck-suppress misra-c2012-22.10 */
         if (errno == EINPROGRESS)
         {
             return sock;

@@ -13,6 +13,8 @@ int robotraconteurlite_poll(struct robotraconteurlite_pollfd* fds, int nfds, int
 {
     int ret = -1;
     ret = poll((struct pollfd*)fds, (int)nfds, (int)timeout);
+    /* False positive cppcheck warning for errno not set */
+    /* cppcheck-suppress misra-c2012-22.10 */
     if ((ret < 0) && (errno == EINTR))
     {
         return 0;
