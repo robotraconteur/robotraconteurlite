@@ -68,7 +68,7 @@ robotraconteurlite_status robotraconteurlite_tcp_acceptor_communicate(
     c->connection_state = ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTING;
     c->last_recv_message_time = now;
     c->last_send_message_time = now;
-    memset(&c->transport_storage, 0, sizeof(c->transport_storage));
+    (void)memset(&c->transport_storage, 0, sizeof(c->transport_storage));
 
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
@@ -1117,7 +1117,7 @@ robotraconteurlite_status robotraconteurlite_tcp_connect_service(
     c->sock = sock;
     c->connection_state =
         ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTING | ROBOTRACONTEURLITE_STATUS_FLAGS_RECEIVE_REQUESTED;
-    memset(&c->transport_storage, 0, sizeof(c->transport_storage));
+    (void)memset(&c->transport_storage, 0, sizeof(c->transport_storage));
     if (connect_data->service_address->flags & ROBOTRACONTEURLITE_ADDR_FLAGS_WEBSOCKET)
     {
         struct robotraconteurlite_tcp_transport_storage* storage =

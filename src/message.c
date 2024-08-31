@@ -454,7 +454,7 @@ robotraconteurlite_status robotraconteurlite_messageentry_reader_find_element_ve
         return rv;
     }
 
-    memset(&header, 0, sizeof(header));
+    (void)memset(&header, 0, sizeof(header));
     rv = robotraconteurlite_messageelement_reader_read_header(element_reader, &header);
     if (rv < 0)
     {
@@ -488,7 +488,7 @@ robotraconteurlite_status robotraconteurlite_messageentry_reader_find_element_ve
         return rv;
     }
 
-    memset(&header, 0, sizeof(header));
+    (void)memset(&header, 0, sizeof(header));
     rv = robotraconteurlite_messageelement_reader_read_header(element_reader, &header);
     if (rv < 0)
     {
@@ -531,7 +531,7 @@ robotraconteurlite_status robotraconteurlite_messageentry_reader_find_element_ve
         return rv;
     }
 
-    memset(&header, 0, sizeof(header));
+    (void)memset(&header, 0, sizeof(header));
     rv = robotraconteurlite_messageelement_reader_read_header(element_reader, &header);
     if (rv < 0)
     {
@@ -857,7 +857,7 @@ static robotraconteurlite_status robotraconteurlite_messageelement_reader_get_da
 
     assert(element_reader != NULL);
 
-    memset(&element_header, 0, sizeof(element_header));
+    (void)memset(&element_header, 0, sizeof(element_header));
     rv = robotraconteurlite_messageelement_reader_read_header(element_reader, &element_header);
     if (rv < 0)
     {
@@ -1164,7 +1164,7 @@ robotraconteurlite_status robotraconteurlite_messageelement_reader_begin_read_ne
     size_t element_count_offset = 0;
     uint32_t nested_element_size = 0;
 
-    memset(&header, 0, sizeof(header));
+    (void)memset(&header, 0, sizeof(header));
     rv = robotraconteurlite_messageelement_reader_read_header(element_reader, &header);
     if (rv < 0)
     {
@@ -1308,7 +1308,7 @@ robotraconteurlite_status robotraconteurlite_messageelement_reader_find_nested_e
         return rv;
     }
 
-    memset(&header, 0, sizeof(header));
+    (void)memset(&header, 0, sizeof(header));
     rv = robotraconteurlite_messageelement_reader_read_header(nested_element_reader, &header);
     if (rv < 0)
     {
@@ -1344,7 +1344,7 @@ robotraconteurlite_status robotraconteurlite_messageelement_reader_find_nested_e
         return rv;
     }
 
-    memset(&header, 0, sizeof(header));
+    (void)memset(&header, 0, sizeof(header));
     rv = robotraconteurlite_messageelement_reader_read_header(nested_element_reader, &header);
     if (rv < 0)
     {
@@ -1388,7 +1388,7 @@ robotraconteurlite_status robotraconteurlite_messageelement_reader_find_nested_e
         return rv;
     }
 
-    memset(&header, 0, sizeof(header));
+    (void)memset(&header, 0, sizeof(header));
     rv = robotraconteurlite_messageelement_reader_read_header(nested_element_reader, &header);
     if (rv < 0)
     {

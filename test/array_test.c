@@ -106,7 +106,7 @@ void robotraconteurlite_arraytest_buffer_vec_copy_vec(void** state)
         size_t bufb_vec_start = 0;
         size_t count = 0;
 
-        memset(a2, 0, sizeof(a2));
+        (void)memset(a2, 0, sizeof(a2));
 
         for (buf_i = 0; buf_i < 2; buf_i++)
         {
@@ -212,7 +212,7 @@ void robotraconteurlite_arraytest_buffer_vec_copy_vec_ex(void** state)
         size_t count_bytes = 0;
         size_t big_el = 0;
 
-        memset(a2, 0, sizeof(a2));
+        (void)memset(a2, 0, sizeof(a2));
 
         for (buf_i = 0; buf_i < 2; buf_i++)
         {
@@ -290,8 +290,8 @@ void robotraconteurlite_buffer_copy_to_double_test(void** state)
 
     for (i = 0; i < sizeof(a1) / sizeof(double); i++)
         a1[i] = (double)i;
-    memset(a2, 0, sizeof(a2));
-    memset(buf_data, 0, sizeof(buf_data));
+    (void)memset(a2, 0, sizeof(a2));
+    (void)memset(buf_data, 0, sizeof(buf_data));
 
     buf.data = buf_data;
     buf.len = sizeof(buf_data);

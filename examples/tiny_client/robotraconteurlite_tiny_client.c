@@ -103,7 +103,7 @@ int main(int argc, char* argv[])
     robotraconteurlite_node_init(&node, &node_id, &nodename_str, connections_head);
 
     /* Connect to the service */
-    memset(&service_addr, 0, sizeof(service_addr));
+    (void)memset(&service_addr, 0, sizeof(service_addr));
     robotraconteurlite_string_from_c_str(service_name, &service_addr.service_name);
     service_sockaddr = (struct sockaddr_in*)&service_addr.socket_addr;
     service_sockaddr->sin_family = AF_INET;
@@ -120,7 +120,7 @@ int main(int argc, char* argv[])
     robotraconteurlite_string_from_c_str("/", &service_addr.http_path);
 #endif
 
-    memset(&connect_data, 0, sizeof(connect_data));
+    (void)memset(&connect_data, 0, sizeof(connect_data));
     connect_data.connections_head = connections_head;
     connect_data.service_address = &service_addr;
 
@@ -138,7 +138,7 @@ int main(int argc, char* argv[])
     connection = connect_data.client_out;
     {
         struct robotraconteurlite_client_handshake_data handshake_data;
-        memset(&handshake_data, 0, sizeof(handshake_data));
+        (void)memset(&handshake_data, 0, sizeof(handshake_data));
         handshake_data.node = &node;
         handshake_data.connection = connection;
         while (1)
@@ -178,7 +178,7 @@ int main(int argc, char* argv[])
         switch (state)
         {
         case TINY_CLIENT_STATE_INIT: {
-            memset(&request_data, 0, sizeof(request_data));
+            (void)memset(&request_data, 0, sizeof(request_data));
             printf("Sending get_d1\n");
             request_data.node = &node;
             request_data.connection = connection;
@@ -199,7 +199,7 @@ int main(int argc, char* argv[])
         }
         case TINY_CLIENT_STATE_GET_D1_RECEIVED: {
             struct robotraconteurlite_string element_name;
-            memset(&request_data, 0, sizeof(request_data));
+            (void)memset(&request_data, 0, sizeof(request_data));
             printf("Sending set_d1\n");
             request_data.node = &node;
             request_data.connection = connection;

@@ -406,7 +406,7 @@ int main(int argc, char* argv[])
     }
 
     /* Start TCP acceptor */
-    memset(&listen_addr, 0, sizeof(listen_addr));
+    (void)memset(&listen_addr, 0, sizeof(listen_addr));
     /* Implicit listen address of 0.0.0.0, or all interfaces */
     listen_addr.sin_family = AF_INET;
     listen_addr.sin_port = htons(node_port);

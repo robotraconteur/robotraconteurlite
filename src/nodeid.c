@@ -24,7 +24,7 @@ int robotraconteurlite_nodeid_newrandom(struct robotraconteurlite_nodeid* a)
 
 int robotraconteurlite_nodeid_reset(struct robotraconteurlite_nodeid* a)
 {
-    memset(a->data, 0, sizeof(a->data));
+    (void)memset(a->data, 0, sizeof(a->data));
     return 0;
 }
 

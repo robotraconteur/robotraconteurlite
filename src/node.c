@@ -9,7 +9,7 @@ robotraconteurlite_status robotraconteurlite_node_init(struct robotraconteurlite
                                                        struct robotraconteurlite_string* nodename,
                                                        struct robotraconteurlite_connection* connections_head)
 {
-    memset(node, 0, sizeof(struct robotraconteurlite_node));
+    (void)memset(node, 0, sizeof(struct robotraconteurlite_node));
     robotraconteurlite_nodeid_copy_to(nodeid, &node->nodeid);
     assert(nodename->len < sizeof(node->nodename_char));
     node->nodename.data = node->nodename_char;
@@ -95,7 +95,7 @@ robotraconteurlite_status robotraconteurlite_node_remove_connection(struct robot
 
 void static robotraconteurlite_clear_event(struct robotraconteurlite_event* event)
 {
-    memset(event, 0, sizeof(struct robotraconteurlite_event));
+    (void)memset(event, 0, sizeof(struct robotraconteurlite_event));
 }
 
 robotraconteurlite_status robotraconteurlite_node_next_event(struct robotraconteurlite_node* node,
@@ -190,7 +190,7 @@ robotraconteurlite_status robotraconteurlite_node_next_event(struct robotraconte
 
     } while (node->connections_next);
 
-    memset(event, 0, sizeof(struct robotraconteurlite_event));
+    (void)memset(event, 0, sizeof(struct robotraconteurlite_event));
     event->event_type = ROBOTRACONTEURLITE_EVENT_TYPE_NEXT_CYCLE;
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
@@ -450,7 +450,7 @@ robotraconteurlite_status robotraconteurlite_node_begin_send_messageentry(
         return rv;
     }
 
-    memset(&send_data->message_header, 0, sizeof(struct robotraconteurlite_message_header));
+    (void)memset(&send_data->message_header, 0, sizeof(struct robotraconteurlite_message_header));
     send_data->message_header.message_version = 2;
     robotraconteurlite_nodeid_copy_to(&send_data->node->nodeid, &send_data->message_header.sender_nodeid);
     robotraconteurlite_nodeid_copy_to(&send_data->connection->remote_nodeid,
@@ -508,7 +508,7 @@ robotraconteurlite_status robotraconteurlite_node_send_messageentry_empty_respon
     struct robotraconteurlite_node_send_messageentry_data send_data;
     struct robotraconteurlite_messageentry_header send_message_header;
     robotraconteurlite_status rv = -1;
-    memset(&send_data, 0, sizeof(struct robotraconteurlite_node_send_messageentry_data));
+    (void)memset(&send_data, 0, sizeof(struct robotraconteurlite_node_send_messageentry_data));
     memcpy(&send_message_header, request_message_entry_header, sizeof(struct robotraconteurlite_messageentry_header));
     send_message_header.entry_type++;
     send_data.node = node;
@@ -554,7 +554,7 @@ robotraconteurlite_status robotraconteurlite_connection_send_messageentry_error_
            sizeof(struct robotraconteurlite_messageentry_header));
     send_message_entry_header.entry_type++;
     send_message_entry_header.error = error_code;
-    memset(&send_data, 0, sizeof(struct robotraconteurlite_node_send_messageentry_data));
+    (void)memset(&send_data, 0, sizeof(struct robotraconteurlite_node_send_messageentry_data));
     send_data.node = node;
     send_data.connection = connection;
     send_data.message_entry_header = &send_message_entry_header;
@@ -710,7 +710,7 @@ robotraconteurlite_status robotraconteurlite_node_event_special_request_service_
                 /* TODO: Support attributes */
                 struct robotraconteurlite_messageelement_writer attr_element_writer;
                 struct robotraconteurlite_messageelement_header attr_element_header;
-                memset(&attr_element_header, 0, sizeof(struct robotraconteurlite_messageelement_header));
+                (void)memset(&attr_element_header, 0, sizeof(struct robotraconteurlite_messageelement_header));
                 attr_element_header.element_type = ROBOTRACONTEURLITE_DATATYPE_MAP_STRING;
                 robotraconteurlite_string_from_c_str("attributes", &attr_element_header.element_name);
                 rv = robotraconteurlite_messageelement_writer_begin_nested_element(
@@ -863,7 +863,7 @@ static robotraconteurlite_status robotraconteurlite_client_handshake_begin_reque
     struct robotraconteurlite_node_send_messageentry_data* send_data, uint16_t entry_type, const char* membername)
 {
     robotraconteurlite_status rv = -1;
-    memset(send_data, 0, sizeof(struct robotraconteurlite_node_send_messageentry_data));
+    (void)memset(send_data, 0, sizeof(struct robotraconteurlite_node_send_messageentry_data));
     send_data->node = handshake_data->node;
     send_data->connection = handshake_data->connection;
     rv = robotraconteurlite_client_begin_request(send_data, entry_type, membername, NULL);
@@ -1120,7 +1120,7 @@ robotraconteurlite_status robotraconteurlite_client_begin_request(
     const char* servicepath)
 {
     send_data->message_entry_header = &send_data->message_entry_header_storage;
-    memset(send_data->message_entry_header, 0, sizeof(struct robotraconteurlite_messageentry_header));
+    (void)memset(send_data->message_entry_header, 0, sizeof(struct robotraconteurlite_messageentry_header));
     send_data->message_entry_header->entry_type = entry_type;
     send_data->connection->last_request_id++;
     send_data->message_entry_header->request_id = send_data->connection->last_request_id;

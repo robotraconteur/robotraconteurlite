@@ -161,7 +161,7 @@ struct robotraconteurlite_connection* robotraconteurlite_connections_init_from_a
 
     for (i = 0; i < connections_fixed_storage_len; i++)
     {
-        memset(&connections_fixed_storage[i], 0, sizeof(struct robotraconteurlite_connection));
+        (void)memset(&connections_fixed_storage[i], 0, sizeof(struct robotraconteurlite_connection));
         connections_fixed_storage[i].recv_buffer = buffers + (i * 2U * buffer_size);
         connections_fixed_storage[i].send_buffer = buffers + (i * 2U * buffer_size) + buffer_size;
         connections_fixed_storage[i].recv_buffer_len = buffer_size;
