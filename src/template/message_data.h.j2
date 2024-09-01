@@ -1,0 +1,66 @@
+/* Copyright 2011-2024 Wason Technology, LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+{% set types=[("double","double"),("single","float"),("int8","int8_t"),("uint8","uint8_t"),("int16","int16_t"),
+    ("uint16","uint16_t"),("int32","int32_t"),("uint32","uint32_t"),("int64","int64_t"),("uint64","uint64_t"),
+    ("cdouble","struct robotraconteurlite_cdouble"),("csingle","struct robotraconteurlite_csingle"),
+    ("bool","struct robotraconteurlite_bool")] %}
+#ifndef ROBOTRACONTEURLITE_MESSAGE_DATA_H
+#define ROBOTRACONTEURLITE_MESSAGE_DATA_H
+
+#include "robotraconteurlite/message.h"
+
+/* reader */
+
+{% for type,ctype in types %}
+ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_{{type}}_array(
+    struct robotraconteurlite_messageelement_reader* element_reader, struct robotraconteurlite_array_{{type}}* array);
+
+ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_{{type}}(
+    struct robotraconteurlite_messageelement_reader* element_reader, {{ctype}}* value);
+
+{% endfor %}
+
+ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_string(
+    struct robotraconteurlite_messageelement_reader* element_reader, struct robotraconteurlite_string* dest_str);
+
+/* writer */
+
+{% for type,ctype in types %}
+ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_messageelement_writer_write_{{type}}(
+    struct robotraconteurlite_messageelement_writer* element_writer,
+    const struct robotraconteurlite_string* element_name, {{ctype}} value);
+
+ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_messageelement_writer_write_{{type}}_array(
+    struct robotraconteurlite_messageelement_writer* element_writer,
+    const struct robotraconteurlite_string* element_name, const struct robotraconteurlite_array_{{type}}* value);
+
+{% endfor %}
+
+ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_messageelement_writer_write_data_string(
+    struct robotraconteurlite_messageelement_writer* element_writer,
+    const struct robotraconteurlite_string* element_name, const struct robotraconteurlite_string* value);
+
+static robotraconteurlite_status robotraconteurlite_messageelement_writer_write_data_string_c_str(
+    struct robotraconteurlite_messageelement_writer* element_writer, const char* element_name, const char* value)
+{
+    struct robotraconteurlite_string element_name_str;
+    struct robotraconteurlite_string value_str;
+    robotraconteurlite_string_from_c_str(element_name, &element_name_str);
+    robotraconteurlite_string_from_c_str(value, &value_str);
+    return robotraconteurlite_messageelement_writer_write_data_string(element_writer, &element_name_str, &value_str);
+}
+
+#endif /* ROBOTRACONTEURLITE_MESSAGE_DATA_H */
