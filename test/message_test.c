@@ -881,8 +881,8 @@ void robotraconteurlite_message_writer_basictest(void** state)
         el2_name.len = strlen(el2_name_data);
         el2_data.data = el2_data_d;
         el2_data.len = strlen(el2_data_d);
-        assert_return_code(robotraconteurlite_messageelement_writer_write_string(&element_writer, &el2_name, &el2_data),
-                           0);
+        assert_return_code(
+            robotraconteurlite_messageelement_writer_write_data_string(&element_writer, &el2_name, &el2_data), 0);
 
         {
             char element_name_data[] = "el3";
@@ -1061,7 +1061,7 @@ void robotraconteurlite_message_writer_basictest(void** state)
                 sub_strings_data.data = sub_strings_data_d;
                 sub_strings_data.len = strlen(sub_strings_data_d);
 
-                assert_return_code(robotraconteurlite_messageelement_writer_write_string(
+                assert_return_code(robotraconteurlite_messageelement_writer_write_data_string(
                                        &nested_element_writer, &sub_strings_name, &sub_strings_data),
                                    0);
             }
