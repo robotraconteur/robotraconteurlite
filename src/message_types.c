@@ -33,6 +33,7 @@ robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_dou
     struct robotraconteurlite_messageelement_reader* element_reader, double* value)
 {
     return robotraconteurlite_messageelement_reader_read_data_scalar_ex(
+        /* cppcheck-suppress invalidPointerCast */
         element_reader, (uint8_t*)value, ROBOTRACONTEURLITE_DATATYPE_DOUBLE, sizeof(double));
 }
 /* single */
@@ -49,6 +50,7 @@ robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_sin
     struct robotraconteurlite_messageelement_reader* element_reader, float* value)
 {
     return robotraconteurlite_messageelement_reader_read_data_scalar_ex(
+        /* cppcheck-suppress invalidPointerCast */
         element_reader, (uint8_t*)value, ROBOTRACONTEURLITE_DATATYPE_SINGLE, sizeof(float));
 }
 /* int8 */
