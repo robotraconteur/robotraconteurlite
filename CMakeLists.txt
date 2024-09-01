@@ -68,17 +68,7 @@ install(EXPORT robotraconteurliteTargets FILE robotraconteurliteTargets.cmake
 
 include(CTest)
 if(BUILD_TESTING)
-    find_package(cmocka REQUIRED)
-    include_directories(${CMOCKA_INCLUDE_DIR})
-    add_executable(robotraconteurlite_array_test test/array_test.c)
-    target_link_libraries(robotraconteurlite_array_test robotraconteurlite ${CMOCKA_LIBRARY})
-    add_test(array_test robotraconteurlite_array_test)
-    add_executable(robotraconteurlite_array_types_test test/array_test_types.c)
-    target_link_libraries(robotraconteurlite_array_types_test robotraconteurlite ${CMOCKA_LIBRARY})
-    add_test(array_test robotraconteurlite_array_types_test)
-    add_executable(robotraconteurlite_message_test test/message_test.c)
-    target_link_libraries(robotraconteurlite_message_test robotraconteurlite ${CMOCKA_LIBRARY})
-    add_test(message_test robotraconteurlite_message_test)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/test)
 endif()
 
 option(BUILD_EXAMPLES "Build examples" ON)
