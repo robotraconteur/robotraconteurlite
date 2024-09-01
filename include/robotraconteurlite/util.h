@@ -35,4 +35,9 @@ static uint16_t robotraconteurlite_util_read_uint16(const void* p)
     return ret;
 }
 
+#define ROBOTRACONTEURLITE_FLAGS_CHECK(flags, mask) (((flags) & (mask)) != 0U)
+#define ROBOTRACONTEURLITE_FLAGS_CHECK_ALL(flags, mask) (((flags) & (mask)) == (mask))
+#define ROBOTRACONTEURLITE_FLAGS_SET(flags, mask) ((flags) |= (mask))
+#define ROBOTRACONTEURLITE_FLAGS_CLEAR(flags, mask) ((flags) &= ~(mask))
+
 #endif /* ROBOTRACONTEURLITE_UTIL_H */
