@@ -1,5 +1,4 @@
 {#- jinja2 message_types.c.j2  > ../message_types.c -#}
-/* cppcheck-suppress-file invalidPointerCast */
 /* Copyright 2011-2024 Wason Technology, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -45,7 +44,7 @@ robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_{{t
     struct robotraconteurlite_messageelement_reader* element_reader, {{ctype}}* value)
 {
     return robotraconteurlite_messageelement_reader_read_data_scalar_ex(
-        element_reader, value, ROBOTRACONTEURLITE_DATATYPE_{{type.upper()}}, sizeof({{ctype}}));
+        element_reader, (uint8_t*)value, ROBOTRACONTEURLITE_DATATYPE_{{type.upper()}}, sizeof({{ctype}}));
 }
 {% endfor %}
 
@@ -88,6 +87,9 @@ robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_str
     struct robotraconteurlite_messageelement_reader* element_reader, struct robotraconteurlite_string* dest_str)
 {
     return robotraconteurlite_messageelement_reader_read_data_ex(
+        {% if type in ("double","single") -%}
+        /* cppcheck-suppress invalidPointerCast */
+        {% endif -%}
         element_reader, (uint8_t*)dest_str->data, &dest_str->len, ROBOTRACONTEURLITE_DATATYPE_STRING, sizeof(char));
 }
 
