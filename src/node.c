@@ -19,6 +19,11 @@
 #include <string.h>
 #include <limits.h>
 
+#define FLAGS_CHECK_ALL ROBOTRACONTEURLITE_FLAGS_CHECK_ALL
+#define FLAGS_CHECK ROBOTRACONTEURLITE_FLAGS_CHECK
+#define FLAGS_SET ROBOTRACONTEURLITE_FLAGS_SET
+#define FLAGS_CLEAR ROBOTRACONTEURLITE_FLAGS_CLEAR
+
 robotraconteurlite_status robotraconteurlite_node_init(struct robotraconteurlite_node* node,
                                                        struct robotraconteurlite_nodeid* nodeid,
                                                        struct robotraconteurlite_string* nodename,
@@ -293,7 +298,7 @@ robotraconteurlite_status robotraconteurlite_node_event_special_request(struct r
         if ((robotraconteurlite_string_cmp_c_str(&event->received_message.received_message_entry_header.member_name,
                                                  "CreateConnection") == 0) &&
             robotraconteurlite_connection_is_server(event->connection) &&
-            ((event->connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_ESTABLISHED) == 0U))
+            (!FLAGS_CHECK(event->connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_ESTABLISHED)))
         {
             robotraconteurlite_status rv = -1;
             /* TODO: Check the incoming target address and sender address */
@@ -311,7 +316,7 @@ robotraconteurlite_status robotraconteurlite_node_event_special_request(struct r
             }
 
             /* Set the ESTABLISHED flag */
-            event->connection->connection_state |= ROBOTRACONTEURLITE_STATUS_FLAGS_ESTABLISHED;
+            FLAGS_SET(event->connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_ESTABLISHED);
 
             /* Consume event */
             (void)robotraconteurlite_node_consume_event(node, event);
@@ -345,7 +350,7 @@ robotraconteurlite_status robotraconteurlite_node_event_special_request(struct r
         }
 
         /* Set the CLIENT_ESTABLISHED flag */
-        event->connection->connection_state |= ROBOTRACONTEURLITE_STATUS_FLAGS_CLIENT_ESTABLISHED;
+        FLAGS_SET(event->connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_CLIENT_ESTABLISHED);
 
         /* Consume event */
         (void)robotraconteurlite_node_consume_event(node, event);
@@ -378,7 +383,7 @@ robotraconteurlite_status robotraconteurlite_node_event_special_request(struct r
         if ((robotraconteurlite_string_cmp_c_str(&event->received_message.received_message_entry_header.member_name,
                                                  "CreateConnection") == 0) &&
             !robotraconteurlite_connection_is_server(event->connection) &&
-            ((event->connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_ESTABLISHED) == 0U))
+            (!FLAGS_CHECK(event->connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_ESTABLISHED)))
         {
             robotraconteurlite_status rv = -1;
             if (robotraconteurlite_nodeid_copy_to(&event->received_message.received_message_header.sender_nodeid,
@@ -388,7 +393,7 @@ robotraconteurlite_status robotraconteurlite_node_event_special_request(struct r
             }
 
             /* Set the ESTABLISHED flag */
-            event->connection->connection_state |= ROBOTRACONTEURLITE_STATUS_FLAGS_ESTABLISHED;
+            FLAGS_SET(event->connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_ESTABLISHED);
 
             return ROBOTRACONTEURLITE_ERROR_SUCCESS;
         }
@@ -401,12 +406,12 @@ robotraconteurlite_status robotraconteurlite_node_event_special_request(struct r
     /* cppcheck-suppress misra-c2012-16.3 */
     case ROBOTRACONTEURLITE_MESSAGEENTRYTYPE_CONNECTCLIENTRET: {
         if (!robotraconteurlite_connection_is_server(event->connection) &&
-            ((event->connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_CLIENT_ESTABLISHED) == 0U))
+            (!FLAGS_CHECK(event->connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_CLIENT_ESTABLISHED)))
         {
             event->connection->remote_endpoint = event->received_message.received_message_header.sender_endpoint;
 
             /* Set the CLIENT_ESTABLISHED flag */
-            event->connection->connection_state |= ROBOTRACONTEURLITE_STATUS_FLAGS_CLIENT_ESTABLISHED;
+            FLAGS_SET(event->connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_CLIENT_ESTABLISHED);
 
             return ROBOTRACONTEURLITE_ERROR_SUCCESS;
         }
@@ -866,12 +871,12 @@ robotraconteurlite_status robotraconteurlite_client_is_connected(struct robotrac
                                                                  struct robotraconteurlite_connection* connection)
 {
     ROBOTRACONTEURLITE_UNUSED(node);
-    if ((connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_ERROR) != 0U)
+    if (FLAGS_CHECK(connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_ERROR))
     {
         return ROBOTRACONTEURLITE_ERROR_CONNECTION_ERROR;
     }
 
-    if ((connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTED) == 0U)
+    if (!FLAGS_CHECK(connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTED))
     {
         return ROBOTRACONTEURLITE_ERROR_RETRY;
     }
@@ -994,10 +999,12 @@ robotraconteurlite_status robotraconteurlite_client_handshake(
                     return robotraconteurlite_client_handshake_error(handshake_data);
                 }
                 /* Set to connection "connected" connection_state flag if still connecting */
-                if ((handshake_data->connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTING) != 0U)
+                if (FLAGS_CHECK(handshake_data->connection->connection_state,
+                                ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTING))
                 {
-                    handshake_data->connection->connection_state &= ~ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTING;
-                    handshake_data->connection->connection_state |= ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTED;
+                    FLAGS_CLEAR(handshake_data->connection->connection_state,
+                                ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTING);
+                    FLAGS_SET(handshake_data->connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTED);
                 }
 
                 handshake_data->handshake_state = ROBOTRACONTEURLITE_CLIENT_HANDSHAKE_CREATECONNECTION_COMPLETED;
@@ -1091,8 +1098,8 @@ robotraconteurlite_status robotraconteurlite_client_handshake(
         handshake_data->connection->last_request_id = 100 + (rand() % 100000);
         /* Spoof being connected to avoid error... */
         old_connection_state = handshake_data->connection->connection_state;
-        handshake_data->connection->connection_state &= ~ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTING;
-        handshake_data->connection->connection_state |= ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTED;
+        FLAGS_CLEAR(handshake_data->connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTING);
+        FLAGS_SET(handshake_data->connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTED);
         rv = robotraconteurlite_client_handshake_begin_request(
             handshake_data, &send_data, ROBOTRACONTEURLITE_MESSAGEENTRYTYPE_STREAMOP, "CreateConnection");
         handshake_data->connection->connection_state = old_connection_state;

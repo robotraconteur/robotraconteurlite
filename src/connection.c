@@ -17,6 +17,11 @@
 #include "robotraconteurlite/util.h"
 #include <assert.h>
 
+#define FLAGS_CHECK_ALL ROBOTRACONTEURLITE_FLAGS_CHECK_ALL
+#define FLAGS_CHECK ROBOTRACONTEURLITE_FLAGS_CHECK
+#define FLAGS_SET ROBOTRACONTEURLITE_FLAGS_SET
+#define FLAGS_CLEAR ROBOTRACONTEURLITE_FLAGS_CLEAR
+
 robotraconteurlite_status robotraconteurlite_connection_reset(struct robotraconteurlite_connection* connection)
 {
     connection->connection_state = ROBOTRACONTEURLITE_STATUS_FLAGS_IDLE;
@@ -45,8 +50,8 @@ robotraconteurlite_status robotraconteurlite_connection_verify_preamble(
         /* Check the message RRAC */
         if (memcmp(connection->recv_buffer, rrac_magic, sizeof(rrac_magic)) != 0)
         {
-            connection->connection_state |= ROBOTRACONTEURLITE_STATUS_FLAGS_ERROR;
-            connection->connection_state &= ~ROBOTRACONTEURLITE_STATUS_FLAGS_RECEIVE_REQUESTED;
+            FLAGS_SET(connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_ERROR);
+            FLAGS_CLEAR(connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_RECEIVE_REQUESTED);
             return ROBOTRACONTEURLITE_ERROR_CONNECTION_ERROR;
         }
         connection->recv_message_len = robotraconteurlite_util_read_uint32(&connection->recv_buffer[4]);
@@ -56,8 +61,8 @@ robotraconteurlite_status robotraconteurlite_connection_verify_preamble(
         message_version = robotraconteurlite_util_read_uint16(&connection->recv_buffer[8]);
         if (message_version != 2U)
         {
-            connection->connection_state |= ROBOTRACONTEURLITE_STATUS_FLAGS_ERROR;
-            connection->connection_state &= ~ROBOTRACONTEURLITE_STATUS_FLAGS_RECEIVE_REQUESTED;
+            FLAGS_SET(connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_ERROR);
+            FLAGS_CLEAR(connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_RECEIVE_REQUESTED);
             return ROBOTRACONTEURLITE_ERROR_CONNECTION_ERROR;
         }
     }
@@ -70,8 +75,8 @@ robotraconteurlite_status robotraconteurlite_connection_message_receive(
     struct robotraconteurlite_buffer_vec* buffer_storage)
 {
 
-    if (((connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_MESSAGE_RECEIVED) == 0U) ||
-        ((connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_MESSAGE_CONSUMED) != 0U))
+    if ((!FLAGS_CHECK(connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_MESSAGE_RECEIVED)) ||
+        FLAGS_CHECK(connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_MESSAGE_CONSUMED))
     {
         return ROBOTRACONTEURLITE_ERROR_RETRY;
     }
@@ -94,12 +99,12 @@ robotraconteurlite_status robotraconteurlite_connection_message_receive(
 robotraconteurlite_status robotraconteurlite_connection_message_receive_consume(
     struct robotraconteurlite_connection* connection)
 {
-    if ((connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_MESSAGE_RECEIVED) == 0U)
+    if (!FLAGS_CHECK(connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_MESSAGE_RECEIVED))
     {
         return ROBOTRACONTEURLITE_ERROR_INVALID_OPERATION;
     }
 
-    connection->connection_state |= ROBOTRACONTEURLITE_STATUS_FLAGS_MESSAGE_CONSUMED;
+    FLAGS_SET(connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_MESSAGE_CONSUMED);
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
 
@@ -107,20 +112,19 @@ robotraconteurlite_status robotraconteurlite_connection_begin_send_message(
     struct robotraconteurlite_connection* connection, struct robotraconteurlite_message_writer* message_writer,
     struct robotraconteurlite_buffer_vec* buffer_storage)
 {
-    if (((connection->connection_state &
-          (ROBOTRACONTEURLITE_STATUS_FLAGS_ERROR | ROBOTRACONTEURLITE_STATUS_FLAGS_CLOSED |
-           ROBOTRACONTEURLITE_STATUS_FLAGS_CLOSE_REQUESTED | ROBOTRACONTEURLITE_STATUS_FLAGS_IDLE)
-
-              ) != 0U) ||
-        ((connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTED) == 0U))
+    if (FLAGS_CHECK(connection->connection_state,
+                    (ROBOTRACONTEURLITE_STATUS_FLAGS_ERROR | ROBOTRACONTEURLITE_STATUS_FLAGS_CLOSED |
+                     ROBOTRACONTEURLITE_STATUS_FLAGS_CLOSE_REQUESTED | ROBOTRACONTEURLITE_STATUS_FLAGS_IDLE)) ||
+        (!FLAGS_CHECK(connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTED)))
     {
         return ROBOTRACONTEURLITE_ERROR_INVALID_OPERATION;
     }
 
-    if ((connection->connection_state &
-         (ROBOTRACONTEURLITE_STATUS_FLAGS_SEND_REQUESTED | ROBOTRACONTEURLITE_STATUS_FLAGS_SENDING |
-          ROBOTRACONTEURLITE_STATUS_FLAGS_MESSAGE_SENT | ROBOTRACONTEURLITE_STATUS_FLAGS_MESSAGE_SENT_CONSUMED |
-          ROBOTRACONTEURLITE_STATUS_FLAGS_BLOCK_SEND)) != 0U)
+    if (FLAGS_CHECK(connection->connection_state,
+                    (ROBOTRACONTEURLITE_STATUS_FLAGS_SEND_REQUESTED | ROBOTRACONTEURLITE_STATUS_FLAGS_SENDING |
+                     ROBOTRACONTEURLITE_STATUS_FLAGS_MESSAGE_SENT |
+                     ROBOTRACONTEURLITE_STATUS_FLAGS_MESSAGE_SENT_CONSUMED |
+                     ROBOTRACONTEURLITE_STATUS_FLAGS_BLOCK_SEND)))
     {
         return ROBOTRACONTEURLITE_ERROR_RETRY;
     }
@@ -143,7 +147,7 @@ robotraconteurlite_status robotraconteurlite_connection_end_send_message(
     struct robotraconteurlite_connection* connection, size_t message_len)
 {
     connection->send_message_len = message_len;
-    connection->connection_state |= ROBOTRACONTEURLITE_STATUS_FLAGS_SEND_REQUESTED;
+    FLAGS_SET(connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_SEND_REQUESTED);
 
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
@@ -158,11 +162,11 @@ robotraconteurlite_status robotraconteurlite_connection_abort_send_message(
 
 robotraconteurlite_status robotraconteurlite_connection_close(struct robotraconteurlite_connection* connection)
 {
-    if ((connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_IDLE) != 0U)
+    if (FLAGS_CHECK(connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_IDLE))
     {
         return ROBOTRACONTEURLITE_ERROR_SUCCESS;
     }
-    connection->connection_state |= ROBOTRACONTEURLITE_STATUS_FLAGS_CLOSE_REQUESTED;
+    FLAGS_SET(connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_CLOSE_REQUESTED);
 
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
@@ -198,25 +202,25 @@ robotraconteurlite_status robotraconteurlite_connection_next_wake(struct robotra
                                                                   robotraconteurlite_timespec now,
                                                                   robotraconteurlite_timespec* next_wake)
 {
-    if ((connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_IDLE) != 0U)
+    if (FLAGS_CHECK(connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_IDLE))
     {
         return ROBOTRACONTEURLITE_ERROR_SUCCESS;
     }
 
-    if (((connection->connection_state &
-          (ROBOTRACONTEURLITE_STATUS_FLAGS_CLOSE_REQUESTED | ROBOTRACONTEURLITE_STATUS_FLAGS_ERROR)) != 0U))
-    {
-        *next_wake = now;
-        return ROBOTRACONTEURLITE_ERROR_SUCCESS;
-    }
-
-    if ((connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_MESSAGE_SENT) != 0U)
+    if (FLAGS_CHECK(connection->connection_state,
+                    (ROBOTRACONTEURLITE_STATUS_FLAGS_CLOSE_REQUESTED | ROBOTRACONTEURLITE_STATUS_FLAGS_ERROR)))
     {
         *next_wake = now;
         return ROBOTRACONTEURLITE_ERROR_SUCCESS;
     }
 
-    if ((connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_MESSAGE_RECEIVED) != 0U)
+    if (FLAGS_CHECK(connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_MESSAGE_SENT))
+    {
+        *next_wake = now;
+        return ROBOTRACONTEURLITE_ERROR_SUCCESS;
+    }
+
+    if (FLAGS_CHECK(connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_MESSAGE_RECEIVED))
     {
         *next_wake = now;
         return ROBOTRACONTEURLITE_ERROR_SUCCESS;

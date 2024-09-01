@@ -115,7 +115,7 @@ int main(int argc, char* argv[])
     }
 #if TINY_CLIENT_WEBSOCKET
     /* Use websocket connection */
-    service_addr.flags |= ROBOTRACONTEURLITE_ADDR_FLAGS_WEBSOCKET;
+    ROBOTRACONTEURLITE_FLAGS_SET(service_addr.flags, ROBOTRACONTEURLITE_ADDR_FLAGS_WEBSOCKET);
     robotraconteurlite_string_from_c_str("127.0.0.1", &service_addr.http_host);
     robotraconteurlite_string_from_c_str("/", &service_addr.http_path);
 #endif

@@ -37,6 +37,11 @@
 #include <openssl/evp.h>
 #endif
 
+#define FLAGS_CHECK_ALL ROBOTRACONTEURLITE_FLAGS_CHECK_ALL
+#define FLAGS_CHECK ROBOTRACONTEURLITE_FLAGS_CHECK
+#define FLAGS_SET ROBOTRACONTEURLITE_FLAGS_SET
+#define FLAGS_CLEAR ROBOTRACONTEURLITE_FLAGS_CLEAR
+
 robotraconteurlite_status robotraconteurlite_tcp_sha1(const uint8_t* data, size_t len,
                                                       struct robotraconteurlite_tcp_sha1_storage* storage)
 {
@@ -336,7 +341,7 @@ robotraconteurlite_status robotraconteurlite_tcp_acceptor_poll_add_fd(
     struct robotraconteurlite_connection* c = connection_head;
     while (c != NULL)
     {
-        if ((c->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_IDLE) != 0U)
+        if (FLAGS_CHECK(c->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_IDLE))
         {
             extra_events = POLLIN;
             break;
@@ -353,20 +358,20 @@ robotraconteurlite_status robotraconteurlite_tcp_connection_poll_add_fd(
 {
     int i = 0;
     short extra_events = 0;
-    if (((connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_IDLE) != 0U) || (connection->sock < 0))
+    if ((FLAGS_CHECK(connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_IDLE)) || (connection->sock < 0))
     {
         return ROBOTRACONTEURLITE_ERROR_SUCCESS;
     }
 
-    if ((connection->connection_state &
-         (ROBOTRACONTEURLITE_STATUS_FLAGS_SEND_REQUESTED | ROBOTRACONTEURLITE_STATUS_FLAGS_SENDING)) != 0U)
+    if (FLAGS_CHECK(connection->connection_state,
+                    (ROBOTRACONTEURLITE_STATUS_FLAGS_SEND_REQUESTED | ROBOTRACONTEURLITE_STATUS_FLAGS_SENDING)))
     {
         extra_events |= POLLOUT;
     }
 
-    if ((connection->connection_state &
-         (ROBOTRACONTEURLITE_STATUS_FLAGS_RECEIVE_REQUESTED | ROBOTRACONTEURLITE_STATUS_FLAGS_RECEIVING |
-          ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTING)) != 0U)
+    if (FLAGS_CHECK(connection->connection_state,
+                    (ROBOTRACONTEURLITE_STATUS_FLAGS_RECEIVE_REQUESTED | ROBOTRACONTEURLITE_STATUS_FLAGS_RECEIVING |
+                     ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTING)))
     {
         extra_events |= POLLIN;
     }
