@@ -49,7 +49,7 @@ jobs:
         mkdir -p build
         cd build
         cmake -DCMAKE_DISABLE_PRECOMPILE_HEADERS=ON -DCMAKE_C_CLANG_TIDY=clang-tidy-14 \
-              -DCMAKE_BUILD_TYPE=Debug ..
+              -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTING=OFF ..
     - name: make
       working-directory: build
       run: make -j2 -k

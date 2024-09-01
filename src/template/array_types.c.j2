@@ -1,0 +1,72 @@
+{#- jinja2 array_types.c.j2  > ../array_types.c -#}
+/* cppcheck-suppress-file invalidPointerCast */
+/* Copyright 2011-2024 Wason Technology, LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+#include <robotraconteurlite/robotraconteurlite.h>
+#include <string.h>
+#include <assert.h>
+
+{% set types=[("double","double"),("single","float"),("int8","int8_t"),("uint8","uint8_t"),("int16","int16_t"),
+    ("uint16","uint16_t"),("int32","int32_t"),("uint32","uint32_t"),("int64","int64_t"),("uint64","uint64_t"),
+    ("cdouble","struct robotraconteurlite_cdouble"),("csingle","struct robotraconteurlite_csingle"),
+    ("bool","struct robotraconteurlite_bool")] %}
+{% for type1 in types %}
+{%- set type=type1[0] -%}
+{%- set ctype=type1[1] -%}
+/* {{type}} */
+robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_{{type}}_array(
+    const struct robotraconteurlite_buffer_vec* source_buf, size_t source_buf_pos,
+    struct robotraconteurlite_array_{{type}}* dest, size_t dest_pos, size_t dest_count)
+{
+    return robotraconteurlite_buffer_vec_copy_to_mem(source_buf, source_buf_pos,
+                                                    {% if type in ("double","single") -%}
+                                                    /* cppcheck-suppress invalidPointerCast */
+                                                    {% endif -%}
+                                                     (uint8_t*)dest->data, dest->len, dest_pos, sizeof({{ctype}}), dest_count);
+}
+
+robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_{{type}}_array(
+    struct robotraconteurlite_buffer_vec* dest_buf, size_t dest_buf_pos,
+    const struct robotraconteurlite_array_{{type}}* source, size_t source_pos, size_t source_count)
+{
+    return robotraconteurlite_buffer_vec_copy_from_mem(dest_buf, dest_buf_pos,
+                                                    {% if type in ("double","single") -%}
+                                                    /* cppcheck-suppress invalidPointerCast */
+                                                    {% endif -%}
+                                                       (const uint8_t*)source->data, source->len, source_pos, sizeof({{ctype}}), source_count);
+}
+
+robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_{{type}}(
+    const struct robotraconteurlite_buffer_vec* source_buf, size_t source_buf_pos, {{ctype}}* dest)
+{
+    return robotraconteurlite_buffer_vec_copy_to_mem(source_buf, source_buf_pos,
+                                                    {% if type in ("double","single") -%}
+                                                    /* cppcheck-suppress invalidPointerCast */
+                                                    {% endif -%}
+                                                     (uint8_t*)dest, 1, 0, sizeof({{ctype}}), 1);
+}
+
+robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_{{type}}(
+    const struct robotraconteurlite_buffer_vec* dest_buf, size_t dest_buf_pos, {{ctype}} source)
+{
+    return robotraconteurlite_buffer_vec_copy_from_mem(dest_buf, dest_buf_pos,
+                                                    {% if type in ("double","single") -%}
+                                                    /* cppcheck-suppress invalidPointerCast */
+                                                    {% endif -%}
+                                                       (const uint8_t*)&source, 1, 0, sizeof({{ctype}}), 1);
+}
+
+{% endfor %}
