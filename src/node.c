@@ -602,15 +602,15 @@ robotraconteurlite_status robotraconteurlite_connection_send_messageentry_error_
         return rv;
     }
 
-    rv =
-        robotraconteurlite_messageelement_writer_write_string_c_str(&send_data.element_writer, "errorname", error_name);
+    rv = robotraconteurlite_messageelement_writer_write_data_string_c_str(&send_data.element_writer, "errorname",
+                                                                          error_name);
     if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
     {
         return rv;
     }
 
-    rv = robotraconteurlite_messageelement_writer_write_string_c_str(&send_data.element_writer, "errorstring",
-                                                                     error_message);
+    rv = robotraconteurlite_messageelement_writer_write_data_string_c_str(&send_data.element_writer, "errorstring",
+                                                                          error_message);
     if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
     {
         return rv;
@@ -738,8 +738,8 @@ robotraconteurlite_status robotraconteurlite_node_event_special_request_service_
                 element_name_str.len = 10;
                 desc_str.data = service_objects[i].service_def->service_definition.data;
                 desc_str.len = service_objects[i].service_def->service_definition.len;
-                rv = robotraconteurlite_messageelement_writer_write_string(&send_data.element_writer, &element_name_str,
-                                                                           &desc_str);
+                rv = robotraconteurlite_messageelement_writer_write_data_string(&send_data.element_writer,
+                                                                                &element_name_str, &desc_str);
                 if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
                 {
                     return rv;
@@ -821,8 +821,8 @@ robotraconteurlite_status robotraconteurlite_node_event_special_request_object_t
                 robotraconteurlite_string_from_c_str("objecttype", &element_name_str);
                 type_name_str.data = service_objects[i].qualified_type.data;
                 type_name_str.len = service_objects[i].qualified_type.len;
-                rv = robotraconteurlite_messageelement_writer_write_string(&send_data.element_writer, &element_name_str,
-                                                                           &type_name_str);
+                rv = robotraconteurlite_messageelement_writer_write_data_string(&send_data.element_writer,
+                                                                                &element_name_str, &type_name_str);
                 if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
                 {
                     return rv;

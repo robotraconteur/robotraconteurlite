@@ -570,18 +570,37 @@ ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_messageeleme
     struct robotraconteurlite_messageelement_writer* element_writer,
     const struct robotraconteurlite_string* element_name, const struct robotraconteurlite_array_bool* value);
 
-ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_messageelement_writer_write_string(
+ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_messageelement_writer_write_data_string(
     struct robotraconteurlite_messageelement_writer* element_writer,
     const struct robotraconteurlite_string* element_name, const struct robotraconteurlite_string* value);
 
-static robotraconteurlite_status robotraconteurlite_messageelement_writer_write_string_c_str(
+static robotraconteurlite_status robotraconteurlite_messageelement_writer_write_data_string_c_str(
     struct robotraconteurlite_messageelement_writer* element_writer, const char* element_name, const char* value)
 {
     struct robotraconteurlite_string element_name_str;
     struct robotraconteurlite_string value_str;
     robotraconteurlite_string_from_c_str(element_name, &element_name_str);
     robotraconteurlite_string_from_c_str(value, &value_str);
-    return robotraconteurlite_messageelement_writer_write_string(element_writer, &element_name_str, &value_str);
+    return robotraconteurlite_messageelement_writer_write_data_string(element_writer, &element_name_str, &value_str);
 }
+
+/* internal use functions */
+
+robotraconteurlite_status robotraconteurlite_messageelement_reader_get_data_info(
+    struct robotraconteurlite_messageelement_reader* element_reader, size_t* data_offset, size_t* data_size,
+    uint32_t* data_count, uint16_t data_type, size_t data_element_size);
+
+robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_ex(
+    struct robotraconteurlite_messageelement_reader* element_reader, struct robotraconteurlite_buffer* dest_buf,
+    uint16_t dest_elem_type, size_t dest_elem_size);
+
+robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_scalar_ex(
+    struct robotraconteurlite_messageelement_reader* element_reader, void* dest_scalar, uint16_t dest_elem_type,
+    size_t dest_elem_size);
+
+robotraconteurlite_status robotraconteurlite_messageelement_writer_write_raw(
+    struct robotraconteurlite_messageelement_writer* element_writer,
+    const struct robotraconteurlite_string* element_name, struct robotraconteurlite_buffer* data, uint16_t data_type,
+    size_t data_elem_size);
 
 #endif /* ROBOTRACONTEURLITE_MESSAGE_H */
