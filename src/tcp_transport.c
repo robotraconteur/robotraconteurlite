@@ -205,13 +205,15 @@ static robotraconteurlite_status robotraconteurlite_tcp_connection_buffer_recv_w
         masked = storage->recv_websocket_header_buffer[1] & 0x80U;
         if (len1 == 126U)
         {
-            storage->recv_websocket_frame_len =
-                robotraconteurlite_ntohs(*(uint16_t*)&storage->recv_websocket_header_buffer[2]);
+            uint16_t frame_len_be = 0;
+            (void)memcpy((uint8_t*)&frame_len_be, &storage->recv_websocket_header_buffer[2], 2);
+            storage->recv_websocket_frame_len = robotraconteurlite_ntohs(frame_len_be);
         }
         else if (len1 == 127U)
         {
-            storage->recv_websocket_frame_len =
-                robotraconteurlite_be64toh(*(uint64_t*)&storage->recv_websocket_header_buffer[2]);
+            uint64_t frame_len_be = 0;
+            (void)memcpy((uint8_t*)&frame_len_be, &storage->recv_websocket_header_buffer[2], 8);
+            storage->recv_websocket_frame_len = robotraconteurlite_be64toh(frame_len_be);
         }
         else
         {
@@ -377,8 +379,9 @@ static robotraconteurlite_status robotraconteurlite_tcp_connection_buffer_send_w
         storage->send_websocket_header_buffer[0] = 0x80U | ROBOTRACONTEURLITE_TCP_TRANSPORT_WEBSOCKET_FLAGS_BINARY;
         if (len > 125U)
         {
+            uint16_t len_be = robotraconteurlite_htons((uint16_t)len);
             storage->send_websocket_header_len += 2U;
-            *(uint16_t*)&storage->send_websocket_header_buffer[2] = robotraconteurlite_htons(len);
+            (void)memcpy(&storage->send_websocket_header_buffer[2], (uint8_t*)&len_be, 2);
             storage->send_websocket_header_buffer[1] = 126;
         }
         else
