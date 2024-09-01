@@ -385,7 +385,6 @@ robotraconteurlite_status robotraconteurlite_node_event_special_request(struct r
             !robotraconteurlite_connection_is_server(event->connection) &&
             (!FLAGS_CHECK(event->connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_ESTABLISHED)))
         {
-            robotraconteurlite_status rv = -1;
             if (robotraconteurlite_nodeid_copy_to(&event->received_message.received_message_header.sender_nodeid,
                                                   &event->connection->remote_nodeid) != 0)
             {
@@ -1204,7 +1203,6 @@ robotraconteurlite_status robotraconteurlite_client_send_request(
 robotraconteurlite_status robotraconteurlite_client_end_request(
     struct robotraconteurlite_node_send_messageentry_data* send_data, struct robotraconteurlite_event* event)
 {
-    robotraconteurlite_status rv = -1;
     if (event->event_type != ROBOTRACONTEURLITE_EVENT_TYPE_MESSAGE_RECEIVED)
     {
         return ROBOTRACONTEURLITE_ERROR_UNHANDLED_EVENT;

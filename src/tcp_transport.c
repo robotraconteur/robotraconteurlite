@@ -33,7 +33,6 @@ robotraconteurlite_status robotraconteurlite_tcp_acceptor_listen(
     struct robotraconteurlite_connection_acceptor* acceptor, const struct sockaddr_storage* serv_addr, int backlog)
 {
 
-    int sock = 0;
     int last_errno = -1;
     robotraconteurlite_status rv = -1;
 
@@ -899,7 +898,6 @@ static robotraconteurlite_status robotraconteurlite_tcp_connection_handshake_cli
     struct robotraconteurlite_connection* connection)
 {
     struct robotraconteurlite_tcp_transport_storage* storage = get_storage(connection);
-    int newline_found = 0;
     robotraconteurlite_status rv = -1;
 
     if (!FLAGS_CHECK(connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTING))
@@ -1154,8 +1152,6 @@ robotraconteurlite_status robotraconteurlite_tcp_connect_service(
     struct robotraconteurlite_tcp_connect_service_data* connect_data, robotraconteurlite_timespec now)
 {
     struct robotraconteurlite_connection* c = connect_data->connections_head;
-    int errno_out = 0;
-    robotraconteurlite_status rv = -1;
     int sock = 0;
     while (c != NULL)
     {

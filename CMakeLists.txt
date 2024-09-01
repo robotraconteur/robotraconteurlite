@@ -3,7 +3,7 @@ project(robotraconteurlite VERSION 0.1.0)
 
 # if(CMAKE_COMPILER_IS_GNUCC)
 set(CMAKE_C_FLAGS
-    "${CMAKE_C_FLAGS} -ansi -pedantic -Werror -Werror=return-type -Wimplicit-function-declaration -Wint-conversion -Wincompatible-pointer-types"
+    "${CMAKE_C_FLAGS} -ansi -pedantic -Werror -Werror=return-type -Wimplicit-function-declaration -Wint-conversion -Wincompatible-pointer-types -Wall -Wno-unused-function"
 )
 # endif()
 

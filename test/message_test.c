@@ -632,7 +632,7 @@ void robotraconteurlite_message_reader_basictest(void** state)
             struct robotraconteurlite_messageelement_reader nested_element12_reader;
             char nested_element12_name_data[] = "sub_cdouble";
             struct robotraconteurlite_string nested_element12_name;
-            struct robotraconteurlite_cdouble nested_element12_expected_data[] = {1, 10, 2, 20, 3, 30, 4, 40};
+            struct robotraconteurlite_cdouble nested_element12_expected_data[] = {{1, 10}, {2, 20}, {3, 30}, {4, 40}};
             struct robotraconteurlite_cdouble nested_element12_read_data_storage[40];
             struct robotraconteurlite_array_cdouble nested_element12_read_data;
             nested_element12_name.data = nested_element12_name_data;
@@ -659,7 +659,7 @@ void robotraconteurlite_message_reader_basictest(void** state)
             struct robotraconteurlite_messageelement_reader nested_element13_reader;
             char nested_element13_name_data[] = "sub_csingle";
             struct robotraconteurlite_string nested_element13_name;
-            struct robotraconteurlite_csingle nested_element13_expected_data[] = {1, 10, 2, 20, 3, 30, 4, 40};
+            struct robotraconteurlite_csingle nested_element13_expected_data[] = {{1, 10}, {2, 20}, {3, 30}, {4, 40}};
             struct robotraconteurlite_csingle nested_element13_read_data_storage[40];
             struct robotraconteurlite_array_csingle nested_element13_read_data;
             nested_element13_name.data = nested_element13_name_data;

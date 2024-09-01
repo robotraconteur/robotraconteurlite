@@ -1253,7 +1253,6 @@ robotraconteurlite_status robotraconteurlite_message_writer_begin_message(
     size_t str3_len = header->extended.len;
     size_t str4_len = str1_len + str2_len + str3_len;
     uint16_t header_size = 0;
-    struct robotraconteurlite_string magic;
     robotraconteurlite_status rv = -1;
     struct robotraconteurlite_array_uint8 sender_nodeid_array;
     struct robotraconteurlite_array_uint8 recv_nodeid_array;

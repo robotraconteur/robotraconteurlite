@@ -34,7 +34,6 @@ void robotraconteurlite_arraytest_buffer(void** state)
 
     struct robotraconteurlite_buffer bufa;
     struct robotraconteurlite_buffer bufb;
-    struct robotraconteurlite_buffer bufc;
     struct robotraconteurlite_buffer bufd;
     size_t bufa_len = 0;
 
@@ -45,9 +44,6 @@ void robotraconteurlite_arraytest_buffer(void** state)
 
     bufb.data = b;
     bufb.len = sizeof(b);
-
-    bufc.data = c;
-    bufc.len = sizeof(c);
 
     bufd.data = d;
     bufd.len = sizeof(d);
