@@ -24,6 +24,10 @@
 
 #define ROBOTRACONTEURLITE_NODE_DEFAULT_SLEEP_TIME 5000
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 enum robotraconteurlite_event_type
 {
     ROBOTRACONTEURLITE_EVENT_TYPE_NOOP = 0,
@@ -237,5 +241,9 @@ robotraconteurlite_node_poll_add_fd(struct robotraconteurlite_node* node, struct
 /*ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_client_process_request(struct
  * robotraconteurlite_node_send_messageentry_data* request_data, struct
  * robotraconteurlite_node_receive_messageentry_data* response_data);*/
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* ROBOTRACONTEURLITE_NODE_H */

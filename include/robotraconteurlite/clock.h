@@ -20,6 +20,10 @@
 #include "robotraconteurlite/config.h"
 #include "robotraconteurlite/err.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 struct robotraconteurlite_clock
 {
     int64_t clock_epoch_offset;
@@ -31,5 +35,9 @@ ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_clock_init(s
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status
 robotraconteurlite_clock_gettime(struct robotraconteurlite_clock* clock, robotraconteurlite_timespec* now);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /*ROBOTRACONTEURLITE_CLOCK_H */

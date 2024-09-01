@@ -45,11 +45,19 @@
 #define ROBOTRACONTEURLITE_ERROR_INVALID_PARAMETER (-22)
 #define ROBOTRACONTEURLITE_ERROR_SYSTEM_ERROR (-23)
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef int32_t robotraconteurlite_status;
 
 static int32_t robotraconteurlite_is_success(robotraconteurlite_status status)
 {
     return status >= ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* ROBOTRACONTEURLITE_ERROR_H */

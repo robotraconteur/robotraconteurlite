@@ -184,6 +184,10 @@
 #define ROBOTRACONTEURLITE_MESSAGEERRORTYPE_OBJECTLOCKEDERROR 151U
 #define ROBOTRACONTEURLITE_MESSAGEERRORTYPE_PERMISSIONDENIED 152U
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 struct robotraconteurlite_message_header
 {
     uint32_t message_size;
@@ -403,5 +407,9 @@ robotraconteurlite_status robotraconteurlite_messageelement_writer_write_raw(
     struct robotraconteurlite_messageelement_writer* element_writer,
     const struct robotraconteurlite_string* element_name, const uint8_t* data_buf, size_t data_len, uint16_t data_type,
     size_t data_elem_size);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* ROBOTRACONTEURLITE_MESSAGE_H */

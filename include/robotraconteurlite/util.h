@@ -21,6 +21,10 @@
 
 #include "robotraconteurlite/config.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 static uint32_t robotraconteurlite_util_read_uint32(const void* p)
 {
     uint32_t ret = 0;
@@ -39,5 +43,9 @@ static uint16_t robotraconteurlite_util_read_uint16(const void* p)
 #define ROBOTRACONTEURLITE_FLAGS_CHECK_ALL(flags, mask) (((flags) & (mask)) == (mask))
 #define ROBOTRACONTEURLITE_FLAGS_SET(flags, mask) ((flags) |= (mask))
 #define ROBOTRACONTEURLITE_FLAGS_CLEAR(flags, mask) ((flags) &= ~(mask))
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* ROBOTRACONTEURLITE_UTIL_H */

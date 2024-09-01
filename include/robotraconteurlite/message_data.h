@@ -18,6 +18,10 @@
 
 #include "robotraconteurlite/message.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 struct robotraconteurlite_messageelement_reader;
 struct robotraconteurlite_messageelement_writer;
 
@@ -223,5 +227,9 @@ static robotraconteurlite_status robotraconteurlite_messageelement_writer_write_
     robotraconteurlite_string_from_c_str(value, &value_str);
     return robotraconteurlite_messageelement_writer_write_data_string(element_writer, &element_name_str, &value_str);
 }
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* ROBOTRACONTEURLITE_MESSAGE_DATA_H */
