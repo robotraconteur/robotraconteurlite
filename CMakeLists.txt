@@ -26,6 +26,7 @@ add_library(
     include/robotraconteurlite/tcp_transport.h
     include/robotraconteurlite/clock.h
     src/array.c
+    src/array_types.c
     src/connection.c
     src/message.c
     src/node.c
@@ -71,6 +72,9 @@ if(BUILD_TESTING)
     add_executable(robotraconteurlite_array_test test/array_test.c)
     target_link_libraries(robotraconteurlite_array_test robotraconteurlite ${CMOCKA_LIBRARY})
     add_test(array_test robotraconteurlite_array_test)
+    add_executable(robotraconteurlite_array_types_test test/array_test_types.c)
+    target_link_libraries(robotraconteurlite_array_types_test robotraconteurlite ${CMOCKA_LIBRARY})
+    add_test(array_test robotraconteurlite_array_types_test)
     add_executable(robotraconteurlite_message_test test/message_test.c)
     target_link_libraries(robotraconteurlite_message_test robotraconteurlite ${CMOCKA_LIBRARY})
     add_test(message_test robotraconteurlite_message_test)
