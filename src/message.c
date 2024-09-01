@@ -1272,10 +1272,8 @@ robotraconteurlite_status robotraconteurlite_message_writer_begin_message(
 
     header_size = (uint16_t)(str4_len + 64U);
 
-    magic.data = (char*)rrac_magic;
-    magic.len = sizeof(rrac_magic);
-
-    rv = robotraconteurlite_buffer_vec_copy_from_string(writer->buffer, writer->buffer_offset, &magic, 0, 4);
+    rv = robotraconteurlite_buffer_vec_copy_from_mem(writer->buffer, writer->buffer_offset, (const uint8_t*)rrac_magic,
+                                                     4, 0, 1, 4);
     if (rv < 0)
     {
         return rv;
