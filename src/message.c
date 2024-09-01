@@ -886,7 +886,7 @@ robotraconteurlite_status robotraconteurlite_messageelement_reader_get_data_info
 }
 
 robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_ex(
-    struct robotraconteurlite_messageelement_reader* element_reader, struct robotraconteurlite_buffer* dest_buf,
+    struct robotraconteurlite_messageelement_reader* element_reader, uint8_t* dest_buf, size_t* dest_len,
     uint16_t dest_elem_type, size_t dest_elem_size)
 {
     size_t data_offset = 0;
@@ -894,9 +894,8 @@ robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_ex(
     uint32_t data_count = 0;
     robotraconteurlite_status rv = -1;
 
-    struct robotraconteurlite_buffer_vec dest_vec;
-    dest_vec.buffer_vec = dest_buf;
-    dest_vec.buffer_vec_cnt = 1;
+    assert(dest_buf != NULL);
+    assert(dest_len != NULL);
 
     rv = robotraconteurlite_messageelement_reader_get_data_info(element_reader, &data_offset, &data_size, &data_count,
                                                                 dest_elem_type, dest_elem_size);
@@ -905,14 +904,15 @@ robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_ex(
         return rv;
     }
 
-    rv = robotraconteurlite_buffer_vec_copy_vec_ex(element_reader->buffer, data_offset, 1, data_count * dest_elem_size,
-                                                   &dest_vec, 0, dest_elem_size, data_count);
+    rv = robotraconteurlite_buffer_vec_copy_to_mem(element_reader->buffer, data_offset, dest_buf, *dest_len, 0,
+                                                   dest_elem_size, data_count);
+
     if (rv < 0)
     {
         return rv;
     }
 
-    dest_buf->len = data_count;
+    *dest_len = data_count;
 
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
@@ -1791,11 +1791,10 @@ robotraconteurlite_status robotraconteurlite_messageelement_writer_end_nested_el
 
 robotraconteurlite_status robotraconteurlite_messageelement_writer_write_raw(
     struct robotraconteurlite_messageelement_writer* element_writer,
-    const struct robotraconteurlite_string* element_name, struct robotraconteurlite_buffer* data, uint16_t data_type,
+    const struct robotraconteurlite_string* element_name, const uint8_t* data_buf, size_t data_len, uint16_t data_type,
     size_t data_elem_size)
 {
 
-    struct robotraconteurlite_buffer_vec data_vec;
     size_t str1_len = 0;
     size_t data_size = 0;
     size_t elem_size = 0;
@@ -1803,7 +1802,7 @@ robotraconteurlite_status robotraconteurlite_messageelement_writer_write_raw(
 
     assert(element_writer != NULL);
     assert(element_name != NULL);
-    assert(data != NULL);
+    assert(data_buf != NULL);
 
     if (element_name->len > UINT16_MAX)
     {
@@ -1816,7 +1815,7 @@ robotraconteurlite_status robotraconteurlite_messageelement_writer_write_raw(
     }
 
     str1_len = element_name->len;
-    data_size = data->len * data_elem_size;
+    data_size = data_len * data_elem_size;
     elem_size = 16U + str1_len + data_size;
     if (elem_size > UINT32_MAX)
     {
@@ -1868,18 +1867,15 @@ robotraconteurlite_status robotraconteurlite_messageelement_writer_write_raw(
     }
 
     rv = robotraconteurlite_buffer_vec_copy_from_uint32(element_writer->buffer,
-                                                        element_writer->buffer_offset + 12U + str1_len, data->len);
+                                                        element_writer->buffer_offset + 12U + str1_len, data_len);
     if (rv < 0)
     {
         return rv;
     }
 
-    data_vec.buffer_vec = data;
-    data_vec.buffer_vec_cnt = 1;
-
-    rv = robotraconteurlite_buffer_vec_copy_vec_ex((struct robotraconteurlite_buffer_vec*)&data_vec, 0, data_elem_size,
-                                                   data->len, element_writer->buffer,
-                                                   element_writer->buffer_offset + 16U + str1_len, 1, data_size);
+    rv = robotraconteurlite_buffer_vec_copy_from_mem(element_writer->buffer,
+                                                     element_writer->buffer_offset + 16U + str1_len, data_buf, data_len,
+                                                     0, data_elem_size, data_len);
 
     if (rv < 0)
     {

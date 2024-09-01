@@ -363,7 +363,7 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_mem(const struct
                                                      dest_pos, dest_elem_size, dest_count);
 }
 
-robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_mem(const struct robotraconteurlite_buffer_vec* dest,
+robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_mem(struct robotraconteurlite_buffer_vec* dest,
                                                                       size_t dest_pos, const uint8_t* source,
                                                                       size_t source_len, size_t source_pos,
                                                                       size_t source_elem_size, size_t source_count)

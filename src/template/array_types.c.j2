@@ -60,7 +60,7 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_{{type}}(
 }
 
 robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_{{type}}(
-    const struct robotraconteurlite_buffer_vec* dest_buf, size_t dest_buf_pos, {{ctype}} source)
+    struct robotraconteurlite_buffer_vec* dest_buf, size_t dest_buf_pos, {{ctype}} source)
 {
     return robotraconteurlite_buffer_vec_copy_from_mem(dest_buf, dest_buf_pos,
                                                     {% if type in ("double","single") -%}

@@ -591,7 +591,7 @@ robotraconteurlite_status robotraconteurlite_messageelement_reader_get_data_info
     uint32_t* data_count, uint16_t data_type, size_t data_element_size);
 
 robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_ex(
-    struct robotraconteurlite_messageelement_reader* element_reader, struct robotraconteurlite_buffer* dest_buf,
+    struct robotraconteurlite_messageelement_reader* element_reader, uint8_t* dest_buf, size_t* dest_len,
     uint16_t dest_elem_type, size_t dest_elem_size);
 
 robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_scalar_ex(
@@ -600,7 +600,7 @@ robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_sca
 
 robotraconteurlite_status robotraconteurlite_messageelement_writer_write_raw(
     struct robotraconteurlite_messageelement_writer* element_writer,
-    const struct robotraconteurlite_string* element_name, struct robotraconteurlite_buffer* data, uint16_t data_type,
+    const struct robotraconteurlite_string* element_name, const uint8_t* data_buf, size_t data_len, uint16_t data_type,
     size_t data_elem_size);
 
 #endif /* ROBOTRACONTEURLITE_MESSAGE_H */
