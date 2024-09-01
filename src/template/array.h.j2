@@ -1,0 +1,224 @@
+/* Copyright 2011-2024 Wason Technology, LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+#ifndef ROBOTRACONTEURLITE_ARRAY_H
+#define ROBOTRACONTEURLITE_ARRAY_H
+
+#include <stdint.h>
+#include "robotraconteurlite/err.h"
+#include "robotraconteurlite/config.h"
+#include <stddef.h>
+#include <string.h>
+
+{% set types=[("double","double"),("single","float"),("int8","int8_t"),("uint8","uint8_t"),("int16","int16_t"),
+    ("uint16","uint16_t"),("int32","int32_t"),("uint32","uint32_t"),("int64","int64_t"),("uint64","uint64_t"),
+    ("cdouble","struct robotraconteurlite_cdouble"),("csingle","struct robotraconteurlite_csingle"),
+    ("bool","struct robotraconteurlite_bool")] %}
+struct robotraconteurlite_array_storage
+{
+    void* data;
+    size_t len;
+};
+
+struct robotraconteurlite_buffer
+{
+    uint8_t* data;
+    size_t len;
+};
+
+struct robotraconteurlite_buffer_vec
+{
+    struct robotraconteurlite_buffer* buffer_vec;
+    size_t buffer_vec_cnt;
+
+    struct robotraconteurlite_array_storage _scalar_storage;
+};
+
+/* Complex types */
+struct robotraconteurlite_cdouble
+{
+    double real;
+    double imag;
+};
+
+struct robotraconteurlite_csingle
+{
+    float real;
+    float imag;
+};
+
+struct robotraconteurlite_bool
+{
+    uint8_t logical;
+};
+
+/* All strings are utf8! */
+struct robotraconteurlite_string
+{
+    char* data;
+    size_t len;
+};
+
+struct robotraconteurlite_string_vec
+{
+    struct robotraconteurlite_string* string_vec;
+    size_t string_vec_cnt;
+
+    struct robotraconteurlite_array_storage _scalar_storage;
+};
+
+{% for type1 in types %}
+{%- set type=type1[0] -%}
+{%- set ctype=type1[1] -%}
+struct robotraconteurlite_array_{{type}}
+{
+    {{ctype}}* data;
+    size_t len;
+};
+
+struct robotraconteurlite_array_vec_{{type}}
+{
+    struct robotraconteurlite_array_{{type}}* array_vec;
+    size_t array_vec_cnt;
+
+    struct robotraconteurlite_array_storage _scalar_storage;
+};
+
+{% endfor %}
+
+
+ROBOTRACONTEURLITE_API robotraconteurlite_status
+robotraconteurlite_buffer_init_scalar(struct robotraconteurlite_buffer* buffer, void* data, size_t len);
+
+ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_init_scalar(
+    struct robotraconteurlite_buffer_vec* buffer_vec, struct robotraconteurlite_buffer* buffer);
+
+ROBOTRACONTEURLITE_API robotraconteurlite_status
+robotraconteurlite_buffer_len(const struct robotraconteurlite_buffer* source, size_t* len);
+
+ROBOTRACONTEURLITE_API robotraconteurlite_status
+robotraconteurlite_buffer_vec_len(const struct robotraconteurlite_buffer_vec* source, size_t* len);
+
+ROBOTRACONTEURLITE_API robotraconteurlite_status
+robotraconteurlite_buffer_copy(const struct robotraconteurlite_buffer* source, size_t source_pos,
+                               const struct robotraconteurlite_buffer* dest, size_t dest_pos, size_t count);
+
+ROBOTRACONTEURLITE_API robotraconteurlite_status
+robotraconteurlite_buffer_vec_copy_vec(const struct robotraconteurlite_buffer_vec* source, size_t source_pos,
+                                       const struct robotraconteurlite_buffer_vec* dest, size_t dest_pos, size_t count);
+
+ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_copy_ex(
+    const struct robotraconteurlite_buffer* source, size_t source_pos, size_t source_elem_size, size_t source_count,
+    const struct robotraconteurlite_buffer* dest, size_t dest_pos, size_t dest_elem_size, size_t dest_count);
+
+ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_vec_ex(
+    const struct robotraconteurlite_buffer_vec* source, size_t source_pos, size_t source_elem_size, size_t source_count,
+    const struct robotraconteurlite_buffer_vec* dest, size_t dest_pos, size_t dest_elem_size, size_t dest_count);
+
+ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_mem(
+    const struct robotraconteurlite_buffer_vec* source, size_t source_pos, uint8_t* dest, size_t dest_len,
+    size_t dest_pos, size_t dest_elem_size, size_t dest_count);
+
+ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_mem(
+    struct robotraconteurlite_buffer_vec* dest, size_t dest_pos, const uint8_t* source, size_t source_len,
+    size_t source_pos, size_t source_elem_size, size_t source_count);
+
+{% for type1 in types %}
+{%- set type=type1[0] -%}
+{%- set ctype=type1[1] -%}
+/* {{type}} */
+ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_{{type}}_array(
+    const struct robotraconteurlite_buffer_vec* source_buf, size_t source_buf_pos,
+    struct robotraconteurlite_array_{{type}}* dest, size_t dest_pos, size_t dest_count);
+
+ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_{{type}}_array(
+    struct robotraconteurlite_buffer_vec* dest_buf, size_t dest_buf_pos,
+    const struct robotraconteurlite_array_{{type}}* source, size_t source_pos, size_t source_count);
+
+ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_{{type}}(
+    const struct robotraconteurlite_buffer_vec* source_buf, size_t source_buf_pos, {{ctype}}* dest);
+
+ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_{{type}}(
+    struct robotraconteurlite_buffer_vec* dest_buf, size_t dest_buf_pos, {{ctype}} source);
+
+{% endfor %}
+
+/* string */
+ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_string(
+    const struct robotraconteurlite_buffer_vec* source_buf, size_t source_buf_pos,
+    struct robotraconteurlite_string* dest, size_t dest_pos, size_t dest_count);
+
+ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_string(
+    struct robotraconteurlite_buffer_vec* dest_buf, size_t dest_buf_pos, const struct robotraconteurlite_string* source,
+    size_t source_pos, size_t source_count);
+
+ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_string_cmp(
+    const struct robotraconteurlite_string* str1, const struct robotraconteurlite_string* str2);
+
+static int robotraconteurlite_string_cmp_c_str(const struct robotraconteurlite_string* str1, const char* str2)
+{
+    size_t strlen_str2 = strlen(str2);
+    if ((strlen_str2 == 0U) && (str1->len == 0U))
+    {
+        return 0;
+    }
+
+    if (str1->len == 0U)
+    {
+        return -1;
+    }
+
+    if (strlen_str2 == 0U)
+    {
+        return 1;
+    }
+
+    if (str1->len < strlen_str2)
+    {
+        return -1;
+    }
+
+    if (str1->len > strlen_str2)
+    {
+        return 1;
+    }
+
+    /* The char null terminator is not used by this function */
+    /* cppcheck-suppress misra-c2012-21.14 */
+    return memcmp(str1->data, str2, str1->len);
+}
+
+ROBOTRACONTEURLITE_API uint32_t robotraconteurlite_string_hash(const struct robotraconteurlite_string* str);
+
+ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_string_copy_to(
+    const struct robotraconteurlite_string* source, struct robotraconteurlite_string* dest);
+
+ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_string_shallow_copy_to(
+    const struct robotraconteurlite_string* source, struct robotraconteurlite_string* dest);
+
+static void robotraconteurlite_string_from_c_str(const char* source, struct robotraconteurlite_string* dest)
+{
+    if (source == NULL)
+    {
+        dest->data = NULL;
+        dest->len = 0;
+        return;
+    }
+    /* TODO: Fix misra warning */
+    /* cppcheck-suppress misra-c2012-11.8 */
+    dest->data = (char*)source;
+    dest->len = strlen(source);
+}
+#endif /* ROBOTRACONTEURLITE_ARRAY_H */

@@ -42,6 +42,39 @@ struct robotraconteurlite_buffer_vec
     struct robotraconteurlite_array_storage _scalar_storage;
 };
 
+/* Complex types */
+struct robotraconteurlite_cdouble
+{
+    double real;
+    double imag;
+};
+
+struct robotraconteurlite_csingle
+{
+    float real;
+    float imag;
+};
+
+struct robotraconteurlite_bool
+{
+    uint8_t logical;
+};
+
+/* All strings are utf8! */
+struct robotraconteurlite_string
+{
+    char* data;
+    size_t len;
+};
+
+struct robotraconteurlite_string_vec
+{
+    struct robotraconteurlite_string* string_vec;
+    size_t string_vec_cnt;
+
+    struct robotraconteurlite_array_storage _scalar_storage;
+};
+
 struct robotraconteurlite_array_double
 {
     double* data;
@@ -182,19 +215,6 @@ struct robotraconteurlite_array_vec_uint64
     struct robotraconteurlite_array_storage _scalar_storage;
 };
 
-/* Complex types */
-struct robotraconteurlite_cdouble
-{
-    double real;
-    double imag;
-};
-
-struct robotraconteurlite_csingle
-{
-    float real;
-    float imag;
-};
-
 struct robotraconteurlite_array_cdouble
 {
     struct robotraconteurlite_cdouble* data;
@@ -223,11 +243,6 @@ struct robotraconteurlite_array_vec_csingle
     struct robotraconteurlite_array_storage _scalar_storage;
 };
 
-struct robotraconteurlite_bool
-{
-    uint8_t logical;
-};
-
 struct robotraconteurlite_array_bool
 {
     struct robotraconteurlite_bool* data;
@@ -238,21 +253,6 @@ struct robotraconteurlite_array_vec_bool
 {
     struct robotraconteurlite_array_bool* array_vec;
     size_t array_vec_cnt;
-
-    struct robotraconteurlite_array_storage _scalar_storage;
-};
-
-/* All strings are utf8! */
-struct robotraconteurlite_string
-{
-    char* data;
-    size_t len;
-};
-
-struct robotraconteurlite_string_vec
-{
-    struct robotraconteurlite_string* string_vec;
-    size_t string_vec_cnt;
 
     struct robotraconteurlite_array_storage _scalar_storage;
 };
@@ -475,7 +475,7 @@ robotraconteurlite_buffer_vec_copy_to_csingle(const struct robotraconteurlite_bu
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_csingle(
     struct robotraconteurlite_buffer_vec* dest_buf, size_t dest_buf_pos, struct robotraconteurlite_csingle source);
 
-/* struct robotraconteurlite_bool */
+/* bool */
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_bool_array(
     const struct robotraconteurlite_buffer_vec* source_buf, size_t source_buf_pos,
     struct robotraconteurlite_array_bool* dest, size_t dest_pos, size_t dest_count);
