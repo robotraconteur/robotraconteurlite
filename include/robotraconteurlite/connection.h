@@ -74,10 +74,10 @@ struct robotraconteurlite_connection
     /* Send and receive buffers */
     uint8_t* send_buffer;
     uint8_t* recv_buffer;
-    uint32_t send_buffer_len;
-    uint32_t recv_buffer_len;
-    uint32_t send_buffer_pos;
-    uint32_t recv_buffer_pos;
+    size_t send_buffer_len;
+    size_t recv_buffer_len;
+    size_t send_buffer_pos;
+    size_t recv_buffer_pos;
 
     /* Control flags */
     uint32_t config_flags;
