@@ -22,9 +22,7 @@
     ("uint16","uint16_t"),("int32","int32_t"),("uint32","uint32_t"),("int64","int64_t"),("uint64","uint64_t"),
     ("cdouble","struct robotraconteurlite_cdouble"),("csingle","struct robotraconteurlite_csingle"),
     ("bool","struct robotraconteurlite_bool")] %}
-{% for type1 in types %}
-{%- set type=type1[0] -%}
-{%- set ctype=type1[1] -%}
+{% for type,ctype in types %}
 /* {{type}} */
 robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_{{type}}_array(
     const struct robotraconteurlite_buffer_vec* source_buf, size_t source_buf_pos,

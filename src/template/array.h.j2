@@ -79,9 +79,7 @@ struct robotraconteurlite_string_vec
     struct robotraconteurlite_array_storage _scalar_storage;
 };
 
-{% for type1 in types %}
-{%- set type=type1[0] -%}
-{%- set ctype=type1[1] -%}
+{% for type,ctype in types %}
 struct robotraconteurlite_array_{{type}}
 {
     {{ctype}}* data;
@@ -135,9 +133,7 @@ ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_c
     struct robotraconteurlite_buffer_vec* dest, size_t dest_pos, const uint8_t* source, size_t source_len,
     size_t source_pos, size_t source_elem_size, size_t source_count);
 
-{% for type1 in types %}
-{%- set type=type1[0] -%}
-{%- set ctype=type1[1] -%}
+{% for type,ctype in types %}
 /* {{type}} */
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_{{type}}_array(
     const struct robotraconteurlite_buffer_vec* source_buf, size_t source_buf_pos,

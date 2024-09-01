@@ -25,9 +25,7 @@
     ("bool","struct robotraconteurlite_bool")] %}
 
 /* readers */
-{% for type1 in types %}
-{%- set type=type1[0] -%}
-{%- set ctype=type1[1] -%}
+{% for type,ctype in types -%}
 /* {{type}} */
 robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_{{type}}_array(
     struct robotraconteurlite_messageelement_reader* element_reader, struct robotraconteurlite_array_{{type}}* dest_array)
@@ -52,9 +50,7 @@ robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_{{t
 {% endfor %}
 
 /* writers */
-{% for type1 in types %}
-{%- set type=type1[0] -%}
-{%- set ctype=type1[1] -%}
+{% for type,ctype in types -%}
 /* {{type}} */
 robotraconteurlite_status robotraconteurlite_messageelement_writer_write_{{type}}(
     struct robotraconteurlite_messageelement_writer* element_writer,
