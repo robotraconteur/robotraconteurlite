@@ -351,8 +351,8 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_mem(const struct
 {
     struct robotraconteurlite_buffer dest_buf;
     struct robotraconteurlite_buffer_vec dest_vec;
-    memset(&dest_buf, 0, sizeof(dest_buf));
-    memset(&dest_vec, 0, sizeof(dest_vec));
+    (void)memset(&dest_buf, 0, sizeof(dest_buf));
+    (void)memset(&dest_vec, 0, sizeof(dest_vec));
     dest_buf.data = dest;
     dest_buf.len = dest_len;
     dest_vec.buffer_vec = &dest_buf;
@@ -370,8 +370,8 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_mem(const stru
 {
     struct robotraconteurlite_buffer source_buf;
     struct robotraconteurlite_buffer_vec source_vec;
-    memset(&source_buf, 0, sizeof(source_buf));
-    memset(&source_vec, 0, sizeof(source_vec));
+    (void)memset(&source_buf, 0, sizeof(source_buf));
+    (void)memset(&source_vec, 0, sizeof(source_vec));
     source_buf.data = (uint8_t*)source;
     source_buf.len = source_len;
     source_vec.buffer_vec = &source_buf;
