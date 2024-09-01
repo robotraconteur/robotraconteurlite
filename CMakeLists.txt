@@ -29,7 +29,7 @@ add_library(
     src/array_types.c
     src/connection.c
     src/message.c
-    src/message_types.c
+    src/message_data.c
     src/node.c
     src/nodeid.c
     src/tcp_transport_posix.c
