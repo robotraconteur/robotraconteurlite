@@ -87,7 +87,7 @@ robotraconteurlite_status robotraconteurlite_buffer_copy(const struct robotracon
         return ROBOTRACONTEURLITE_ERROR_OUT_OF_RANGE;
     }
 
-    (void)memcpy(dest->data + dest_pos, source->data + source_pos, count);
+    (void)memcpy(&dest->data[dest_pos], &source->data[source_pos], count);
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
 
@@ -186,7 +186,7 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_vec(const struct ro
         assert(source->buffer_vec[source_i].data != NULL);
         assert(dest->buffer_vec[dest_i].data != NULL);
 
-        (void)memcpy(dest->buffer_vec[dest_i].data + dest_i_pos, source->buffer_vec[source_i].data + source_i_pos,
+        (void)memcpy(&dest->buffer_vec[dest_i].data[dest_i_pos], &source->buffer_vec[source_i].data[source_i_pos],
                      delta);
 
         count_remaining -= delta;
@@ -224,7 +224,7 @@ robotraconteurlite_status robotraconteurlite_buffer_copy_ex(const struct robotra
         return ROBOTRACONTEURLITE_ERROR_OUT_OF_RANGE;
     }
 
-    (void)memcpy(dest->data + (dest_pos * dest_elem_size), source->data + (source_pos * source_elem_size),
+    (void)memcpy(&dest->data[(dest_pos * dest_elem_size)], &source->data[(source_pos * source_elem_size)],
                  source_count * source_elem_size);
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
@@ -333,8 +333,8 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_vec_ex(
         assert(source->buffer_vec[source_i].data != NULL);
         assert(dest->buffer_vec[dest_i].data != NULL);
 
-        (void)memcpy(dest->buffer_vec[dest_i].data + dest_i_byte_pos,
-                     source->buffer_vec[source_i].data + source_i_byte_pos, delta);
+        (void)memcpy(&dest->buffer_vec[dest_i].data[dest_i_byte_pos],
+                     &source->buffer_vec[source_i].data[source_i_byte_pos], delta);
 
         bytes_remaining -= delta;
         source_i_byte_pos += delta;

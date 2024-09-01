@@ -415,7 +415,7 @@ robotraconteurlite_status robotraconteurlite_messageentry_reader_find_element(
                     return rv;
                 }
 
-                if (memcmp(temp_str.data, element_name->data + str_offset, str_read) != 0)
+                if (memcmp(temp_str.data, &element_name->data[str_offset], str_read) != 0)
                 {
                     break;
                 }
@@ -1066,7 +1066,7 @@ robotraconteurlite_status robotraconteurlite_messageelement_reader_find_nested_e
                     return rv;
                 }
 
-                if (memcmp(temp_str.data, nested_element_name->data + str_offset, str_read) != 0)
+                if (memcmp(temp_str.data, &nested_element_name->data[str_offset], str_read) != 0)
                 {
                     break;
                 }
