@@ -47,6 +47,10 @@
 #define ROBOTRACONTEURLITE_STATUS_FLAGS_MESSAGE_SENT_CONSUMED 0x40000U
 #define ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTED_CONSUMED 0x80000U
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 struct robotraconteurlite_transport_storage
 {
     uint8_t _storage[128];
@@ -292,5 +296,9 @@ static int robotraconteurlite_connection_is_idle(struct robotraconteurlite_conne
 ROBOTRACONTEURLITE_API robotraconteurlite_status
 robotraconteurlite_connection_next_wake(struct robotraconteurlite_connection* connection,
                                         robotraconteurlite_timespec now, robotraconteurlite_timespec* next_wake);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /*ROBOTRACONTEURLITE_CONNECTION_H*/

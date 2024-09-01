@@ -41,6 +41,10 @@
 #define ROBOTRACONTEURLITE_TCP_TRANSPORT_WEBSOCKET_FLAGS_PING 0x9U
 #define ROBOTRACONTEURLITE_TCP_TRANSPORT_WEBSOCKET_FLAGS_PONG 0xAU
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 struct robotraconteurlite_tcp_sha1_storage
 {
     uint8_t sha1_bytes[20];
@@ -169,5 +173,9 @@ ROBOTRACONTEURLITE_API uint64_t robotraconteurlite_be64toh(uint64_t big_endian_6
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status
 robotraconteurlite_tcp_socket_connect(struct robotraconteurlite_sockaddr_storage* addr);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /*ROBOTRACONTEURLITE_TCP_TRANSPORT_H*/

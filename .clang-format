@@ -6,6 +6,7 @@ PointerAlignment: Left
 AlwaysBreakTemplateDeclarations: Yes
 BraceWrapping:
   SplitEmptyFunction: No
+  AfterExternBlock: false
 AllowShortFunctionsOnASingleLine: true
 ---
 Language: Cpp

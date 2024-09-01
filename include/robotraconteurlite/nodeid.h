@@ -19,6 +19,10 @@
 #include <stdint.h>
 #include "robotraconteurlite/config.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 struct robotraconteurlite_nodeid
 {
     uint8_t data[16];
@@ -35,5 +39,9 @@ ROBOTRACONTEURLITE_API int robotraconteurlite_nodeid_reset(struct robotraconteur
 
 ROBOTRACONTEURLITE_API int robotraconteurlite_nodeid_copy_to(const struct robotraconteurlite_nodeid* src,
                                                              struct robotraconteurlite_nodeid* dst);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* ROBOTRACONTEURLITE_NODEID_H */

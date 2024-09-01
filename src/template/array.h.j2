@@ -22,6 +22,10 @@
 #include <stddef.h>
 #include <string.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 {% set types=[("double","double"),("single","float"),("int8","int8_t"),("uint8","uint8_t"),("int16","int16_t"),
     ("uint16","uint16_t"),("int32","int32_t"),("uint32","uint32_t"),("int64","int64_t"),("uint64","uint64_t"),
     ("cdouble","struct robotraconteurlite_cdouble"),("csingle","struct robotraconteurlite_csingle"),
@@ -217,4 +221,9 @@ static void robotraconteurlite_string_from_c_str(const char* source, struct robo
     dest->data = (char*)source;
     dest->len = strlen(source);
 }
+
+#ifdef __cplusplus
+}
+#endif
+
 #endif /* ROBOTRACONTEURLITE_ARRAY_H */
