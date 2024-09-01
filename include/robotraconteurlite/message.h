@@ -20,6 +20,7 @@
 #include "robotraconteurlite/err.h"
 #include "robotraconteurlite/array.h"
 #include "robotraconteurlite/nodeid.h"
+#include "robotraconteurlite/message_data.h"
 
 /* Data Types */
 #define ROBOTRACONTEURLITE_DATATYPE_VOID 0U
@@ -383,8 +384,6 @@ ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_messageeleme
     struct robotraconteurlite_messageelement_writer* element_writer,
     struct robotraconteurlite_messageelement_header* header,
     struct robotraconteurlite_messageelement_writer* nested_element_writer);
-
-#include "robotraconteurlite/message_data.h"
 
 /* internal use functions */
 

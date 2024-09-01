@@ -18,6 +18,9 @@
 
 #include "robotraconteurlite/message.h"
 
+struct robotraconteurlite_messageelement_reader;
+struct robotraconteurlite_messageelement_writer;
+
 /* reader */
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_double_array(
@@ -87,14 +90,13 @@ ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_messageeleme
     struct robotraconteurlite_messageelement_reader* element_reader, struct robotraconteurlite_cdouble* value);
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_csingle_array(
-    struct robotraconteurlite_messageelement_reader* element_reader,
-    struct robotraconteurlite_array_csingle* dest_array);
+    struct robotraconteurlite_messageelement_reader* element_reader, struct robotraconteurlite_array_csingle* array);
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_csingle(
     struct robotraconteurlite_messageelement_reader* element_reader, struct robotraconteurlite_csingle* value);
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_bool_array(
-    struct robotraconteurlite_messageelement_reader* element_reader, struct robotraconteurlite_array_bool* dest_array);
+    struct robotraconteurlite_messageelement_reader* element_reader, struct robotraconteurlite_array_bool* array);
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_bool(
     struct robotraconteurlite_messageelement_reader* element_reader, struct robotraconteurlite_bool* value);
