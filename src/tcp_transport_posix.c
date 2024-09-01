@@ -82,7 +82,7 @@ robotraconteurlite_status robotraconteurlite_tcp_base64_encode(const uint8_t* bi
 #endif
 }
 
-robotraconteurlite_status robotraconteurlite_tcp_socket_recv_nonblocking(int sock, uint8_t* buffer, uint32_t* pos,
+robotraconteurlite_status robotraconteurlite_tcp_socket_recv_nonblocking(int sock, uint8_t* buffer, size_t* pos,
                                                                          size_t len, int* errno_out)
 {
     size_t pos1 = *pos;
@@ -119,7 +119,7 @@ robotraconteurlite_status robotraconteurlite_tcp_socket_recv_nonblocking(int soc
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
 
-robotraconteurlite_status robotraconteurlite_tcp_socket_send_nonblocking(int sock, const uint8_t* buffer, uint32_t* pos,
+robotraconteurlite_status robotraconteurlite_tcp_socket_send_nonblocking(int sock, const uint8_t* buffer, size_t* pos,
                                                                          size_t len, int* errno_out)
 {
     size_t pos1 = *pos;
