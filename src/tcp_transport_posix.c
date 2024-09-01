@@ -179,7 +179,7 @@ robotraconteurlite_status robotraconteurlite_tcp_socket_begin_server(const struc
     }
 
     /* Bind socket */
-    /* cppcheck-suppress misra-c2012-11.2 */
+    /* cppcheck-suppress [misra-c2012-11.2,misra-c2012-11.8] */
     if (bind(sock, (struct sockaddr*)serv_addr, sizeof(struct sockaddr_storage)) < 0)
     {
         *errno_out = errno;
@@ -293,6 +293,7 @@ robotraconteurlite_status robotraconteurlite_tcp_socket_connect(struct robotraco
         return -1;
     }
 
+    /* cppcheck-suppress misra-c2012-11.3 */
     rv = connect(sock, (struct sockaddr*)addr, sizeof(struct sockaddr_storage));
     if (rv < 0)
     {

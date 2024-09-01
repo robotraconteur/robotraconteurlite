@@ -27,6 +27,7 @@
 int robotraconteurlite_poll(struct robotraconteurlite_pollfd* fds, int nfds, int timeout)
 {
     int ret = -1;
+    /* cppcheck_suppress misra-c2012-11.3 */
     ret = poll((struct pollfd*)fds, (int)nfds, (int)timeout);
     /* False positive cppcheck warning for errno not set */
     /* cppcheck-suppress misra-c2012-22.10 */
