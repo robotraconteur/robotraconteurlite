@@ -589,7 +589,6 @@ static robotraconteurlite_status robotraconteurlite_tcp_connection_handshake_htt
 static robotraconteurlite_status robotraconteurlite_tcp_connection_handshake_http_handshake(
     struct robotraconteurlite_connection* connection)
 {
-    /* cppcheck-suppress [misra-c2012-21.14, misra-c2012-21.16] */
     const char* recv_data = (const char*)connection->recv_buffer;
     size_t recv_data_len = connection->recv_buffer_pos;
 
