@@ -215,7 +215,7 @@ static robotraconteurlite_status robotraconteurlite_tcp_connection_buffer_recv_w
         if (masked != 0U)
         {
             (void)memcpy(storage->recv_websocket_mask,
-                         storage->recv_websocket_header_buffer + websocket_header_len - 4U, 4U);
+                         &storage->recv_websocket_header_buffer[websocket_header_len - 4U], 4U);
             storage->tcp_transport_state |= ROBOTRACONTEURLITE_TCP_TRANSPORT_STATE_RECV_WEBSOCKET_ENABLE_MASK;
         }
         else
@@ -288,7 +288,7 @@ robotraconteurlite_status robotraconteurlite_tcp_connection_communicate_recv(
     {
         if (connection->recv_buffer_pos > connection->recv_message_len)
         {
-            (void)memmove(connection->recv_buffer, connection->recv_buffer + connection->recv_message_len,
+            (void)memmove(connection->recv_buffer, &connection->recv_buffer[connection->recv_message_len],
                           connection->recv_buffer_pos - connection->recv_message_len);
         }
         connection->recv_buffer_pos -= connection->recv_message_len;
@@ -392,7 +392,7 @@ static robotraconteurlite_status robotraconteurlite_tcp_connection_buffer_send_w
                 return ROBOTRACONTEURLITE_ERROR_INTERNAL_ERROR;
             }
             storage->send_websocket_header_buffer[1] |= 0x80U;
-            (void)memcpy(storage->send_websocket_header_buffer + storage->send_websocket_header_len - 4U,
+            (void)memcpy(&storage->send_websocket_header_buffer[storage->send_websocket_header_len - 4U],
                          storage->send_websocket_mask, 4);
         }
 
@@ -611,7 +611,7 @@ static robotraconteurlite_status robotraconteurlite_tcp_connection_handshake_htt
         {
             if (((i_next + STRCONST_HTTP_SEC_WEBSOCKET_KEY_LEN) < recv_data_len) &&
                 /* cppcheck-suppress [misra-c2012-21.14, misra-c2012-21.16] */
-                (memcmp(recv_data + i_next, STRCONST_HTTP_SEC_WEBSOCKET_KEY, STRCONST_HTTP_SEC_WEBSOCKET_KEY_LEN) == 0))
+                (memcmp(&recv_data[i_next], STRCONST_HTTP_SEC_WEBSOCKET_KEY, STRCONST_HTTP_SEC_WEBSOCKET_KEY_LEN) == 0))
             {
                 i_sec_websocket = i_next + STRCONST_HTTP_SEC_WEBSOCKET_KEY_LEN;
                 break;
@@ -662,9 +662,9 @@ static robotraconteurlite_status robotraconteurlite_tcp_connection_handshake_htt
 
     /* NOLINTBEGIN(bugprone-not-null-terminated-result) */
     /* Copy the client key to the buffer */
-    (void)memcpy(sha1_input_bytes, recv_data + i_sec_websocket, WEBSOCKET_KEY_BASE64_LEN);
+    (void)memcpy(sha1_input_bytes, &recv_data[i_sec_websocket], WEBSOCKET_KEY_BASE64_LEN);
     /* Copy the UUID to the buffer */
-    (void)memcpy(sha1_input_bytes + WEBSOCKET_KEY_BASE64_LEN, STRCONST_HTTP_KEY_UUID, STRCONST_HTTP_KEY_UUID_LEN);
+    (void)memcpy(&sha1_input_bytes[WEBSOCKET_KEY_BASE64_LEN], STRCONST_HTTP_KEY_UUID, STRCONST_HTTP_KEY_UUID_LEN);
     /* NOLINTEND(bugprone-not-null-terminated-result) */
 
     /* Compute the SHA1 hash */
@@ -688,9 +688,9 @@ static robotraconteurlite_status robotraconteurlite_tcp_connection_handshake_htt
     /* NOLINTBEGIN(bugprone-not-null-terminated-result) */
     (void)memcpy(connection->send_buffer, STRCONST_HTTP_RESPONSE_1, STRCONST_HTTP_RESPONSE_1_LEN);
     /* Send the accept hash */
-    (void)memcpy(connection->send_buffer + STRCONST_HTTP_RESPONSE_1_LEN, sha1_base64, sha1_base64_len);
+    (void)memcpy(&connection->send_buffer[STRCONST_HTTP_RESPONSE_1_LEN], sha1_base64, sha1_base64_len);
     /* Send the second part of the response */
-    (void)memcpy(connection->send_buffer + STRCONST_HTTP_RESPONSE_1_LEN + sha1_base64_len, STRCONST_HTTP_RESPONSE_2,
+    (void)memcpy(&connection->send_buffer[STRCONST_HTTP_RESPONSE_1_LEN + sha1_base64_len], STRCONST_HTTP_RESPONSE_2,
                  STRCONST_HTTP_RESPONSE_2_LEN);
     /* NOLINTEND(bugprone-not-null-terminated-result) */
 
@@ -730,7 +730,7 @@ static robotraconteurlite_status robotraconteurlite_tcp_connection_handshake_htt
         /* Check for ending of \r\n\r\n or \n\n or \r\r or \n\r\n\r */
         if (connection->recv_buffer_pos >= 4U)
         {
-            uint8_t* end_minus_4 = connection->recv_buffer + connection->recv_buffer_pos - 4U;
+            uint8_t* end_minus_4 = &connection->recv_buffer[connection->recv_buffer_pos - 4U];
             /* cppcheck-suppress [misra-c2012-21.14, misra-c2012-21.16] */
             if ((memcmp(end_minus_4, "\r\n\r\n", 4) == 0) || (memcmp(end_minus_4, "\n\r\n\r", 4) == 0))
             {
@@ -740,7 +740,7 @@ static robotraconteurlite_status robotraconteurlite_tcp_connection_handshake_htt
 
         if (connection->recv_buffer_pos >= 2U)
         {
-            uint8_t* end_minus_2 = connection->recv_buffer + connection->recv_buffer_pos - 2U;
+            uint8_t* end_minus_2 = &connection->recv_buffer[connection->recv_buffer_pos - 2U];
             /* cppcheck-suppress [misra-c2012-21.14, misra-c2012-21.16] */
             if ((memcmp(end_minus_2, "\n\n", 2) == 0) || (memcmp(end_minus_2, "\r\r", 2) == 0))
             {
@@ -1108,15 +1108,15 @@ static robotraconteurlite_status robotraconteurlite_tcp_connect_service_send_web
     /* NOLINTBEGIN(bugprone-not-null-terminated-result) */
     send_buf = connect_data->client_out->send_buffer;
     (void)memcpy(send_buf, STRCONST_HTTP_REQUEST_1, STRCONST_HTTP_REQUEST_1_LEN);
-    send_buf += STRCONST_HTTP_REQUEST_1_LEN;
+    send_buf = &send_buf[STRCONST_HTTP_REQUEST_1_LEN];
     (void)memcpy(send_buf, connect_data->service_address->http_path.data, connect_data->service_address->http_path.len);
-    send_buf += connect_data->service_address->http_path.len;
+    send_buf = &send_buf[connect_data->service_address->http_path.len];
     (void)memcpy(send_buf, STRCONST_HTTP_REQUEST_2, STRCONST_HTTP_REQUEST_2_LEN);
-    send_buf += STRCONST_HTTP_REQUEST_2_LEN;
+    send_buf = &send_buf[STRCONST_HTTP_REQUEST_2_LEN];
     (void)memcpy(send_buf, connect_data->service_address->http_host.data, connect_data->service_address->http_host.len);
-    send_buf += connect_data->service_address->http_host.len;
+    send_buf = &send_buf[connect_data->service_address->http_host.len];
     (void)memcpy(send_buf, STRCONST_HTTP_REQUEST_3, STRCONST_HTTP_REQUEST_3_LEN);
-    send_buf += STRCONST_HTTP_REQUEST_3_LEN;
+    send_buf = &send_buf[STRCONST_HTTP_REQUEST_3_LEN];
 
     if (robotraconteurlite_tcp_base64_encode(websocket_key, sizeof(websocket_key), (char*)send_buf,
                                              &sec_b64_send_len) != 0)
@@ -1127,11 +1127,12 @@ static robotraconteurlite_status robotraconteurlite_tcp_connect_service_send_web
     {
         return ROBOTRACONTEURLITE_ERROR_INTERNAL_ERROR;
     }
-    send_buf += WEBSOCKET_KEY_BASE64_LEN;
+    send_buf = &send_buf[WEBSOCKET_KEY_BASE64_LEN];
     (void)memcpy(send_buf, STRCONST_HTTP_REQUEST_4, STRCONST_HTTP_REQUEST_4_LEN);
-    send_buf += STRCONST_HTTP_REQUEST_4_LEN;
+    send_buf = &send_buf[STRCONST_HTTP_REQUEST_4_LEN];
     /* NOLINTEND(bugprone-not-null-terminated-result) */
 
+    /* cppcheck-suppress misra-c2012-18.4 */
     assert((send_buf - connect_data->client_out->send_buffer) == (int)send_len);
     connect_data->client_out->send_message_len = send_len;
     connect_data->client_out->send_buffer_pos = 0;

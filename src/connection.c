@@ -49,11 +49,11 @@ robotraconteurlite_status robotraconteurlite_connection_verify_preamble(
             connection->connection_state &= ~ROBOTRACONTEURLITE_STATUS_FLAGS_RECEIVE_REQUESTED;
             return ROBOTRACONTEURLITE_ERROR_CONNECTION_ERROR;
         }
-        connection->recv_message_len = robotraconteurlite_util_read_uint32(connection->recv_buffer + 4);
+        connection->recv_message_len = robotraconteurlite_util_read_uint32(&connection->recv_buffer[4]);
         *message_len = connection->recv_message_len;
 
         /* Check the message version */
-        message_version = robotraconteurlite_util_read_uint16(connection->recv_buffer + 8);
+        message_version = robotraconteurlite_util_read_uint16(&connection->recv_buffer[8]);
         if (message_version != 2U)
         {
             connection->connection_state |= ROBOTRACONTEURLITE_STATUS_FLAGS_ERROR;
@@ -179,8 +179,8 @@ struct robotraconteurlite_connection* robotraconteurlite_connections_init_from_a
     for (i = 0; i < connections_fixed_storage_len; i++)
     {
         (void)memset(&connections_fixed_storage[i], 0, sizeof(struct robotraconteurlite_connection));
-        connections_fixed_storage[i].recv_buffer = buffers + (i * 2U * buffer_size);
-        connections_fixed_storage[i].send_buffer = buffers + (i * 2U * buffer_size) + buffer_size;
+        connections_fixed_storage[i].recv_buffer = &buffers[(i * 2U * buffer_size)];
+        connections_fixed_storage[i].send_buffer = &buffers[(i * 2U * buffer_size) + buffer_size];
         connections_fixed_storage[i].recv_buffer_len = buffer_size;
         connections_fixed_storage[i].send_buffer_len = buffer_size;
 
