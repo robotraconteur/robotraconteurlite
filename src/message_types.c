@@ -1,4 +1,3 @@
-/* cppcheck-suppress-file invalidPointerCast */
 /* Copyright 2011-2024 Wason Technology, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -34,7 +33,8 @@ robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_dou
     struct robotraconteurlite_messageelement_reader* element_reader, double* value)
 {
     return robotraconteurlite_messageelement_reader_read_data_scalar_ex(
-        element_reader, value, ROBOTRACONTEURLITE_DATATYPE_DOUBLE, sizeof(double));
+        /* cppcheck-suppress invalidPointerCast */
+        element_reader, (uint8_t*)value, ROBOTRACONTEURLITE_DATATYPE_DOUBLE, sizeof(double));
 }
 /* single */
 robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_single_array(
@@ -50,7 +50,8 @@ robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_sin
     struct robotraconteurlite_messageelement_reader* element_reader, float* value)
 {
     return robotraconteurlite_messageelement_reader_read_data_scalar_ex(
-        element_reader, value, ROBOTRACONTEURLITE_DATATYPE_SINGLE, sizeof(float));
+        /* cppcheck-suppress invalidPointerCast */
+        element_reader, (uint8_t*)value, ROBOTRACONTEURLITE_DATATYPE_SINGLE, sizeof(float));
 }
 /* int8 */
 robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_int8_array(
@@ -64,7 +65,7 @@ robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_int
     struct robotraconteurlite_messageelement_reader* element_reader, int8_t* value)
 {
     return robotraconteurlite_messageelement_reader_read_data_scalar_ex(
-        element_reader, value, ROBOTRACONTEURLITE_DATATYPE_INT8, sizeof(int8_t));
+        element_reader, (uint8_t*)value, ROBOTRACONTEURLITE_DATATYPE_INT8, sizeof(int8_t));
 }
 /* uint8 */
 robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_uint8_array(
@@ -79,7 +80,7 @@ robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_uin
     struct robotraconteurlite_messageelement_reader* element_reader, uint8_t* value)
 {
     return robotraconteurlite_messageelement_reader_read_data_scalar_ex(
-        element_reader, value, ROBOTRACONTEURLITE_DATATYPE_UINT8, sizeof(uint8_t));
+        element_reader, (uint8_t*)value, ROBOTRACONTEURLITE_DATATYPE_UINT8, sizeof(uint8_t));
 }
 /* int16 */
 robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_int16_array(
@@ -94,7 +95,7 @@ robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_int
     struct robotraconteurlite_messageelement_reader* element_reader, int16_t* value)
 {
     return robotraconteurlite_messageelement_reader_read_data_scalar_ex(
-        element_reader, value, ROBOTRACONTEURLITE_DATATYPE_INT16, sizeof(int16_t));
+        element_reader, (uint8_t*)value, ROBOTRACONTEURLITE_DATATYPE_INT16, sizeof(int16_t));
 }
 /* uint16 */
 robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_uint16_array(
@@ -109,7 +110,7 @@ robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_uin
     struct robotraconteurlite_messageelement_reader* element_reader, uint16_t* value)
 {
     return robotraconteurlite_messageelement_reader_read_data_scalar_ex(
-        element_reader, value, ROBOTRACONTEURLITE_DATATYPE_UINT16, sizeof(uint16_t));
+        element_reader, (uint8_t*)value, ROBOTRACONTEURLITE_DATATYPE_UINT16, sizeof(uint16_t));
 }
 /* int32 */
 robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_int32_array(
@@ -124,7 +125,7 @@ robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_int
     struct robotraconteurlite_messageelement_reader* element_reader, int32_t* value)
 {
     return robotraconteurlite_messageelement_reader_read_data_scalar_ex(
-        element_reader, value, ROBOTRACONTEURLITE_DATATYPE_INT32, sizeof(int32_t));
+        element_reader, (uint8_t*)value, ROBOTRACONTEURLITE_DATATYPE_INT32, sizeof(int32_t));
 }
 /* uint32 */
 robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_uint32_array(
@@ -139,7 +140,7 @@ robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_uin
     struct robotraconteurlite_messageelement_reader* element_reader, uint32_t* value)
 {
     return robotraconteurlite_messageelement_reader_read_data_scalar_ex(
-        element_reader, value, ROBOTRACONTEURLITE_DATATYPE_UINT32, sizeof(uint32_t));
+        element_reader, (uint8_t*)value, ROBOTRACONTEURLITE_DATATYPE_UINT32, sizeof(uint32_t));
 }
 /* int64 */
 robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_int64_array(
@@ -154,7 +155,7 @@ robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_int
     struct robotraconteurlite_messageelement_reader* element_reader, int64_t* value)
 {
     return robotraconteurlite_messageelement_reader_read_data_scalar_ex(
-        element_reader, value, ROBOTRACONTEURLITE_DATATYPE_INT64, sizeof(int64_t));
+        element_reader, (uint8_t*)value, ROBOTRACONTEURLITE_DATATYPE_INT64, sizeof(int64_t));
 }
 /* uint64 */
 robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_uint64_array(
@@ -169,7 +170,7 @@ robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_uin
     struct robotraconteurlite_messageelement_reader* element_reader, uint64_t* value)
 {
     return robotraconteurlite_messageelement_reader_read_data_scalar_ex(
-        element_reader, value, ROBOTRACONTEURLITE_DATATYPE_UINT64, sizeof(uint64_t));
+        element_reader, (uint8_t*)value, ROBOTRACONTEURLITE_DATATYPE_UINT64, sizeof(uint64_t));
 }
 /* cdouble */
 robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_cdouble_array(
@@ -184,8 +185,9 @@ robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_cdo
 robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_cdouble(
     struct robotraconteurlite_messageelement_reader* element_reader, struct robotraconteurlite_cdouble* value)
 {
-    return robotraconteurlite_messageelement_reader_read_data_scalar_ex(
-        element_reader, value, ROBOTRACONTEURLITE_DATATYPE_CDOUBLE, sizeof(struct robotraconteurlite_cdouble));
+    return robotraconteurlite_messageelement_reader_read_data_scalar_ex(element_reader, (uint8_t*)value,
+                                                                        ROBOTRACONTEURLITE_DATATYPE_CDOUBLE,
+                                                                        sizeof(struct robotraconteurlite_cdouble));
 }
 /* csingle */
 robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_csingle_array(
@@ -200,8 +202,9 @@ robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_csi
 robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_csingle(
     struct robotraconteurlite_messageelement_reader* element_reader, struct robotraconteurlite_csingle* value)
 {
-    return robotraconteurlite_messageelement_reader_read_data_scalar_ex(
-        element_reader, value, ROBOTRACONTEURLITE_DATATYPE_CSINGLE, sizeof(struct robotraconteurlite_csingle));
+    return robotraconteurlite_messageelement_reader_read_data_scalar_ex(element_reader, (uint8_t*)value,
+                                                                        ROBOTRACONTEURLITE_DATATYPE_CSINGLE,
+                                                                        sizeof(struct robotraconteurlite_csingle));
 }
 /* bool */
 robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_bool_array(
@@ -216,7 +219,7 @@ robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_boo
     struct robotraconteurlite_messageelement_reader* element_reader, struct robotraconteurlite_bool* value)
 {
     return robotraconteurlite_messageelement_reader_read_data_scalar_ex(
-        element_reader, value, ROBOTRACONTEURLITE_DATATYPE_BOOL, sizeof(struct robotraconteurlite_bool));
+        element_reader, (uint8_t*)value, ROBOTRACONTEURLITE_DATATYPE_BOOL, sizeof(struct robotraconteurlite_bool));
 }
 
 /* writers */

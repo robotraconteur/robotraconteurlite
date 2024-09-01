@@ -1,4 +1,3 @@
-/* cppcheck-suppress-file invalidPointerCast */
 /* Copyright 2011-2024 Wason Technology, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");

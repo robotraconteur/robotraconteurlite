@@ -918,7 +918,7 @@ robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_ex(
 }
 
 robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_scalar_ex(
-    struct robotraconteurlite_messageelement_reader* element_reader, void* dest_scalar, uint16_t dest_elem_type,
+    struct robotraconteurlite_messageelement_reader* element_reader, uint8_t* dest_scalar, uint16_t dest_elem_type,
     size_t dest_elem_size)
 {
     size_t data_offset = 0;
@@ -929,8 +929,6 @@ robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_sca
     struct robotraconteurlite_buffer dest_buf;
     struct robotraconteurlite_buffer_vec dest_vec;
 
-    /* TODO: Fix cppcheck warning */
-    /* cppcheck-suppress misra-c2012-11.5 */
     dest_buf.data = dest_scalar;
     dest_buf.len = 1;
     dest_vec.buffer_vec = &dest_buf;
@@ -1272,10 +1270,8 @@ robotraconteurlite_status robotraconteurlite_message_writer_begin_message(
 
     header_size = (uint16_t)(str4_len + 64U);
 
-    magic.data = (char*)rrac_magic;
-    magic.len = sizeof(rrac_magic);
-
-    rv = robotraconteurlite_buffer_vec_copy_from_string(writer->buffer, writer->buffer_offset, &magic, 0, 4);
+    rv = robotraconteurlite_buffer_vec_copy_from_mem(writer->buffer, writer->buffer_offset, (const uint8_t*)rrac_magic,
+                                                     4, 0, 1, 4);
     if (rv < 0)
     {
         return rv;

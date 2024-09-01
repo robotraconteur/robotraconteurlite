@@ -372,6 +372,8 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_mem(struct rob
     struct robotraconteurlite_buffer_vec source_vec;
     (void)memset(&source_buf, 0, sizeof(source_buf));
     (void)memset(&source_vec, 0, sizeof(source_vec));
+    /* TODO: fix this misra warning */
+    /* cppcheck-suppress misra-c2012-11.8 */
     source_buf.data = (uint8_t*)source;
     source_buf.len = source_len;
     source_vec.buffer_vec = &source_buf;
@@ -386,12 +388,8 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_string(
     const struct robotraconteurlite_buffer_vec* source_buf, size_t source_buf_pos,
     struct robotraconteurlite_string* dest, size_t dest_pos, size_t dest_count)
 {
-    struct robotraconteurlite_buffer_vec dest_vec;
-    (void)memset(&dest_vec, 0, sizeof(dest_vec));
-    dest_vec.buffer_vec = (struct robotraconteurlite_buffer*)dest;
-    dest_vec.buffer_vec_cnt = 1;
-    return robotraconteurlite_buffer_vec_copy_vec_ex(source_buf, source_buf_pos, 1, dest_count * sizeof(char),
-                                                     &dest_vec, dest_pos, sizeof(char), dest_count);
+    return robotraconteurlite_buffer_vec_copy_to_mem(source_buf, source_buf_pos, (uint8_t*)dest->data, dest->len,
+                                                     dest_pos, 1, dest_count);
 }
 
 robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_string(struct robotraconteurlite_buffer_vec* dest_buf,
@@ -399,12 +397,8 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_string(struct 
                                                                          const struct robotraconteurlite_string* source,
                                                                          size_t source_pos, size_t source_count)
 {
-    struct robotraconteurlite_buffer_vec source_vec;
-    (void)memset(&source_vec, 0, sizeof(source_vec));
-    source_vec.buffer_vec = (struct robotraconteurlite_buffer*)source;
-    source_vec.buffer_vec_cnt = 1;
-    return robotraconteurlite_buffer_vec_copy_vec_ex(&source_vec, source_pos, sizeof(char), source_count, dest_buf,
-                                                     dest_buf_pos, 1, source_count * sizeof(char));
+    return robotraconteurlite_buffer_vec_copy_from_mem(dest_buf, dest_buf_pos, (const uint8_t*)source->data,
+                                                       source->len, source_pos, 1, source_count);
 }
 
 robotraconteurlite_status robotraconteurlite_string_cmp(const struct robotraconteurlite_string* str1,

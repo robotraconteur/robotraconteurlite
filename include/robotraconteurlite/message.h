@@ -595,7 +595,7 @@ robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_ex(
     uint16_t dest_elem_type, size_t dest_elem_size);
 
 robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_scalar_ex(
-    struct robotraconteurlite_messageelement_reader* element_reader, void* dest_scalar, uint16_t dest_elem_type,
+    struct robotraconteurlite_messageelement_reader* element_reader, uint8_t* dest_scalar, uint16_t dest_elem_type,
     size_t dest_elem_size);
 
 robotraconteurlite_status robotraconteurlite_messageelement_writer_write_raw(

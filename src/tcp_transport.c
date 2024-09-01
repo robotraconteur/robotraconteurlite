@@ -135,11 +135,17 @@ static size_t robotraconteurlite_tcp_connection_recv_websocket_header_size(uint8
     return websocket_header_len;
 }
 
+static struct robotraconteurlite_tcp_transport_storage* get_storage(struct robotraconteurlite_connection* connection)
+{
+    /* TODO: fix misra warning */
+    /* cppcheck-suppress misra-c2012-11.3 */
+    return (struct robotraconteurlite_tcp_transport_storage*)&connection->transport_storage;
+}
+
 static robotraconteurlite_status robotraconteurlite_tcp_connection_buffer_recv_websocket(
     struct robotraconteurlite_connection* connection, size_t len)
 {
-    struct robotraconteurlite_tcp_transport_storage* storage =
-        (struct robotraconteurlite_tcp_transport_storage*)&connection->transport_storage;
+    struct robotraconteurlite_tcp_transport_storage* storage = get_storage(connection);
     if ((storage->recv_websocket_frame_pos == storage->recv_websocket_frame_len) &&
         ((storage->tcp_transport_state & ROBOTRACONTEURLITE_TCP_TRANSPORT_STATE_RECV_WEBSOCKET_IN_FRAME) != 0U))
     {
@@ -199,13 +205,15 @@ static robotraconteurlite_status robotraconteurlite_tcp_connection_buffer_recv_w
         masked = storage->recv_websocket_header_buffer[1] & 0x80U;
         if (len1 == 126U)
         {
-            storage->recv_websocket_frame_len =
-                robotraconteurlite_ntohs(*(uint16_t*)&storage->recv_websocket_header_buffer[2]);
+            uint16_t frame_len_be = 0;
+            (void)memcpy((uint8_t*)&frame_len_be, &storage->recv_websocket_header_buffer[2], 2);
+            storage->recv_websocket_frame_len = robotraconteurlite_ntohs(frame_len_be);
         }
         else if (len1 == 127U)
         {
-            storage->recv_websocket_frame_len =
-                robotraconteurlite_be64toh(*(uint64_t*)&storage->recv_websocket_header_buffer[2]);
+            uint64_t frame_len_be = 0;
+            (void)memcpy((uint8_t*)&frame_len_be, &storage->recv_websocket_header_buffer[2], 8);
+            storage->recv_websocket_frame_len = robotraconteurlite_be64toh(frame_len_be);
         }
         else
         {
@@ -263,8 +271,7 @@ robotraconteurlite_status robotraconteurlite_tcp_connection_buffer_recv(
     struct robotraconteurlite_connection* connection, size_t len)
 {
     int last_errno = -1;
-    struct robotraconteurlite_tcp_transport_storage* storage =
-        (struct robotraconteurlite_tcp_transport_storage*)&connection->transport_storage;
+    struct robotraconteurlite_tcp_transport_storage* storage = get_storage(connection);
     if ((storage->tcp_transport_state & ROBOTRACONTEURLITE_TCP_TRANSPORT_STATE_IS_WEBSOCKET) != 0U)
     {
         return robotraconteurlite_tcp_connection_buffer_recv_websocket(connection, len);
@@ -356,8 +363,7 @@ static robotraconteurlite_status robotraconteurlite_tcp_websocket_random_mask(
 static robotraconteurlite_status robotraconteurlite_tcp_connection_buffer_send_websocket(
     struct robotraconteurlite_connection* connection, size_t len)
 {
-    struct robotraconteurlite_tcp_transport_storage* storage =
-        (struct robotraconteurlite_tcp_transport_storage*)&connection->transport_storage;
+    struct robotraconteurlite_tcp_transport_storage* storage = get_storage(connection);
     size_t send_len = len - connection->send_buffer_pos;
     int last_errno = -1;
     robotraconteurlite_status rv = -1;
@@ -373,8 +379,9 @@ static robotraconteurlite_status robotraconteurlite_tcp_connection_buffer_send_w
         storage->send_websocket_header_buffer[0] = 0x80U | ROBOTRACONTEURLITE_TCP_TRANSPORT_WEBSOCKET_FLAGS_BINARY;
         if (len > 125U)
         {
+            uint16_t len_be = robotraconteurlite_htons((uint16_t)len);
             storage->send_websocket_header_len += 2U;
-            *(uint16_t*)&storage->send_websocket_header_buffer[2] = robotraconteurlite_htons(len);
+            (void)memcpy(&storage->send_websocket_header_buffer[2], (uint8_t*)&len_be, 2);
             storage->send_websocket_header_buffer[1] = 126;
         }
         else
@@ -465,8 +472,7 @@ robotraconteurlite_status robotraconteurlite_tcp_connection_buffer_send(
     struct robotraconteurlite_connection* connection, size_t len)
 {
     int last_errno = -1;
-    struct robotraconteurlite_tcp_transport_storage* storage =
-        (struct robotraconteurlite_tcp_transport_storage*)&connection->transport_storage;
+    struct robotraconteurlite_tcp_transport_storage* storage = get_storage(connection);
     if ((storage->tcp_transport_state & ROBOTRACONTEURLITE_TCP_TRANSPORT_STATE_IS_WEBSOCKET) != 0U)
     {
         return robotraconteurlite_tcp_connection_buffer_send_websocket(connection, len);
@@ -583,7 +589,6 @@ static robotraconteurlite_status robotraconteurlite_tcp_connection_handshake_htt
 static robotraconteurlite_status robotraconteurlite_tcp_connection_handshake_http_handshake(
     struct robotraconteurlite_connection* connection)
 {
-    /* cppcheck-suppress [misra-c2012-21.14, misra-c2012-21.16] */
     const char* recv_data = (const char*)connection->recv_buffer;
     size_t recv_data_len = connection->recv_buffer_pos;
 
@@ -768,8 +773,7 @@ static robotraconteurlite_status robotraconteurlite_tcp_connection_handshake_ser
 {
     const char rrac_magic[4] = {'R', 'R', 'A', 'C'};
 
-    struct robotraconteurlite_tcp_transport_storage* storage =
-        (struct robotraconteurlite_tcp_transport_storage*)&connection->transport_storage;
+    struct robotraconteurlite_tcp_transport_storage* storage = get_storage(connection);
     robotraconteurlite_status rv = -1;
 
     if ((connection->connection_state & ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTING) == 0U)
@@ -887,8 +891,7 @@ static robotraconteurlite_status robotraconteurlite_tcp_connection_handshake_ser
 static robotraconteurlite_status robotraconteurlite_tcp_connection_handshake_client(
     struct robotraconteurlite_connection* connection)
 {
-    struct robotraconteurlite_tcp_transport_storage* storage =
-        (struct robotraconteurlite_tcp_transport_storage*)&connection->transport_storage;
+    struct robotraconteurlite_tcp_transport_storage* storage = get_storage(connection);
     int newline_found = 0;
     robotraconteurlite_status rv = -1;
 
@@ -1174,8 +1177,7 @@ robotraconteurlite_status robotraconteurlite_tcp_connect_service(
     (void)memset(&c->transport_storage, 0, sizeof(c->transport_storage));
     if ((connect_data->service_address->flags & ROBOTRACONTEURLITE_ADDR_FLAGS_WEBSOCKET) != 0U)
     {
-        struct robotraconteurlite_tcp_transport_storage* storage =
-            (struct robotraconteurlite_tcp_transport_storage*)&c->transport_storage;
+        struct robotraconteurlite_tcp_transport_storage* storage = get_storage(c);
         storage->tcp_transport_state |=
             ROBOTRACONTEURLITE_TCP_TRANSPORT_STATE_IS_WEBSOCKET | ROBOTRACONTEURLITE_TCP_TRANSPORT_STATE_IN_HTTP_HEADER;
         c->connection_state |= ROBOTRACONTEURLITE_STATUS_FLAGS_BLOCK_SEND;
