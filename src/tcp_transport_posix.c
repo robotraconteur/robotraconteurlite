@@ -318,7 +318,6 @@ static robotraconteurlite_status robotraconteurlite_poll_add_fd(int sock, short 
                                                                 struct robotraconteurlite_pollfd* pollfds,
                                                                 size_t* pollfd_count, size_t max_pollfds)
 {
-    struct pollfd pollfds1;
     int i = (int)*pollfd_count;
     if (i >= (int)max_pollfds)
     {
@@ -356,7 +355,6 @@ robotraconteurlite_status robotraconteurlite_tcp_connection_poll_add_fd(
     struct robotraconteurlite_connection* connection, struct robotraconteurlite_pollfd* pollfds, size_t* pollfd_count,
     size_t max_pollfds)
 {
-    int i = 0;
     short extra_events = 0;
     if ((FLAGS_CHECK(connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_IDLE)) || (connection->sock < 0))
     {
