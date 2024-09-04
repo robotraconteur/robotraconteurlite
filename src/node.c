@@ -676,8 +676,8 @@ robotraconteurlite_status robotraconteurlite_node_receive_messageentry(
     receive_data->received_message_entry_header.member_name.len = sizeof(receive_data->member_name_char);
     receive_data->received_message_entry_header.service_path.data = receive_data->service_path_char;
     receive_data->received_message_entry_header.service_path.len = sizeof(receive_data->service_path_char);
-    receive_data->received_message_entry_header.extended.data = receive_data->extended_char;
-    receive_data->received_message_entry_header.extended.len = sizeof(receive_data->extended_char);
+    receive_data->received_message_entry_header.metadata.data = receive_data->extended_char;
+    receive_data->received_message_entry_header.metadata.len = sizeof(receive_data->extended_char);
 
     rv = robotraconteurlite_messageentry_reader_read_header(&receive_data->entry_reader,
                                                             &receive_data->received_message_entry_header);

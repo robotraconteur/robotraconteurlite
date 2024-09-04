@@ -169,7 +169,7 @@ void robotraconteurlite_message_reader_basictest(void** state)
     assert_true(header.receiver_endpoint == 2805032049);
     assert_true(header.sender_nodename.len == 11);
     assert_true(header.receiver_nodename.len == 9);
-    assert_true(header.extended.len == 23);
+    assert_true(header.metadata.len == 23);
     assert_true(header.entry_count == 3);
     assert_true(header.message_id == 10);
     assert_true(header.message_res_id == 20);
@@ -178,8 +178,8 @@ void robotraconteurlite_message_reader_basictest(void** state)
     header2.sender_nodename.len = sizeof(sender_nodename);
     header2.receiver_nodename.data = receiver_nodename;
     header2.receiver_nodename.len = sizeof(receiver_nodename);
-    header2.extended.data = extended;
-    header2.extended.len = sizeof(extended);
+    header2.metadata.data = extended;
+    header2.metadata.len = sizeof(extended);
 
     assert_return_code(robotraconteurlite_message_reader_read_header(&reader, &header2), 0);
 
@@ -190,14 +190,14 @@ void robotraconteurlite_message_reader_basictest(void** state)
     assert_true(header2.receiver_endpoint == 2805032049);
     assert_true(header2.sender_nodename.len == 11);
     assert_true(header2.receiver_nodename.len == 9);
-    assert_true(header2.extended.len == 23);
+    assert_true(header2.metadata.len == 23);
     assert_true(header2.entry_count == 3);
     assert_true(header2.message_id == 10);
     assert_true(header2.message_res_id == 20);
 
     assert_true(robotraconteurlite_string_cmp(&header2.sender_nodename, &sender_nodename_expected) == 0);
     assert_true(robotraconteurlite_string_cmp(&header2.receiver_nodename, &receiver_nodename_expected) == 0);
-    assert_true(robotraconteurlite_string_cmp(&header2.extended, &extended_expected) == 0);
+    assert_true(robotraconteurlite_string_cmp(&header2.metadata, &extended_expected) == 0);
 
     /* Read message entries */
     assert_return_code(robotraconteurlite_message_reader_begin_read_entries(&reader, &entry_reader), 0);
@@ -213,7 +213,7 @@ void robotraconteurlite_message_reader_basictest(void** state)
         assert_true(entry_header.service_path.len == 25);
         assert_true(entry_header.member_name.len == 9);
         assert_true(entry_header.error == ROBOTRACONTEURLITE_MESSAGEERRORTYPE_NULLVALUE);
-        assert_true(entry_header.extended.len == 14);
+        assert_true(entry_header.metadata.len == 14);
         assert_true(entry_header.element_count == 0);
     }
 
@@ -235,8 +235,8 @@ void robotraconteurlite_message_reader_basictest(void** state)
         entry_header2.service_path.len = sizeof(service_path_data);
         entry_header2.member_name.data = member_name_data;
         entry_header2.member_name.len = sizeof(member_name_data);
-        entry_header2.extended.data = entry_extended_data;
-        entry_header2.extended.len = sizeof(entry_extended_data),
+        entry_header2.metadata.data = entry_extended_data;
+        entry_header2.metadata.len = sizeof(entry_extended_data),
 
         service_path_expected.data = service_path_expected_data;
         service_path_expected.len = strlen(service_path_expected_data);
@@ -249,7 +249,7 @@ void robotraconteurlite_message_reader_basictest(void** state)
 
         assert_true(robotraconteurlite_string_cmp(&entry_header2.service_path, &service_path_expected) == 0);
         assert_true(robotraconteurlite_string_cmp(&entry_header2.member_name, &member_name_expected) == 0);
-        assert_true(robotraconteurlite_string_cmp(&entry_header2.extended, &entry_extended_expected) == 0);
+        assert_true(robotraconteurlite_string_cmp(&entry_header2.metadata, &entry_extended_expected) == 0);
 
         assert_true(entry_header2.entry_size == 70);
         assert_true(entry_header2.entry_type = ROBOTRACONTEURLITE_MESSAGEENTRYTYPE_PROPERTYGETRES);
@@ -257,7 +257,7 @@ void robotraconteurlite_message_reader_basictest(void** state)
         assert_true(entry_header2.service_path.len == 25);
         assert_true(entry_header2.member_name.len == 9);
         assert_true(entry_header2.error == ROBOTRACONTEURLITE_MESSAGEERRORTYPE_NULLVALUE);
-        assert_true(entry_header2.extended.len == 14);
+        assert_true(entry_header2.metadata.len == 14);
         assert_true(entry_header2.element_count == 0);
     }
     {
@@ -271,7 +271,7 @@ void robotraconteurlite_message_reader_basictest(void** state)
         assert_true(entry_header3.request_id == 562846);
         assert_true(entry_header3.service_path.len == 25);
         assert_true(entry_header3.member_name.len == 10);
-        assert_true(entry_header3.extended.len == 0);
+        assert_true(entry_header3.metadata.len == 0);
         assert_true(entry_header3.element_count == 4);
     }
 
@@ -745,7 +745,7 @@ void robotraconteurlite_message_reader_basictest(void** state)
             assert_true(entry_header4.request_id == 0);
             assert_true(entry_header4.service_path.len == 0);
             assert_true(entry_header4.member_name.len == 0);
-            assert_true(entry_header4.extended.len == 0);
+            assert_true(entry_header4.metadata.len == 0);
             assert_true(entry_header4.element_count == 0);
         }
 
@@ -808,8 +808,8 @@ void robotraconteurlite_message_writer_basictest(void** state)
     header.sender_nodename.len = strlen(sender_nodename_data);
     header.receiver_nodename.data = receiver_nodename_data;
     header.receiver_nodename.len = strlen(receiver_nodename_data);
-    header.extended.data = extended_data;
-    header.extended.len = strlen(extended_data);
+    header.metadata.data = extended_data;
+    header.metadata.len = strlen(extended_data);
     header.entry_count = 0;
     header.message_id = 10;
     header.message_res_id = 20;
@@ -830,8 +830,8 @@ void robotraconteurlite_message_writer_basictest(void** state)
         entry_header.request_id = 395728;
         entry_header.service_path.data = service_path;
         entry_header.service_path.len = strlen(service_path);
-        entry_header.extended.data = extended;
-        entry_header.extended.len = strlen(extended);
+        entry_header.metadata.data = extended;
+        entry_header.metadata.len = strlen(extended);
         entry_header.element_count = 0;
 
         assert_return_code(
@@ -865,8 +865,8 @@ void robotraconteurlite_message_writer_basictest(void** state)
         entry_header.request_id = 562846;
         entry_header.service_path.data = service_path;
         entry_header.service_path.len = strlen(service_path);
-        entry_header.extended.data = extended;
-        entry_header.extended.len = strlen(extended);
+        entry_header.metadata.data = extended;
+        entry_header.metadata.len = strlen(extended);
         entry_header.element_count = 0;
 
         assert_return_code(

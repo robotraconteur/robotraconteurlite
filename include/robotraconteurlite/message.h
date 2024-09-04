@@ -199,7 +199,7 @@ struct robotraconteurlite_message_header
     uint32_t receiver_endpoint;
     struct robotraconteurlite_string sender_nodename;
     struct robotraconteurlite_string receiver_nodename;
-    struct robotraconteurlite_string extended;
+    struct robotraconteurlite_string metadata;
     uint16_t entry_count;
     uint16_t message_id;
     uint16_t message_res_id;
@@ -213,7 +213,7 @@ struct robotraconteurlite_messageentry_header
     struct robotraconteurlite_string member_name;
     uint32_t request_id;
     uint16_t error;
-    struct robotraconteurlite_string extended;
+    struct robotraconteurlite_string metadata;
     uint16_t element_count;
 };
 
@@ -223,7 +223,7 @@ struct robotraconteurlite_messageelement_header
     struct robotraconteurlite_string element_name;
     uint16_t element_type;
     struct robotraconteurlite_string element_type_name;
-    struct robotraconteurlite_string extended;
+    struct robotraconteurlite_string metadata;
     uint32_t data_count;
 };
 
