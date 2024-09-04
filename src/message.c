@@ -599,77 +599,79 @@ robotraconteurlite_status robotraconteurlite_messageentry_reader_read_header(
 {
     size_t o = entry_reader->buffer_offset;
     robotraconteurlite_status rv = -1;
-    uint16_t servicepath_len = 0;
-    uint16_t membername_len = 0;
-    size_t strlen_2 = 0;
-    uint16_t extended_len = 0;
-    size_t strlen_3 = 0;
+    struct robotraconteurlite_message_read_header_string_info service_path_info;
+    struct robotraconteurlite_message_read_header_string_info member_name_info;
+    struct robotraconteurlite_message_read_header_string_info meta_info;
 
-    rv = robotraconteurlite_buffer_vec_copy_to_uint32(entry_reader->buffer, o, &header->entry_size);
+    rv = robotraconteurlite_message_read_count(entry_reader->buffer, 2, &o, &header->entry_size);
     if (rv < 0)
     {
         return rv;
     }
 
-    rv = robotraconteurlite_buffer_vec_copy_to_uint16(entry_reader->buffer, o + 4U, &header->entry_type);
+    rv = robotraconteurlite_message_read_uint16(entry_reader->buffer, &o, &header->entry_type);
+
     if (rv < 0)
     {
         return rv;
     }
 
-    rv = robotraconteurlite_buffer_vec_copy_to_uint16(entry_reader->buffer, o + 8U, &servicepath_len);
+    /* reserved */
+    o += 2;
+
+    rv =
+        robotraconteurlite_message_read_header_string_with_len_prefix1(entry_reader->buffer, 2, &o, &service_path_info);
     if (rv < 0)
     {
         return rv;
     }
 
-    rv = robotraconteurlite_buffer_vec_copy_to_uint16(entry_reader->buffer, o + 10U + servicepath_len, &membername_len);
+    rv = robotraconteurlite_message_read_header_string_with_len_prefix1(entry_reader->buffer, 2, &o, &member_name_info);
     if (rv < 0)
     {
         return rv;
     }
 
-    strlen_2 = (size_t)servicepath_len + membername_len;
-
-    rv = robotraconteurlite_buffer_vec_copy_to_uint32(entry_reader->buffer, o + 12U + strlen_2, &header->request_id);
+    rv = robotraconteurlite_message_read_count(entry_reader->buffer, 2, &o, &header->request_id);
     if (rv < 0)
     {
         return rv;
     }
 
-    rv = robotraconteurlite_buffer_vec_copy_to_uint16(entry_reader->buffer, o + 16U + strlen_2, &header->error);
+    rv = robotraconteurlite_message_read_uint16(entry_reader->buffer, &o, &header->error);
     if (rv < 0)
     {
         return rv;
     }
 
-    rv = robotraconteurlite_buffer_vec_copy_to_uint16(entry_reader->buffer, o + 18U + strlen_2, &extended_len);
+    rv = robotraconteurlite_message_read_header_string_with_len_prefix1(entry_reader->buffer, 2, &o, &meta_info);
     if (rv < 0)
     {
         return rv;
     }
 
-    strlen_3 = strlen_2 + extended_len;
-    rv = robotraconteurlite_buffer_vec_copy_to_uint16(entry_reader->buffer, o + 20U + strlen_3, &header->element_count);
+    rv = robotraconteurlite_message_read_count2(entry_reader->buffer, 2, &o, &header->element_count);
     if (rv < 0)
     {
         return rv;
     }
 
-    rv = robotraconteurlite_message_read_header_string(entry_reader->buffer, o + 10U, servicepath_len,
-                                                       &header->service_path);
+    rv = robotraconteurlite_message_read_header_string_with_len_prefix2(entry_reader->buffer, 2, &service_path_info,
+                                                                        &header->service_path);
     if (rv < 0)
     {
         return rv;
     }
-    rv = robotraconteurlite_message_read_header_string(entry_reader->buffer, o + 12U + servicepath_len, membername_len,
-                                                       &header->member_name);
+
+    rv = robotraconteurlite_message_read_header_string_with_len_prefix2(entry_reader->buffer, 2, &member_name_info,
+                                                                        &header->member_name);
     if (rv < 0)
     {
         return rv;
     }
-    rv = robotraconteurlite_message_read_header_string(entry_reader->buffer, o + 20U + strlen_2, extended_len,
-                                                       &header->metadata);
+
+    rv = robotraconteurlite_message_read_header_string_with_len_prefix2(entry_reader->buffer, 2, &meta_info,
+                                                                        &header->metadata);
     if (rv < 0)
     {
         return rv;
