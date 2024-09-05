@@ -770,13 +770,14 @@ robotraconteurlite_status robotraconteurlite_messageelement_reader_move_next(
     size_t o = (size_t)(element_reader->buffer_offset + element_reader->buffer_count);
     uint32_t element_size = 0;
     robotraconteurlite_status rv = -1;
+    size_t o2 = 0;
 
     size_t element_count = 0;
     if (element_reader->element_count_uint32 != 0U)
     {
-        uint16_t element_count_32 = 0;
-        rv = robotraconteurlite_buffer_vec_copy_to_uint16(element_reader->buffer, element_reader->element_count_offset,
-                                                          &element_count_32);
+        uint32_t element_count_32 = 0;
+        o2 = element_reader->element_count_offset;
+        rv = robotraconteurlite_message_read_count(element_reader->buffer, 2, &o2, &element_count_32);
         if (rv < 0)
         {
             return rv;
@@ -786,8 +787,8 @@ robotraconteurlite_status robotraconteurlite_messageelement_reader_move_next(
     else
     {
         uint16_t element_count_16 = 0;
-        rv = robotraconteurlite_buffer_vec_copy_to_uint16(element_reader->buffer, element_reader->element_count_offset,
-                                                          &element_count_16);
+        o2 = element_reader->element_count_offset;
+        rv = robotraconteurlite_message_read_count2(element_reader->buffer, 2, &o2, &element_count_16);
         if (rv < 0)
         {
             return rv;
@@ -800,7 +801,8 @@ robotraconteurlite_status robotraconteurlite_messageelement_reader_move_next(
         return ROBOTRACONTEURLITE_ERROR_NO_MORE;
     }
 
-    rv = robotraconteurlite_buffer_vec_copy_to_uint32(element_reader->buffer, o, &element_size);
+    o2 = o;
+    rv = robotraconteurlite_message_read_count(element_reader->buffer, 2, &o2, &element_size);
     if (rv < 0)
     {
         return rv;
