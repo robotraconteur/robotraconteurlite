@@ -685,59 +685,64 @@ robotraconteurlite_status robotraconteurlite_messageentry_reader_begin_read_elem
     struct robotraconteurlite_messageelement_reader* element_reader)
 {
     size_t o = entry_reader->buffer_offset;
+    size_t o2 = 0;
     robotraconteurlite_status rv = -1;
     uint32_t entry_size = 0;
-    uint16_t servicepath_len = 0;
-    uint16_t membername_len = 0;
-    uint16_t extended_len = 0;
+    struct robotraconteurlite_message_read_header_string_info service_path_info;
+    struct robotraconteurlite_message_read_header_string_info member_name_info;
+    struct robotraconteurlite_message_read_header_string_info meta_info;
     size_t header_size = 0;
     size_t element_count_offset = 0;
     uint16_t element_count = 0;
     uint32_t element_size = 0;
 
-    rv = robotraconteurlite_buffer_vec_copy_to_uint32(entry_reader->buffer, o, &entry_size);
+    rv = robotraconteurlite_message_read_count(entry_reader->buffer, 2, &o, &entry_size);
     if (rv < 0)
     {
         return rv;
     }
 
-    rv = robotraconteurlite_buffer_vec_copy_to_uint16(entry_reader->buffer, o + 8U, &servicepath_len);
+    /* skip entry size and reserved */
+    o += 4;
+
+    rv =
+        robotraconteurlite_message_read_header_string_with_len_prefix1(entry_reader->buffer, 2, &o, &service_path_info);
     if (rv < 0)
     {
         return rv;
     }
 
-    rv = robotraconteurlite_buffer_vec_copy_to_uint16(entry_reader->buffer, o + 10U + servicepath_len, &membername_len);
+    rv = robotraconteurlite_message_read_header_string_with_len_prefix1(entry_reader->buffer, 2, &o, &member_name_info);
     if (rv < 0)
     {
         return rv;
     }
 
-    header_size = (size_t)servicepath_len + membername_len;
+    /* Skip requestid and error */
+    o += 6;
 
-    rv = robotraconteurlite_buffer_vec_copy_to_uint16(entry_reader->buffer, o + 18U + header_size, &extended_len);
+    rv = robotraconteurlite_message_read_header_string_with_len_prefix1(entry_reader->buffer, 2, &o, &meta_info);
     if (rv < 0)
     {
         return rv;
     }
+    element_count_offset = o;
 
-    header_size += (size_t)extended_len + 22U;
-
-    element_count_offset = o + header_size - 2U;
-
-    rv = robotraconteurlite_buffer_vec_copy_to_uint16(entry_reader->buffer, element_count_offset, &element_count);
+    rv = robotraconteurlite_message_read_count2(entry_reader->buffer, 2, &o, &element_count);
     if (rv < 0)
     {
         return rv;
     }
+    o2 = o;
+
+    header_size = o - entry_reader->buffer_offset;
 
     if (element_count == 0U)
     {
         return ROBOTRACONTEURLITE_ERROR_NO_MORE;
     }
 
-    o += header_size;
-    rv = robotraconteurlite_buffer_vec_copy_to_uint32(entry_reader->buffer, o, &element_size);
+    rv = robotraconteurlite_message_read_count(entry_reader->buffer, 2, &o2, &element_size);
     if (rv < 0)
     {
         return rv;
