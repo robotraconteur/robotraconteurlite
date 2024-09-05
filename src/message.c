@@ -827,70 +827,63 @@ robotraconteurlite_status robotraconteurlite_messageelement_reader_read_header(
 {
     size_t o = element_reader->buffer_offset;
     robotraconteurlite_status rv = -1;
-    uint16_t elementname_len = 0;
-    uint16_t elementtypename_len = 0;
-    uint16_t strlen_2 = 0;
-    uint16_t extended_len = 0;
-    size_t strlen_3 = 0;
+    struct robotraconteurlite_message_read_header_string_info elementname_info;
+    struct robotraconteurlite_message_read_header_string_info elementtypename_info;
+    struct robotraconteurlite_message_read_header_string_info meta_info;
 
-    rv = robotraconteurlite_buffer_vec_copy_to_uint32(element_reader->buffer, o, &header->element_size);
+    rv = robotraconteurlite_message_read_count(element_reader->buffer, 2, &o, &header->element_size);
     if (rv < 0)
     {
         return rv;
     }
 
-    rv = robotraconteurlite_buffer_vec_copy_to_uint16(element_reader->buffer, o + 4U, &elementname_len);
+    rv = robotraconteurlite_message_read_header_string_with_len_prefix1(element_reader->buffer, 2, &o,
+                                                                        &elementname_info);
     if (rv < 0)
     {
         return rv;
     }
 
-    rv = robotraconteurlite_buffer_vec_copy_to_uint16(element_reader->buffer, o + 6U + elementname_len,
-                                                      &header->element_type);
+    rv = robotraconteurlite_message_read_uint16(element_reader->buffer, &o, &header->element_type);
     if (rv < 0)
     {
         return rv;
     }
 
-    rv = robotraconteurlite_buffer_vec_copy_to_uint16(element_reader->buffer, o + 8U + elementname_len,
-                                                      &elementtypename_len);
+    rv = robotraconteurlite_message_read_header_string_with_len_prefix1(element_reader->buffer, 2, &o,
+                                                                        &elementtypename_info);
     if (rv < 0)
     {
         return rv;
     }
 
-    strlen_2 = elementname_len + elementtypename_len;
-
-    rv = robotraconteurlite_buffer_vec_copy_to_uint16(element_reader->buffer, o + 10U + strlen_2, &extended_len);
+    rv = robotraconteurlite_message_read_header_string_with_len_prefix1(element_reader->buffer, 2, &o, &meta_info);
     if (rv < 0)
     {
         return rv;
     }
 
-    strlen_3 = (size_t)strlen_2 + extended_len;
-
-    rv = robotraconteurlite_buffer_vec_copy_to_uint32(element_reader->buffer, o + 12U + strlen_3, &header->data_count);
+    rv = robotraconteurlite_message_read_count(element_reader->buffer, 2, &o, &header->data_count);
     if (rv < 0)
     {
         return rv;
     }
 
-    rv = robotraconteurlite_message_read_header_string(element_reader->buffer, o + 6U, elementname_len,
-                                                       &header->element_name);
+    rv = robotraconteurlite_message_read_header_string_with_len_prefix2(element_reader->buffer, 2, &elementname_info,
+                                                                        &header->element_name);
+    if (rv < 0)
+    {
+        return rv;
+    }
+    rv = robotraconteurlite_message_read_header_string_with_len_prefix2(
+        element_reader->buffer, 2, &elementtypename_info, &header->element_type_name);
     if (rv < 0)
     {
         return rv;
     }
 
-    rv = robotraconteurlite_message_read_header_string(element_reader->buffer, o + 10U + elementname_len,
-                                                       elementtypename_len, &header->element_type_name);
-    if (rv < 0)
-    {
-        return rv;
-    }
-
-    rv = robotraconteurlite_message_read_header_string(element_reader->buffer, o + 12U + strlen_2, extended_len,
-                                                       &header->metadata);
+    rv = robotraconteurlite_message_read_header_string_with_len_prefix2(element_reader->buffer, 2, &meta_info,
+                                                                        &header->metadata);
     if (rv < 0)
     {
         return rv;
