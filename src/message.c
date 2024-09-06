@@ -204,10 +204,10 @@ robotraconteurlite_status robotraconteurlite_message_reader_read_header(
     struct robotraconteurlite_message_reader* reader, struct robotraconteurlite_message_header* header)
 {
     struct robotraconteurlite_message_buffer_info buffer_info;
-    return robotraconteurlite_message_reader_read_header2(reader, header, &buffer_info);
+    return robotraconteurlite_message_reader_read_header_ex(reader, header, &buffer_info);
 }
 
-robotraconteurlite_status robotraconteurlite_message_reader_read_header2(
+robotraconteurlite_status robotraconteurlite_message_reader_read_header_ex(
     struct robotraconteurlite_message_reader* reader, struct robotraconteurlite_message_header* header,
     struct robotraconteurlite_message_buffer_info* buffer_info)
 {
@@ -363,7 +363,7 @@ robotraconteurlite_status robotraconteurlite_message_reader_begin_read_entries(
     struct robotraconteurlite_message_buffer_info message_buffer_info;
     memset(&message_header, 0, sizeof(message_header));
 
-    rv = robotraconteurlite_message_reader_read_header2(reader, &message_header, &message_buffer_info);
+    rv = robotraconteurlite_message_reader_read_header_ex(reader, &message_header, &message_buffer_info);
     if (rv < 0)
     {
         return rv;
@@ -461,8 +461,8 @@ robotraconteurlite_status robotraconteurlite_messageentry_reader_find_element(
         memset(&element_header, 0, sizeof(element_header));
         memset(&element_buffer_info, 0, sizeof(element_buffer_info));
 
-        rv = robotraconteurlite_messageelement_reader_read_header2(element_reader, &element_header,
-                                                                   &element_buffer_info);
+        rv = robotraconteurlite_messageelement_reader_read_header_ex(element_reader, &element_header,
+                                                                     &element_buffer_info);
 
         if (rv < 0)
         {
@@ -628,10 +628,10 @@ robotraconteurlite_status robotraconteurlite_messageentry_reader_read_header(
     struct robotraconteurlite_messageentry_reader* entry_reader, struct robotraconteurlite_messageentry_header* header)
 {
     struct robotraconteurlite_messageentry_buffer_info buffer_info;
-    return robotraconteurlite_messageentry_reader_read_header2(entry_reader, header, &buffer_info);
+    return robotraconteurlite_messageentry_reader_read_header_ex(entry_reader, header, &buffer_info);
 }
 
-robotraconteurlite_status robotraconteurlite_messageentry_reader_read_header2(
+robotraconteurlite_status robotraconteurlite_messageentry_reader_read_header_ex(
     struct robotraconteurlite_messageentry_reader* entry_reader, struct robotraconteurlite_messageentry_header* header,
     struct robotraconteurlite_messageentry_buffer_info* buffer_info)
 {
@@ -742,7 +742,7 @@ robotraconteurlite_status robotraconteurlite_messageentry_reader_begin_read_elem
     memset(&entry_header, 0, sizeof(entry_header));
     memset(&entry_buffer_info, 0, sizeof(entry_buffer_info));
 
-    rv = robotraconteurlite_messageentry_reader_read_header2(entry_reader, &entry_header, &entry_buffer_info);
+    rv = robotraconteurlite_messageentry_reader_read_header_ex(entry_reader, &entry_header, &entry_buffer_info);
     if (rv < 0)
     {
         return rv;
@@ -840,10 +840,10 @@ robotraconteurlite_status robotraconteurlite_messageelement_reader_read_header(
     struct robotraconteurlite_messageelement_header* header)
 {
     struct robotraconteurlite_messageelement_buffer_info buffer_info;
-    return robotraconteurlite_messageelement_reader_read_header2(element_reader, header, &buffer_info);
+    return robotraconteurlite_messageelement_reader_read_header_ex(element_reader, header, &buffer_info);
 }
 
-robotraconteurlite_status robotraconteurlite_messageelement_reader_read_header2(
+robotraconteurlite_status robotraconteurlite_messageelement_reader_read_header_ex(
     struct robotraconteurlite_messageelement_reader* element_reader,
     struct robotraconteurlite_messageelement_header* header,
     struct robotraconteurlite_messageelement_buffer_info* buffer_info)
@@ -941,7 +941,7 @@ robotraconteurlite_status robotraconteurlite_messageelement_reader_get_data_info
 
     (void)memset(&element_header, 0, sizeof(element_header));
     (void)memset(&element_buffer_info, 0, sizeof(element_buffer_info));
-    rv = robotraconteurlite_messageelement_reader_read_header2(element_reader, &element_header, &element_buffer_info);
+    rv = robotraconteurlite_messageelement_reader_read_header_ex(element_reader, &element_header, &element_buffer_info);
     if (rv < 0)
     {
         return rv;
@@ -1041,7 +1041,7 @@ robotraconteurlite_status robotraconteurlite_messageelement_reader_begin_read_ne
 
     (void)memset(&header, 0, sizeof(header));
     (void)memset(&buffer_info, 0, sizeof(buffer_info));
-    rv = robotraconteurlite_messageelement_reader_read_header2(element_reader, &header, &buffer_info);
+    rv = robotraconteurlite_messageelement_reader_read_header_ex(element_reader, &header, &buffer_info);
     if (rv < 0)
     {
         return rv;
@@ -1122,8 +1122,8 @@ robotraconteurlite_status robotraconteurlite_messageelement_reader_find_nested_e
         memset(&element_header, 0, sizeof(element_header));
         memset(&element_buffer_info, 0, sizeof(element_buffer_info));
 
-        rv = robotraconteurlite_messageelement_reader_read_header2(nested_element_reader, &element_header,
-                                                                   &element_buffer_info);
+        rv = robotraconteurlite_messageelement_reader_read_header_ex(nested_element_reader, &element_header,
+                                                                     &element_buffer_info);
         if (rv < 0)
         {
             return rv;
