@@ -772,8 +772,7 @@ robotraconteurlite_status robotraconteurlite_messageentry_reader_begin_read_elem
     element_reader->buffer_count = element_size;
     element_reader->buffer_remaining = entry_reader->buffer_count - entry_buffer_info.header_size - element_size;
     element_reader->current_element = 0;
-    element_reader->element_count_offset = entry_buffer_info.element_count_offset;
-    element_reader->element_count_uint32 = 0;
+    element_reader->total_elements = entry_header.element_count;
 
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
@@ -786,29 +785,7 @@ robotraconteurlite_status robotraconteurlite_messageelement_reader_move_next(
     robotraconteurlite_status rv = -1;
     size_t o2 = 0;
 
-    size_t element_count = 0;
-    if (element_reader->element_count_uint32 != 0U)
-    {
-        uint32_t element_count_32 = 0;
-        o2 = element_reader->element_count_offset;
-        rv = robotraconteurlite_message_read_count(element_reader->buffer, 2, &o2, &element_count_32);
-        if (rv < 0)
-        {
-            return rv;
-        }
-        element_count = element_count_32;
-    }
-    else
-    {
-        uint16_t element_count_16 = 0;
-        o2 = element_reader->element_count_offset;
-        rv = robotraconteurlite_message_read_count2(element_reader->buffer, 2, &o2, &element_count_16);
-        if (rv < 0)
-        {
-            return rv;
-        }
-        element_count = element_count_16;
-    }
+    size_t element_count = element_reader->total_elements;
 
     if (!((element_reader->current_element + 1U) < element_count))
     {
@@ -1087,8 +1064,7 @@ robotraconteurlite_status robotraconteurlite_messageelement_reader_begin_read_ne
     nested_element_reader->buffer_remaining =
         element_reader->buffer_count - buffer_info.header_size - nested_element_size;
     nested_element_reader->current_element = 0;
-    nested_element_reader->element_count_offset = buffer_info.element_count_offset;
-    nested_element_reader->element_count_uint32 = 1;
+    nested_element_reader->total_elements = header.data_count;
 
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }

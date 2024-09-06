@@ -250,9 +250,8 @@ struct robotraconteurlite_messageelement_reader
     size_t buffer_offset;
     size_t buffer_count;
     size_t buffer_remaining;
-    size_t element_count_offset;
-    size_t element_count_uint32;
     size_t current_element;
+    size_t total_elements;
 };
 
 struct robotraconteurlite_message_buffer_info
