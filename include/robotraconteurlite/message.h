@@ -284,6 +284,8 @@ struct robotraconteurlite_message_writer
     struct robotraconteurlite_buffer_vec* buffer;
     size_t buffer_offset;
     size_t buffer_count;
+    size_t message_size_offset;
+    size_t entry_count_offset;
     /* uint8_t dry_run; */
 };
 
