@@ -560,7 +560,7 @@ static robotraconteurlite_status robotraconteurlite_message_reader_read_header_e
 
     if (FLAGS_CHECK(flags, ROBOTRACONTEURLITE_MESSAGE_FLAGS_META_INFO))
     {
-        rv = robotraconteurlite_message_read_header_string_with_len_prefix2(reader->buffer, 2, &meta_info,
+        rv = robotraconteurlite_message_read_header_string_with_len_prefix2(reader->buffer, 4, &meta_info,
                                                                             &header->metadata);
         if (rv < 0)
         {
@@ -1170,7 +1170,7 @@ robotraconteurlite_status robotraconteurlite_messageentry_reader_read_header_ex(
     }
 
     temp_buffer_info.element_count_offset = o;
-    rv = robotraconteurlite_message_read_count2(entry_reader->buffer, 2, &o, &header->element_count);
+    rv = robotraconteurlite_message_read_count2(entry_reader->buffer, ver, &o, &header->element_count);
     if (rv < 0)
     {
         return rv;
@@ -1178,8 +1178,8 @@ robotraconteurlite_status robotraconteurlite_messageentry_reader_read_header_ex(
 
     if (FLAGS_CHECK(flags, ROBOTRACONTEURLITE_MESSAGEENTRY_FLAGS_SERVICE_PATH_STR))
     {
-        rv = robotraconteurlite_message_read_header_string_with_len_prefix2(entry_reader->buffer, 2, &service_path_info,
-                                                                            &header->service_path);
+        rv = robotraconteurlite_message_read_header_string_with_len_prefix2(entry_reader->buffer, ver,
+                                                                            &service_path_info, &header->service_path);
         if (rv < 0)
         {
             return rv;
@@ -1193,8 +1193,8 @@ robotraconteurlite_status robotraconteurlite_messageentry_reader_read_header_ex(
 
     if (FLAGS_CHECK(flags, ROBOTRACONTEURLITE_MESSAGEENTRY_FLAGS_MEMBER_NAME_STR))
     {
-        rv = robotraconteurlite_message_read_header_string_with_len_prefix2(entry_reader->buffer, 2, &member_name_info,
-                                                                            &header->member_name);
+        rv = robotraconteurlite_message_read_header_string_with_len_prefix2(entry_reader->buffer, ver,
+                                                                            &member_name_info, &header->member_name);
         if (rv < 0)
         {
             return rv;
@@ -1207,7 +1207,7 @@ robotraconteurlite_status robotraconteurlite_messageentry_reader_read_header_ex(
     }
     if (FLAGS_CHECK(flags, ROBOTRACONTEURLITE_MESSAGEENTRY_FLAGS_META_INFO))
     {
-        rv = robotraconteurlite_message_read_header_string_with_len_prefix2(entry_reader->buffer, 2, &meta_info,
+        rv = robotraconteurlite_message_read_header_string_with_len_prefix2(entry_reader->buffer, ver, &meta_info,
                                                                             &header->metadata);
         if (rv < 0)
         {
@@ -1256,7 +1256,7 @@ robotraconteurlite_status robotraconteurlite_messageentry_reader_begin_read_elem
     o = entry_buffer_info.element_start_offset;
     o2 = o;
 
-    rv = robotraconteurlite_message_read_count(entry_reader->buffer, 2, &o2, &element_size);
+    rv = robotraconteurlite_message_read_count(entry_reader->buffer, entry_reader->message_version, &o2, &element_size);
     if (rv < 0)
     {
         return rv;
@@ -1294,7 +1294,8 @@ robotraconteurlite_status robotraconteurlite_messageelement_reader_move_next(
     }
 
     o2 = o;
-    rv = robotraconteurlite_message_read_count(element_reader->buffer, 2, &o2, &element_size);
+    rv = robotraconteurlite_message_read_count(element_reader->buffer, element_reader->message_version, &o2,
+                                               &element_size);
     if (rv < 0)
     {
         return rv;
@@ -1656,7 +1657,8 @@ robotraconteurlite_status robotraconteurlite_messageelement_reader_begin_read_ne
     }
 
     o = buffer_info.data_start_offset;
-    rv = robotraconteurlite_message_read_count(element_reader->buffer, 2, &o, &nested_element_size);
+    rv = robotraconteurlite_message_read_count(element_reader->buffer, element_reader->message_version, &o,
+                                               &nested_element_size);
     if (rv < 0)
     {
         return rv;

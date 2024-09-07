@@ -64,6 +64,48 @@ uint8_t message2[] = {
     0,   0,   0,   1,   0,   0,   0,   92,  143, 194, 245, 40,  44,  69,  64,  22,  0,   0,   0,   1,   0,   0,   0,
     0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0};
 
+uint8_t message4[] = {
+    82,  82,  65,  67,  141, 3,   0,   0,   4,   0,   105, 83,  216, 53,  196, 29,  51,  156, 71,  168, 132, 219, 240,
+    10,  143, 239, 210, 250, 174, 120, 72,  27,  194, 190, 79,  38,  159, 239, 116, 187, 110, 138, 4,   63,  11,  115,
+    101, 110, 100, 101, 114, 95,  110, 111, 100, 101, 9,   114, 101, 99,  118, 95,  110, 111, 100, 101, 254, 71,  88,
+    55,  248, 254, 113, 100, 49,  167, 23,  101, 120, 116, 101, 110, 100, 101, 100, 95,  100, 97,  116, 97,  10,  98,
+    108, 97,  104, 32,  98,  108, 97,  104, 10,  0,   20,  0,   3,   63,  117, 88,  4,   25,  109, 121, 46,  115, 101,
+    114, 118, 105, 99,  101, 46,  111, 98,  106, 101, 99,  116, 91,  37,  50,  56,  97,  98,  99,  93,  9,   109, 121,
+    95,  109, 101, 109, 98,  101, 114, 254, 208, 9,   6,   0,   20,  0,   14,  109, 111, 114, 101, 10,  98,  108, 97,
+    104, 10,  98,  108, 97,  104, 0,   253, 222, 2,   21,  98,  4,   25,  109, 121, 46,  115, 101, 114, 118, 105, 99,
+    101, 46,  111, 98,  106, 101, 99,  116, 91,  37,  49,  50,  53,  52,  50,  93,  10,  109, 121, 95,  109, 101, 109,
+    98,  101, 114, 50,  254, 158, 150, 8,   0,   4,   49,  1,   3,   101, 108, 49,  1,   0,   5,   0,   0,   0,   0,
+    0,   0,   240, 63,  0,   0,   0,   0,   0,   0,   0,   64,  0,   0,   0,   0,   0,   0,   8,   64,  0,   0,   0,
+    0,   0,   0,   16,  64,  0,   0,   0,   0,   0,   0,   20,  64,  27,  1,   3,   101, 108, 50,  11,  0,   18,  115,
+    111, 109, 101, 32,  114, 97,  110, 100, 111, 109, 32,  115, 116, 114, 105, 110, 103, 253, 25,  2,   9,   3,   101,
+    108, 51,  101, 0,   16,  115, 111, 109, 101, 95,  115, 116, 114, 117, 99,  116, 95,  116, 121, 112, 101, 14,  49,
+    1,   11,  115, 117, 98,  95,  100, 111, 117, 98,  108, 101, 115, 1,   0,   4,   0,   0,   0,   0,   0,   0,   240,
+    63,  0,   0,   0,   0,   0,   0,   0,   64,  0,   0,   0,   0,   0,   0,   8,   64,  0,   0,   0,   0,   0,   0,
+    16,  64,  33,  1,   11,  115, 117, 98,  95,  115, 105, 110, 103, 108, 101, 115, 2,   0,   4,   0,   0,   128, 63,
+    0,   0,   0,   64,  0,   0,   64,  64,  0,   0,   128, 64,  18,  1,   8,   115, 117, 98,  95,  105, 110, 116, 56,
+    3,   0,   4,   1,   2,   3,   4,   19,  1,   9,   115, 117, 98,  95,  117, 105, 110, 116, 56,  4,   0,   4,   1,
+    2,   3,   4,   23,  1,   9,   115, 117, 98,  95,  105, 110, 116, 49,  54,  5,   0,   4,   1,   0,   2,   0,   3,
+    0,   4,   0,   24,  1,   10,  115, 117, 98,  95,  117, 105, 110, 116, 49,  54,  6,   0,   4,   1,   0,   2,   0,
+    3,   0,   4,   0,   31,  1,   9,   115, 117, 98,  95,  105, 110, 116, 51,  50,  7,   0,   4,   1,   0,   0,   0,
+    2,   0,   0,   0,   3,   0,   0,   0,   4,   0,   0,   0,   32,  1,   10,  115, 117, 98,  95,  117, 105, 110, 116,
+    51,  50,  8,   0,   4,   1,   0,   0,   0,   2,   0,   0,   0,   3,   0,   0,   0,   4,   0,   0,   0,   47,  1,
+    9,   115, 117, 98,  95,  105, 110, 116, 54,  52,  9,   0,   4,   1,   0,   0,   0,   0,   0,   0,   0,   2,   0,
+    0,   0,   0,   0,   0,   0,   3,   0,   0,   0,   0,   0,   0,   0,   4,   0,   0,   0,   0,   0,   0,   0,   48,
+    1,   10,  115, 117, 98,  95,  117, 105, 110, 116, 54,  52,  10,  0,   4,   1,   0,   0,   0,   0,   0,   0,   0,
+    2,   0,   0,   0,   0,   0,   0,   0,   3,   0,   0,   0,   0,   0,   0,   0,   4,   0,   0,   0,   0,   0,   0,
+    0,   37,  1,   10,  115, 117, 98,  95,  115, 116, 114, 105, 110, 103, 11,  0,   21,  97,  110, 111, 116, 104, 101,
+    114, 32,  114, 97,  110, 100, 111, 109, 32,  115, 116, 114, 105, 110, 103, 81,  1,   11,  115, 117, 98,  95,  99,
+    100, 111, 117, 98,  108, 101, 12,  0,   4,   0,   0,   0,   0,   0,   0,   240, 63,  0,   0,   0,   0,   0,   0,
+    36,  64,  0,   0,   0,   0,   0,   0,   0,   64,  0,   0,   0,   0,   0,   0,   52,  64,  0,   0,   0,   0,   0,
+    0,   8,   64,  0,   0,   0,   0,   0,   0,   62,  64,  0,   0,   0,   0,   0,   0,   16,  64,  0,   0,   0,   0,
+    0,   0,   68,  64,  49,  1,   11,  115, 117, 98,  95,  99,  115, 105, 110, 103, 108, 101, 13,  0,   4,   0,   0,
+    128, 63,  0,   0,   32,  65,  0,   0,   0,   64,  0,   0,   160, 65,  0,   0,   64,  64,  0,   0,   240, 65,  0,
+    0,   128, 64,  0,   0,   32,  66,  18,  1,   8,   115, 117, 98,  95,  98,  111, 111, 108, 14,  0,   4,   1,   1,
+    0,   1,   72,  1,   58,  101, 108, 52,  95,  105, 115, 95,  97,  95,  118, 101, 114, 121, 95,  108, 111, 110, 103,
+    95,  110, 97,  109, 101, 95,  105, 116, 95,  107, 101, 101, 112, 115, 95,  103, 111, 105, 110, 103, 95,  97,  110,
+    100, 95,  103, 111, 105, 110, 103, 95,  97,  110, 100, 95,  103, 111, 105, 110, 103, 1,   0,   1,   92,  143, 194,
+    245, 40,  44,  69,  64,  7,   5,   1,   0,   0,   0,   0};
+
 static int cmp_double(const double* a, const double* b, size_t len)
 {
     size_t i = 0;
@@ -118,7 +160,8 @@ static int cmp_csingle(const struct robotraconteurlite_csingle* a, const struct 
     return 0;
 }
 
-void robotraconteurlite_message_reader_basictest(void** state)
+void robotraconteurlite_message_run_reader_basictest(uint8_t* message_bytes, size_t message_bytes_len,
+                                                     uint16_t message_ver)
 {
     struct robotraconteurlite_buffer buffer1;
     struct robotraconteurlite_buffer_vec buffer;
@@ -141,10 +184,8 @@ void robotraconteurlite_message_reader_basictest(void** state)
     struct robotraconteurlite_string extended_expected;
     struct robotraconteurlite_messageentry_reader entry_reader;
 
-    ROBOTRACONTEURLITE_UNUSED(state);
-
-    buffer1.data = message2;
-    buffer1.len = sizeof(message2);
+    buffer1.data = message_bytes;
+    buffer1.len = message_bytes_len;
     buffer.buffer_vec = &buffer1;
     buffer.buffer_vec_cnt = 1;
 
@@ -155,16 +196,29 @@ void robotraconteurlite_message_reader_basictest(void** state)
     extended_expected.data = extended_expected_data;
     extended_expected.len = strlen(extended_expected_data);
 
-    assert_return_code(robotraconteurlite_message_reader_init(&reader, &buffer, 0, sizeof(message2)), 0);
+    assert_return_code(robotraconteurlite_message_reader_init(&reader, &buffer, 0, message_bytes_len), 0);
 
     /* Read message header */
 
     (void)memset(&header, 0, sizeof(header));
     assert_return_code(robotraconteurlite_message_reader_read_header(&reader, &header), 0);
 
-    assert_true(header.message_size == 1118);
-    assert_true(header.message_version == 2);
-    assert_true(header.header_size == 107);
+    switch (message_ver)
+    {
+    case 2:
+        assert_true(header.message_size == 1118);
+        assert_true(header.message_version == 2);
+        assert_true(header.header_size == 107);
+        break;
+    case 4:
+        assert_true(header.message_size == 909);
+        assert_true(header.message_version == 4);
+        assert_true(header.header_size == 105);
+        break;
+    default:
+        assert_true(0);
+        break;
+    }
     assert_true(header.sender_endpoint == 4164376647);
     assert_true(header.receiver_endpoint == 2805032049);
     assert_true(header.sender_nodename.len == 11);
@@ -183,9 +237,22 @@ void robotraconteurlite_message_reader_basictest(void** state)
 
     assert_return_code(robotraconteurlite_message_reader_read_header(&reader, &header2), 0);
 
-    assert_true(header2.message_size == 1118);
-    assert_true(header2.message_version == 2);
-    assert_true(header2.header_size == 107);
+    switch (message_ver)
+    {
+    case 2:
+        assert_true(header.message_size == 1118);
+        assert_true(header.message_version == 2);
+        assert_true(header.header_size == 107);
+        break;
+    case 4:
+        assert_true(header.message_size == 909);
+        assert_true(header.message_version == 4);
+        assert_true(header.header_size == 105);
+        break;
+    default:
+        assert_true(0);
+        break;
+    }
     assert_true(header2.sender_endpoint == 4164376647);
     assert_true(header2.receiver_endpoint == 2805032049);
     assert_true(header2.sender_nodename.len == 11);
@@ -207,7 +274,18 @@ void robotraconteurlite_message_reader_basictest(void** state)
         (void)memset(&entry_header, 0, sizeof(entry_header));
         assert_return_code(robotraconteurlite_messageentry_reader_read_header(&entry_reader, &entry_header), 0);
 
-        assert_true(entry_header.entry_size == 70);
+        switch (message_ver)
+        {
+        case 2:
+            assert_true(entry_header.entry_size == 70);
+            break;
+        case 4:
+            assert_true(entry_header.entry_size == 63);
+            break;
+        default:
+            assert_true(0);
+            break;
+        }
         assert_true(entry_header.entry_type = ROBOTRACONTEURLITE_MESSAGEENTRYTYPE_PROPERTYGETRES);
         assert_true(entry_header.request_id == 395728);
         assert_true(entry_header.service_path.len == 25);
@@ -250,8 +328,19 @@ void robotraconteurlite_message_reader_basictest(void** state)
         assert_true(robotraconteurlite_string_cmp(&entry_header2.service_path, &service_path_expected) == 0);
         assert_true(robotraconteurlite_string_cmp(&entry_header2.member_name, &member_name_expected) == 0);
         assert_true(robotraconteurlite_string_cmp(&entry_header2.metadata, &entry_extended_expected) == 0);
+        switch (message_ver)
+        {
+        case 2:
+            assert_true(entry_header2.entry_size == 70);
+            break;
+        case 4:
+            assert_true(entry_header2.entry_size == 63);
+            break;
+        default:
+            assert_true(0);
+            break;
+        }
 
-        assert_true(entry_header2.entry_size == 70);
         assert_true(entry_header2.entry_type = ROBOTRACONTEURLITE_MESSAGEENTRYTYPE_PROPERTYGETRES);
         assert_true(entry_header2.request_id == 395728);
         assert_true(entry_header2.service_path.len == 25);
@@ -265,8 +354,18 @@ void robotraconteurlite_message_reader_basictest(void** state)
         assert_return_code(robotraconteurlite_messageentry_reader_move_next(&entry_reader), 0);
         (void)memset(&entry_header3, 0, sizeof(entry_header3));
         assert_return_code(robotraconteurlite_messageentry_reader_read_header(&entry_reader, &entry_header3), 0);
-
-        assert_true(entry_header3.entry_size == 919);
+        switch (message_ver)
+        {
+        case 2:
+            assert_true(entry_header3.entry_size == 919);
+            break;
+        case 4:
+            assert_true(entry_header3.entry_size == 734);
+            break;
+        default:
+            assert_true(0);
+            break;
+        }
         assert_true(entry_header3.entry_type == 1122);
         assert_true(entry_header3.request_id == 562846);
         assert_true(entry_header3.service_path.len == 25);
@@ -302,7 +401,18 @@ void robotraconteurlite_message_reader_basictest(void** state)
         element_header2.element_name.len = sizeof(element_name2_header_data);
         assert_return_code(robotraconteurlite_messageelement_reader_read_header(&element_reader2, &element_header2), 0);
         assert_true(robotraconteurlite_string_cmp(&element2_name, &element_header2.element_name) == 0);
-        assert_true(element_header2.element_size == 37);
+        switch (message_ver)
+        {
+        case 2:
+            assert_true(element_header2.element_size == 37);
+            break;
+        case 4:
+            assert_true(element_header2.element_size == 27);
+            break;
+        default:
+            assert_true(0);
+            break;
+        }
 
         {
 
@@ -379,8 +489,7 @@ void robotraconteurlite_message_reader_basictest(void** state)
                                    &nested_element2_reader, &nested_element2_read_data),
                                0);
             assert_true(nested_element2_read_data.len == 4);
-            assert_true(cmp_float(nested_element2_read_data_storage, nested_element2_expected_data,
-                                  sizeof(nested_element2_expected_data)) == 0);
+            assert_true(cmp_float(nested_element2_read_data_storage, nested_element2_expected_data, 4) == 0);
         }
 
         {
@@ -739,8 +848,18 @@ void robotraconteurlite_message_reader_basictest(void** state)
             struct robotraconteurlite_messageentry_header entry_header4;
             (void)memset(&entry_header4, 0, sizeof(entry_header4));
             assert_return_code(robotraconteurlite_messageentry_reader_read_header(&entry_reader, &entry_header4), 0);
-
-            assert_true(entry_header4.entry_size == 22);
+            switch (message_ver)
+            {
+            case 2:
+                assert_true(entry_header4.entry_size == 22);
+                break;
+            case 4:
+                assert_true(entry_header4.entry_size == 7);
+                break;
+            default:
+                assert_true(0);
+                break;
+            }
             assert_true(entry_header4.entry_type == 1);
             assert_true(entry_header4.request_id == 0);
             assert_true(entry_header4.service_path.len == 0);
@@ -766,6 +885,16 @@ void robotraconteurlite_message_reader_basictest(void** state)
     }
 
     assert_true(1);
+}
+
+void robotraconteurlite_message_reader_basictest(void** state)
+{
+    robotraconteurlite_message_run_reader_basictest(message2, sizeof(message2), 2);
+}
+
+void robotraconteurlite_message4_reader_basictest(void** state)
+{
+    robotraconteurlite_message_run_reader_basictest(message4, sizeof(message4), 4);
 }
 
 void robotraconteurlite_message_writer_basictest(void** state)
@@ -1150,6 +1279,7 @@ void robotraconteurlite_message_writer_basictest(void** state)
 int main(void)
 {
     const struct CMUnitTest tests[] = {cmocka_unit_test(robotraconteurlite_message_reader_basictest),
+                                       cmocka_unit_test(robotraconteurlite_message4_reader_basictest),
                                        cmocka_unit_test(robotraconteurlite_message_writer_basictest)};
     return cmocka_run_group_tests(tests, NULL, NULL);
 }
