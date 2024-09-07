@@ -330,6 +330,7 @@ struct robotraconteurlite_message_writer
     size_t buffer_count;
     size_t message_size_offset;
     size_t entry_count_offset;
+    uint16_t message_version;
     /* uint8_t dry_run; */
 };
 
@@ -343,6 +344,7 @@ struct robotraconteurlite_messageentry_writer
     size_t entry_size_offset;
     size_t element_count_offset;
     size_t entry_header_size;
+    uint16_t message_version;
     /* uint8_t dry_run; */
 };
 
@@ -356,6 +358,7 @@ struct robotraconteurlite_messageelement_writer
     size_t element_size_offset;
     size_t data_count_offset;
     size_t element_header_size;
+    uint16_t message_version;
     /* uint8_t dry_run; */
 };
 
@@ -448,13 +451,17 @@ robotraconteurlite_messageelement_reader_find_nested_element_verify_string(
 
 /* Message Writer */
 
-ROBOTRACONTEURLITE_API robotraconteurlite_status
-robotraconteurlite_message_writer_init(struct robotraconteurlite_message_writer* writer,
-                                       struct robotraconteurlite_buffer_vec* buffer, size_t offset, size_t count);
+ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_message_writer_init(
+    struct robotraconteurlite_message_writer* writer, struct robotraconteurlite_buffer_vec* buffer, size_t offset,
+    size_t count, uint16_t message_version);
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_message_writer_begin_message(
     struct robotraconteurlite_message_writer* writer, struct robotraconteurlite_message_header* header,
     struct robotraconteurlite_messageentry_writer* entry_writer);
+
+ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_message_writer_begin_message_ex(
+    struct robotraconteurlite_message_writer* writer, struct robotraconteurlite_message_header* header,
+    struct robotraconteurlite_messageentry_writer* entry_writer, uint8_t message_flags_mask);
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_message_writer_end_message(
     struct robotraconteurlite_message_writer* writer, struct robotraconteurlite_message_header* header,

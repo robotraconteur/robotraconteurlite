@@ -924,7 +924,7 @@ void robotraconteurlite_message_writer_basictest(void** state)
     buffer1.len = sizeof(buffer_data);
     buffer.buffer_vec = &buffer1;
     buffer.buffer_vec_cnt = 1;
-    assert_return_code(robotraconteurlite_message_writer_init(&writer, &buffer, 0, sizeof(buffer_data)), 0);
+    assert_return_code(robotraconteurlite_message_writer_init(&writer, &buffer, 0, sizeof(buffer_data), 2), 0);
 
     header.message_size = 0;
     header.message_version = 2;

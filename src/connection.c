@@ -135,7 +135,7 @@ robotraconteurlite_status robotraconteurlite_connection_begin_send_message(
         return ROBOTRACONTEURLITE_ERROR_INTERNAL_ERROR;
     }
 
-    if (robotraconteurlite_message_writer_init(message_writer, buffer_storage, 0U, connection->send_buffer_pos) != 0)
+    if (robotraconteurlite_message_writer_init(message_writer, buffer_storage, 0U, connection->send_buffer_pos, 2) != 0)
     {
         return ROBOTRACONTEURLITE_ERROR_INTERNAL_ERROR;
     }
