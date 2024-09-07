@@ -184,6 +184,38 @@
 #define ROBOTRACONTEURLITE_MESSAGEERRORTYPE_OBJECTLOCKEDERROR 151U
 #define ROBOTRACONTEURLITE_MESSAGEERRORTYPE_PERMISSIONDENIED 152U
 
+/* Message Flags */
+#define ROBOTRACONTEURLITE_MESSAGE_FLAGS_ROUTING_INFO 0x01U
+#define ROBOTRACONTEURLITE_MESSAGE_FLAGS_ENDPOINT_INFO 0x02U
+#define ROBOTRACONTEURLITE_MESSAGE_FLAGS_PRIORITY 0x04U
+#define ROBOTRACONTEURLITE_MESSAGE_FLAGS_UNRELIABLE 0x08U
+#define ROBOTRACONTEURLITE_MESSAGE_FLAGS_META_INFO 0x10U
+#define ROBOTRACONTEURLITE_MESSAGE_FLAGS_STRING_TABLE 0x20U
+#define ROBOTRACONTEURLITE_MESSAGE_FLAGS_MULTIPLE_ENTRIES 0x40U
+#define ROBOTRACONTEURLITE_MESSAGE_FLAGS_EXTENDED 0x80U
+#define ROBOTRACONTEURLITE_MESSAGE_FLAGS_VERSION2COMPAT 0x53U
+
+/* Message Entry Flags */
+#define ROBOTRACONTEURLITE_MESSAGEENTRY_FLAGS_SERVICE_PATH_STR 0x01U
+#define ROBOTRACONTEURLITE_MESSAGEENTRY_FLAGS_SERVICE_PATH_CODE 0x02U
+#define ROBOTRACONTEURLITE_MESSAGEENTRY_FLAGS_MEMBER_NAME_STR 0x04U
+#define ROBOTRACONTEURLITE_MESSAGEENTRY_FLAGS_MEMBER_NAME_CODE 0x08U
+#define ROBOTRACONTEURLITE_MESSAGEENTRY_FLAGS_REQUEST_ID 0x10U
+#define ROBOTRACONTEURLITE_MESSAGEENTRY_FLAGS_ERROR 0x20U
+#define ROBOTRACONTEURLITE_MESSAGEENTRY_FLAGS_META_INFO 0x40U
+#define ROBOTRACONTEURLITE_MESSAGEENTRY_FLAGS_EXTENDED 0x80U
+#define ROBOTRACONTEURLITE_MESSAGEENTRY_FLAGS_VERSION2COMPAT 0x75U
+
+/* Message Element Flags */
+#define ROBOTRACONTEURLITE_MESSAGEELEMENT_FLAGS_ELEMENT_NAME_STR 0x01U
+#define ROBOTRACONTEURLITE_MESSAGEELEMENT_FLAGS_ELEMENT_NAME_CODE 0x02U
+#define ROBOTRACONTEURLITE_MESSAGEELEMENT_FLAGS_ELEMENT_NUMBER 0x04U
+#define ROBOTRACONTEURLITE_MESSAGEELEMENT_FLAGS_ELEMENT_TYPE_NAME_STR 0x08U
+#define ROBOTRACONTEURLITE_MESSAGEELEMENT_FLAGS_ELEMENT_TYPE_NAME_CODE 0x10U
+#define ROBOTRACONTEURLITE_MESSAGEELEMENT_FLAGS_META_INFO 0x20U
+#define ROBOTRACONTEURLITE_MESSAGEELEMENT_FLAGS_EXTENDED 0x80U
+#define ROBOTRACONTEURLITE_MESSAGEELEMENT_FLAGS_VERSION2COMPAT 0x29U
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -192,15 +224,17 @@ struct robotraconteurlite_message_header
 {
     uint32_t message_size;
     uint16_t message_version;
-    uint16_t header_size;
+    uint32_t header_size;
+    uint8_t message_flags;
     struct robotraconteurlite_nodeid sender_nodeid;
     struct robotraconteurlite_nodeid receiver_nodeid;
     uint32_t sender_endpoint;
     uint32_t receiver_endpoint;
+    uint16_t priority;
     struct robotraconteurlite_string sender_nodename;
     struct robotraconteurlite_string receiver_nodename;
     struct robotraconteurlite_string metadata;
-    uint16_t entry_count;
+    uint32_t entry_count;
     uint16_t message_id;
     uint16_t message_res_id;
 };
@@ -208,21 +242,28 @@ struct robotraconteurlite_message_header
 struct robotraconteurlite_messageentry_header
 {
     uint32_t entry_size;
+    uint8_t entry_flags;
     uint16_t entry_type;
     struct robotraconteurlite_string service_path;
+    uint32_t service_path_code;
     struct robotraconteurlite_string member_name;
+    uint32_t member_name_code;
     uint32_t request_id;
     uint16_t error;
     struct robotraconteurlite_string metadata;
-    uint16_t element_count;
+    uint32_t element_count;
 };
 
 struct robotraconteurlite_messageelement_header
 {
     uint32_t element_size;
+    uint8_t element_flags;
     struct robotraconteurlite_string element_name;
+    uint32_t element_name_code;
+    int32_t element_number;
     uint16_t element_type;
     struct robotraconteurlite_string element_type_name;
+    uint32_t element_type_name_code;
     struct robotraconteurlite_string metadata;
     uint32_t data_count;
 };
@@ -232,6 +273,7 @@ struct robotraconteurlite_message_reader
     struct robotraconteurlite_buffer_vec* buffer;
     size_t buffer_offset;
     size_t buffer_count;
+    uint16_t message_version;
 };
 
 struct robotraconteurlite_messageentry_reader
@@ -242,6 +284,7 @@ struct robotraconteurlite_messageentry_reader
     size_t buffer_remaining;
     size_t entry_count_offset;
     size_t current_entry;
+    uint16_t message_version;
 };
 
 struct robotraconteurlite_messageelement_reader
@@ -252,6 +295,7 @@ struct robotraconteurlite_messageelement_reader
     size_t buffer_remaining;
     size_t current_element;
     size_t total_elements;
+    uint16_t message_version;
 };
 
 struct robotraconteurlite_message_buffer_info
