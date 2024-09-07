@@ -309,6 +309,9 @@ struct robotraconteurlite_messageelement_writer
     size_t buffer_count;
     size_t elements_written_count;
     size_t elements_written_size;
+    size_t element_size_offset;
+    size_t data_count_offset;
+    size_t element_header_size;
     /* uint8_t dry_run; */
 };
 
