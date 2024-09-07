@@ -1673,6 +1673,7 @@ robotraconteurlite_status robotraconteurlite_messageentry_writer_begin_entry(
     element_writer->elements_written_size = 0;
     entry_writer->entry_size_offset = entry_size_offset;
     entry_writer->element_count_offset = element_count_offset;
+    entry_writer->entry_header_size = header_size;
 
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
@@ -1689,7 +1690,7 @@ robotraconteurlite_status robotraconteurlite_messageentry_writer_end_entry(
     assert(header != NULL);
     assert(element_writer != NULL);
 
-    entry_size = (element_writer->buffer_offset - entry_writer->buffer_offset) + element_writer->elements_written_size;
+    entry_size = (uint32_t)(entry_writer->entry_header_size + element_writer->elements_written_size);
 
     rv = robotraconteurlite_message_write_padded_count_val(entry_writer->buffer, 2, entry_writer->entry_size_offset,
                                                            entry_size);

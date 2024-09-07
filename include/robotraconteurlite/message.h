@@ -298,6 +298,7 @@ struct robotraconteurlite_messageentry_writer
     size_t entries_written_size;
     size_t entry_size_offset;
     size_t element_count_offset;
+    size_t entry_header_size;
     /* uint8_t dry_run; */
 };
 
