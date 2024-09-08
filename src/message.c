@@ -2242,7 +2242,7 @@ static robotraconteurlite_status robotraconteurlite_message_write_header_string_
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
 
-static robotraconteurlite_status robotraconteurlite_message_writer_write_header2_ex(
+robotraconteurlite_status robotraconteurlite_message_writer_write_header2_ex(
     struct robotraconteurlite_message_writer* writer, size_t* offset, struct robotraconteurlite_message_header* header,
     struct robotraconteurlite_message_buffer_info* buffer_info)
 {
@@ -2365,7 +2365,7 @@ static robotraconteurlite_status robotraconteurlite_message_writer_write_header2
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
 
-static robotraconteurlite_status robotraconteurlite_message_writer_write_header4_ex(
+robotraconteurlite_status robotraconteurlite_message_writer_write_header4_ex(
     struct robotraconteurlite_message_writer* writer, size_t* offset, struct robotraconteurlite_message_header* header,
     uint8_t message_flags_mask, struct robotraconteurlite_message_buffer_info* buffer_info)
 {
@@ -2592,6 +2592,10 @@ static robotraconteurlite_status robotraconteurlite_message_writer_write_header4
             return rv;
         }
     }
+    else
+    {
+        buffer_info->entry_count_offset = SIZE_MAX;
+    }
 
     if (*offset != (buffer_info->start_buffer_offset + header_size))
     {
@@ -2657,6 +2661,7 @@ robotraconteurlite_status robotraconteurlite_message_writer_end_message(
 {
     size_t message_size = 0;
     robotraconteurlite_status rv = -1;
+    uint16_t ver = writer->message_version;
 
     assert(writer != NULL);
     assert(header != NULL);
@@ -2670,11 +2675,21 @@ robotraconteurlite_status robotraconteurlite_message_writer_end_message(
         return rv;
     }
 
-    rv = robotraconteurlite_message_write_padded_count2_val(writer->buffer, 2, writer->entry_count_offset,
-                                                            (uint32_t)entry_writer->entries_written_count);
-    if (rv < 0)
+    if (writer->entry_count_offset != SIZE_MAX)
     {
-        return rv;
+        rv = robotraconteurlite_message_write_padded_count2_val(writer->buffer, ver, writer->entry_count_offset,
+                                                                (uint32_t)entry_writer->entries_written_count);
+        if (rv < 0)
+        {
+            return rv;
+        }
+    }
+    else
+    {
+        if (entry_writer->entries_written_count != 1)
+        {
+            return ROBOTRACONTEURLITE_ERROR_PROTOCOL;
+        }
     }
 
     header->message_size = message_size;
@@ -2683,15 +2698,85 @@ robotraconteurlite_status robotraconteurlite_message_writer_end_message(
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
 
+ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_messageentry_writer_write_header2_ex(
+    struct robotraconteurlite_messageentry_writer* entry_writer, size_t* offset,
+    struct robotraconteurlite_messageentry_header* header,
+    struct robotraconteurlite_messageentry_buffer_info* buffer_info)
+{
+    robotraconteurlite_status rv = -1;
+    rv = robotraconteurlite_message_write_padded_count(entry_writer->buffer, 2, offset, 0,
+                                                       &buffer_info->entry_size_offset);
+    if (rv < 0)
+    {
+        return rv;
+    }
+
+    rv = robotraconteurlite_message_write_uint16(entry_writer->buffer, offset, header->entry_type);
+    if (rv < 0)
+    {
+        return rv;
+    }
+
+    /* pad */
+    rv = robotraconteurlite_message_write_uint16(entry_writer->buffer, offset, 0);
+    if (rv < 0)
+    {
+        return rv;
+    }
+    rv = robotraconteurlite_message_write_header_string_with_len_prefix(entry_writer->buffer, 2, offset,
+                                                                        &header->service_path);
+    if (rv < 0)
+    {
+        return rv;
+    }
+
+    rv = robotraconteurlite_message_write_header_string_with_len_prefix(entry_writer->buffer, 2, offset,
+                                                                        &header->member_name);
+    if (rv < 0)
+    {
+        return rv;
+    }
+
+    rv = robotraconteurlite_message_write_count(entry_writer->buffer, 2, offset, header->request_id);
+
+    if (rv < 0)
+    {
+        return rv;
+    }
+
+    rv = robotraconteurlite_message_write_uint16(entry_writer->buffer, offset, header->error);
+    if (rv < 0)
+    {
+        return rv;
+    }
+
+    rv = robotraconteurlite_message_write_header_string_with_len_prefix(entry_writer->buffer, 2, offset,
+                                                                        &header->metadata);
+    if (rv < 0)
+    {
+        return rv;
+    }
+
+    rv = robotraconteurlite_message_write_padded_count2(entry_writer->buffer, 2, offset, 0,
+                                                        &buffer_info->element_count_offset);
+    if (rv < 0)
+    {
+        return rv;
+    }
+
+    buffer_info->header_size = *offset - entry_writer->buffer_offset;
+    buffer_info->element_start_offset = *offset;
+    return ROBOTRACONTEURLITE_ERROR_SUCCESS;
+}
+
 robotraconteurlite_status robotraconteurlite_messageentry_writer_begin_entry(
     struct robotraconteurlite_messageentry_writer* entry_writer, struct robotraconteurlite_messageentry_header* header,
     struct robotraconteurlite_messageelement_writer* element_writer)
 {
-    size_t header_size = 0;
+
     robotraconteurlite_status rv = -1;
-    size_t entry_size_offset = 0;
-    size_t element_count_offset = 0;
     size_t o = entry_writer->buffer_offset;
+    struct robotraconteurlite_messageentry_buffer_info buffer_info;
 
     assert(entry_writer != NULL);
     assert(header != NULL);
@@ -2702,73 +2787,20 @@ robotraconteurlite_status robotraconteurlite_messageentry_writer_begin_entry(
         return ROBOTRACONTEURLITE_ERROR_PROTOCOL;
     }
 
-    rv = robotraconteurlite_message_write_padded_count(entry_writer->buffer, 2, &o, 0, &entry_size_offset);
+    rv = robotraconteurlite_messageentry_writer_write_header2_ex(entry_writer, &o, header, &buffer_info);
     if (rv < 0)
     {
         return rv;
     }
-
-    rv = robotraconteurlite_message_write_uint16(entry_writer->buffer, &o, header->entry_type);
-    if (rv < 0)
-    {
-        return rv;
-    }
-
-    /* pad */
-    rv = robotraconteurlite_message_write_uint16(entry_writer->buffer, &o, 0);
-    if (rv < 0)
-    {
-        return rv;
-    }
-    rv = robotraconteurlite_message_write_header_string_with_len_prefix(entry_writer->buffer, 2, &o,
-                                                                        &header->service_path);
-    if (rv < 0)
-    {
-        return rv;
-    }
-
-    rv = robotraconteurlite_message_write_header_string_with_len_prefix(entry_writer->buffer, 2, &o,
-                                                                        &header->member_name);
-    if (rv < 0)
-    {
-        return rv;
-    }
-
-    rv = robotraconteurlite_message_write_count(entry_writer->buffer, 2, &o, header->request_id);
-
-    if (rv < 0)
-    {
-        return rv;
-    }
-
-    rv = robotraconteurlite_message_write_uint16(entry_writer->buffer, &o, header->error);
-    if (rv < 0)
-    {
-        return rv;
-    }
-
-    rv = robotraconteurlite_message_write_header_string_with_len_prefix(entry_writer->buffer, 2, &o, &header->metadata);
-    if (rv < 0)
-    {
-        return rv;
-    }
-
-    rv = robotraconteurlite_message_write_padded_count2(entry_writer->buffer, 2, &o, 0, &element_count_offset);
-    if (rv < 0)
-    {
-        return rv;
-    }
-
-    header_size = o - entry_writer->buffer_offset;
 
     element_writer->buffer = entry_writer->buffer;
-    element_writer->buffer_offset = entry_writer->buffer_offset + header_size;
-    element_writer->buffer_count = entry_writer->buffer_count - header_size;
+    element_writer->buffer_offset = entry_writer->buffer_offset + buffer_info.header_size;
+    element_writer->buffer_count = entry_writer->buffer_count - buffer_info.header_size;
     element_writer->elements_written_count = 0;
     element_writer->elements_written_size = 0;
-    entry_writer->entry_size_offset = entry_size_offset;
-    entry_writer->element_count_offset = element_count_offset;
-    entry_writer->entry_header_size = header_size;
+    entry_writer->entry_size_offset = buffer_info.entry_size_offset;
+    entry_writer->element_count_offset = buffer_info.element_count_offset;
+    entry_writer->entry_header_size = buffer_info.header_size;
 
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }

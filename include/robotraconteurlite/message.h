@@ -312,6 +312,7 @@ struct robotraconteurlite_messageentry_buffer_info
     size_t header_size;
     size_t element_count_offset;
     size_t element_start_offset;
+    size_t entry_size_offset;
 };
 
 struct robotraconteurlite_messageelement_buffer_info
@@ -454,6 +455,14 @@ robotraconteurlite_messageelement_reader_find_nested_element_verify_string(
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_message_writer_init(
     struct robotraconteurlite_message_writer* writer, struct robotraconteurlite_buffer_vec* buffer, size_t offset,
     size_t count, uint16_t message_version);
+
+ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_message_writer_write_header2_ex(
+    struct robotraconteurlite_message_writer* writer, size_t* offset, struct robotraconteurlite_message_header* header,
+    struct robotraconteurlite_message_buffer_info* buffer_info);
+
+ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_message_writer_write_header4_ex(
+    struct robotraconteurlite_message_writer* writer, size_t* offset, struct robotraconteurlite_message_header* header,
+    uint8_t message_flags_mask, struct robotraconteurlite_message_buffer_info* buffer_info);
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_message_writer_begin_message(
     struct robotraconteurlite_message_writer* writer, struct robotraconteurlite_message_header* header,
