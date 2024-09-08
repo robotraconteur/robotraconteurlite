@@ -59,7 +59,7 @@ robotraconteurlite_status robotraconteurlite_connection_verify_preamble(
 
         /* Check the message version */
         message_version = robotraconteurlite_util_read_uint16(&connection->recv_buffer[8]);
-        if (message_version != 2U && message_version != 4U)
+        if ((message_version != 2U) && (message_version != 4U))
         {
             FLAGS_SET(connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_ERROR);
             FLAGS_CLEAR(connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_RECEIVE_REQUESTED);
