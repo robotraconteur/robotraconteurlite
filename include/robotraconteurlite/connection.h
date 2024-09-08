@@ -23,6 +23,7 @@
 /* robotraconteurlite_connection_config_flags */
 #define ROBOTRACONTEURLITE_CONFIG_FLAGS_NULL 0U
 #define ROBOTRACONTEURLITE_CONFIG_FLAGS_ISSERVER 0x1U
+#define ROBOTRACONTEURLITE_CONFIG_FLAGS_ENABLE_REDUCED_HEADER4 0x2U
 
 /* robotraconteurlite_connection_status_flags */
 #define ROBOTRACONTEURLITE_STATUS_FLAGS_NULL 0U
@@ -107,6 +108,7 @@ struct robotraconteurlite_connection
     robotraconteurlite_timespec last_recv_message_time;
     robotraconteurlite_timespec last_send_message_time;
     uint32_t last_request_id;
+    uint8_t message_flags_inv_mask;
 
     /* Message information */
     uint32_t recv_message_len;

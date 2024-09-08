@@ -102,6 +102,7 @@ void robotraconteurlite_tcp_connection_init_connection_server(struct robotracont
     connection->transport_type = ROBOTRACONTEURLITE_TCP_TRANSPORT;
     connection->sock = -1;
     FLAGS_SET(connection->config_flags, ROBOTRACONTEURLITE_CONFIG_FLAGS_ISSERVER);
+    FLAGS_SET(connection->config_flags, ROBOTRACONTEURLITE_CONFIG_FLAGS_ENABLE_REDUCED_HEADER4);
     FLAGS_SET(connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_IDLE);
     connection->heartbeat_period_ms = 5000;
     connection->heartbeat_timeout_ms = 15000;
@@ -1223,6 +1224,7 @@ void robotraconteurlite_tcp_connection_init_connection_client(struct robotracont
     connection->transport_type = ROBOTRACONTEURLITE_TCP_TRANSPORT;
     connection->sock = -1;
     FLAGS_CLEAR(connection->config_flags, ROBOTRACONTEURLITE_CONFIG_FLAGS_ISSERVER);
+    FLAGS_SET(connection->config_flags, ROBOTRACONTEURLITE_CONFIG_FLAGS_ENABLE_REDUCED_HEADER4);
     FLAGS_SET(connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_IDLE);
     connection->heartbeat_period_ms = 5000;
     connection->heartbeat_timeout_ms = 15000;
