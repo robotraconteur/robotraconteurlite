@@ -377,6 +377,14 @@ ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_message_read
     struct robotraconteurlite_message_reader* reader, struct robotraconteurlite_message_header* header,
     struct robotraconteurlite_message_buffer_info* buffer_info);
 
+ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_message_reader_read_header2_ex(
+    struct robotraconteurlite_message_reader* reader, struct robotraconteurlite_message_header* header,
+    struct robotraconteurlite_message_buffer_info* buffer_info);
+
+ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_message_reader_read_header4_ex(
+    struct robotraconteurlite_message_reader* reader, struct robotraconteurlite_message_header* header,
+    struct robotraconteurlite_message_buffer_info* buffer_info);
+
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_message_reader_begin_read_entries(
     struct robotraconteurlite_message_reader* reader, struct robotraconteurlite_messageentry_reader* entry_reader);
 
@@ -387,6 +395,14 @@ ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_messageentry
     struct robotraconteurlite_messageentry_reader* entry_reader, struct robotraconteurlite_messageentry_header* header);
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_messageentry_reader_read_header_ex(
+    struct robotraconteurlite_messageentry_reader* entry_reader, struct robotraconteurlite_messageentry_header* header,
+    struct robotraconteurlite_messageentry_buffer_info* buffer_info);
+
+ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_messageentry_reader_read_header2_ex(
+    struct robotraconteurlite_messageentry_reader* entry_reader, struct robotraconteurlite_messageentry_header* header,
+    struct robotraconteurlite_messageentry_buffer_info* buffer_info);
+
+ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_messageentry_reader_read_header4_ex(
     struct robotraconteurlite_messageentry_reader* entry_reader, struct robotraconteurlite_messageentry_header* header,
     struct robotraconteurlite_messageentry_buffer_info* buffer_info);
 
@@ -419,6 +435,16 @@ robotraconteurlite_messageelement_reader_read_header(struct robotraconteurlite_m
                                                      struct robotraconteurlite_messageelement_header* header);
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_messageelement_reader_read_header_ex(
+    struct robotraconteurlite_messageelement_reader* element_reader,
+    struct robotraconteurlite_messageelement_header* header,
+    struct robotraconteurlite_messageelement_buffer_info* buffer_info);
+
+ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_messageelement_reader_read_header2_ex(
+    struct robotraconteurlite_messageelement_reader* element_reader,
+    struct robotraconteurlite_messageelement_header* header,
+    struct robotraconteurlite_messageelement_buffer_info* buffer_info);
+
+ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_messageelement_reader_read_header4_ex(
     struct robotraconteurlite_messageelement_reader* element_reader,
     struct robotraconteurlite_messageelement_header* header,
     struct robotraconteurlite_messageelement_buffer_info* buffer_info);
