@@ -300,9 +300,8 @@ robotraconteurlite_status robotraconteurlite_node_event_special_request(struct r
             robotraconteurlite_connection_is_server(event->connection) &&
             (!FLAGS_CHECK(event->connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_ESTABLISHED)))
         {
-            uint8_t send_message2_reply = 0;
-            uint8_t send_message4_reply = 0;
             robotraconteurlite_status rv = -1;
+            uint32_t caps_flags = 0;
             /* TODO: Check the incoming target address and sender address */
             if (robotraconteurlite_nodeid_copy_to(&event->received_message.received_message_header.sender_nodeid,
                                                   &event->connection->remote_nodeid) != 0)
@@ -312,54 +311,16 @@ robotraconteurlite_status robotraconteurlite_node_event_special_request(struct r
 
             if (event->received_message.received_message_entry_header.element_count > 0U)
             {
-                robotraconteurlite_status rv_c = -1;
-                struct robotraconteurlite_string capabilities_element_name_str;
-                struct robotraconteurlite_messageelement_reader capabilities_element_reader;
-                robotraconteurlite_string_from_c_str("capabilities", &capabilities_element_name_str);
-
-                rv_c = robotraconteurlite_messageentry_reader_find_element_verify_array(
-                    &event->received_message.entry_reader, &capabilities_element_name_str, &capabilities_element_reader,
-                    ROBOTRACONTEURLITE_DATATYPE_UINT32, 256, 1);
-
-                if (rv_c == 0)
+                (void)robotraconteurlite_node_transport_parse_capabilities(&event->received_message.entry_reader,
+                                                                           &caps_flags);
+                if (FLAGS_CHECK(caps_flags, ROBOTRACONTEURLITE_CONNECTION_PARSE_CAPABILITY_MESSAGE4))
                 {
-                    struct robotraconteurlite_messageelement_header capabilities_element_header;
-                    struct robotraconteurlite_messageelement_buffer_info capabilities_element_buffer_info;
-                    (void)memset(&capabilities_element_header, 0, sizeof(capabilities_element_header));
-                    (void)memset(&capabilities_element_buffer_info, 0, sizeof(capabilities_element_buffer_info));
-                    rv_c = robotraconteurlite_messageelement_reader_read_header_ex(
-                        &capabilities_element_reader, &capabilities_element_header, &capabilities_element_buffer_info);
-                    if (rv_c == 0)
-                    {
-                        size_t i = 0;
-                        for (i = 0; i < capabilities_element_header.data_count; i++)
-                        {
-                            uint32_t c = 0;
-                            rv_c = robotraconteurlite_buffer_vec_copy_to_uint32(
-                                capabilities_element_reader.buffer,
-                                capabilities_element_buffer_info.data_start_offset + (i * sizeof(uint32_t)), &c);
-                            if (((c & ROBOTRACONTEURLITE_TRANSPORT_CAPABILITY_CODE_PAGE_MASK) ==
-                                 ROBOTRACONTEURLITE_TRANSPORT_CAPABILITY_CODE_MESSAGE2_BASIC_PAGE) &&
-                                (FLAGS_CHECK(c, ROBOTRACONTEURLITE_TRANSPORT_CAPABILITY_CODE_MESSAGE2_BASIC_ENABLE)))
-                            {
-                                send_message2_reply = 1;
-                            }
-                            if (((c & ROBOTRACONTEURLITE_TRANSPORT_CAPABILITY_CODE_PAGE_MASK) ==
-                                 ROBOTRACONTEURLITE_TRANSPORT_CAPABILITY_CODE_MESSAGE4_BASIC_PAGE) &&
-                                (FLAGS_CHECK(c, ROBOTRACONTEURLITE_TRANSPORT_CAPABILITY_CODE_MESSAGE4_BASIC_ENABLE)))
-                            {
-                                /* We have message 4 capability! */
-                                FLAGS_SET(event->connection->connection_state,
-                                          ROBOTRACONTEURLITE_STATUS_FLAGS_SEND_MESSAGE4);
-                                send_message4_reply = 1;
-                            }
-                        }
-                    }
+                    FLAGS_SET(event->connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_SEND_MESSAGE4);
                 }
             }
 
             /* TODO: sender nodename */
-            if (send_message2_reply == 0U && send_message4_reply == 0U)
+            if (caps_flags == 0)
             {
                 rv = robotraconteurlite_node_send_messageentry_empty_response(
                     node, event->connection, &event->received_message.received_message_entry_header);
@@ -370,19 +331,7 @@ robotraconteurlite_status robotraconteurlite_node_event_special_request(struct r
             }
             else
             {
-                uint32_t caps_reply[2];
-                size_t caps_reply_len = 0;
                 struct robotraconteurlite_node_send_messageentry_data send_data;
-                if (send_message2_reply != 0U)
-                {
-                    caps_reply[caps_reply_len++] = ROBOTRACONTEURLITE_TRANSPORT_CAPABILITY_CODE_MESSAGE2_BASIC_PAGE |
-                                                   ROBOTRACONTEURLITE_TRANSPORT_CAPABILITY_CODE_MESSAGE2_BASIC_ENABLE;
-                }
-                if (send_message4_reply != 0U)
-                {
-                    caps_reply[caps_reply_len++] = ROBOTRACONTEURLITE_TRANSPORT_CAPABILITY_CODE_MESSAGE4_BASIC_PAGE |
-                                                   ROBOTRACONTEURLITE_TRANSPORT_CAPABILITY_CODE_MESSAGE4_BASIC_ENABLE;
-                }
                 send_data.node = event->received_message.node;
                 send_data.connection = event->connection;
                 rv = robotraconteurlite_node_begin_send_messageentry_response(
@@ -391,20 +340,14 @@ robotraconteurlite_status robotraconteurlite_node_event_special_request(struct r
                 {
                     return robotraconteurlite_node_event_special_request_handle_error(node, event, rv);
                 }
-                if (caps_reply_len > 0U)
+
+                rv = robotraconteurlite_node_transport_populate_capabilities(&send_data.element_writer, caps_flags);
+                if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
                 {
-                    struct robotraconteurlite_string capabilities_element_name_str;
-                    struct robotraconteurlite_array_uint32 capabilities_array;
-                    capabilities_array.data = caps_reply;
-                    capabilities_array.len = caps_reply_len;
-                    robotraconteurlite_string_from_c_str("capabilities", &capabilities_element_name_str);
-                    if (robotraconteurlite_messageelement_writer_write_uint32_array(
-                            &send_data.element_writer, &capabilities_element_name_str, &capabilities_array) != 0)
-                    {
-                        return robotraconteurlite_node_event_special_request_handle_error(
-                            node, event, ROBOTRACONTEURLITE_ERROR_INTERNAL_ERROR);
-                    }
+                    return robotraconteurlite_node_event_special_request_handle_error(
+                        node, event, ROBOTRACONTEURLITE_ERROR_INTERNAL_ERROR);
                 }
+
                 rv = robotraconteurlite_node_end_send_messageentry(&send_data);
                 if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
                 {
@@ -1393,5 +1336,93 @@ robotraconteurlite_status robotraconteurlite_node_poll_add_fd(struct robotracont
     ROBOTRACONTEURLITE_UNUSED(pollfd_count);
     ROBOTRACONTEURLITE_UNUSED(max_pollfds);
     /* Reserved for future use */
+    return ROBOTRACONTEURLITE_ERROR_SUCCESS;
+}
+
+robotraconteurlite_status robotraconteurlite_node_transport_parse_capabilities(
+    struct robotraconteurlite_messageentry_reader* entry_reader, uint32_t* parsed_flags)
+{
+    robotraconteurlite_status rv = ROBOTRACONTEURLITE_ERROR_SUCCESS;
+    struct robotraconteurlite_string capabilities_element_name_str;
+    struct robotraconteurlite_messageelement_reader capabilities_element_reader;
+    robotraconteurlite_string_from_c_str("capabilities", &capabilities_element_name_str);
+
+    *parsed_flags = 0;
+
+    rv = robotraconteurlite_messageentry_reader_find_element_verify_array(entry_reader, &capabilities_element_name_str,
+                                                                          &capabilities_element_reader,
+                                                                          ROBOTRACONTEURLITE_DATATYPE_UINT32, 1024, 1);
+
+    if (rv == 0)
+    {
+        struct robotraconteurlite_messageelement_header capabilities_element_header;
+        struct robotraconteurlite_messageelement_buffer_info capabilities_element_buffer_info;
+        (void)memset(&capabilities_element_header, 0, sizeof(capabilities_element_header));
+        (void)memset(&capabilities_element_buffer_info, 0, sizeof(capabilities_element_buffer_info));
+        rv = robotraconteurlite_messageelement_reader_read_header_ex(
+            &capabilities_element_reader, &capabilities_element_header, &capabilities_element_buffer_info);
+        if (rv == 0)
+        {
+            size_t i = 0;
+            for (i = 0; i < capabilities_element_header.data_count; i++)
+            {
+                uint32_t c = 0;
+                rv = robotraconteurlite_buffer_vec_copy_to_uint32(
+                    capabilities_element_reader.buffer,
+                    capabilities_element_buffer_info.data_start_offset + (i * sizeof(uint32_t)), &c);
+                if (rv < 0)
+                {
+                    return ROBOTRACONTEURLITE_ERROR_INTERNAL_ERROR;
+                }
+                if (((c & ROBOTRACONTEURLITE_TRANSPORT_CAPABILITY_CODE_PAGE_MASK) ==
+                     ROBOTRACONTEURLITE_TRANSPORT_CAPABILITY_CODE_MESSAGE2_BASIC_PAGE) &&
+                    (FLAGS_CHECK(c, ROBOTRACONTEURLITE_TRANSPORT_CAPABILITY_CODE_MESSAGE2_BASIC_ENABLE)))
+                {
+                    FLAGS_SET(*parsed_flags, ROBOTRACONTEURLITE_CONNECTION_PARSE_CAPABILITY_MESSAGE2);
+                }
+                if (((c & ROBOTRACONTEURLITE_TRANSPORT_CAPABILITY_CODE_PAGE_MASK) ==
+                     ROBOTRACONTEURLITE_TRANSPORT_CAPABILITY_CODE_MESSAGE4_BASIC_PAGE) &&
+                    (FLAGS_CHECK(c, ROBOTRACONTEURLITE_TRANSPORT_CAPABILITY_CODE_MESSAGE4_BASIC_ENABLE)))
+                {
+                    /* We have message 4 capability! */
+
+                    FLAGS_SET(*parsed_flags, ROBOTRACONTEURLITE_CONNECTION_PARSE_CAPABILITY_MESSAGE4);
+                }
+            }
+        }
+    }
+
+    return ROBOTRACONTEURLITE_ERROR_SUCCESS;
+}
+
+robotraconteurlite_status robotraconteurlite_node_transport_populate_capabilities(
+    struct robotraconteurlite_messageelement_writer* element_writer, uint32_t capability_flags)
+{
+    uint32_t caps_reply[2];
+    size_t caps_reply_len = 0;
+    robotraconteurlite_status rv = -1;
+    if (FLAGS_CHECK(capability_flags, ROBOTRACONTEURLITE_CONNECTION_PARSE_CAPABILITY_MESSAGE2))
+    {
+        caps_reply[caps_reply_len++] = ROBOTRACONTEURLITE_TRANSPORT_CAPABILITY_CODE_MESSAGE2_BASIC_PAGE |
+                                       ROBOTRACONTEURLITE_TRANSPORT_CAPABILITY_CODE_MESSAGE2_BASIC_ENABLE;
+    }
+    if (FLAGS_CHECK(capability_flags, ROBOTRACONTEURLITE_CONNECTION_PARSE_CAPABILITY_MESSAGE4))
+    {
+        caps_reply[caps_reply_len++] = ROBOTRACONTEURLITE_TRANSPORT_CAPABILITY_CODE_MESSAGE4_BASIC_PAGE |
+                                       ROBOTRACONTEURLITE_TRANSPORT_CAPABILITY_CODE_MESSAGE4_BASIC_ENABLE;
+    }
+
+    if (caps_reply_len > 0U)
+    {
+        struct robotraconteurlite_string capabilities_element_name_str;
+        struct robotraconteurlite_array_uint32 capabilities_array;
+        capabilities_array.data = caps_reply;
+        capabilities_array.len = caps_reply_len;
+        robotraconteurlite_string_from_c_str("capabilities", &capabilities_element_name_str);
+        rv = robotraconteurlite_messageelement_writer_write_uint32_array(element_writer, &capabilities_element_name_str,
+                                                                         &capabilities_array);
+        return rv;
+    }
+
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
