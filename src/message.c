@@ -1232,7 +1232,7 @@ robotraconteurlite_status robotraconteurlite_messageentry_reader_begin_read_elem
     struct robotraconteurlite_messageentry_reader* entry_reader,
     struct robotraconteurlite_messageelement_reader* element_reader)
 {
-    size_t o = entry_reader->buffer_offset;
+    size_t o = 0;
     size_t o2 = 0;
     robotraconteurlite_status rv = -1;
     struct robotraconteurlite_messageentry_header entry_header;
@@ -1956,7 +1956,7 @@ static robotraconteurlite_status robotraconteurlite_message_write_uint8(struct r
 
 static robotraconteurlite_status robotraconteurlite_message_write_int32(struct robotraconteurlite_buffer_vec* buffer,
 
-                                                                        size_t* offset, uint32_t val)
+                                                                        size_t* offset, int32_t val)
 {
     robotraconteurlite_status rv = robotraconteurlite_buffer_vec_copy_from_int32(buffer, *offset, val);
     if (rv < 0)
@@ -1968,7 +1968,7 @@ static robotraconteurlite_status robotraconteurlite_message_write_int32(struct r
 }
 
 static robotraconteurlite_status robotraconteurlite_message_write_int16(struct robotraconteurlite_buffer_vec* buffer,
-                                                                        size_t* offset, uint16_t val)
+                                                                        size_t* offset, int16_t val)
 {
     robotraconteurlite_status rv = robotraconteurlite_buffer_vec_copy_from_int16(buffer, *offset, val);
     if (rv < 0)
@@ -1980,7 +1980,7 @@ static robotraconteurlite_status robotraconteurlite_message_write_int16(struct r
 }
 
 static robotraconteurlite_status robotraconteurlite_message_write_int8(struct robotraconteurlite_buffer_vec* buffer,
-                                                                       size_t* offset, uint8_t val)
+                                                                       size_t* offset, int8_t val)
 {
     robotraconteurlite_status rv = robotraconteurlite_buffer_vec_copy_from_int8(buffer, *offset, val);
     if (rv < 0)
@@ -2417,8 +2417,7 @@ robotraconteurlite_status robotraconteurlite_message_writer_write_header4_ex(
         }
     }
 
-    flags |= ((message_flags_mask & ROBOTRACONTEURLITE_MESSAGE_FLAGS_UNRELIABLE) &
-              (flags & ROBOTRACONTEURLITE_MESSAGE_FLAGS_UNRELIABLE));
+    flags |= ((message_flags_mask & ROBOTRACONTEURLITE_MESSAGE_FLAGS_UNRELIABLE) & flags);
     {
         size_t s = 0;
         rv = robotraconteurlite_message_len_plus_uint_x(header_size, &header_size, &s);
@@ -3311,7 +3310,7 @@ robotraconteurlite_status robotraconteurlite_messageelement_writer_write_data_he
         return ROBOTRACONTEURLITE_ERROR_OUT_OF_RANGE;
     }
 
-    buffer_info->data_start_offset = *offset;
+    buffer_info->start_buffer_offset = *offset;
     buffer_info->element_size_offset = *offset;
     rv = robotraconteurlite_message_write_uint32(element_writer->buffer, offset, (uint32_t)elem_size);
     if (rv < 0)
@@ -3409,7 +3408,7 @@ robotraconteurlite_status robotraconteurlite_messageelement_writer_write_data_he
         return ROBOTRACONTEURLITE_ERROR_OUT_OF_RANGE;
     }
 
-    buffer_info->data_start_offset = *offset;
+    buffer_info->start_buffer_offset = *offset;
     buffer_info->element_size_offset = SIZE_MAX;
     rv = robotraconteurlite_message_write_uint_x(element_writer->buffer, offset, (uint32_t)elem_size);
     if (rv < 0)
@@ -3461,13 +3460,15 @@ robotraconteurlite_status robotraconteurlite_messageelement_writer_write_raw(
 {
 
     robotraconteurlite_status rv = -1;
-    size_t o = element_writer->buffer_offset;
+    size_t o = 0;
     struct robotraconteurlite_messageelement_buffer_info buffer_info;
     size_t elem_size = 0;
 
     assert(element_writer != NULL);
     assert(element_name != NULL);
     assert(data_buf != NULL);
+
+    o = element_writer->buffer_offset;
 
     if (!(element_writer->elements_written_count < UINT32_MAX))
     {
