@@ -3303,11 +3303,6 @@ robotraconteurlite_status robotraconteurlite_messageelement_writer_write_data_he
         return ROBOTRACONTEURLITE_ERROR_OUT_OF_RANGE;
     }
 
-    if (!(element_writer->elements_written_count < UINT32_MAX))
-    {
-        return ROBOTRACONTEURLITE_ERROR_PROTOCOL;
-    }
-
     str1_len = element_name->len;
     data_size = data_len * data_elem_size;
     elem_size = 16U + str1_len + data_size;
@@ -3367,6 +3362,98 @@ robotraconteurlite_status robotraconteurlite_messageelement_writer_write_data_he
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
 
+robotraconteurlite_status robotraconteurlite_messageelement_writer_write_data_header4_ex(
+    struct robotraconteurlite_messageelement_writer* element_writer, size_t* offset,
+    const struct robotraconteurlite_string* element_name, size_t data_len, uint16_t data_type, size_t data_elem_size,
+    struct robotraconteurlite_messageelement_buffer_info* buffer_info, size_t* element_size)
+{
+    robotraconteurlite_status rv = -1;
+
+    size_t data_size = 0;
+    size_t elem_size = 3;
+    uint32_t elem_size2 = 0;
+    uint8_t flags = 0;
+
+    if (element_name->len != 0)
+    {
+        size_t s = 0;
+        FLAGS_SET(flags, ROBOTRACONTEURLITE_MESSAGEELEMENT_FLAGS_ELEMENT_NAME_STR);
+        rv = robotraconteurlite_message_header_string_with_len_prefix_size4(element_name, &s);
+        if (rv < 0)
+        {
+            return rv;
+        }
+        elem_size += s;
+    }
+
+    data_size = data_len * data_elem_size;
+    elem_size += data_size;
+
+    if (elem_size > UINT32_MAX)
+    {
+        return ROBOTRACONTEURLITE_ERROR_OUT_OF_RANGE;
+    }
+
+    {
+        size_t s = 0;
+        rv = robotraconteurlite_message_len_plus_uint_x(elem_size, &elem_size2, &s);
+        if (rv < 0)
+        {
+            return rv;
+        }
+        elem_size += s;
+    }
+
+    if (elem_size > UINT32_MAX)
+    {
+        return ROBOTRACONTEURLITE_ERROR_OUT_OF_RANGE;
+    }
+
+    buffer_info->data_start_offset = *offset;
+    buffer_info->element_size_offset = SIZE_MAX;
+    rv = robotraconteurlite_message_write_uint_x(element_writer->buffer, offset, (uint32_t)elem_size);
+    if (rv < 0)
+    {
+        return rv;
+    }
+
+    rv = robotraconteurlite_message_write_uint8(element_writer->buffer, offset, flags);
+    if (rv < 0)
+    {
+        return rv;
+    }
+
+    buffer_info->element_name_str_offset = SIZE_MAX;
+    if (FLAGS_CHECK(flags, ROBOTRACONTEURLITE_MESSAGEELEMENT_FLAGS_ELEMENT_NAME_STR))
+    {
+        rv = robotraconteurlite_message_write_header_string_with_len_prefix4(element_writer->buffer, offset,
+                                                                             element_name);
+        if (rv < 0)
+        {
+            return rv;
+        }
+    }
+
+    rv = robotraconteurlite_message_write_uint16(element_writer->buffer, offset, data_type);
+    if (rv < 0)
+    {
+        return rv;
+    }
+
+    buffer_info->element_count_offset = SIZE_MAX;
+    rv = robotraconteurlite_message_write_uint_x(element_writer->buffer, offset, data_len);
+    if (rv < 0)
+    {
+        return rv;
+    }
+
+    buffer_info->data_start_offset = *offset;
+    buffer_info->header_size = *offset - buffer_info->start_buffer_offset;
+    *element_size = elem_size;
+
+    return ROBOTRACONTEURLITE_ERROR_SUCCESS;
+}
+
 robotraconteurlite_status robotraconteurlite_messageelement_writer_write_raw(
     struct robotraconteurlite_messageelement_writer* element_writer,
     const struct robotraconteurlite_string* element_name, const uint8_t* data_buf, size_t data_len, uint16_t data_type,
@@ -3382,8 +3469,24 @@ robotraconteurlite_status robotraconteurlite_messageelement_writer_write_raw(
     assert(element_name != NULL);
     assert(data_buf != NULL);
 
-    rv = robotraconteurlite_messageelement_writer_write_data_header2_ex(
-        element_writer, &o, element_name, data_len, data_type, data_elem_size, &buffer_info, &elem_size);
+    if (!(element_writer->elements_written_count < UINT32_MAX))
+    {
+        return ROBOTRACONTEURLITE_ERROR_PROTOCOL;
+    }
+
+    switch (element_writer->message_version)
+    {
+    case 2:
+        rv = robotraconteurlite_messageelement_writer_write_data_header2_ex(
+            element_writer, &o, element_name, data_len, data_type, data_elem_size, &buffer_info, &elem_size);
+        break;
+    case 4:
+        rv = robotraconteurlite_messageelement_writer_write_data_header4_ex(
+            element_writer, &o, element_name, data_len, data_type, data_elem_size, &buffer_info, &elem_size);
+        break;
+    default:
+        return ROBOTRACONTEURLITE_ERROR_PROTOCOL;
+    }
 
     if (rv < 0)
     {
