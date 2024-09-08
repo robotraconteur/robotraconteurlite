@@ -476,6 +476,16 @@ ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_message_writ
     struct robotraconteurlite_message_writer* writer, struct robotraconteurlite_message_header* header,
     struct robotraconteurlite_messageentry_writer* entry_writer);
 
+ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_messageentry_writer_write_header2_ex(
+    struct robotraconteurlite_messageentry_writer* entry_writer, size_t* offset,
+    struct robotraconteurlite_messageentry_header* header,
+    struct robotraconteurlite_messageentry_buffer_info* buffer_info);
+
+ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_messageentry_writer_write_header4_ex(
+    struct robotraconteurlite_messageentry_writer* entry_writer, size_t* offset,
+    struct robotraconteurlite_messageentry_header* header,
+    struct robotraconteurlite_messageentry_buffer_info* buffer_info);
+
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_messageentry_writer_begin_entry(
     struct robotraconteurlite_messageentry_writer* entry_writer, struct robotraconteurlite_messageentry_header* header,
     struct robotraconteurlite_messageelement_writer* element_writer);
