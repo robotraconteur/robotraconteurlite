@@ -441,6 +441,23 @@ robotraconteurlite_status robotraconteurlite_node_event_special_request(struct r
             /* Set the ESTABLISHED flag */
             FLAGS_SET(event->connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_ESTABLISHED);
 
+            {
+                uint32_t caps_flags = 0;
+                (void)robotraconteurlite_node_transport_parse_capabilities(&event->received_message.entry_reader,
+                                                                           &caps_flags);
+                if (FLAGS_CHECK(caps_flags, ROBOTRACONTEURLITE_CONNECTION_PARSE_CAPABILITY_MESSAGE4))
+                {
+                    FLAGS_SET(event->connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_SEND_MESSAGE4);
+                    if (FLAGS_CHECK(event->connection->config_flags,
+                                    ROBOTRACONTEURLITE_CONFIG_FLAGS_ENABLE_REDUCED_HEADER4))
+                    {
+                        /* Enable reduced address info in message 4 headers */
+                        event->connection->message_flags_inv_mask = (ROBOTRACONTEURLITE_MESSAGE_FLAGS_ROUTING_INFO |
+                                                                     ROBOTRACONTEURLITE_MESSAGE_FLAGS_ENDPOINT_INFO);
+                    }
+                }
+            }
+
             return ROBOTRACONTEURLITE_ERROR_SUCCESS;
         }
         else
@@ -1156,6 +1173,15 @@ robotraconteurlite_status robotraconteurlite_client_handshake(
         {
             return robotraconteurlite_client_handshake_handle_error(handshake_data, rv);
         }
+
+        rv = robotraconteurlite_node_transport_populate_capabilities(
+            &send_data.element_writer, (ROBOTRACONTEURLITE_CONNECTION_PARSE_CAPABILITY_MESSAGE2 |
+                                        ROBOTRACONTEURLITE_CONNECTION_PARSE_CAPABILITY_MESSAGE4));
+        if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+        {
+            return robotraconteurlite_client_handshake_handle_error(handshake_data, rv);
+        }
+
         rv = robotraconteurlite_node_end_send_messageentry(&send_data);
         if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
         {
