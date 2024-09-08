@@ -557,6 +557,7 @@ robotraconteurlite_status robotraconteurlite_node_begin_send_messageentry(
     struct robotraconteurlite_node_send_messageentry_data* send_data)
 {
     robotraconteurlite_status rv = -1;
+    uint8_t message_flags_mask = 0xFF;
     send_data->buffer_storage.data = NULL;
     send_data->buffer_storage.len = 0;
     send_data->buffer_vec_storage.buffer_vec_cnt = 1;
@@ -592,8 +593,15 @@ robotraconteurlite_status robotraconteurlite_node_begin_send_messageentry(
         return ROBOTRACONTEURLITE_ERROR_INTERNAL_ERROR;
     }
 
-    rv = robotraconteurlite_message_writer_begin_message(&send_data->message_writer, &send_data->message_header,
-                                                         &send_data->entry_writer);
+    if (FLAGS_CHECK(send_data->connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_CLIENT_ESTABLISHED))
+    {
+        /* Don't send address info if connection has been established */
+        message_flags_mask =
+            (uint8_t) ~(ROBOTRACONTEURLITE_MESSAGE_FLAGS_ROUTING_INFO | ROBOTRACONTEURLITE_MESSAGE_FLAGS_ENDPOINT_INFO);
+    }
+
+    rv = robotraconteurlite_message_writer_begin_message_ex(&send_data->message_writer, &send_data->message_header,
+                                                            &send_data->entry_writer, message_flags_mask);
     if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
     {
         return rv;
