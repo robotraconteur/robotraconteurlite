@@ -131,6 +131,9 @@ enum robotraconteurlite_client_handshake_state
     ROBOTRACONTEURLITE_CLIENT_HANDSHAKE_FAILED
 };
 
+#define ROBOTRACONTEURLITE_CONNECTION_PARSE_CAPABILITY_MESSAGE2 0x1U
+#define ROBOTRACONTEURLITE_CONNECTION_PARSE_CAPABILITY_MESSAGE4 0x2U
+
 struct robotraconteurlite_client_handshake_data
 {
     struct robotraconteurlite_node* node;
@@ -241,6 +244,12 @@ robotraconteurlite_node_poll_add_fd(struct robotraconteurlite_node* node, struct
 /*ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_client_process_request(struct
  * robotraconteurlite_node_send_messageentry_data* request_data, struct
  * robotraconteurlite_node_receive_messageentry_data* response_data);*/
+
+ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_node_transport_parse_capabilities(
+    struct robotraconteurlite_messageentry_reader* entry_reader, uint32_t* parsed_flags);
+
+ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_node_transport_populate_capabilities(
+    struct robotraconteurlite_messageelement_writer* element_writer, uint32_t capability_flags);
 
 #ifdef __cplusplus
 }
