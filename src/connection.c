@@ -112,6 +112,7 @@ robotraconteurlite_status robotraconteurlite_connection_begin_send_message(
     struct robotraconteurlite_connection* connection, struct robotraconteurlite_message_writer* message_writer,
     struct robotraconteurlite_buffer_vec* buffer_storage)
 {
+    uint16_t message_version = 2;
     if (FLAGS_CHECK(connection->connection_state,
                     (ROBOTRACONTEURLITE_STATUS_FLAGS_ERROR | ROBOTRACONTEURLITE_STATUS_FLAGS_CLOSED |
                      ROBOTRACONTEURLITE_STATUS_FLAGS_CLOSE_REQUESTED | ROBOTRACONTEURLITE_STATUS_FLAGS_IDLE)) ||
@@ -135,7 +136,13 @@ robotraconteurlite_status robotraconteurlite_connection_begin_send_message(
         return ROBOTRACONTEURLITE_ERROR_INTERNAL_ERROR;
     }
 
-    if (robotraconteurlite_message_writer_init(message_writer, buffer_storage, 0U, connection->send_buffer_pos, 2) != 0)
+    if (FLAGS_CHECK(connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_SEND_MESSAGE4))
+    {
+        message_version = 4;
+    }
+
+    if (robotraconteurlite_message_writer_init(message_writer, buffer_storage, 0U, connection->send_buffer_pos,
+                                               message_version) != 0)
     {
         return ROBOTRACONTEURLITE_ERROR_INTERNAL_ERROR;
     }
