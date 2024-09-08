@@ -323,30 +323,36 @@ robotraconteurlite_status robotraconteurlite_node_event_special_request(struct r
 
                 if (rv_c == 0)
                 {
-                    size_t i = 0;
-                    struct robotraconteurlite_array_uint32 capabilities_array;
-                    uint32_t capabilities_array_data[256];
-                    capabilities_array.data = capabilities_array_data;
-                    capabilities_array.len = 256;
-                    rv_c = robotraconteurlite_messageelement_reader_read_data_uint32_array(&capabilities_element_reader,
-                                                                                           &capabilities_array);
-                    for (i = 0; i < capabilities_array.len; i++)
+                    struct robotraconteurlite_messageelement_header capabilities_element_header;
+                    struct robotraconteurlite_messageelement_buffer_info capabilities_element_buffer_info;
+                    (void)memset(&capabilities_element_header, 0, sizeof(capabilities_element_header));
+                    (void)memset(&capabilities_element_buffer_info, 0, sizeof(capabilities_element_buffer_info));
+                    rv_c = robotraconteurlite_messageelement_reader_read_header_ex(
+                        &capabilities_element_reader, &capabilities_element_header, &capabilities_element_buffer_info);
+                    if (rv_c == 0)
                     {
-                        uint32_t c = capabilities_array.data[i];
-                        if (((c & ROBOTRACONTEURLITE_TRANSPORT_CAPABILITY_CODE_PAGE_MASK) ==
-                             ROBOTRACONTEURLITE_TRANSPORT_CAPABILITY_CODE_MESSAGE2_BASIC_PAGE) &&
-                            (FLAGS_CHECK(c, ROBOTRACONTEURLITE_TRANSPORT_CAPABILITY_CODE_MESSAGE2_BASIC_ENABLE)))
+                        size_t i = 0;
+                        for (i = 0; i < capabilities_element_header.data_count; i++)
                         {
-                            send_message2_reply = 1;
-                        }
-                        if (((c & ROBOTRACONTEURLITE_TRANSPORT_CAPABILITY_CODE_PAGE_MASK) ==
-                             ROBOTRACONTEURLITE_TRANSPORT_CAPABILITY_CODE_MESSAGE4_BASIC_PAGE) &&
-                            (FLAGS_CHECK(c, ROBOTRACONTEURLITE_TRANSPORT_CAPABILITY_CODE_MESSAGE4_BASIC_ENABLE)))
-                        {
-                            /* We have message 4 capability! */
-                            FLAGS_SET(event->connection->connection_state,
-                                      ROBOTRACONTEURLITE_STATUS_FLAGS_SEND_MESSAGE4);
-                            send_message4_reply = 1;
+                            uint32_t c = 0;
+                            rv_c = robotraconteurlite_buffer_vec_copy_to_uint32(
+                                capabilities_element_reader.buffer,
+                                capabilities_element_buffer_info.data_start_offset + (i * sizeof(uint32_t)), &c);
+                            if (((c & ROBOTRACONTEURLITE_TRANSPORT_CAPABILITY_CODE_PAGE_MASK) ==
+                                 ROBOTRACONTEURLITE_TRANSPORT_CAPABILITY_CODE_MESSAGE2_BASIC_PAGE) &&
+                                (FLAGS_CHECK(c, ROBOTRACONTEURLITE_TRANSPORT_CAPABILITY_CODE_MESSAGE2_BASIC_ENABLE)))
+                            {
+                                send_message2_reply = 1;
+                            }
+                            if (((c & ROBOTRACONTEURLITE_TRANSPORT_CAPABILITY_CODE_PAGE_MASK) ==
+                                 ROBOTRACONTEURLITE_TRANSPORT_CAPABILITY_CODE_MESSAGE4_BASIC_PAGE) &&
+                                (FLAGS_CHECK(c, ROBOTRACONTEURLITE_TRANSPORT_CAPABILITY_CODE_MESSAGE4_BASIC_ENABLE)))
+                            {
+                                /* We have message 4 capability! */
+                                FLAGS_SET(event->connection->connection_state,
+                                          ROBOTRACONTEURLITE_STATUS_FLAGS_SEND_MESSAGE4);
+                                send_message4_reply = 1;
+                            }
                         }
                     }
                 }
