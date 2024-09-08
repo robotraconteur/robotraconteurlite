@@ -52,7 +52,7 @@ robotraconteurlite_status robotraconteurlite_message_reader_init(struct robotrac
         return ROBOTRACONTEURLITE_ERROR_OUT_OF_RANGE;
     }
 
-    if (count < 64U)
+    if (count < 10U)
     {
         return ROBOTRACONTEURLITE_ERROR_OUT_OF_RANGE;
     }
@@ -2330,7 +2330,7 @@ robotraconteurlite_status robotraconteurlite_message_writer_write_header4_ex(
     struct robotraconteurlite_message_writer* writer, size_t* offset, struct robotraconteurlite_message_header* header,
     uint8_t message_flags_mask, struct robotraconteurlite_message_buffer_info* buffer_info)
 {
-    size_t header_size = 10U;
+    size_t header_size = 11U;
     uint8_t flags = 0;
     robotraconteurlite_status rv = -1;
 
@@ -2399,6 +2399,7 @@ robotraconteurlite_status robotraconteurlite_message_writer_write_header4_ex(
                 return rv;
             }
             header_size += s;
+            header_size += 4U;
             FLAGS_SET(flags, ROBOTRACONTEURLITE_MESSAGE_FLAGS_META_INFO);
         }
     }
@@ -2458,6 +2459,12 @@ robotraconteurlite_status robotraconteurlite_message_writer_write_header4_ex(
     }
 
     rv = robotraconteurlite_message_write_uint_x(writer->buffer, offset, (uint32_t)header_size);
+    if (rv < 0)
+    {
+        return rv;
+    }
+
+    rv = robotraconteurlite_message_write_uint8(writer->buffer, offset, flags);
     if (rv < 0)
     {
         return rv;
@@ -2560,7 +2567,7 @@ robotraconteurlite_status robotraconteurlite_message_writer_write_header4_ex(
         buffer_info->entry_count_offset = SIZE_MAX;
     }
 
-    if (*offset != (buffer_info->start_buffer_offset + header_size))
+    if ((*offset - buffer_info->start_buffer_offset) != header_size)
     {
         return ROBOTRACONTEURLITE_ERROR_INTERNAL_ERROR;
     }
@@ -3386,6 +3393,16 @@ robotraconteurlite_status robotraconteurlite_messageelement_writer_write_data_he
         size_t s = 0;
         FLAGS_SET(flags, ROBOTRACONTEURLITE_MESSAGEELEMENT_FLAGS_ELEMENT_NAME_STR);
         rv = robotraconteurlite_message_header_string_with_len_prefix_size4(element_name, &s);
+        if (rv < 0)
+        {
+            return rv;
+        }
+        elem_size += s;
+    }
+
+    {
+        size_t s = 0;
+        rv = robotraconteurlite_message_uint_x_size(data_len, &s);
         if (rv < 0)
         {
             return rv;

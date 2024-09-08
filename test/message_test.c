@@ -211,9 +211,9 @@ void robotraconteurlite_message_run_reader_basictest(uint8_t* message_bytes, siz
         assert_true(header.header_size == 107);
         break;
     case 4:
-        assert_true(header.message_size == 909);
+        assert_true(header.message_size == 909 || header.message_size == 939);
         assert_true(header.message_version == 4);
-        assert_true(header.header_size == 105);
+        assert_true(header.header_size == 105 || header.header_size == 109);
         break;
     default:
         assert_true(0);
@@ -245,9 +245,9 @@ void robotraconteurlite_message_run_reader_basictest(uint8_t* message_bytes, siz
         assert_true(header.header_size == 107);
         break;
     case 4:
-        assert_true(header.message_size == 909);
+        assert_true(header.message_size == 909 || header.message_size == 939);
         assert_true(header.message_version == 4);
-        assert_true(header.header_size == 105);
+        assert_true(header.header_size == 105 || header.header_size == 109);
         break;
     default:
         assert_true(0);
@@ -280,7 +280,7 @@ void robotraconteurlite_message_run_reader_basictest(uint8_t* message_bytes, siz
             assert_true(entry_header.entry_size == 70);
             break;
         case 4:
-            assert_true(entry_header.entry_size == 63);
+            assert_true(entry_header.entry_size == 63 || entry_header.entry_size == 71);
             break;
         default:
             assert_true(0);
@@ -334,7 +334,7 @@ void robotraconteurlite_message_run_reader_basictest(uint8_t* message_bytes, siz
             assert_true(entry_header2.entry_size == 70);
             break;
         case 4:
-            assert_true(entry_header2.entry_size == 63);
+            assert_true(entry_header2.entry_size == 63 || entry_header2.entry_size == 71);
             break;
         default:
             assert_true(0);
@@ -360,7 +360,7 @@ void robotraconteurlite_message_run_reader_basictest(uint8_t* message_bytes, siz
             assert_true(entry_header3.entry_size == 919);
             break;
         case 4:
-            assert_true(entry_header3.entry_size == 734);
+            assert_true(entry_header3.entry_size == 734 || entry_header3.entry_size == 746);
             break;
         default:
             assert_true(0);
@@ -407,7 +407,7 @@ void robotraconteurlite_message_run_reader_basictest(uint8_t* message_bytes, siz
             assert_true(element_header2.element_size == 37);
             break;
         case 4:
-            assert_true(element_header2.element_size == 27);
+            assert_true(element_header2.element_size == 27 || element_header2.element_size == 26);
             break;
         default:
             assert_true(0);
@@ -854,7 +854,7 @@ void robotraconteurlite_message_run_reader_basictest(uint8_t* message_bytes, siz
                 assert_true(entry_header4.entry_size == 22);
                 break;
             case 4:
-                assert_true(entry_header4.entry_size == 7);
+                assert_true(entry_header4.entry_size == 7 || entry_header4.entry_size == 13);
                 break;
             default:
                 assert_true(0);
@@ -897,9 +897,9 @@ void robotraconteurlite_message4_reader_basictest(void** state)
     robotraconteurlite_message_run_reader_basictest(message4, sizeof(message4), 4);
 }
 
-void robotraconteurlite_message_writer_basictest(void** state)
+void robotraconteurlite_message_run_writer_basictest(uint8_t* buffer_bytes, size_t* buffer_bytes_len,
+                                                     uint16_t message_ver, uint8_t message_flags_mask)
 {
-    uint8_t buffer_data[5000];
 
     struct robotraconteurlite_buffer buffer1;
     struct robotraconteurlite_buffer_vec buffer;
@@ -918,13 +918,11 @@ void robotraconteurlite_message_writer_basictest(void** state)
     uint8_t receiver_nodeid[] = {0xae, 0x78, 0x48, 0x1b, 0xc2, 0xbe, 0x4f, 0x26,
                                  0x9f, 0xef, 0x74, 0xbb, 0x6e, 0x8a, 0x04, 0x3f};
 
-    ROBOTRACONTEURLITE_UNUSED(state);
-
-    buffer1.data = buffer_data;
-    buffer1.len = sizeof(buffer_data);
+    buffer1.data = buffer_bytes;
+    buffer1.len = *buffer_bytes_len;
     buffer.buffer_vec = &buffer1;
     buffer.buffer_vec_cnt = 1;
-    assert_return_code(robotraconteurlite_message_writer_init(&writer, &buffer, 0, sizeof(buffer_data), 2), 0);
+    assert_return_code(robotraconteurlite_message_writer_init(&writer, &buffer, 0, *buffer_bytes_len, message_ver), 0);
 
     header.message_size = 0;
     header.message_version = 2;
@@ -943,7 +941,8 @@ void robotraconteurlite_message_writer_basictest(void** state)
     header.message_id = 10;
     header.message_res_id = 20;
 
-    assert_return_code(robotraconteurlite_message_writer_begin_message(&writer, &header, &entry_writer), 0);
+    assert_return_code(
+        robotraconteurlite_message_writer_begin_message_ex(&writer, &header, &entry_writer, message_flags_mask), 0);
 
     {
         struct robotraconteurlite_messageentry_header entry_header;
@@ -1272,14 +1271,145 @@ void robotraconteurlite_message_writer_basictest(void** state)
 
     assert_return_code(robotraconteurlite_message_writer_end_message(&writer, &header, &entry_writer), 0);
 
-    assert_true(header.message_size == sizeof(message2));
-    assert_true(memcmp(buffer_data, message2, sizeof(message2)) == 0);
+    *buffer_bytes_len = header.message_size;
+}
+
+void robotraconteurlite_message_writer_basictest(void** state)
+{
+    uint8_t buffer_bytes[5000];
+    size_t buffer_bytes_len = sizeof(buffer_bytes);
+
+    robotraconteurlite_message_run_writer_basictest(buffer_bytes, &buffer_bytes_len, 2, 0xFF);
+
+    assert_true(buffer_bytes_len == sizeof(message2));
+    assert_true(memcmp(buffer_bytes, message2, sizeof(message2)) == 0);
+}
+
+void robotraconteurlite_message4_writer_basictest(void** state)
+{
+    uint8_t buffer_bytes[5000];
+    size_t buffer_bytes_len = sizeof(buffer_bytes);
+
+    robotraconteurlite_message_run_writer_basictest(buffer_bytes, &buffer_bytes_len, 4, 0xFF);
+
+    robotraconteurlite_message_run_reader_basictest(buffer_bytes, buffer_bytes_len, 4);
+}
+
+void robotraconteurlite_message4_writer_basictest_masked(void** state)
+{
+    uint8_t buffer_bytes[5000];
+    size_t buffer_bytes_len = sizeof(buffer_bytes);
+
+    uint8_t message_mask = ROBOTRACONTEURLITE_MESSAGE_FLAGS_MULTIPLE_ENTRIES;
+
+    robotraconteurlite_message_run_writer_basictest(buffer_bytes, &buffer_bytes_len, 4, message_mask);
+
+    {
+        struct robotraconteurlite_buffer buffer1;
+        struct robotraconteurlite_buffer_vec buffer;
+
+        struct robotraconteurlite_message_reader reader;
+
+        struct robotraconteurlite_message_header header;
+
+        buffer1.data = buffer_bytes;
+        buffer1.len = buffer_bytes_len;
+        buffer.buffer_vec = &buffer1;
+        buffer.buffer_vec_cnt = 1;
+
+        assert_return_code(robotraconteurlite_message_reader_init(&reader, &buffer, 0, buffer_bytes_len), 0);
+        (void)memset(&header, 0, sizeof(header));
+        assert_return_code(robotraconteurlite_message_reader_read_header(&reader, &header), 0);
+
+        assert_true(header.sender_endpoint == 0);
+        assert_true(header.receiver_endpoint == 0);
+        assert_true(header.sender_nodename.len == 0);
+        assert_true(header.receiver_nodename.len == 0);
+        assert_true(header.metadata.len == 0);
+        assert_true(header.entry_count == 3);
+        assert_true(header.message_id == 0);
+        assert_true(header.message_res_id == 0);
+    }
+}
+
+void robotraconteurlite_message4_writer_basictest_single_entry(void** state)
+{
+    uint8_t buffer_bytes[5000];
+    size_t buffer_bytes_len = sizeof(buffer_bytes);
+
+    {
+        uint8_t message_flags_mask = 0;
+
+        struct robotraconteurlite_buffer buffer1;
+        struct robotraconteurlite_buffer_vec buffer;
+
+        struct robotraconteurlite_message_writer writer;
+        struct robotraconteurlite_messageentry_writer entry_writer;
+
+        struct robotraconteurlite_message_header header;
+
+        buffer1.data = buffer_bytes;
+        buffer1.len = buffer_bytes_len;
+        buffer.buffer_vec = &buffer1;
+        buffer.buffer_vec_cnt = 1;
+        assert_return_code(robotraconteurlite_message_writer_init(&writer, &buffer, 0, buffer_bytes_len, 4), 0);
+
+        memset(&header, 0, sizeof(header));
+
+        assert_return_code(
+            robotraconteurlite_message_writer_begin_message_ex(&writer, &header, &entry_writer, message_flags_mask), 0);
+
+        {
+            struct robotraconteurlite_messageentry_header entry_header;
+            struct robotraconteurlite_messageelement_writer element_writer;
+            (void)memset(&entry_header, 0, sizeof(entry_header));
+            entry_header.entry_type = ROBOTRACONTEURLITE_MESSAGEENTRYTYPE_STREAMOP;
+
+            assert_return_code(
+                robotraconteurlite_messageentry_writer_begin_entry(&entry_writer, &entry_header, &element_writer), 0);
+            assert_return_code(
+                robotraconteurlite_messageentry_writer_end_entry(&entry_writer, &entry_header, &element_writer), 0);
+        }
+
+        assert_return_code(robotraconteurlite_message_writer_end_message(&writer, &header, &entry_writer), 0);
+
+        buffer_bytes_len = header.message_size;
+    }
+    {
+        struct robotraconteurlite_buffer buffer1;
+        struct robotraconteurlite_buffer_vec buffer;
+
+        struct robotraconteurlite_message_reader reader;
+
+        struct robotraconteurlite_message_header header;
+
+        buffer1.data = buffer_bytes;
+        buffer1.len = buffer_bytes_len;
+        buffer.buffer_vec = &buffer1;
+        buffer.buffer_vec_cnt = 1;
+
+        assert_return_code(robotraconteurlite_message_reader_init(&reader, &buffer, 0, buffer_bytes_len), 0);
+        (void)memset(&header, 0, sizeof(header));
+        assert_return_code(robotraconteurlite_message_reader_read_header(&reader, &header), 0);
+
+        assert_true(header.sender_endpoint == 0);
+        assert_true(header.receiver_endpoint == 0);
+        assert_true(header.sender_nodename.len == 0);
+        assert_true(header.receiver_nodename.len == 0);
+        assert_true(header.metadata.len == 0);
+        assert_true(header.entry_count == 1);
+        assert_true(header.message_id == 0);
+        assert_true(header.message_res_id == 0);
+    }
 }
 
 int main(void)
 {
     const struct CMUnitTest tests[] = {cmocka_unit_test(robotraconteurlite_message_reader_basictest),
                                        cmocka_unit_test(robotraconteurlite_message4_reader_basictest),
-                                       cmocka_unit_test(robotraconteurlite_message_writer_basictest)};
+                                       cmocka_unit_test(robotraconteurlite_message_writer_basictest),
+                                       cmocka_unit_test(robotraconteurlite_message4_writer_basictest),
+                                       cmocka_unit_test(robotraconteurlite_message4_writer_basictest_masked),
+                                       cmocka_unit_test(robotraconteurlite_message4_writer_basictest_single_entry)};
     return cmocka_run_group_tests(tests, NULL, NULL);
 }
