@@ -2896,17 +2896,71 @@ robotraconteurlite_status robotraconteurlite_messageentry_writer_end_entry(
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
 
+robotraconteurlite_status robotraconteurlite_messageelement_writer_write_header2_ex(
+    struct robotraconteurlite_messageelement_writer* element_writer, size_t* offset,
+    struct robotraconteurlite_messageelement_header* header,
+    struct robotraconteurlite_messageelement_buffer_info* buffer_info)
+{
+    robotraconteurlite_status rv = -1;
+    buffer_info->start_buffer_offset = *offset;
+    buffer_info->element_size_offset = *offset;
+    rv = robotraconteurlite_message_write_uint32(element_writer->buffer, offset, 0);
+    if (rv < 0)
+    {
+        return rv;
+    }
+
+    buffer_info->element_name_str_offset = *offset;
+    rv = robotraconteurlite_message_write_header_string_with_len_prefix2(element_writer->buffer, offset,
+                                                                         &header->element_name);
+    if (rv < 0)
+    {
+        return rv;
+    }
+
+    rv = robotraconteurlite_message_write_uint16(element_writer->buffer, offset, header->element_type);
+    if (rv < 0)
+    {
+        return rv;
+    }
+
+    rv = robotraconteurlite_message_write_header_string_with_len_prefix2(element_writer->buffer, offset,
+                                                                         &header->element_type_name);
+    if (rv < 0)
+    {
+        return rv;
+    }
+
+    rv = robotraconteurlite_message_write_header_string_with_len_prefix2(element_writer->buffer, offset,
+                                                                         &header->metadata);
+
+    if (rv < 0)
+    {
+        return rv;
+    }
+
+    buffer_info->element_count_offset = *offset;
+    rv = robotraconteurlite_message_write_uint32(element_writer->buffer, offset, 0);
+    if (rv < 0)
+    {
+        return rv;
+    }
+
+    buffer_info->header_size = *offset - element_writer->buffer_offset;
+    buffer_info->data_start_offset = *offset;
+
+    return ROBOTRACONTEURLITE_ERROR_SUCCESS;
+}
+
 robotraconteurlite_status robotraconteurlite_messageelement_writer_begin_nested_element(
     struct robotraconteurlite_messageelement_writer* element_writer,
     struct robotraconteurlite_messageelement_header* header,
     struct robotraconteurlite_messageelement_writer* nested_element_writer)
 {
 
-    size_t header_size = 0;
     robotraconteurlite_status rv = -1;
     size_t o = element_writer->buffer_offset;
-    size_t element_size_offset = 0;
-    size_t data_count_offset = 0;
+    struct robotraconteurlite_messageelement_buffer_info buffer_info;
 
     assert(element_writer != NULL);
     assert(header != NULL);
@@ -2917,58 +2971,32 @@ robotraconteurlite_status robotraconteurlite_messageelement_writer_begin_nested_
         return ROBOTRACONTEURLITE_ERROR_PROTOCOL;
     }
 
-    element_size_offset = o;
-    rv = robotraconteurlite_message_write_uint32(element_writer->buffer, &o, 0);
-    if (rv < 0)
+    switch (element_writer->message_version)
     {
-        return rv;
+    case 2:
+        rv = robotraconteurlite_messageelement_writer_write_header2_ex(element_writer, &o, header, &buffer_info);
+        break;
+    /*case 4:
+        rv = robotraconteurlite_messageelement_writer_write_header4_ex(element_writer, &o, header, &buffer_info);
+        break;*/
+    default:
+        return ROBOTRACONTEURLITE_ERROR_PROTOCOL;
     }
-
-    rv = robotraconteurlite_message_write_header_string_with_len_prefix2(element_writer->buffer, &o,
-                                                                         &header->element_name);
-    if (rv < 0)
-    {
-        return rv;
-    }
-
-    rv = robotraconteurlite_message_write_uint16(element_writer->buffer, &o, header->element_type);
-    if (rv < 0)
-    {
-        return rv;
-    }
-
-    rv = robotraconteurlite_message_write_header_string_with_len_prefix2(element_writer->buffer, &o,
-                                                                         &header->element_type_name);
-    if (rv < 0)
-    {
-        return rv;
-    }
-
-    rv = robotraconteurlite_message_write_header_string_with_len_prefix2(element_writer->buffer, &o, &header->metadata);
 
     if (rv < 0)
     {
         return rv;
     }
-
-    data_count_offset = o;
-    rv = robotraconteurlite_message_write_uint32(element_writer->buffer, &o, 0);
-    if (rv < 0)
-    {
-        return rv;
-    }
-
-    header_size = o - element_writer->buffer_offset;
 
     nested_element_writer->buffer = element_writer->buffer;
-    nested_element_writer->buffer_offset = element_writer->buffer_offset + header_size;
-    nested_element_writer->buffer_count = element_writer->buffer_count - header_size;
+    nested_element_writer->buffer_offset = buffer_info.data_start_offset;
+    nested_element_writer->buffer_count = element_writer->buffer_count - buffer_info.header_size;
     nested_element_writer->elements_written_count = 0;
     nested_element_writer->elements_written_size = 0;
     nested_element_writer->message_version = element_writer->message_version;
-    element_writer->element_size_offset = element_size_offset;
-    element_writer->data_count_offset = data_count_offset;
-    element_writer->element_header_size = header_size;
+    element_writer->element_size_offset = buffer_info.element_size_offset;
+    element_writer->data_count_offset = buffer_info.element_count_offset;
+    element_writer->element_header_size = buffer_info.header_size;
 
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }

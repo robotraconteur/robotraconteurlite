@@ -322,6 +322,7 @@ struct robotraconteurlite_messageelement_buffer_info
     size_t data_start_offset;
     size_t element_name_str_offset;
     size_t element_count_offset;
+    size_t element_size_offset;
 };
 
 struct robotraconteurlite_message_writer
