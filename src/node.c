@@ -332,15 +332,16 @@ robotraconteurlite_status robotraconteurlite_node_event_special_request(struct r
                                                                                            &capabilities_array);
                     for (i = 0; i < capabilities_array.len; i++)
                     {
-                        if (FLAGS_CHECK_ALL(capabilities_array.data[i],
-                                            (ROBOTRACONTEURLITE_TRANSPORT_CAPABILITY_CODE_MESSAGE2_BASIC_PAGE |
-                                             ROBOTRACONTEURLITE_TRANSPORT_CAPABILITY_CODE_MESSAGE2_BASIC_ENABLE)))
+                        uint32_t c = capabilities_array.data[i];
+                        if (((c & ROBOTRACONTEURLITE_TRANSPORT_CAPABILITY_CODE_PAGE_MASK) ==
+                             ROBOTRACONTEURLITE_TRANSPORT_CAPABILITY_CODE_MESSAGE2_BASIC_PAGE) &&
+                            (FLAGS_CHECK(c, ROBOTRACONTEURLITE_TRANSPORT_CAPABILITY_CODE_MESSAGE2_BASIC_ENABLE)))
                         {
                             send_message2_reply = 1;
                         }
-                        if (FLAGS_CHECK_ALL(capabilities_array.data[i],
-                                            (ROBOTRACONTEURLITE_TRANSPORT_CAPABILITY_CODE_MESSAGE4_BASIC_PAGE |
-                                             ROBOTRACONTEURLITE_TRANSPORT_CAPABILITY_CODE_MESSAGE4_BASIC_ENABLE)))
+                        if (((c & ROBOTRACONTEURLITE_TRANSPORT_CAPABILITY_CODE_PAGE_MASK) ==
+                             ROBOTRACONTEURLITE_TRANSPORT_CAPABILITY_CODE_MESSAGE4_BASIC_PAGE) &&
+                            (FLAGS_CHECK(c, ROBOTRACONTEURLITE_TRANSPORT_CAPABILITY_CODE_MESSAGE4_BASIC_ENABLE)))
                         {
                             /* We have message 4 capability! */
                             FLAGS_SET(event->connection->connection_state,
