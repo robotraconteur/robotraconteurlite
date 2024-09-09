@@ -30,6 +30,7 @@
 #define FLAGS_CLEAR ROBOTRACONTEURLITE_FLAGS_CLEAR
 
 #define FAILED ROBOTRACONTEURLITE_FAILED
+#define RETRY ROBOTRACONTEURLITE_RETRY
 
 robotraconteurlite_status robotraconteurlite_tcp_acceptor_listen(
     struct robotraconteurlite_connection_acceptor* acceptor, const struct sockaddr_storage* serv_addr, int backlog)
@@ -84,7 +85,7 @@ robotraconteurlite_status robotraconteurlite_tcp_acceptor_communicate(
     rv = robotraconteurlite_tcp_socket_accept(acceptor->sock, &c->sock, &errno_out);
     if (FAILED(rv))
     {
-        if (rv == ROBOTRACONTEURLITE_ERROR_RETRY)
+        if (RETRY(rv))
         {
             return ROBOTRACONTEURLITE_ERROR_SUCCESS;
         }
@@ -798,7 +799,7 @@ static robotraconteurlite_status robotraconteurlite_tcp_connection_handshake_ser
             &last_errno);
         if (FAILED(rv))
         {
-            if (rv == ROBOTRACONTEURLITE_ERROR_RETRY)
+            if (RETRY(rv))
             {
                 return ROBOTRACONTEURLITE_ERROR_RETRY;
             }
@@ -864,7 +865,7 @@ static robotraconteurlite_status robotraconteurlite_tcp_connection_handshake_ser
     rv = robotraconteurlite_tcp_connection_handshake_http_recv_header(connection);
     if (FAILED(rv))
     {
-        if (rv == ROBOTRACONTEURLITE_ERROR_RETRY)
+        if (RETRY(rv))
         {
             return ROBOTRACONTEURLITE_ERROR_RETRY;
         }
@@ -935,7 +936,7 @@ static robotraconteurlite_status robotraconteurlite_tcp_connection_handshake_cli
     rv = robotraconteurlite_tcp_connection_handshake_http_recv_header(connection);
     if (FAILED(rv))
     {
-        if ((rv == ROBOTRACONTEURLITE_ERROR_RETRY) || (rv == ROBOTRACONTEURLITE_ERROR_CONSUMED))
+        if ((RETRY(rv)) || (rv == ROBOTRACONTEURLITE_ERROR_CONSUMED))
         {
             return rv;
         }

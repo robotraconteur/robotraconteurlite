@@ -32,6 +32,7 @@
 
 #define FAILED ROBOTRACONTEURLITE_FAILED
 #define SUCCEEDED ROBOTRACONTEURLITE_SUCCEEDED
+#define RETRY ROBOTRACONTEURLITE_RETRY
 
 /* #define TINY_CLIENT_WEBSOCKET 1 */
 
@@ -160,7 +161,7 @@ int main(int argc, char* argv[])
             {
                 break;
             }
-            if (rv == ROBOTRACONTEURLITE_ERROR_RETRY)
+            if (RETRY(rv))
             {
                 usleep(1000);
                 continue;
@@ -189,7 +190,7 @@ int main(int argc, char* argv[])
                 &request_data, ROBOTRACONTEURLITE_MESSAGEENTRYTYPE_PROPERTYGETREQ, "d1", NULL);
             if (FAILED(rv))
             {
-                if (rv == ROBOTRACONTEURLITE_ERROR_RETRY)
+                if (RETRY(rv))
                 {
                     printf("Could not send get_d1, retrying\n");
                     continue;
@@ -211,7 +212,7 @@ int main(int argc, char* argv[])
 
             if (FAILED(rv))
             {
-                if (rv == ROBOTRACONTEURLITE_ERROR_RETRY)
+                if (RETRY(rv))
                 {
                     printf("Could not send set_d1, retrying\n");
                     continue;
@@ -231,7 +232,7 @@ int main(int argc, char* argv[])
             rv = robotraconteurlite_client_send_request(&request_data);
             if (FAILED(rv))
             {
-                if (rv == ROBOTRACONTEURLITE_ERROR_RETRY)
+                if (RETRY(rv))
                 {
                     printf("Could not send set_d1, retrying\n");
                     continue;

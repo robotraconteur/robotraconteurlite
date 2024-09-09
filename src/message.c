@@ -25,6 +25,7 @@
 #define FLAGS_CLEAR ROBOTRACONTEURLITE_FLAGS_CLEAR
 
 #define FAILED ROBOTRACONTEURLITE_FAILED
+#define NO_MORE ROBOTRACONTEURLITE_NO_MORE
 
 static const char rrac_magic[4] = {'R', 'R', 'A', 'C'};
 
@@ -882,7 +883,7 @@ robotraconteurlite_status robotraconteurlite_messageentry_reader_find_element(
     rv = robotraconteurlite_messageentry_reader_begin_read_elements(entry_reader, element_reader);
     if (FAILED(rv))
     {
-        if (rv == ROBOTRACONTEURLITE_ERROR_NO_MORE)
+        if (NO_MORE(rv))
         {
             return ROBOTRACONTEURLITE_ERROR_MESSAGEELEMENT_NOT_FOUND;
         }
@@ -941,7 +942,7 @@ robotraconteurlite_status robotraconteurlite_messageentry_reader_find_element(
         rv = robotraconteurlite_messageelement_reader_move_next(element_reader);
         if (FAILED(rv))
         {
-            if (rv == ROBOTRACONTEURLITE_ERROR_NO_MORE)
+            if (NO_MORE(rv))
             {
                 return ROBOTRACONTEURLITE_ERROR_MESSAGEELEMENT_NOT_FOUND;
             }
@@ -1937,7 +1938,7 @@ robotraconteurlite_status robotraconteurlite_messageelement_reader_find_nested_e
     rv = robotraconteurlite_messageelement_reader_begin_read_nested_elements(element_reader, nested_element_reader);
     if (FAILED(rv))
     {
-        if (rv == ROBOTRACONTEURLITE_ERROR_NO_MORE)
+        if (NO_MORE(rv))
         {
             return ROBOTRACONTEURLITE_ERROR_MESSAGEELEMENT_NOT_FOUND;
         }
@@ -1996,7 +1997,7 @@ robotraconteurlite_status robotraconteurlite_messageelement_reader_find_nested_e
         rv = robotraconteurlite_messageelement_reader_move_next(nested_element_reader);
         if (FAILED(rv))
         {
-            if (rv == ROBOTRACONTEURLITE_ERROR_NO_MORE)
+            if (NO_MORE(rv))
             {
                 return ROBOTRACONTEURLITE_ERROR_MESSAGEELEMENT_NOT_FOUND;
             }

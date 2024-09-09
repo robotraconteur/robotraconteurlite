@@ -26,6 +26,7 @@
 #define FLAGS_CLEAR ROBOTRACONTEURLITE_FLAGS_CLEAR
 
 #define FAILED ROBOTRACONTEURLITE_FAILED
+#define RETRY ROBOTRACONTEURLITE_RETRY
 
 robotraconteurlite_status robotraconteurlite_node_init(struct robotraconteurlite_node* node,
                                                        struct robotraconteurlite_nodeid* nodeid,
@@ -499,7 +500,7 @@ robotraconteurlite_status robotraconteurlite_node_event_special_request(struct r
         robotraconteurlite_status rv = robotraconteurlite_connection_send_messageentry_error_response(
             node, event->connection, &event->received_message.received_message_entry_header,
             ROBOTRACONTEURLITE_ERROR_INVALID_OPERATION, "RobotRaconteur.InvalidOperation", "Invalid operation");
-        if (rv == ROBOTRACONTEURLITE_ERROR_RETRY)
+        if (RETRY(rv))
         {
             return ROBOTRACONTEURLITE_ERROR_RETRY;
         }
@@ -968,7 +969,7 @@ static robotraconteurlite_status robotraconteurlite_client_handshake_error(
 static robotraconteurlite_status robotraconteurlite_client_handshake_handle_error(
     struct robotraconteurlite_client_handshake_data* handshake_data, robotraconteurlite_status rv)
 {
-    if (rv == ROBOTRACONTEURLITE_ERROR_RETRY)
+    if (RETRY(rv))
     {
         return ROBOTRACONTEURLITE_ERROR_RETRY;
     }

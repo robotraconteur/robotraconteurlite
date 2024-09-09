@@ -30,6 +30,7 @@
 #define CONNECTION_BUFFER_SIZE 8096
 
 #define FAILED ROBOTRACONTEURLITE_FAILED
+#define RETRY ROBOTRACONTEURLITE_RETRY
 
 const char* node_name_str = "example.tiny_service";
 const uint16_t node_port = 22228;
@@ -79,7 +80,7 @@ int handle_message(struct robotraconteurlite_node* node, struct robotraconteurli
     case ROBOTRACONTEURLITE_MESSAGEENTRYTYPE_CLIENTKEEPALIVEREQ: {
         robotraconteurlite_status rv = robotraconteurlite_node_send_messageentry_empty_response(
             node, event->connection, &event->received_message.received_message_entry_header);
-        if (rv == ROBOTRACONTEURLITE_ERROR_RETRY)
+        if (RETRY(rv))
         {
             return ROBOTRACONTEURLITE_ERROR_RETRY;
         }
@@ -101,7 +102,7 @@ int handle_message(struct robotraconteurlite_node* node, struct robotraconteurli
             send_data.connection = event->connection;
             rv = robotraconteurlite_node_begin_send_messageentry_response(
                 &send_data, &event->received_message.received_message_entry_header);
-            if (rv == ROBOTRACONTEURLITE_ERROR_RETRY)
+            if (RETRY(rv))
             {
                 return ROBOTRACONTEURLITE_ERROR_RETRY;
             }
@@ -118,7 +119,7 @@ int handle_message(struct robotraconteurlite_node* node, struct robotraconteurli
                 return -1;
             }
             rv = robotraconteurlite_node_end_send_messageentry(&send_data);
-            if (rv == ROBOTRACONTEURLITE_ERROR_RETRY)
+            if (RETRY(rv))
             {
                 return ROBOTRACONTEURLITE_ERROR_RETRY;
             }
@@ -185,7 +186,7 @@ int handle_message(struct robotraconteurlite_node* node, struct robotraconteurli
             /* Send empty response */
             rv = robotraconteurlite_node_send_messageentry_empty_response(
                 node, event->connection, &event->received_message.received_message_entry_header);
-            if (rv == ROBOTRACONTEURLITE_ERROR_RETRY)
+            if (RETRY(rv))
             {
                 return ROBOTRACONTEURLITE_ERROR_RETRY;
             }
@@ -243,7 +244,7 @@ int handle_event(struct robotraconteurlite_node* node, struct robotraconteurlite
         printf("Message received\n");
         /* Handle the message */
         rv = handle_message(node, event);
-        if (rv == ROBOTRACONTEURLITE_ERROR_RETRY)
+        if (RETRY(rv))
         {
             return 0;
         }
