@@ -30,7 +30,7 @@ robotraconteurlite_status robotraconteurlite_wait_next_wake(struct robotraconteu
     int64_t timeout_i64 = 0;
 
     rv = robotraconteurlite_clock_gettime(clock, &now);
-    if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+    if (FAILED(rv))
     {
         return rv;
     }

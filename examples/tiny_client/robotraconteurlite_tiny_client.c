@@ -30,6 +30,8 @@
 #define NUM_CONNECTIONS 1
 #define CONNECTION_BUFFER_SIZE 8096
 
+#define FAILED ROBOTRACONTEURLITE_FAILED
+
 /* #define TINY_CLIENT_WEBSOCKET 1 */
 
 const uint16_t service_port = 22229;
@@ -147,7 +149,7 @@ int main(int argc, char* argv[])
             robotraconteurlite_clock_gettime(&rr_clock, &now);
             robotraconteurlite_tcp_connection_communicate(connection, now);
             rv = robotraconteurlite_node_next_event(&node, &event, now);
-            if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+            if (FAILED(rv))
             {
                 printf("Could not get next event\n");
                 return -1;
@@ -184,7 +186,7 @@ int main(int argc, char* argv[])
             request_data.connection = connection;
             rv = robotraconteurlite_client_send_empty_request(
                 &request_data, ROBOTRACONTEURLITE_MESSAGEENTRYTYPE_PROPERTYGETREQ, "d1", NULL);
-            if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+            if (FAILED(rv))
             {
                 if (rv == ROBOTRACONTEURLITE_ERROR_RETRY)
                 {
@@ -206,7 +208,7 @@ int main(int argc, char* argv[])
             rv = robotraconteurlite_client_begin_request(
                 &request_data, ROBOTRACONTEURLITE_MESSAGEENTRYTYPE_PROPERTYSETREQ, "d1", NULL);
 
-            if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+            if (FAILED(rv))
             {
                 if (rv == ROBOTRACONTEURLITE_ERROR_RETRY)
                 {
@@ -226,7 +228,7 @@ int main(int argc, char* argv[])
             }
 
             rv = robotraconteurlite_client_send_request(&request_data);
-            if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+            if (FAILED(rv))
             {
                 if (rv == ROBOTRACONTEURLITE_ERROR_RETRY)
                 {
@@ -254,7 +256,7 @@ int main(int argc, char* argv[])
         {
             robotraconteurlite_clock_gettime(&rr_clock, &now);
             rv = robotraconteurlite_tcp_connections_communicate(connections_head, now);
-            if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+            if (FAILED(rv))
             {
                 printf("Could not communicate with connections\n");
                 return -1;
@@ -268,7 +270,7 @@ int main(int argc, char* argv[])
                 size_t num_pollfds = 0;
                 robotraconteurlite_timespec next_wake = 0;
                 rv = robotraconteurlite_node_next_wake(&node, now, &next_wake);
-                if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+                if (FAILED(rv))
                 {
                     printf("Could not get next wake\n");
                     return -1;
@@ -278,27 +280,27 @@ int main(int argc, char* argv[])
                 {
                     rv = robotraconteurlite_tcp_connections_poll_add_fds(connections_head, pollfds, &num_pollfds,
                                                                          NUM_CONNECTIONS + 1);
-                    if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+                    if (FAILED(rv))
                     {
                         printf("Could not add connections to poll\n");
                         return -1;
                     }
                     rv = robotraconteurlite_node_poll_add_fd(&node, pollfds, &num_pollfds, NUM_CONNECTIONS + 1);
-                    if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+                    if (FAILED(rv))
                     {
                         printf("Could not add node to poll\n");
                         return -1;
                     }
 
                     rv = robotraconteurlite_wait_next_wake(&rr_clock, pollfds, num_pollfds, next_wake);
-                    if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+                    if (FAILED(rv))
                     {
                         printf("Could not wait for next wake\n");
                         return -1;
                     }
                     robotraconteurlite_clock_gettime(&rr_clock, &now);
                     rv = robotraconteurlite_tcp_connections_communicate(connections_head, now);
-                    if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+                    if (FAILED(rv))
                     {
                         printf("Could not communicate with connections\n");
                         return -1;
@@ -308,7 +310,7 @@ int main(int argc, char* argv[])
             /* get next event */
 
             rv = robotraconteurlite_node_next_event(&node, &event, now);
-            if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+            if (FAILED(rv))
             {
                 printf("Could not get next event\n");
                 return -1;
@@ -320,7 +322,7 @@ int main(int argc, char* argv[])
                 continue;
             }
 
-            if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+            if (FAILED(rv))
             {
                 printf("Could not handle special request\n");
                 return -1;

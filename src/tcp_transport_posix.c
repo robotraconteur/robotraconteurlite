@@ -295,7 +295,7 @@ robotraconteurlite_status robotraconteurlite_tcp_socket_connect(struct robotraco
     int sock = socket(AF_INET, SOCK_STREAM, 0);
     int errno_out = -1;
     robotraconteurlite_status rv = robotraconteurlite_tcp_configure_socket(sock, &errno_out);
-    if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+    if (FAILED(rv))
     {
         return -1;
     }
@@ -388,7 +388,7 @@ robotraconteurlite_status robotraconteurlite_tcp_connections_poll_add_fds(
     {
         robotraconteurlite_status rv =
             robotraconteurlite_tcp_connection_poll_add_fd(c, pollfds, pollfd_count, max_pollfds);
-        if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+        if (FAILED(rv))
         {
             return rv;
         }
