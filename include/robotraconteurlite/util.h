@@ -44,8 +44,16 @@ static uint16_t robotraconteurlite_util_read_uint16(const void* p)
 #define ROBOTRACONTEURLITE_FLAGS_SET(flags, mask) ((flags) |= (mask))
 #define ROBOTRACONTEURLITE_FLAGS_CLEAR(flags, mask) ((flags) &= ~(mask))
 
-#define ROBOTRACONTEURLITE_FAILED(rc) ((rc) < 0)
-#define ROBOTRACONTEURLITE_SUCCEEDED(rc) ((rc) >= 0)
+#if defined(__GNUC__) && !defined(ROBOTRACONTEURLITE_CODE_QUALITY_CHECK)
+#define ROBOTRACONTEURLITE_LIKELY(x) __builtin_expect(!!(x), 1)
+#define ROBOTRACONTEURLITE_UNLIKELY(x) __builtin_expect(!!(x), 0)
+#else
+#define ROBOTRACONTEURLITE_LIKELY(x) (x)
+#define ROBOTRACONTEURLITE_UNLIKELY(x) (x)
+#endif
+
+#define ROBOTRACONTEURLITE_FAILED(rc) (ROBOTRACONTEURLITE_UNLIKELY((rc) < 0))
+#define ROBOTRACONTEURLITE_SUCCEEDED(rc) (ROBOTRACONTEURLITE_LIKELY((rc) >= 0))
 #define ROBOTRACONTEURLITE_RETRY(rc) ((rc) == ROBOTRACONTEURLITE_ERROR_RETRY)
 #define ROBOTRACONTEURLITE_NO_MORE(rc) ((rc) == ROBOTRACONTEURLITE_ERROR_NO_MORE)
 
