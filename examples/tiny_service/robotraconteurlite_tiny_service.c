@@ -29,6 +29,8 @@
 #define NUM_CONNECTIONS 4
 #define CONNECTION_BUFFER_SIZE 8096
 
+#define FAILED ROBOTRACONTEURLITE_FAILED
+
 const char* node_name_str = "example.tiny_service";
 const uint16_t node_port = 22228;
 
@@ -514,7 +516,7 @@ int main(int argc, char* argv[])
             {
                 break;
             }
-            else if (rv < 0)
+            else if (FAILED(rv))
             {
                 if (rv != ROBOTRACONTEURLITE_ERROR_RETRY)
                 {

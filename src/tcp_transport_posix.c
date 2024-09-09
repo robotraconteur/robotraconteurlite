@@ -42,6 +42,8 @@
 #define FLAGS_SET ROBOTRACONTEURLITE_FLAGS_SET
 #define FLAGS_CLEAR ROBOTRACONTEURLITE_FLAGS_CLEAR
 
+#define FAILED ROBOTRACONTEURLITE_FAILED
+
 robotraconteurlite_status robotraconteurlite_tcp_sha1(const uint8_t* data, size_t len,
                                                       struct robotraconteurlite_tcp_sha1_storage* storage)
 {
@@ -300,7 +302,7 @@ robotraconteurlite_status robotraconteurlite_tcp_socket_connect(struct robotraco
 
     /* cppcheck-suppress misra-c2012-11.3 */
     rv = connect(sock, (struct sockaddr*)addr, sizeof(struct sockaddr_storage));
-    if (rv < 0)
+    if (FAILED(rv))
     {
         /* False positive cppcheck warning for errno not set */
         /* cppcheck-suppress misra-c2012-22.10 */

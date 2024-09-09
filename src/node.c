@@ -14,6 +14,7 @@
  */
 
 #include "robotraconteurlite/node.h"
+#include "robotraconteurlite/util.h"
 #include <stdlib.h>
 #include <assert.h>
 #include <string.h>
@@ -23,6 +24,8 @@
 #define FLAGS_CHECK ROBOTRACONTEURLITE_FLAGS_CHECK
 #define FLAGS_SET ROBOTRACONTEURLITE_FLAGS_SET
 #define FLAGS_CLEAR ROBOTRACONTEURLITE_FLAGS_CLEAR
+
+#define FAILED ROBOTRACONTEURLITE_FAILED
 
 robotraconteurlite_status robotraconteurlite_node_init(struct robotraconteurlite_node* node,
                                                        struct robotraconteurlite_nodeid* nodeid,
@@ -1396,7 +1399,7 @@ robotraconteurlite_status robotraconteurlite_node_transport_parse_capabilities(
                 rv = robotraconteurlite_buffer_vec_copy_to_uint32(
                     capabilities_element_reader.buffer,
                     capabilities_element_buffer_info.data_start_offset + (i * sizeof(uint32_t)), &c);
-                if (rv < 0)
+                if (FAILED(rv))
                 {
                     return ROBOTRACONTEURLITE_ERROR_INTERNAL_ERROR;
                 }
