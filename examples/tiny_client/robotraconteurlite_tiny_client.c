@@ -31,6 +31,7 @@
 #define CONNECTION_BUFFER_SIZE 8096
 
 #define FAILED ROBOTRACONTEURLITE_FAILED
+#define SUCCEEDED ROBOTRACONTEURLITE_SUCCEEDED
 
 /* #define TINY_CLIENT_WEBSOCKET 1 */
 
@@ -131,7 +132,7 @@ int main(int argc, char* argv[])
     robotraconteurlite_clock_gettime(&rr_clock, &now);
     rv = robotraconteurlite_tcp_connect_service(&connect_data, now);
 
-    if (rv)
+    if (FAILED(rv))
     {
         printf("Could not connect to service\n");
         return -1;
@@ -155,7 +156,7 @@ int main(int argc, char* argv[])
                 return -1;
             }
             rv = robotraconteurlite_client_handshake(&handshake_data, &event, now);
-            if (rv == ROBOTRACONTEURLITE_ERROR_SUCCESS)
+            if (SUCCEEDED(rv))
             {
                 break;
             }
