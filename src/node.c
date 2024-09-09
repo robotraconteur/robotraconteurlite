@@ -14,6 +14,7 @@
  */
 
 #include "robotraconteurlite/node.h"
+#include "robotraconteurlite/util.h"
 #include <stdlib.h>
 #include <assert.h>
 #include <string.h>
@@ -23,6 +24,9 @@
 #define FLAGS_CHECK ROBOTRACONTEURLITE_FLAGS_CHECK
 #define FLAGS_SET ROBOTRACONTEURLITE_FLAGS_SET
 #define FLAGS_CLEAR ROBOTRACONTEURLITE_FLAGS_CLEAR
+
+#define FAILED ROBOTRACONTEURLITE_FAILED
+#define RETRY ROBOTRACONTEURLITE_RETRY
 
 robotraconteurlite_status robotraconteurlite_node_init(struct robotraconteurlite_node* node,
                                                        struct robotraconteurlite_nodeid* nodeid,
@@ -324,7 +328,7 @@ robotraconteurlite_status robotraconteurlite_node_event_special_request(struct r
             {
                 rv = robotraconteurlite_node_send_messageentry_empty_response(
                     node, event->connection, &event->received_message.received_message_entry_header);
-                if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+                if (FAILED(rv))
                 {
                     return robotraconteurlite_node_event_special_request_handle_error(node, event, rv);
                 }
@@ -336,20 +340,20 @@ robotraconteurlite_status robotraconteurlite_node_event_special_request(struct r
                 send_data.connection = event->connection;
                 rv = robotraconteurlite_node_begin_send_messageentry_response(
                     &send_data, &event->received_message.received_message_entry_header);
-                if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+                if (FAILED(rv))
                 {
                     return robotraconteurlite_node_event_special_request_handle_error(node, event, rv);
                 }
 
                 rv = robotraconteurlite_node_transport_populate_capabilities(&send_data.element_writer, caps_flags);
-                if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+                if (FAILED(rv))
                 {
                     return robotraconteurlite_node_event_special_request_handle_error(
                         node, event, ROBOTRACONTEURLITE_ERROR_INTERNAL_ERROR);
                 }
 
                 rv = robotraconteurlite_node_end_send_messageentry(&send_data);
-                if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+                if (FAILED(rv))
                 {
                     return robotraconteurlite_node_event_special_request_handle_error(node, event, rv);
                 }
@@ -384,7 +388,7 @@ robotraconteurlite_status robotraconteurlite_node_event_special_request(struct r
 
         rv = robotraconteurlite_node_send_messageentry_empty_response(
             node, event->connection, &event->received_message.received_message_entry_header);
-        if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+        if (FAILED(rv))
         {
             return robotraconteurlite_node_event_special_request_handle_error(node, event, rv);
         }
@@ -415,7 +419,7 @@ robotraconteurlite_status robotraconteurlite_node_event_special_request(struct r
         /* TODO: handle disconnect client */
         rv = robotraconteurlite_node_send_messageentry_empty_response(
             node, event->connection, &event->received_message.received_message_entry_header);
-        if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+        if (FAILED(rv))
         {
             return robotraconteurlite_node_event_special_request_handle_error(node, event, rv);
         }
@@ -496,7 +500,7 @@ robotraconteurlite_status robotraconteurlite_node_event_special_request(struct r
         robotraconteurlite_status rv = robotraconteurlite_connection_send_messageentry_error_response(
             node, event->connection, &event->received_message.received_message_entry_header,
             ROBOTRACONTEURLITE_ERROR_INVALID_OPERATION, "RobotRaconteur.InvalidOperation", "Invalid operation");
-        if (rv == ROBOTRACONTEURLITE_ERROR_RETRY)
+        if (RETRY(rv))
         {
             return ROBOTRACONTEURLITE_ERROR_RETRY;
         }
@@ -538,7 +542,7 @@ robotraconteurlite_status robotraconteurlite_node_begin_send_messageentry(
     send_data->buffer_vec_storage.buffer_vec = &send_data->buffer_storage;
     rv = robotraconteurlite_connection_begin_send_message(send_data->connection, &send_data->message_writer,
                                                           &send_data->buffer_vec_storage);
-    if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+    if (FAILED(rv))
     {
         return rv;
     }
@@ -571,7 +575,7 @@ robotraconteurlite_status robotraconteurlite_node_begin_send_messageentry(
 
     rv = robotraconteurlite_message_writer_begin_message_ex(&send_data->message_writer, &send_data->message_header,
                                                             &send_data->entry_writer, message_flags_mask);
-    if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+    if (FAILED(rv))
     {
         return rv;
     }
@@ -586,14 +590,14 @@ robotraconteurlite_status robotraconteurlite_node_end_send_messageentry(
 {
     robotraconteurlite_status rv = robotraconteurlite_messageentry_writer_end_entry(
         &send_data->entry_writer, send_data->message_entry_header, &send_data->element_writer);
-    if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+    if (FAILED(rv))
     {
         return rv;
     }
 
     rv = robotraconteurlite_message_writer_end_message(&send_data->message_writer, &send_data->message_header,
                                                        &send_data->entry_writer);
-    if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+    if (FAILED(rv))
     {
         return rv;
     }
@@ -624,13 +628,13 @@ robotraconteurlite_status robotraconteurlite_node_send_messageentry_empty_respon
     send_data.connection = connection;
     send_data.message_entry_header = &send_message_header;
     rv = robotraconteurlite_node_begin_send_messageentry(&send_data);
-    if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+    if (FAILED(rv))
     {
         return rv;
     }
 
     rv = robotraconteurlite_node_end_send_messageentry(&send_data);
-    if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+    if (FAILED(rv))
     {
         return rv;
     }
@@ -668,27 +672,27 @@ robotraconteurlite_status robotraconteurlite_connection_send_messageentry_error_
     send_data.connection = connection;
     send_data.message_entry_header = &send_message_entry_header;
     rv = robotraconteurlite_node_begin_send_messageentry(&send_data);
-    if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+    if (FAILED(rv))
     {
         return rv;
     }
 
     rv = robotraconteurlite_messageelement_writer_write_data_string_c_str(&send_data.element_writer, "errorname",
                                                                           error_name);
-    if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+    if (FAILED(rv))
     {
         return rv;
     }
 
     rv = robotraconteurlite_messageelement_writer_write_data_string_c_str(&send_data.element_writer, "errorstring",
                                                                           error_message);
-    if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+    if (FAILED(rv))
     {
         return rv;
     }
 
     rv = robotraconteurlite_node_end_send_messageentry(&send_data);
-    if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+    if (FAILED(rv))
     {
         return rv;
     }
@@ -707,7 +711,7 @@ robotraconteurlite_status robotraconteurlite_node_receive_messageentry(
     receive_data->buffer_vec_storage.buffer_vec_cnt = 1;
     rv = robotraconteurlite_connection_message_receive(receive_data->connection, &message_reader,
                                                        &receive_data->buffer_vec_storage);
-    if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+    if (FAILED(rv))
     {
         return rv;
     }
@@ -719,21 +723,21 @@ robotraconteurlite_status robotraconteurlite_node_receive_messageentry(
     receive_data->received_message_header.sender_nodename.len = sizeof(receive_data->sender_nodename_char);
 
     rv = robotraconteurlite_message_reader_read_header(&message_reader, &receive_data->received_message_header);
-    if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+    if (FAILED(rv))
     {
         return rv;
     }
 
     rv = robotraconteurlite_node_verify_incoming_message(receive_data->node, receive_data->connection,
                                                          &receive_data->received_message_header);
-    if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+    if (FAILED(rv))
     {
         return rv;
     }
 
     /* TODO: Support multiple entries in one message */
     rv = robotraconteurlite_message_reader_begin_read_entries(&message_reader, &receive_data->entry_reader);
-    if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+    if (FAILED(rv))
     {
         return rv;
     }
@@ -748,7 +752,7 @@ robotraconteurlite_status robotraconteurlite_node_receive_messageentry(
 
     rv = robotraconteurlite_messageentry_reader_read_header(&receive_data->entry_reader,
                                                             &receive_data->received_message_entry_header);
-    if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+    if (FAILED(rv))
     {
         return rv;
     }
@@ -795,7 +799,7 @@ robotraconteurlite_status robotraconteurlite_node_event_special_request_service_
             rv = robotraconteurlite_node_begin_send_messageentry_response(
                 &send_data, &event->received_message.received_message_entry_header);
             event->connection->remote_endpoint = old_remote_endpoint;
-            if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+            if (FAILED(rv))
             {
                 return rv;
             }
@@ -811,7 +815,7 @@ robotraconteurlite_status robotraconteurlite_node_event_special_request_service_
                 desc_str.len = service_objects[i].service_def->service_definition.len;
                 rv = robotraconteurlite_messageelement_writer_write_data_string(&send_data.element_writer,
                                                                                 &element_name_str, &desc_str);
-                if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+                if (FAILED(rv))
                 {
                     return rv;
                 }
@@ -826,20 +830,20 @@ robotraconteurlite_status robotraconteurlite_node_event_special_request_service_
                 robotraconteurlite_string_from_c_str("attributes", &attr_element_header.element_name);
                 rv = robotraconteurlite_messageelement_writer_begin_nested_element(
                     &send_data.element_writer, &attr_element_header, &attr_element_writer);
-                if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+                if (FAILED(rv))
                 {
                     return rv;
                 }
                 rv = robotraconteurlite_messageelement_writer_end_nested_element(
                     &send_data.element_writer, &attr_element_header, &attr_element_writer);
-                if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+                if (FAILED(rv))
                 {
                     return rv;
                 }
             }
 
             rv = robotraconteurlite_node_end_send_messageentry(&send_data);
-            if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+            if (FAILED(rv))
             {
                 return rv;
             }
@@ -881,7 +885,7 @@ robotraconteurlite_status robotraconteurlite_node_event_special_request_object_t
             rv = robotraconteurlite_node_begin_send_messageentry_response(
                 &send_data, &event->received_message.received_message_entry_header);
             event->connection->remote_endpoint = old_remote_endpoint;
-            if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+            if (FAILED(rv))
             {
                 return rv;
             }
@@ -894,14 +898,14 @@ robotraconteurlite_status robotraconteurlite_node_event_special_request_object_t
                 type_name_str.len = service_objects[i].qualified_type.len;
                 rv = robotraconteurlite_messageelement_writer_write_data_string(&send_data.element_writer,
                                                                                 &element_name_str, &type_name_str);
-                if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+                if (FAILED(rv))
                 {
                     return rv;
                 }
             }
 
             rv = robotraconteurlite_node_end_send_messageentry(&send_data);
-            if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+            if (FAILED(rv))
             {
                 return rv;
             }
@@ -965,7 +969,7 @@ static robotraconteurlite_status robotraconteurlite_client_handshake_error(
 static robotraconteurlite_status robotraconteurlite_client_handshake_handle_error(
     struct robotraconteurlite_client_handshake_data* handshake_data, robotraconteurlite_status rv)
 {
-    if (rv == ROBOTRACONTEURLITE_ERROR_RETRY)
+    if (RETRY(rv))
     {
         return ROBOTRACONTEURLITE_ERROR_RETRY;
     }
@@ -1005,7 +1009,7 @@ robotraconteurlite_status robotraconteurlite_client_handshake(
         {
             return ROBOTRACONTEURLITE_ERROR_RETRY;
         }
-        else if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+        else if (FAILED(rv))
         {
             return robotraconteurlite_client_handshake_handle_error(handshake_data, rv);
         }
@@ -1091,7 +1095,7 @@ robotraconteurlite_status robotraconteurlite_client_handshake(
                 robotraconteurlite_string_from_c_str("objecttype", &element_name);
                 rv = robotraconteurlite_messageentry_reader_find_element_verify_string(
                     &event->received_message.entry_reader, &element_name, &element_reader, 128);
-                if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+                if (FAILED(rv))
                 {
                     return robotraconteurlite_client_handshake_error(handshake_data);
                 }
@@ -1100,7 +1104,7 @@ robotraconteurlite_status robotraconteurlite_client_handshake(
                 handshake_data->root_object_type.len = sizeof(handshake_data->root_object_type_char);
                 rv = robotraconteurlite_messageelement_reader_read_data_string(&element_reader,
                                                                                &handshake_data->root_object_type);
-                if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+                if (FAILED(rv))
                 {
                     return robotraconteurlite_client_handshake_error(handshake_data);
                 }
@@ -1169,7 +1173,7 @@ robotraconteurlite_status robotraconteurlite_client_handshake(
         rv = robotraconteurlite_client_handshake_begin_request(
             handshake_data, &send_data, ROBOTRACONTEURLITE_MESSAGEENTRYTYPE_STREAMOP, "CreateConnection");
         handshake_data->connection->connection_state = old_connection_state;
-        if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+        if (FAILED(rv))
         {
             return robotraconteurlite_client_handshake_handle_error(handshake_data, rv);
         }
@@ -1177,13 +1181,13 @@ robotraconteurlite_status robotraconteurlite_client_handshake(
         rv = robotraconteurlite_node_transport_populate_capabilities(
             &send_data.element_writer, (ROBOTRACONTEURLITE_CONNECTION_PARSE_CAPABILITY_MESSAGE2 |
                                         ROBOTRACONTEURLITE_CONNECTION_PARSE_CAPABILITY_MESSAGE4));
-        if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+        if (FAILED(rv))
         {
             return robotraconteurlite_client_handshake_handle_error(handshake_data, rv);
         }
 
         rv = robotraconteurlite_node_end_send_messageentry(&send_data);
-        if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+        if (FAILED(rv))
         {
             return robotraconteurlite_client_handshake_handle_error(handshake_data, rv);
         }
@@ -1198,12 +1202,12 @@ robotraconteurlite_status robotraconteurlite_client_handshake(
         struct robotraconteurlite_node_send_messageentry_data send_data;
         rv = robotraconteurlite_client_handshake_begin_request(
             handshake_data, &send_data, ROBOTRACONTEURLITE_MESSAGEENTRYTYPE_OBJECTTYPENAME, NULL);
-        if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+        if (FAILED(rv))
         {
             return robotraconteurlite_client_handshake_handle_error(handshake_data, rv);
         }
         rv = robotraconteurlite_node_end_send_messageentry(&send_data);
-        if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+        if (FAILED(rv))
         {
             return robotraconteurlite_client_handshake_handle_error(handshake_data, rv);
         }
@@ -1218,12 +1222,12 @@ robotraconteurlite_status robotraconteurlite_client_handshake(
         struct robotraconteurlite_node_send_messageentry_data send_data;
         rv = robotraconteurlite_client_handshake_begin_request(handshake_data, &send_data,
                                                                ROBOTRACONTEURLITE_MESSAGEENTRYTYPE_CONNECTCLIENT, NULL);
-        if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+        if (FAILED(rv))
         {
             return robotraconteurlite_client_handshake_handle_error(handshake_data, rv);
         }
         rv = robotraconteurlite_node_end_send_messageentry(&send_data);
-        if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+        if (FAILED(rv))
         {
             return robotraconteurlite_client_handshake_handle_error(handshake_data, rv);
         }
@@ -1261,7 +1265,7 @@ robotraconteurlite_status robotraconteurlite_client_begin_request(
     {
         robotraconteurlite_status rv = robotraconteurlite_string_shallow_copy_to(
             &send_data->connection->remote_service_name, &send_data->message_entry_header->service_path);
-        if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+        if (FAILED(rv))
         {
             return rv;
         }
@@ -1300,7 +1304,7 @@ robotraconteurlite_status robotraconteurlite_client_send_empty_request(
 {
     robotraconteurlite_status rv =
         robotraconteurlite_client_begin_request(send_data, entry_type, membername, servicepath);
-    if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+    if (FAILED(rv))
     {
         return rv;
     }
@@ -1316,13 +1320,13 @@ robotraconteurlite_status robotraconteurlite_client_send_heartbeat(struct robotr
     send_data.connection = connection;
     rv = robotraconteurlite_client_begin_request(&send_data, ROBOTRACONTEURLITE_MESSAGEENTRYTYPE_CONNECTIONTEST, NULL,
                                                  NULL);
-    if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+    if (FAILED(rv))
     {
         return rv;
     }
     send_data.message_entry_header->request_id = 0;
     rv = robotraconteurlite_node_end_send_messageentry(&send_data);
-    if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+    if (FAILED(rv))
     {
         return rv;
     }
@@ -1343,7 +1347,7 @@ robotraconteurlite_status robotraconteurlite_node_next_wake(struct robotraconteu
     while (c != NULL)
     {
         rv = robotraconteurlite_connection_next_wake(c, now, wake_time);
-        if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+        if (FAILED(rv))
         {
             return rv;
         }
@@ -1396,7 +1400,7 @@ robotraconteurlite_status robotraconteurlite_node_transport_parse_capabilities(
                 rv = robotraconteurlite_buffer_vec_copy_to_uint32(
                     capabilities_element_reader.buffer,
                     capabilities_element_buffer_info.data_start_offset + (i * sizeof(uint32_t)), &c);
-                if (rv < 0)
+                if (FAILED(rv))
                 {
                     return ROBOTRACONTEURLITE_ERROR_INTERNAL_ERROR;
                 }

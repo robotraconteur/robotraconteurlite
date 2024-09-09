@@ -29,6 +29,9 @@
 #define NUM_CONNECTIONS 4
 #define CONNECTION_BUFFER_SIZE 8096
 
+#define FAILED ROBOTRACONTEURLITE_FAILED
+#define RETRY ROBOTRACONTEURLITE_RETRY
+
 const char* node_name_str = "example.tiny_service";
 const uint16_t node_port = 22228;
 
@@ -44,7 +47,7 @@ const char* root_object_type = "example.tiny_service.tiny_object";
 int handle_message(struct robotraconteurlite_node* node, struct robotraconteurlite_event* event)
 {
     robotraconteurlite_status rv = robotraconteurlite_node_event_special_request(node, event);
-    if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+    if (FAILED(rv))
     {
         if (rv == ROBOTRACONTEURLITE_ERROR_CONSUMED || rv == ROBOTRACONTEURLITE_ERROR_RETRY)
         {
@@ -77,7 +80,7 @@ int handle_message(struct robotraconteurlite_node* node, struct robotraconteurli
     case ROBOTRACONTEURLITE_MESSAGEENTRYTYPE_CLIENTKEEPALIVEREQ: {
         robotraconteurlite_status rv = robotraconteurlite_node_send_messageentry_empty_response(
             node, event->connection, &event->received_message.received_message_entry_header);
-        if (rv == ROBOTRACONTEURLITE_ERROR_RETRY)
+        if (RETRY(rv))
         {
             return ROBOTRACONTEURLITE_ERROR_RETRY;
         }
@@ -99,11 +102,11 @@ int handle_message(struct robotraconteurlite_node* node, struct robotraconteurli
             send_data.connection = event->connection;
             rv = robotraconteurlite_node_begin_send_messageentry_response(
                 &send_data, &event->received_message.received_message_entry_header);
-            if (rv == ROBOTRACONTEURLITE_ERROR_RETRY)
+            if (RETRY(rv))
             {
                 return ROBOTRACONTEURLITE_ERROR_RETRY;
             }
-            if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+            if (FAILED(rv))
             {
                 printf("Could not begin send message entry response\n");
                 return -1;
@@ -116,11 +119,11 @@ int handle_message(struct robotraconteurlite_node* node, struct robotraconteurli
                 return -1;
             }
             rv = robotraconteurlite_node_end_send_messageentry(&send_data);
-            if (rv == ROBOTRACONTEURLITE_ERROR_RETRY)
+            if (RETRY(rv))
             {
                 return ROBOTRACONTEURLITE_ERROR_RETRY;
             }
-            if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+            if (FAILED(rv))
             {
                 printf("Could not end send message entry response\n");
                 return -1;
@@ -183,7 +186,7 @@ int handle_message(struct robotraconteurlite_node* node, struct robotraconteurli
             /* Send empty response */
             rv = robotraconteurlite_node_send_messageentry_empty_response(
                 node, event->connection, &event->received_message.received_message_entry_header);
-            if (rv == ROBOTRACONTEURLITE_ERROR_RETRY)
+            if (RETRY(rv))
             {
                 return ROBOTRACONTEURLITE_ERROR_RETRY;
             }
@@ -241,11 +244,11 @@ int handle_event(struct robotraconteurlite_node* node, struct robotraconteurlite
         printf("Message received\n");
         /* Handle the message */
         rv = handle_message(node, event);
-        if (rv == ROBOTRACONTEURLITE_ERROR_RETRY)
+        if (RETRY(rv))
         {
             return 0;
         }
-        if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+        if (FAILED(rv))
         {
             printf("Could not handle message\n");
             return -1;
@@ -442,7 +445,7 @@ int main(int argc, char* argv[])
             return -1;
         }
         rv = robotraconteurlite_node_next_wake(&node, now, &next_wake);
-        if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+        if (FAILED(rv))
         {
             printf("Could not get next wake\n");
             return -1;
@@ -452,27 +455,27 @@ int main(int argc, char* argv[])
         {
             rv = robotraconteurlite_tcp_acceptor_poll_add_fd(&tcp_acceptor, connections_head, pollfds, &num_pollfds,
                                                              NUM_CONNECTIONS + 2);
-            if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+            if (FAILED(rv))
             {
                 printf("Could not add acceptor to poll\n");
                 return -1;
             }
             rv = robotraconteurlite_tcp_connections_poll_add_fds(connections_head, pollfds, &num_pollfds,
                                                                  NUM_CONNECTIONS + 2);
-            if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+            if (FAILED(rv))
             {
                 printf("Could not add connections to poll\n");
                 return -1;
             }
             rv = robotraconteurlite_node_poll_add_fd(&node, pollfds, &num_pollfds, NUM_CONNECTIONS + 2);
-            if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+            if (FAILED(rv))
             {
                 printf("Could not add node to poll\n");
                 return -1;
             }
 
             rv = robotraconteurlite_wait_next_wake(&clock, pollfds, num_pollfds, next_wake);
-            if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+            if (FAILED(rv))
             {
                 if (signal_received)
                 {
@@ -503,7 +506,7 @@ int main(int argc, char* argv[])
         {
             struct robotraconteurlite_event event;
             robotraconteurlite_status rv = robotraconteurlite_node_next_event(&node, &event, now);
-            if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+            if (FAILED(rv))
             {
                 printf("Could not get event\n");
                 return -1;
@@ -514,7 +517,7 @@ int main(int argc, char* argv[])
             {
                 break;
             }
-            else if (rv < 0)
+            else if (FAILED(rv))
             {
                 if (rv != ROBOTRACONTEURLITE_ERROR_RETRY)
                 {

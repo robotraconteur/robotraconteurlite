@@ -15,7 +15,10 @@
 
 #include "robotraconteurlite/poll.h"
 #include "robotraconteurlite/err.h"
+#include "robotraconteurlite/util.h"
 #include <limits.h>
+
+#define FAILED ROBOTRACONTEURLITE_FAILED
 
 robotraconteurlite_status robotraconteurlite_wait_next_wake(struct robotraconteurlite_clock* clock,
                                                             struct robotraconteurlite_pollfd* pollfds,
@@ -27,7 +30,7 @@ robotraconteurlite_status robotraconteurlite_wait_next_wake(struct robotraconteu
     int64_t timeout_i64 = 0;
 
     rv = robotraconteurlite_clock_gettime(clock, &now);
-    if (rv != ROBOTRACONTEURLITE_ERROR_SUCCESS)
+    if (FAILED(rv))
     {
         return rv;
     }
@@ -49,7 +52,7 @@ robotraconteurlite_status robotraconteurlite_wait_next_wake(struct robotraconteu
     }
 
     rv = robotraconteurlite_poll(pollfds, (int)pollfd_count, timeout);
-    if (rv < 0)
+    if (FAILED(rv))
     {
         return ROBOTRACONTEURLITE_ERROR_SYSTEM_ERROR;
     }
