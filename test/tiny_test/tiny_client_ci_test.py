@@ -3,6 +3,7 @@ import sys
 from pathlib import Path
 import time
 import argparse
+import sys
 
 parser = argparse.ArgumentParser(description='Run tiny client CI test')
 parser.add_argument('--build-dir', type=str, help='Build directory', required=False, default=None)
@@ -25,5 +26,8 @@ time.sleep(2)
 subprocess.check_call([examples_build_dir / "robotraconteurlite_tiny_client"], cwd=examples_build_dir)
 
 time.sleep(0.5)
-service.terminate()
+if sys.platform == "win32":
+    service.kill()
+else:
+    service.terminate()
 service.wait()

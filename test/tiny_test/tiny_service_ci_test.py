@@ -4,6 +4,7 @@ from pathlib import Path
 import time
 import signal
 import argparse
+import sys
 
 parser = argparse.ArgumentParser(description='Run tiny client CI test')
 parser.add_argument('--build-dir', type=str, help='Build directory', required=False, default=None)
@@ -29,8 +30,11 @@ try:
 finally:
 
     time.sleep(0.5)
-    service.send_signal(signal.SIGINT)
-    service.wait()
+    if sys.platform == "win32":
+        service.kill()
+    else:
+        service.send_signal(signal.SIGINT)
+        service.wait()
 
 # Check return code
 if service.returncode != 0:
