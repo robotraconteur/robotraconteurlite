@@ -16,7 +16,13 @@
 #ifndef ROBOTRACONTEURLITE_CONFIG_H
 #define ROBOTRACONTEURLITE_CONFIG_H
 
+#ifdef _WIN32
+#include "robotraconteurlite_export.h"
+#endif
+
+#ifndef ROBOTRACONTEURLITE_API
 #define ROBOTRACONTEURLITE_API
+#endif
 
 #define ROBOTRACONTEURLITE_NODE_VERSION "0.18.0"
 
