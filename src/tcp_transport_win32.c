@@ -20,22 +20,15 @@
 
 /* Linux socket includes */
 #include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <netinet/tcp.h>
 #include <fcntl.h>
-#include <endian.h>
 #include <errno.h>
-#include <unistd.h>
 #include <assert.h>
-#include <poll.h>
 
-#ifdef ROBOTRACONTEURLITE_USE_OPENSSL
-#include <openssl/sha.h>
-#include <openssl/bio.h>
-#include <openssl/buffer.h>
-#include <openssl/evp.h>
-#endif
+#include <winsock2.h>
+
+/* Macros defined by win32 headers */
+#undef FAILED
+#undef SUCCEEDED
 
 #define FLAGS_CHECK_ALL ROBOTRACONTEURLITE_FLAGS_CHECK_ALL
 #define FLAGS_CHECK ROBOTRACONTEURLITE_FLAGS_CHECK
@@ -47,41 +40,75 @@
 robotraconteurlite_status robotraconteurlite_tcp_sha1(const uint8_t* data, size_t len,
                                                       struct robotraconteurlite_tcp_sha1_storage* storage)
 {
-#ifdef ROBOTRACONTEURLITE_USE_OPENSSL
-    SHA1(data, len, storage->sha1_bytes);
+    /* Use Windows API to generate SHA1 */
+    HCRYPTPROV hProv = 0;
+    HCRYPTHASH hHash = 0;
+    DWORD cbHash = 0;
+    DWORD dwFlags = CRYPT_VERIFYCONTEXT;
+    if (!CryptAcquireContext(&hProv, NULL, NULL, PROV_RSA_FULL, dwFlags))
+    {
+        return ROBOTRACONTEURLITE_ERROR_INTERNAL_ERROR;
+    }
 
-    return 0;
-#else
-    /* No SHA1 implementation on this platform! */
-    assert(0);
-    return ROBOTRACONTEURLITE_ERROR_NOT_IMPLEMENTED;
-#endif
+    if (!CryptCreateHash(hProv, CALG_SHA1, 0, 0, &hHash))
+    {
+        CryptReleaseContext(hProv, 0);
+        return ROBOTRACONTEURLITE_ERROR_INTERNAL_ERROR;
+    }
+
+    if (!CryptHashData(hHash, data, (DWORD)len, 0))
+    {
+        CryptDestroyHash(hHash);
+        CryptReleaseContext(hProv, 0);
+        return ROBOTRACONTEURLITE_ERROR_INTERNAL_ERROR;
+    }
+
+    cbHash = sizeof(storage->sha1_bytes);
+    if (!CryptGetHashParam(hHash, HP_HASHVAL, storage->sha1_bytes, &cbHash, 0))
+    {
+        CryptDestroyHash(hHash);
+        CryptReleaseContext(hProv, 0);
+        return ROBOTRACONTEURLITE_ERROR_INTERNAL_ERROR;
+    }
+
+    CryptDestroyHash(hHash);
+    CryptReleaseContext(hProv, 0);
+    return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
 
 robotraconteurlite_status robotraconteurlite_tcp_base64_encode(const uint8_t* binary_data, size_t binary_len,
                                                                char* base64_data, size_t* base64_len)
 {
-#ifdef ROBOTRACONTEURLITE_USE_OPENSSL
-    /* Use OpenSSL base64 implementation */
-    size_t len = 0;
-    char* base64_data_ptr = NULL; /* Make space for annoying null byte */
-    BIO* bmem = BIO_new(BIO_s_mem());
-    BIO* b64 = BIO_new(BIO_f_base64());
-    BIO_set_flags(b64, BIO_FLAGS_BASE64_NO_NL);
-    b64 = BIO_push(b64, bmem);
-    BIO_write(b64, binary_data, (int)binary_len);
-    BIO_flush(b64);
-    len = BIO_get_mem_data(bmem, &base64_data_ptr);
-    assert(len <= *base64_len);
-    *base64_len = len;
-    (void)memcpy(base64_data, base64_data_ptr, len);
-    BIO_free_all(b64);
+    DWORD hashlen = 0;
+    char base64_data2[29];
+    size_t base64_len2 = sizeof(base64_data2);
+    CryptBinaryToString(binary_data, (DWORD)binary_len, CRYPT_STRING_BASE64 | CRYPT_STRING_NOCRLF, NULL, &hashlen);
+
+    if (hashlen > base64_len2)
+    {
+        return ROBOTRACONTEURLITE_ERROR_INVALID_PARAMETER;
+    }
+
+    if (!CryptBinaryToString(binary_data, (DWORD)binary_len, CRYPT_STRING_BASE64 | CRYPT_STRING_NOCRLF, base64_data2,
+                             &hashlen))
+    {
+        return ROBOTRACONTEURLITE_ERROR_INTERNAL_ERROR;
+    }
+
+    if (base64_data2[hashlen - 1] == '\0')
+    {
+        hashlen--;
+    }
+
+    if (hashlen > *base64_len)
+    {
+        return ROBOTRACONTEURLITE_ERROR_INVALID_PARAMETER;
+    }
+
+    memcpy(base64_data, base64_data2, hashlen);
+
+    *base64_len = hashlen;
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
-#else
-    /* No base64 implementation on this platform! */
-    assert(0);
-    return ROBOTRACONTEURLITE_ERROR_NOT_IMPLEMENTED;
-#endif
 }
 
 robotraconteurlite_status robotraconteurlite_tcp_socket_recv_nonblocking(ROBOTRACONTEURLITE_SOCKET sock,
@@ -89,24 +116,32 @@ robotraconteurlite_status robotraconteurlite_tcp_socket_recv_nonblocking(ROBOTRA
                                                                          int* errno_out)
 {
     size_t pos1 = *pos;
+    WSABUF wsaBuf;
+    DWORD flags = 0;
+    DWORD bytesReceived;
+
+    if (sock == 0)
+    {
+        return ROBOTRACONTEURLITE_ERROR_CONNECTION_ERROR;
+    }
+
     while (*pos < len)
     {
-        ssize_t ret = recv(sock, &buffer[*pos], len - *pos, MSG_DONTWAIT);
-        if (ret < 0)
+        wsaBuf.buf = &buffer[*pos];
+        wsaBuf.len = len - *pos;
+        int ret = WSARecv(sock, &wsaBuf, 1, &bytesReceived, &flags, NULL, NULL);
+        if (ret == SOCKET_ERROR)
         {
-            /* False positive cppcheck warning for errno not set */
-            /* cppcheck-suppress misra-c2012-22.10 */
-            if (errno == EWOULDBLOCK)
+            int wsaError = WSAGetLastError();
+            if (wsaError == WSAEWOULDBLOCK)
             {
                 return ROBOTRACONTEURLITE_ERROR_SUCCESS;
             }
-            /* False positive cppcheck warning for errno not set */
-            /* cppcheck-suppress misra-c2012-22.10 */
-            *errno_out = errno;
+            *errno_out = wsaError;
             return ROBOTRACONTEURLITE_ERROR_CONNECTION_ERROR;
         }
-        *pos += ret;
-        if (ret == 0)
+        *pos += bytesReceived;
+        if (bytesReceived == 0)
         {
             if (*pos == pos1)
             {
@@ -127,24 +162,32 @@ robotraconteurlite_status robotraconteurlite_tcp_socket_send_nonblocking(ROBOTRA
                                                                          int* errno_out)
 {
     size_t pos1 = *pos;
+    WSABUF wsaBuf;
+    DWORD bytesSent;
+    DWORD flags = 0;
+
+    if (sock == 0)
+    {
+        return ROBOTRACONTEURLITE_ERROR_CONNECTION_ERROR;
+    }
+
     while (*pos < len)
     {
-        ssize_t ret = send(sock, &buffer[*pos], len - *pos, MSG_DONTWAIT);
-        if (ret < 0)
+        wsaBuf.buf = &buffer[*pos];
+        wsaBuf.len = len - *pos;
+        int ret = WSASend(sock, &wsaBuf, 1, &bytesSent, flags, NULL, NULL);
+        if (ret == SOCKET_ERROR)
         {
-            /* False positive cppcheck warning for errno not set */
-            /* cppcheck-suppress misra-c2012-22.10 */
-            if (errno == EWOULDBLOCK)
+            int wsaError = WSAGetLastError();
+            if (wsaError == WSAEWOULDBLOCK)
             {
                 return ROBOTRACONTEURLITE_ERROR_SUCCESS;
             }
-            /* False positive cppcheck warning for errno not set */
-            /* cppcheck-suppress misra-c2012-22.10 */
-            *errno_out = errno;
+            *errno_out = wsaError;
             return ROBOTRACONTEURLITE_ERROR_CONNECTION_ERROR;
         }
-        *pos += ret;
-        if (ret == 0)
+        *pos += bytesSent;
+        if (bytesSent == 0)
         {
             if (*pos == pos1)
             {
@@ -156,7 +199,8 @@ robotraconteurlite_status robotraconteurlite_tcp_socket_send_nonblocking(ROBOTRA
             }
         }
     }
-    return 0;
+
+    return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
 
 robotraconteurlite_status robotraconteurlite_tcp_socket_begin_server(const struct sockaddr_storage* serv_addr,
@@ -165,44 +209,35 @@ robotraconteurlite_status robotraconteurlite_tcp_socket_begin_server(const struc
                                                                      int* errno_out)
 {
     /* Create socket */
-    ROBOTRACONTEURLITE_SOCKET sock = socket(AF_INET, SOCK_STREAM, 0);
-    int flags = 0;
-    if (sock < 0)
+    SOCKET sock = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, 0);
+    u_long mode = 1;
+    if (sock == INVALID_SOCKET)
     {
-        *errno_out = errno;
+        *errno_out = WSAGetLastError();
         return ROBOTRACONTEURLITE_ERROR_CONNECTION_ERROR;
     }
 
     /* Make socket non-blocking */
-    flags = fcntl(sock, F_GETFL, 0);
-    if (flags < 0)
+    if (ioctlsocket(sock, FIONBIO, &mode) != NO_ERROR)
     {
-        *errno_out = errno;
-        close(sock);
-        return ROBOTRACONTEURLITE_ERROR_CONNECTION_ERROR;
-    }
-    flags |= O_NONBLOCK;
-    if (fcntl(sock, F_SETFL, flags) < 0)
-    {
-        *errno_out = errno;
-        close(sock);
+        *errno_out = WSAGetLastError();
+        closesocket(sock);
         return ROBOTRACONTEURLITE_ERROR_CONNECTION_ERROR;
     }
 
     /* Bind socket */
-    /* cppcheck-suppress [misra-c2012-11.2,misra-c2012-11.8] */
-    if (bind(sock, (struct sockaddr*)serv_addr, sizeof(struct sockaddr_storage)) < 0)
+    if (bind(sock, (struct sockaddr*)serv_addr, sizeof(struct sockaddr_storage)) == SOCKET_ERROR)
     {
-        *errno_out = errno;
-        close(sock);
+        *errno_out = WSAGetLastError();
+        closesocket(sock);
         return ROBOTRACONTEURLITE_ERROR_CONNECTION_ERROR;
     }
 
     /* Listen */
-    if (listen(sock, (int)backlog) < 0)
+    if (listen(sock, (int)backlog) == SOCKET_ERROR)
     {
-        *errno_out = errno;
-        close(sock);
+        *errno_out = WSAGetLastError();
+        closesocket(sock);
         return ROBOTRACONTEURLITE_ERROR_CONNECTION_ERROR;
     }
 
@@ -212,30 +247,27 @@ robotraconteurlite_status robotraconteurlite_tcp_socket_begin_server(const struc
 
 static robotraconteurlite_status robotraconteurlite_tcp_configure_socket(ROBOTRACONTEURLITE_SOCKET sock, int* errno_out)
 {
-    int flags = 0;
+    int flags = 1;
+    u_long mode = 1;
+
+    if (sock == 0)
+    {
+        return ROBOTRACONTEURLITE_ERROR_CONNECTION_ERROR;
+    }
+
     /* Make socket non-blocking */
-    flags = fcntl(sock, F_GETFL, 0);
-    if (flags < 0)
+    if (ioctlsocket(sock, FIONBIO, &mode) != NO_ERROR)
     {
-        *errno_out = errno;
-        close(sock);
+        *errno_out = WSAGetLastError();
+        closesocket(sock);
         return ROBOTRACONTEURLITE_ERROR_CONNECTION_ERROR;
     }
 
-    flags |= O_NONBLOCK;
-    if (fcntl(sock, F_SETFL, flags) < 0)
+    /* Set TCP no delay */
+    if (setsockopt(sock, IPPROTO_TCP, TCP_NODELAY, (char*)&flags, sizeof(int)) == SOCKET_ERROR)
     {
-        *errno_out = errno;
-        close(sock);
-        return ROBOTRACONTEURLITE_ERROR_CONNECTION_ERROR;
-    }
-
-    /* Set TCP no delay*/
-    flags = 1;
-    if (setsockopt(sock, IPPROTO_TCP, TCP_NODELAY, (char*)&flags, sizeof(int)) < 0)
-    {
-        *errno_out = errno;
-        close(sock);
+        *errno_out = WSAGetLastError();
+        closesocket(sock);
         return ROBOTRACONTEURLITE_ERROR_CONNECTION_ERROR;
     }
 
@@ -247,20 +279,18 @@ robotraconteurlite_status robotraconteurlite_tcp_socket_accept(ROBOTRACONTEURLIT
 {
     /* Accept connection */
     struct sockaddr_in cli_addr;
-    socklen_t clilen = sizeof(cli_addr);
-    int newsockfd = accept(acceptor_sock, (struct sockaddr*)&cli_addr, &clilen);
-    if (newsockfd < 0)
+    int clilen = sizeof(cli_addr);
+    *errno_out = 0;
+    SOCKET newsockfd = WSAAccept(acceptor_sock, (struct sockaddr*)&cli_addr, &clilen, NULL, NULL);
+    if (newsockfd == INVALID_SOCKET)
     {
-        /* False positive cppcheck warning for errno not set */
-        /* cppcheck-suppress misra-c2012-22.10 */
-        if (errno == EWOULDBLOCK)
+        int wsaError = WSAGetLastError();
+        if (wsaError == WSAEWOULDBLOCK)
         {
             return ROBOTRACONTEURLITE_ERROR_RETRY;
         }
-        /* False positive cppcheck warning for errno not set */
-        /* cppcheck-suppress misra-c2012-22.10 */
-        *errno_out = errno;
-        return ROBOTRACONTEURLITE_ERROR_SUCCESS;
+        *errno_out = wsaError;
+        return ROBOTRACONTEURLITE_ERROR_CONNECTION_ERROR;
     }
 
     *client_sock = newsockfd;
@@ -270,7 +300,11 @@ robotraconteurlite_status robotraconteurlite_tcp_socket_accept(ROBOTRACONTEURLIT
 
 robotraconteurlite_status robotraconteurlite_tcp_socket_close(ROBOTRACONTEURLITE_SOCKET sock)
 {
-    close(sock);
+    if (sock == 0)
+    {
+        return ROBOTRACONTEURLITE_ERROR_SUCCESS;
+    }
+    closesocket(sock);
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
 
@@ -298,30 +332,24 @@ uint64_t robotraconteurlite_be64toh(uint64_t big_endian_64bits)
 robotraconteurlite_status robotraconteurlite_tcp_socket_connect(struct robotraconteurlite_sockaddr_storage* addr,
                                                                 ROBOTRACONTEURLITE_SOCKET* sock_out, int* errno_out)
 {
-    ROBOTRACONTEURLITE_SOCKET sock = 0;
-    robotraconteurlite_status rv = -1;
+    ROBOTRACONTEURLITE_SOCKET sock = socket(AF_INET, SOCK_STREAM, 0);
     *errno_out = 0;
-    sock = socket(AF_INET, SOCK_STREAM, 0);
-    rv = robotraconteurlite_tcp_configure_socket(sock, errno_out);
+    robotraconteurlite_status rv = robotraconteurlite_tcp_configure_socket(sock, &errno_out);
     if (FAILED(rv))
     {
         return rv;
     }
 
-    /* cppcheck-suppress misra-c2012-11.3 */
-    rv = connect(sock, (struct sockaddr*)addr, sizeof(struct sockaddr_storage));
-    if (FAILED(rv))
+    if (connect(sock, (struct sockaddr*)addr, sizeof(struct sockaddr_storage)) == SOCKET_ERROR)
     {
-        /* False positive cppcheck warning for errno not set */
-        /* cppcheck-suppress misra-c2012-22.10 */
-        if (errno == EINPROGRESS)
+        if (WSAGetLastError() == WSAEWOULDBLOCK)
         {
             *sock_out = sock;
             return ROBOTRACONTEURLITE_ERROR_SUCCESS;
         }
-        *errno_out = errno;
-        close(sock);
-        return -1;
+        closesocket(sock);
+        *errno_out = WSAGetLastError();
+        return ROBOTRACONTEURLITE_ERROR_CONNECTION_ERROR;
     }
     *sock_out = sock;
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;

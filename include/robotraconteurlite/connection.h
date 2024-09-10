@@ -78,7 +78,7 @@ struct robotraconteurlite_connection
     struct robotraconteurlite_connection* prev;
 
     /* Socket storage */
-    int sock;
+    ROBOTRACONTEURLITE_SOCKET sock;
 
     /* Send and receive buffers */
     uint8_t* send_buffer;
@@ -132,7 +132,7 @@ struct robotraconteurlite_connection_acceptor
     struct robotraconteurlite_connection_acceptor* prev;
 
     /* Socket storage */
-    int sock;
+    ROBOTRACONTEURLITE_SOCKET sock;
 };
 
 struct robotraconteurlite_sockaddr_storage

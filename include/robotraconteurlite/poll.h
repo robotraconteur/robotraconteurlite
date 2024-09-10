@@ -26,7 +26,7 @@ extern "C" {
 
 struct robotraconteurlite_pollfd
 {
-    int fd;
+    ROBOTRACONTEURLITE_SOCKET fd;
     short int events;
     short int revents;
 };

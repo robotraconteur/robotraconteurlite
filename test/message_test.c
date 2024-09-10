@@ -918,6 +918,8 @@ void robotraconteurlite_message_run_writer_basictest(uint8_t* buffer_bytes, size
     uint8_t receiver_nodeid[] = {0xae, 0x78, 0x48, 0x1b, 0xc2, 0xbe, 0x4f, 0x26,
                                  0x9f, 0xef, 0x74, 0xbb, 0x6e, 0x8a, 0x04, 0x3f};
 
+    memset(&header, 0, sizeof(header));
+
     buffer1.data = buffer_bytes;
     buffer1.len = *buffer_bytes_len;
     buffer.buffer_vec = &buffer1;
@@ -950,6 +952,8 @@ void robotraconteurlite_message_run_writer_basictest(uint8_t* buffer_bytes, size
         char member_name[] = "my_member";
         char service_path[] = "my.service.object[%28abc]";
         char extended[] = "more\nblah\nblah";
+
+        memset(&entry_header, 0, sizeof(entry_header));
         entry_header.entry_size = 0;
         entry_header.entry_type = ROBOTRACONTEURLITE_MESSAGEENTRYTYPE_PROPERTYGETRES;
         entry_header.member_name.data = member_name;
@@ -985,6 +989,7 @@ void robotraconteurlite_message_run_writer_basictest(uint8_t* buffer_bytes, size
         struct robotraconteurlite_array_double el1_data;
         struct robotraconteurlite_string el2_data;
 
+        memset(&entry_header, 0, sizeof(entry_header));
         entry_header.entry_size = 0;
         entry_header.entry_type = ROBOTRACONTEURLITE_MESSAGEENTRYTYPE_FUNCTIONCALLRES;
         entry_header.member_name.data = member_name;

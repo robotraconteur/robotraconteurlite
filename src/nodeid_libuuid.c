@@ -13,19 +13,15 @@
  * limitations under the License.
  */
 
-#ifndef ROBOTRACONTEURLITE_CONFIG_H
-#define ROBOTRACONTEURLITE_CONFIG_H
+#include "robotraconteurlite/nodeid.h"
+#include <uuid/uuid.h>
+#include <string.h>
 
-#define ROBOTRACONTEURLITE_API
-
-#define ROBOTRACONTEURLITE_NODE_VERSION "0.18.0"
-
-#define ROBOTRACONTEURLITE_UNUSED(x) (void)(x)
-
-#ifdef WIN32
-#define ROBOTRACONTEURLITE_SOCKET unsigned long long
-#else
-#define ROBOTRACONTEURLITE_SOCKET int
-#endif
-
-#endif /* ROBOTRACONTEURLITE_CONFIG_H */
+int robotraconteurlite_nodeid_newrandom(struct robotraconteurlite_nodeid* a)
+{
+    /* Use uuid.h to generate a random UUID */
+    uuid_t uuid;
+    uuid_generate_random(uuid);
+    (void)memcpy(a->data, uuid, sizeof(a->data));
+    return 0;
+}

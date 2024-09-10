@@ -13,19 +13,24 @@
  * limitations under the License.
  */
 
-#ifndef ROBOTRACONTEURLITE_CONFIG_H
-#define ROBOTRACONTEURLITE_CONFIG_H
+#include "robotraconteurlite/poll.h"
+#include <winsock2.h>
+#include <ws2tcpip.h>
 
-#define ROBOTRACONTEURLITE_API
-
-#define ROBOTRACONTEURLITE_NODE_VERSION "0.18.0"
-
-#define ROBOTRACONTEURLITE_UNUSED(x) (void)(x)
-
-#ifdef WIN32
-#define ROBOTRACONTEURLITE_SOCKET unsigned long long
-#else
-#define ROBOTRACONTEURLITE_SOCKET int
-#endif
-
-#endif /* ROBOTRACONTEURLITE_CONFIG_H */
+int robotraconteurlite_poll(struct robotraconteurlite_pollfd* fds, int nfds, int timeout)
+{
+    int ret = -1;
+    int last_err;
+    WSAPOLLFD* pfd = (WSAPOLLFD*)fds;
+    ret = WSAPoll(pfd, (ULONG)nfds, timeout);
+    if (ret < 0)
+    {
+        last_err = WSAGetLastError();
+        if (last_err == WSAEINTR)
+        {
+            return 0;
+        }
+        return ret;
+    }
+    return ret;
+}

@@ -1,11 +1,17 @@
 find_package(cmocka REQUIRED)
-include_directories(${CMOCKA_INCLUDE_DIR})
+
+if(NOT TARGET cmocka::cmocka)
+    add_library(cmocka::cmocka INTERFACE IMPORTED)
+    set_target_properties(cmocka::cmocka PROPERTIES INTERFACE_INCLUDE_DIRECTORIES ${CMOCKA_INCLUDE_DIR}
+                                                    INTERFACE_LINK_LIBRARIES ${CMOCKA_LIBRARY})
+endif()
+
 add_executable(robotraconteurlite_array_test array_test.c)
-target_link_libraries(robotraconteurlite_array_test robotraconteurlite ${CMOCKA_LIBRARY})
+target_link_libraries(robotraconteurlite_array_test robotraconteurlite cmocka::cmocka)
 add_test(array_test robotraconteurlite_array_test)
 add_executable(robotraconteurlite_array_types_test array_test_types.c)
-target_link_libraries(robotraconteurlite_array_types_test robotraconteurlite ${CMOCKA_LIBRARY})
+target_link_libraries(robotraconteurlite_array_types_test robotraconteurlite cmocka::cmocka)
 add_test(array_test robotraconteurlite_array_types_test)
 add_executable(robotraconteurlite_message_test message_test.c)
-target_link_libraries(robotraconteurlite_message_test robotraconteurlite ${CMOCKA_LIBRARY})
+target_link_libraries(robotraconteurlite_message_test robotraconteurlite cmocka::cmocka)
 add_test(message_test robotraconteurlite_message_test)

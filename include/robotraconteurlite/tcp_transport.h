@@ -151,23 +151,19 @@ ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_tcp_base64_e
                                                                                       char* base64_data,
                                                                                       size_t* base64_len);
 
-ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_tcp_socket_recv_nonblocking(int sock,
-                                                                                                uint8_t* buffer,
-                                                                                                size_t* pos, size_t len,
-                                                                                                int* errno_out);
+ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_tcp_socket_recv_nonblocking(
+    ROBOTRACONTEURLITE_SOCKET sock, uint8_t* buffer, size_t* pos, size_t len, int* errno_out);
 
-ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_tcp_socket_send_nonblocking(int sock,
-                                                                                                const uint8_t* buffer,
-                                                                                                size_t* pos, size_t len,
-                                                                                                int* errno_out);
+ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_tcp_socket_send_nonblocking(
+    ROBOTRACONTEURLITE_SOCKET sock, const uint8_t* buffer, size_t* pos, size_t len, int* errno_out);
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_tcp_socket_begin_server(
-    const struct sockaddr_storage* serv_addr, size_t backlog, int* sock_out, int* errno_out);
+    const struct sockaddr_storage* serv_addr, size_t backlog, ROBOTRACONTEURLITE_SOCKET* sock_out, int* errno_out);
 
-ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_tcp_socket_accept(int acceptor_sock,
-                                                                                      int* client_sock, int* errno_out);
+ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_tcp_socket_accept(
+    ROBOTRACONTEURLITE_SOCKET acceptor_sock, ROBOTRACONTEURLITE_SOCKET* client_sock, int* errno_out);
 
-ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_tcp_socket_close(int sock);
+ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_tcp_socket_close(ROBOTRACONTEURLITE_SOCKET sock);
 
 ROBOTRACONTEURLITE_API uint16_t robotraconteurlite_ntohs(uint16_t netshort);
 
@@ -175,8 +171,8 @@ ROBOTRACONTEURLITE_API uint16_t robotraconteurlite_htons(uint16_t hostshort);
 
 ROBOTRACONTEURLITE_API uint64_t robotraconteurlite_be64toh(uint64_t big_endian_64bits);
 
-ROBOTRACONTEURLITE_API robotraconteurlite_status
-robotraconteurlite_tcp_socket_connect(struct robotraconteurlite_sockaddr_storage* addr);
+ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_tcp_socket_connect(
+    struct robotraconteurlite_sockaddr_storage* addr, ROBOTRACONTEURLITE_SOCKET* sock_out, int* errno_out);
 
 #ifdef __cplusplus
 }
