@@ -29,7 +29,7 @@ robotraconteurlite_status robotraconteurlite_connection_reset(struct robotracont
     connection->recv_message_len = 0;
     connection->send_buffer_pos = 0;
     connection->send_message_len = 0;
-    connection->sock = -1;
+    connection->sock = 0;
     connection->local_endpoint = 0;
     connection->remote_endpoint = 0;
     if (robotraconteurlite_nodeid_reset(&connection->remote_nodeid) != 0)

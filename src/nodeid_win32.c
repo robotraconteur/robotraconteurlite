@@ -13,19 +13,21 @@
  * limitations under the License.
  */
 
-#ifndef ROBOTRACONTEURLITE_CONFIG_H
-#define ROBOTRACONTEURLITE_CONFIG_H
+#include "robotraconteurlite/nodeid.h"
+#include "robotraconteurlite/err.h"
+#include <rpc.h>
 
-#define ROBOTRACONTEURLITE_API
+int robotraconteurlite_nodeid_newrandom(struct robotraconteurlite_nodeid* a)
+{
+    /* Use UuidCreate to generate a random UUID */
 
-#define ROBOTRACONTEURLITE_NODE_VERSION "0.18.0"
-
-#define ROBOTRACONTEURLITE_UNUSED(x) (void)(x)
-
-#ifdef WIN32
-#define ROBOTRACONTEURLITE_SOCKET unsigned long long
-#else
-#define ROBOTRACONTEURLITE_SOCKET int
-#endif
-
-#endif /* ROBOTRACONTEURLITE_CONFIG_H */
+    UUID uuid;
+    RPC_STATUS uuid_rv;
+    uuid_rv = UuidCreate(&uuid);
+    if (uuid_rv == RPC_S_UUID_NO_ADDRESS)
+    {
+        return ROBOTRACONTEURLITE_ERROR_INTERNAL_ERROR;
+    }
+    (void)memcpy(a->data, &uuid, sizeof(a->data));
+    return ROBOTRACONTEURLITE_ERROR_SUCCESS;
+}

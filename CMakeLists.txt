@@ -1,21 +1,34 @@
-cmake_minimum_required(VERSION 3.3)
+cmake_minimum_required(VERSION 3.5)
 project(robotraconteurlite VERSION 0.1.0)
 
-# if(CMAKE_COMPILER_IS_GNUCC)
-set(CMAKE_C_FLAGS
-    "${CMAKE_C_FLAGS} -ansi -pedantic -Werror -Werror=return-type -Wimplicit-function-declaration -Wint-conversion -Wincompatible-pointer-types -Wall -Wno-unused-function"
-)
-# endif()
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    set(CMAKE_C_FLAGS
+        "${CMAKE_C_FLAGS} -ansi -pedantic -Werror -Werror=return-type -Wimplicit-function-declaration -Wint-conversion -Wincompatible-pointer-types -Wall -Wno-unused-function"
+    )
+endif()
 
-find_package(OpenSSL REQUIRED)
-find_package(PkgConfig REQUIRED)
+if(UNIX)
+    find_package(PkgConfig REQUIRED)
+    pkg_check_modules(uuid REQUIRED IMPORTED_TARGET uuid)
+    option(ROBOTRACONTEURLITE_USE_OPENSSL "Use OpenSSL library" TRUE)
+    mark_as_advanced(ROBOTRACONTEURLITE_USE_OPENSSL)
+    option(ROBOTRACONTEURLITE_POSIX "Use POSIX API" TRUE)
+    mark_as_advanced(ROBOTRACONTEURLITE_POSIX)
+    option(ROBOTRACONTEURLITE_USE_LIBUUID "Use libuuid library" TRUE)
+    mark_as_advanced(ROBOTRACONTEURLITE_USE_LIBUUID)
+endif()
 
-pkg_check_modules(uuid REQUIRED IMPORTED_TARGET uuid)
+if(WIN32)
+    option(ROBOTRACONTEURLITE_USE_OPENSSL "Use OpenSSL library" TRUE)
+    mark_as_advanced(ROBOTRACONTEURLITE_USE_OPENSSL)
+endif()
 
-add_definitions(-DROBOTRACONTEURLITE_USE_OPENSSL=1)
+if(ROBOTRACONTEURLITE_USE_OPENSSL)
+    find_package(OpenSSL REQUIRED)
+    add_definitions(-DROBOTRACONTEURLITE_USE_OPENSSL=1)
+endif()
 
-add_library(
-    robotraconteurlite
+set(ROBOTRACONTEURLITE_SRC
     include/robotraconteurlite/array.h
     include/robotraconteurlite/config.h
     include/robotraconteurlite/err.h
@@ -32,13 +45,31 @@ add_library(
     src/message_data.c
     src/node.c
     src/nodeid.c
-    src/tcp_transport_posix.c
     src/tcp_transport.c
-    src/clock_posix.c
-    src/poll.c
-    src/poll_posix.c)
+    src/poll.c)
 
-target_link_libraries(robotraconteurlite PUBLIC OpenSSL::Crypto uuid)
+if(ROBOTRACONTEURLITE_POSIX)
+    set(ROBOTRACONTEURLITE_SRC ${ROBOTRACONTEURLITE_SRC} src/tcp_transport_posix.c src/clock_posix.c src/poll_posix.c)
+endif()
+
+if(ROBOTRACONTEURLITE_USE_LIBUUID)
+    set(ROBOTRACONTEURLITE_SRC ${ROBOTRACONTEURLITE_SRC} src/nodeid_libuuid.c)
+endif()
+
+if(WIN32)
+    set(ROBOTRACONTEURLITE_SRC ${ROBOTRACONTEURLITE_SRC} src/tcp_transport_win32.c src/clock_win32.c src/poll_win32.c
+                               src/nodeid_win32.c)
+endif()
+
+add_library(robotraconteurlite ${ROBOTRACONTEURLITE_SRC})
+
+if(ROBOTRACONTEURLITE_USE_OPENSSL)
+    target_link_libraries(robotraconteurlite PUBLIC OpenSSL::Crypto uuid)
+endif()
+
+if(WIN32)
+    target_link_libraries(robotraconteurlite PUBLIC ws2_32 Rpcrt4)
+endif()
 
 target_include_directories(robotraconteurlite PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/>
                                                      $<INSTALL_INTERFACE:include/>)

@@ -21,15 +21,20 @@
 #include <stdlib.h>
 #include <time.h>
 #include <stdio.h>
+#ifndef _WIN32
 #include <netinet/in.h>
 #include <unistd.h>
+#else
+#include <winsock2.h>
+#endif
 
 #include <robotraconteurlite/robotraconteurlite.h>
 
 #define NUM_CONNECTIONS 4
 #define CONNECTION_BUFFER_SIZE 8096
 
-#define FAILED ROBOTRACONTEURLITE_FAILED
+/* Win32 defines FAILED macro. Use RRLITE_FAILED if Windows support required */
+#define RRLITE_FAILED ROBOTRACONTEURLITE_FAILED
 #define RETRY ROBOTRACONTEURLITE_RETRY
 
 const char* node_name_str = "example.tiny_service";
@@ -47,7 +52,7 @@ const char* root_object_type = "example.tiny_service.tiny_object";
 int handle_message(struct robotraconteurlite_node* node, struct robotraconteurlite_event* event)
 {
     robotraconteurlite_status rv = robotraconteurlite_node_event_special_request(node, event);
-    if (FAILED(rv))
+    if (RRLITE_FAILED(rv))
     {
         if (rv == ROBOTRACONTEURLITE_ERROR_CONSUMED || rv == ROBOTRACONTEURLITE_ERROR_RETRY)
         {
@@ -106,7 +111,7 @@ int handle_message(struct robotraconteurlite_node* node, struct robotraconteurli
             {
                 return ROBOTRACONTEURLITE_ERROR_RETRY;
             }
-            if (FAILED(rv))
+            if (RRLITE_FAILED(rv))
             {
                 printf("Could not begin send message entry response\n");
                 return -1;
@@ -123,7 +128,7 @@ int handle_message(struct robotraconteurlite_node* node, struct robotraconteurli
             {
                 return ROBOTRACONTEURLITE_ERROR_RETRY;
             }
-            if (FAILED(rv))
+            if (RRLITE_FAILED(rv))
             {
                 printf("Could not end send message entry response\n");
                 return -1;
@@ -248,7 +253,7 @@ int handle_event(struct robotraconteurlite_node* node, struct robotraconteurlite
         {
             return 0;
         }
-        if (FAILED(rv))
+        if (RRLITE_FAILED(rv))
         {
             printf("Could not handle message\n");
             return -1;
@@ -358,11 +363,15 @@ int main(int argc, char* argv[])
     struct robotraconteurlite_string node_name;
     struct robotraconteurlite_clock clock;
     robotraconteurlite_timespec now = 0;
+
+#ifndef _WIN32
     struct sigaction sa;
+#endif
 
     ROBOTRACONTEURLITE_UNUSED(argc);
     ROBOTRACONTEURLITE_UNUSED(argv);
 
+#ifndef _WIN32
     /* Disable sigpipe. This is a common source of errors. Some libraries will disable this for you, but not all. */
     /* robotraconteurlite does not automatically disable sigpipe. */
     signal(SIGPIPE, SIG_IGN);
@@ -373,6 +382,14 @@ int main(int argc, char* argv[])
     sa.sa_flags = 0;
     sigaction(SIGINT, &sa, NULL);
     sigaction(SIGTERM, &sa, NULL);
+#else
+    WSADATA wsaData;
+    if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
+    {
+        printf("Could not initialize Winsock\n");
+        return -1;
+    }
+#endif
 
     /* Seed rand with the current time */
     srand(time(NULL));
@@ -445,7 +462,7 @@ int main(int argc, char* argv[])
             return -1;
         }
         rv = robotraconteurlite_node_next_wake(&node, now, &next_wake);
-        if (FAILED(rv))
+        if (RRLITE_FAILED(rv))
         {
             printf("Could not get next wake\n");
             return -1;
@@ -455,27 +472,27 @@ int main(int argc, char* argv[])
         {
             rv = robotraconteurlite_tcp_acceptor_poll_add_fd(&tcp_acceptor, connections_head, pollfds, &num_pollfds,
                                                              NUM_CONNECTIONS + 2);
-            if (FAILED(rv))
+            if (RRLITE_FAILED(rv))
             {
                 printf("Could not add acceptor to poll\n");
                 return -1;
             }
             rv = robotraconteurlite_tcp_connections_poll_add_fds(connections_head, pollfds, &num_pollfds,
                                                                  NUM_CONNECTIONS + 2);
-            if (FAILED(rv))
+            if (RRLITE_FAILED(rv))
             {
                 printf("Could not add connections to poll\n");
                 return -1;
             }
             rv = robotraconteurlite_node_poll_add_fd(&node, pollfds, &num_pollfds, NUM_CONNECTIONS + 2);
-            if (FAILED(rv))
+            if (RRLITE_FAILED(rv))
             {
                 printf("Could not add node to poll\n");
                 return -1;
             }
 
             rv = robotraconteurlite_wait_next_wake(&clock, pollfds, num_pollfds, next_wake);
-            if (FAILED(rv))
+            if (RRLITE_FAILED(rv))
             {
                 if (signal_received)
                 {
@@ -506,7 +523,7 @@ int main(int argc, char* argv[])
         {
             struct robotraconteurlite_event event;
             robotraconteurlite_status rv = robotraconteurlite_node_next_event(&node, &event, now);
-            if (FAILED(rv))
+            if (RRLITE_FAILED(rv))
             {
                 printf("Could not get event\n");
                 return -1;
@@ -517,7 +534,7 @@ int main(int argc, char* argv[])
             {
                 break;
             }
-            else if (FAILED(rv))
+            else if (RRLITE_FAILED(rv))
             {
                 if (rv != ROBOTRACONTEURLITE_ERROR_RETRY)
                 {

@@ -31,6 +31,31 @@ jobs:
     - name: ctest
       working-directory: build
       run: ctest --output-on-failure
+  build-windows:
+    runs-on: windows-2019
+    steps:
+    - uses: actions/checkout@v3
+    - name: vcpkg build
+      uses: johnwason/vcpkg-action@v6
+      id: vcpkg
+      with:
+        pkgs: cmocka openssl
+        triplet: x64-windows-static-md-release
+        cache-key: vcpkg-windows-build
+        token: ${{ github.token }}
+        github-binarycache: true
+    - name: python pip
+      run: python -m pip install robotraconteur
+    - uses: ilammy/msvc-dev-cmd@v1
+    - name: cmake
+      run: cmake -GNinja -B build -S . ${{ steps.vcpkg.outputs.vcpkg-cmake-config }} -DRUN_TINY_TESTS=ON
+    - name: make
+      working-directory: build
+      run: cmake --build . --config Release
+    - name: ctest
+      working-directory: build
+      run: ctest --output-on-failure
+
   clang-tidy:
     runs-on: ubuntu-20.04
     steps:
