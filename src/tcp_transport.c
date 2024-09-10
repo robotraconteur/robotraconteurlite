@@ -48,7 +48,8 @@ robotraconteurlite_status robotraconteurlite_tcp_acceptor_listen(
 
 robotraconteurlite_status robotraconteurlite_tcp_acceptor_close(struct robotraconteurlite_connection_acceptor* acceptor)
 {
-    if (acceptor->sock >= 0)
+    /* cppcheck-suppress misra-c2012-10.4 */
+    if (acceptor->sock != 0)
     {
         (void)robotraconteurlite_tcp_socket_close(acceptor->sock);
         acceptor->sock = 0;
@@ -1062,6 +1063,7 @@ void robotraconteurlite_tcp_connection_close(struct robotraconteurlite_connectio
         return;
     }
 
+    /* cppcheck-suppress misra-c2012-10.4 */
     if (connection->sock != 0)
     {
         (void)robotraconteurlite_tcp_socket_close(connection->sock);

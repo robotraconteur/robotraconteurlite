@@ -397,7 +397,7 @@ robotraconteurlite_status robotraconteurlite_tcp_connection_poll_add_fd(
     size_t max_pollfds)
 {
     short extra_events = 0;
-    if ((FLAGS_CHECK(connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_IDLE)) || (connection->sock < 0))
+    if ((FLAGS_CHECK(connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_IDLE)) || (connection->sock == 0))
     {
         return ROBOTRACONTEURLITE_ERROR_SUCCESS;
     }

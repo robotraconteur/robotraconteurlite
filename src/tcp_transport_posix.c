@@ -167,7 +167,8 @@ robotraconteurlite_status robotraconteurlite_tcp_socket_begin_server(const struc
     /* Create socket */
     ROBOTRACONTEURLITE_SOCKET sock = socket(AF_INET, SOCK_STREAM, 0);
     int flags = 0;
-    if (sock < 0)
+    /* cppcheck-suppress misra-c2012-10.4 */
+    if (sock == 0)
     {
         *errno_out = errno;
         return ROBOTRACONTEURLITE_ERROR_CONNECTION_ERROR;
@@ -369,7 +370,8 @@ robotraconteurlite_status robotraconteurlite_tcp_connection_poll_add_fd(
     size_t max_pollfds)
 {
     short extra_events = 0;
-    if ((FLAGS_CHECK(connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_IDLE)) || (connection->sock < 0))
+    /* cppcheck-suppress misra-c2012-10.4 */
+    if ((FLAGS_CHECK(connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_IDLE)) || (connection->sock == 0))
     {
         return ROBOTRACONTEURLITE_ERROR_SUCCESS;
     }
