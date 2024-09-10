@@ -40,7 +40,7 @@ jobs:
       id: vcpkg
       with:
         pkgs: cmocka openssl
-        triplet: x64-windows-static-md
+        triplet: x64-windows-static-md-release
         cache-key: vcpkg-windows-build
         token: ${{ github.token }}
         github-binarycache: true
