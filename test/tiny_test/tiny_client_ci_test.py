@@ -17,9 +17,9 @@ if examples_build_dir is None:
 examples_build_dir = Path(examples_build_dir)
 print(examples_build_dir)
 
-py_dir = (repo_dir / "examples" / "tiny_client").absolute()
+py_dir = str((repo_dir / "examples" / "tiny_client").absolute())
 
-service = subprocess.Popen([sys.executable, py_dir / "tiny_client_service.py"], cwd=py_dir,
+service = subprocess.Popen([sys.executable, py_dir + "/tiny_client_service.py"], cwd=py_dir,
                            stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 time.sleep(2)
 

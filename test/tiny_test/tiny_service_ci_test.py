@@ -18,7 +18,7 @@ if examples_build_dir is None:
 examples_build_dir = Path(examples_build_dir)
 print(examples_build_dir)
 
-py_dir = (repo_dir / "examples" / "tiny_service").absolute()
+py_dir = str((repo_dir / "examples" / "tiny_service").absolute())
 
 try:
 
@@ -26,7 +26,7 @@ try:
                                cwd=examples_build_dir, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     time.sleep(2)
 
-    subprocess.check_call([sys.executable, py_dir / "tiny_service_client.py"], cwd=py_dir)
+    subprocess.check_call([sys.executable, py_dir + "/tiny_service_client.py"], cwd=py_dir)
 finally:
 
     time.sleep(0.5)
