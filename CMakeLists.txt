@@ -19,7 +19,7 @@ if(UNIX)
 endif()
 
 if(WIN32)
-    option(ROBOTRACONTEURLITE_USE_OPENSSL "Use OpenSSL library" TRUE)
+    option(ROBOTRACONTEURLITE_USE_OPENSSL "Use OpenSSL library" FALSE)
     mark_as_advanced(ROBOTRACONTEURLITE_USE_OPENSSL)
 endif()
 
@@ -68,7 +68,13 @@ if(ROBOTRACONTEURLITE_USE_OPENSSL)
 endif()
 
 if(WIN32)
-    target_link_libraries(robotraconteurlite PUBLIC ws2_32 Rpcrt4)
+    target_link_libraries(robotraconteurlite PUBLIC ws2_32 Rpcrt4 Crypt32)
+    include(GenerateExportHeader)
+    generate_export_header(robotraconteurlite EXPORT_MACRO_NAME ROBOTRACONTEURLITE_API)
+    target_include_directories(robotraconteurlite PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>)
+    if(NOT BUILD_SHARED_LIBS)
+        target_compile_definitions(robotraconteurlite PUBLIC ROBOTRACONTEURLITE_STATIC_DEFINE)
+    endif()
 endif()
 
 target_include_directories(robotraconteurlite PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/>
@@ -88,6 +94,11 @@ install(
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
     FILES_MATCHING
     PATTERN "*.h*")
+
+if(WIN32)
+    install(FILES $<TARGET_FILE_DIR:robotraconteurlite>/robotraconteurlite_export.h
+            DESTINATION include/robotraconteurlite)
+endif()
 
 export(TARGETS robotraconteurlite FILE "${CMAKE_CURRENT_BINARY_DIR}/robotraconteurliteTargets.cmake")
 configure_file(cmake/robotraconteurliteConfig.cmake.in "${CMAKE_CURRENT_BINARY_DIR}/robotraconteurliteConfig.cmake"
