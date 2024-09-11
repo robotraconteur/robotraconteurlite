@@ -64,7 +64,11 @@ endif()
 add_library(robotraconteurlite ${ROBOTRACONTEURLITE_SRC})
 
 if(ROBOTRACONTEURLITE_USE_OPENSSL)
-    target_link_libraries(robotraconteurlite PUBLIC OpenSSL::Crypto uuid)
+    target_link_libraries(robotraconteurlite PUBLIC OpenSSL::Crypto)
+endif()
+
+if(ROBOTRACONTEURLITE_USE_LIBUUID AND NOT APPLE)
+target_link_libraries(robotraconteurlite PUBLIC uuid)
 endif()
 
 if(WIN32)

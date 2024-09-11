@@ -24,7 +24,9 @@
 #include <netinet/in.h>
 #include <netinet/tcp.h>
 #include <fcntl.h>
+#ifndef __APPLE__
 #include <endian.h>
+#endif
 #include <errno.h>
 #include <unistd.h>
 #include <assert.h>
