@@ -63,6 +63,7 @@ jobs:
       uses: johnwason/vcpkg-action@v6
       id: vcpkg
       with:
+        triplet: arm64-osx
         pkgs: cmocka openssl
         cache-key: vcpkg-macos-build
         token: ${{ github.token }}
