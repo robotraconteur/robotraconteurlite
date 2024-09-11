@@ -68,6 +68,8 @@ jobs:
         cache-key: vcpkg-macos-build
         token: ${{ github.token }}
         github-binarycache: true
+    - name: brew
+      run: brew install ninja
     - name: python pip
       run: python -m pip install robotraconteur
     - name: cmake
