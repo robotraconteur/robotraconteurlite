@@ -55,7 +55,31 @@ jobs:
     - name: ctest
       working-directory: build
       run: ctest --output-on-failure
-
+  build-macos:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: vcpkg build
+      uses: johnwason/vcpkg-action@v6
+      id: vcpkg
+      with:
+        triplet: arm64-osx
+        pkgs: cmocka openssl
+        cache-key: vcpkg-macos-build
+        token: ${{ github.token }}
+        github-binarycache: true
+    - name: brew
+      run: brew install ninja
+    - name: python pip
+      run: python3 -m pip install --break-system-packages --user robotraconteur
+    - name: cmake
+      run: cmake -GNinja -B build -S . ${{ steps.vcpkg.outputs.vcpkg-cmake-config }} -DRUN_TINY_TESTS=ON
+    - name: make
+      working-directory: build
+      run: cmake --build . --config Release
+    - name: ctest
+      working-directory: build
+      run: ctest --output-on-failure
   clang-tidy:
     runs-on: ubuntu-20.04
     steps:

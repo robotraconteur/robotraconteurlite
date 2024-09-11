@@ -39,11 +39,9 @@ Incomplete or missing features:
 * Discovery
 * Subscriptions
 * Message and HTTP handshake verification
-* Message Version 4
 * Transports other than TCP
 * TLS encryption
 * Full API documentation and user instructions
-* Support for platforms other thar Linux
 * Exhaustive unit testing
 
 These missing features are all actively being developed.
