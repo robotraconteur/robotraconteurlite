@@ -71,7 +71,7 @@ jobs:
     - name: brew
       run: brew install ninja
     - name: python pip
-      run: python -m pip install robotraconteur
+      run: python3 -m pip install robotraconteur
     - name: cmake
       run: cmake -GNinja -B build -S . ${{ steps.vcpkg.outputs.vcpkg-cmake-config }} -DRUN_TINY_TESTS=ON
     - name: make
