@@ -523,8 +523,9 @@ int main(int argc, char* argv[])
         do
         {
             struct robotraconteurlite_event event;
+            robotraconteurlite_status rv = -1;
             robotraconteurlite_clock_gettime(&clock, &now);
-            robotraconteurlite_status rv = robotraconteurlite_node_next_event(&node, &event, now);
+            rv = robotraconteurlite_node_next_event(&node, &event, now);
             if (RRLITE_FAILED(rv))
             {
                 printf("Could not get event\n");
