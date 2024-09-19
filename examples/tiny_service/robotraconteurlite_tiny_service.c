@@ -502,6 +502,7 @@ int main(int argc, char* argv[])
                 printf("Could not wait for next wake\n");
                 return -1;
             }
+            robotraconteurlite_clock_gettime(&clock, &now);
             /* Accept TCP connections */
             if (robotraconteurlite_tcp_acceptor_communicate(&tcp_acceptor, connections_head, now))
             {
@@ -522,7 +523,9 @@ int main(int argc, char* argv[])
         do
         {
             struct robotraconteurlite_event event;
-            robotraconteurlite_status rv = robotraconteurlite_node_next_event(&node, &event, now);
+            robotraconteurlite_status rv = -1;
+            robotraconteurlite_clock_gettime(&clock, &now);
+            rv = robotraconteurlite_node_next_event(&node, &event, now);
             if (RRLITE_FAILED(rv))
             {
                 printf("Could not get event\n");
