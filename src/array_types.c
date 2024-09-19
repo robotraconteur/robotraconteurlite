@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-#include <robotraconteurlite/robotraconteurlite.h>
+#include "robotraconteurlite/array.h"
 #include <string.h>
 #include <assert.h>
 
