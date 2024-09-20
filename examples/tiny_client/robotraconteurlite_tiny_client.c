@@ -43,8 +43,8 @@ and RRLITE_SUCCEEDED if Windows support required */
 
 /* #define TINY_CLIENT_WEBSOCKET 1 */
 
-const uint16_t service_port = 22229;
-const char* service_ip_str = "127.0.0.1";
+const uint16_t default_service_port = 22229;
+const char* default_service_ip_str = "127.0.0.1";
 const char* service_name = "tiny_service";
 
 enum tiny_client_state
@@ -81,8 +81,43 @@ int main(int argc, char* argv[])
 
     double d1_set_val = 42.2;
 
-    ROBOTRACONTEURLITE_UNUSED(argc);
-    ROBOTRACONTEURLITE_UNUSED(argv);
+    const char* service_ip_str;
+    uint16_t service_port;
+    int use_ws = 0;
+
+    if (argc > 1)
+    {
+        service_ip_str = argv[1];
+    }
+    else
+    {
+        service_ip_str = default_service_ip_str;
+    }
+
+    if (argc > 2)
+    {
+        long temp_port;
+        errno = 0;
+        temp_port = strtol(argv[2], NULL, 10);
+        if (errno != 0 || temp_port < 0 || temp_port > 65535)
+        {
+            printf("Invalid port number\n");
+            return -1;
+        }
+        service_port = (uint16_t)temp_port;
+    }
+    else
+    {
+        service_port = default_service_port;
+    }
+
+    if (argc > 3)
+    {
+        if (strcmp(argv[3], "ws") == 0)
+        {
+            use_ws = 1;
+        }
+    }
 
 #ifndef _WIN32
     /* Disable sigpipe. This is a common source of errors. Some libraries will disable this for you, but not all. */
@@ -133,12 +168,14 @@ int main(int argc, char* argv[])
         printf("Could not convert service IP address\n");
         return -1;
     }
-#if TINY_CLIENT_WEBSOCKET
-    /* Use websocket connection */
-    ROBOTRACONTEURLITE_FLAGS_SET(service_addr.flags, ROBOTRACONTEURLITE_ADDR_FLAGS_WEBSOCKET);
-    robotraconteurlite_string_from_c_str("127.0.0.1", &service_addr.http_host);
-    robotraconteurlite_string_from_c_str("/", &service_addr.http_path);
-#endif
+
+    if (use_ws != 0)
+    {
+        /* Use websocket connection */
+        ROBOTRACONTEURLITE_FLAGS_SET(service_addr.flags, ROBOTRACONTEURLITE_ADDR_FLAGS_WEBSOCKET);
+        robotraconteurlite_string_from_c_str("127.0.0.1", &service_addr.http_host);
+        robotraconteurlite_string_from_c_str("/", &service_addr.http_path);
+    }
 
     (void)memset(&connect_data, 0, sizeof(connect_data));
     connect_data.connections_head = connections_head;
