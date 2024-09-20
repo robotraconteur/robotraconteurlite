@@ -97,7 +97,7 @@ int main(int argc, char* argv[])
 
     if (argc > 2)
     {
-        long temp_port;
+        long temp_port = 0;
         errno = 0;
         temp_port = strtol(argv[2], NULL, 10);
         if (errno != 0 || temp_port < 0 || temp_port > 65535)
