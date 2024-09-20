@@ -25,6 +25,7 @@
 #include <netinet/in.h>
 #include <unistd.h>
 #include <arpa/inet.h>
+#include <errno.h>
 #else
 #include <winsock2.h>
 #include <ws2tcpip.h>
