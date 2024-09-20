@@ -82,8 +82,8 @@ int main(int argc, char* argv[])
 
     double d1_set_val = 42.2;
 
-    const char* service_ip_str;
-    uint16_t service_port;
+    const char* service_ip_str = NULL;
+    uint16_t service_port = 0;
     int use_ws = 0;
 
     if (argc > 1)
