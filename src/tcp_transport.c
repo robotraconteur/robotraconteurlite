@@ -174,9 +174,9 @@ static robotraconteurlite_status robotraconteurlite_tcp_connection_buffer_recv_w
         if (storage->recv_websocket_header_pos < 2U)
         {
             int last_errno = -1;
-            robotraconteurlite_status rv =
-                robotraconteurlite_tcp_socket_recv_nonblocking(connection->sock, storage->recv_websocket_header_buffer,
-                                                               &storage->recv_websocket_header_pos, 2, &last_errno);
+            robotraconteurlite_status rv = robotraconteurlite_tcp_socket_recv_nonblocking(
+                connection->sock, storage->recv_websocket_header_buffer, &storage->recv_websocket_header_pos,
+                2 - storage->recv_websocket_header_pos, &last_errno);
             if (FAILED(rv))
             {
                 FLAGS_SET(connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_ERROR);
@@ -197,7 +197,7 @@ static robotraconteurlite_status robotraconteurlite_tcp_connection_buffer_recv_w
             int last_errno = -1;
             robotraconteurlite_status rv = robotraconteurlite_tcp_socket_recv_nonblocking(
                 connection->sock, storage->recv_websocket_header_buffer, &storage->recv_websocket_header_pos,
-                websocket_header_len, &last_errno);
+                websocket_header_len - storage->recv_websocket_header_pos, &last_errno);
             if (FAILED(rv))
             {
                 FLAGS_SET(connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_ERROR);
@@ -436,7 +436,7 @@ static robotraconteurlite_status robotraconteurlite_tcp_connection_buffer_send_w
         int last_errno = -1;
         robotraconteurlite_status rv = robotraconteurlite_tcp_socket_send_nonblocking(
             connection->sock, storage->send_websocket_header_buffer, &storage->send_websocket_header_pos,
-            storage->send_websocket_header_len, &last_errno);
+            storage->send_websocket_header_len - storage->send_websocket_header_pos, &last_errno);
         if (FAILED(rv))
         {
             return rv;
@@ -453,9 +453,9 @@ static robotraconteurlite_status robotraconteurlite_tcp_connection_buffer_send_w
         return ROBOTRACONTEURLITE_ERROR_CONNECTION_ERROR;
     }
 
-    rv = robotraconteurlite_tcp_socket_send_nonblocking(connection->sock, connection->send_buffer,
-                                                        &storage->send_websocket_frame_buffer_pos,
-                                                        storage->send_websocket_frame_buffer_end, &last_errno);
+    rv = robotraconteurlite_tcp_socket_send_nonblocking(
+        connection->sock, connection->send_buffer, &storage->send_websocket_frame_buffer_pos,
+        storage->send_websocket_frame_buffer_end - storage->send_websocket_frame_buffer_pos, &last_errno);
 
     if (FAILED(rv))
     {
@@ -715,9 +715,9 @@ static robotraconteurlite_status robotraconteurlite_tcp_connection_handshake_htt
     assert(connection->send_message_len <= connection->send_buffer_len);
 
     /* Send the response */
-    rv = robotraconteurlite_tcp_socket_send_nonblocking(connection->sock, connection->send_buffer,
-                                                        &connection->send_buffer_pos, connection->send_message_len,
-                                                        &last_errno);
+    rv = robotraconteurlite_tcp_socket_send_nonblocking(
+        connection->sock, connection->send_buffer, &connection->send_buffer_pos,
+        connection->send_message_len - connection->send_buffer_pos, &last_errno);
     return rv;
 }
 
@@ -796,8 +796,8 @@ static robotraconteurlite_status robotraconteurlite_tcp_connection_handshake_ser
     {
         int last_errno = -1;
         robotraconteurlite_status rv = robotraconteurlite_tcp_socket_send_nonblocking(
-            connection->sock, connection->send_buffer, &connection->send_buffer_pos, connection->send_message_len,
-            &last_errno);
+            connection->sock, connection->send_buffer, &connection->send_buffer_pos,
+            connection->send_message_len - connection->send_buffer_pos, &last_errno);
         if (FAILED(rv))
         {
             if (RETRY(rv))
@@ -816,7 +816,9 @@ static robotraconteurlite_status robotraconteurlite_tcp_connection_handshake_ser
         FLAGS_SET(storage->tcp_transport_state, ROBOTRACONTEURLITE_TCP_TRANSPORT_STATE_IS_WEBSOCKET);
         FLAGS_SET(connection->connection_state,
                   ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTED | ROBOTRACONTEURLITE_STATUS_FLAGS_RECEIVE_REQUESTED);
-        FLAGS_CLEAR(connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTING);
+        FLAGS_CLEAR(connection->connection_state,
+                    (ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTING | ROBOTRACONTEURLITE_STATUS_FLAGS_BLOCK_SEND |
+                     ROBOTRACONTEURLITE_STATUS_FLAGS_SENDING | ROBOTRACONTEURLITE_STATUS_FLAGS_SEND_REQUESTED));
         /* Clear send buffer */
         connection->send_buffer_pos = 0;
         connection->send_message_len = 0;
@@ -882,13 +884,17 @@ static robotraconteurlite_status robotraconteurlite_tcp_connection_handshake_ser
         return rv;
     }
 
+    FLAGS_SET(connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_SENDING);
+
     /* Check if the response was sent */
     if ((connection->send_message_len > 0U) && (connection->send_buffer_pos == connection->send_message_len))
     {
         /* We are connected using websockets! */
         FLAGS_SET(connection->connection_state,
                   ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTED | ROBOTRACONTEURLITE_STATUS_FLAGS_RECEIVE_REQUESTED);
-        FLAGS_CLEAR(connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTING);
+        FLAGS_CLEAR(connection->connection_state,
+                    (ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTING | ROBOTRACONTEURLITE_STATUS_FLAGS_BLOCK_SEND |
+                     ROBOTRACONTEURLITE_STATUS_FLAGS_SENDING | ROBOTRACONTEURLITE_STATUS_FLAGS_SEND_REQUESTED));
         FLAGS_SET(storage->tcp_transport_state, ROBOTRACONTEURLITE_TCP_TRANSPORT_STATE_IS_WEBSOCKET);
         /* Clear send buffer */
         connection->send_buffer_pos = 0;
@@ -921,8 +927,8 @@ static robotraconteurlite_status robotraconteurlite_tcp_connection_handshake_cli
     {
         int last_errno = -1;
         robotraconteurlite_status rv = robotraconteurlite_tcp_socket_send_nonblocking(
-            connection->sock, connection->send_buffer, &connection->send_buffer_pos, connection->send_message_len,
-            &last_errno);
+            connection->sock, connection->send_buffer, &connection->send_buffer_pos,
+            connection->send_message_len - connection->send_buffer_pos, &last_errno);
         if (FAILED(rv))
         {
             FLAGS_SET(connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_ERROR);
@@ -930,9 +936,12 @@ static robotraconteurlite_status robotraconteurlite_tcp_connection_handshake_cli
         }
         if (connection->send_buffer_pos < connection->send_message_len)
         {
+            FLAGS_SET(connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_SENDING);
             return ROBOTRACONTEURLITE_ERROR_CONSUMED;
         }
     }
+
+    FLAGS_CLEAR(connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_SENDING);
 
     rv = robotraconteurlite_tcp_connection_handshake_http_recv_header(connection);
     if (FAILED(rv))

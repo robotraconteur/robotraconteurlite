@@ -91,9 +91,9 @@ robotraconteurlite_status robotraconteurlite_tcp_socket_recv_nonblocking(ROBOTRA
                                                                          int* errno_out)
 {
     size_t pos1 = *pos;
-    while (*pos < len)
+    while ((*pos - pos1) < len)
     {
-        ssize_t ret = recv(sock, &buffer[*pos], len - *pos, MSG_DONTWAIT);
+        ssize_t ret = recv(sock, &buffer[*pos], len - (*pos - pos1), MSG_DONTWAIT);
         if (ret < 0)
         {
             /* False positive cppcheck warning for errno not set */
@@ -129,9 +129,9 @@ robotraconteurlite_status robotraconteurlite_tcp_socket_send_nonblocking(ROBOTRA
                                                                          int* errno_out)
 {
     size_t pos1 = *pos;
-    while (*pos < len)
+    while ((*pos - pos1) < len)
     {
-        ssize_t ret = send(sock, &buffer[*pos], len - *pos, MSG_DONTWAIT);
+        ssize_t ret = send(sock, &buffer[*pos], len - (*pos - pos1), MSG_DONTWAIT);
         if (ret < 0)
         {
             /* False positive cppcheck warning for errno not set */
