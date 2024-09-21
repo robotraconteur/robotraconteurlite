@@ -20,13 +20,13 @@ print(examples_build_dir)
 py_dir = str((repo_dir / "examples" / "tiny_client").absolute())
 
 service = subprocess.Popen([sys.executable, py_dir + "/tiny_client_service.py"], cwd=py_dir,
-                           stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                           stdin=subprocess.PIPE, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 time.sleep(2)
 
 subprocess.check_call([examples_build_dir + "/robotraconteurlite_tiny_client"], cwd=examples_build_dir)
-# time.sleep(0.1)
-# subprocess.check_call([examples_build_dir + "/robotraconteurlite_tiny_client",
-#                       "127.0.0.1", "22229", "ws"], cwd=examples_build_dir)
+time.sleep(0.1)
+subprocess.check_call([examples_build_dir + "/robotraconteurlite_tiny_client",
+                      "127.0.0.1", "22229", "ws"], cwd=examples_build_dir)
 
 time.sleep(0.5)
 if sys.platform == "win32":

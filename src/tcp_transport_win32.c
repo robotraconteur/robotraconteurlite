@@ -125,10 +125,10 @@ robotraconteurlite_status robotraconteurlite_tcp_socket_recv_nonblocking(ROBOTRA
         return ROBOTRACONTEURLITE_ERROR_CONNECTION_ERROR;
     }
 
-    while (*pos < len)
+    while ((*pos - pos1) < len)
     {
         wsaBuf.buf = &buffer[*pos];
-        wsaBuf.len = len - *pos;
+        wsaBuf.len = len - (*pos - pos1);
         int ret = WSARecv(sock, &wsaBuf, 1, &bytesReceived, &flags, NULL, NULL);
         if (ret == SOCKET_ERROR)
         {
@@ -171,10 +171,10 @@ robotraconteurlite_status robotraconteurlite_tcp_socket_send_nonblocking(ROBOTRA
         return ROBOTRACONTEURLITE_ERROR_CONNECTION_ERROR;
     }
 
-    while (*pos < len)
+    while ((*pos - pos1) < len)
     {
         wsaBuf.buf = &buffer[*pos];
-        wsaBuf.len = len - *pos;
+        wsaBuf.len = len - (*pos - pos1);
         int ret = WSASend(sock, &wsaBuf, 1, &bytesSent, flags, NULL, NULL);
         if (ret == SOCKET_ERROR)
         {
