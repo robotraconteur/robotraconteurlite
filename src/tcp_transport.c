@@ -176,7 +176,7 @@ static robotraconteurlite_status robotraconteurlite_tcp_connection_buffer_recv_w
             int last_errno = -1;
             robotraconteurlite_status rv = robotraconteurlite_tcp_socket_recv_nonblocking(
                 connection->sock, storage->recv_websocket_header_buffer, &storage->recv_websocket_header_pos,
-                2 - storage->recv_websocket_header_pos, &last_errno);
+                2U - storage->recv_websocket_header_pos, &last_errno);
             if (FAILED(rv))
             {
                 FLAGS_SET(connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_ERROR);
