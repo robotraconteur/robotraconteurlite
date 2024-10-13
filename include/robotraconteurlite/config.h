@@ -29,7 +29,11 @@
 #define ROBOTRACONTEURLITE_UNUSED(x) (void)(x)
 
 #ifdef WIN32
+#ifdef _WIN64
 #define ROBOTRACONTEURLITE_SOCKET unsigned long long
+#else
+#define ROBOTRACONTEURLITE_SOCKET unsigned long
+#endif
 #else
 #define ROBOTRACONTEURLITE_SOCKET int
 #endif
