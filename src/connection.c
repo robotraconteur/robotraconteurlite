@@ -476,3 +476,42 @@ robotraconteurlite_status robotraconteurlite_connection_impl_communicate_send2(
     }
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
+
+ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_connection_impl_connect2(
+    struct robotraconteurlite_connection* connection, robotraconteurlite_timespec now, uint32_t transport_type,
+    const struct robotraconteurlite_addr* addr, ROBOTRACONTEURLITE_SOCKET sock)
+{
+    struct robotraconteurlite_connection* c = connection;
+
+    c->transport_type = transport_type;
+    FLAGS_CLEAR(c->config_flags, ROBOTRACONTEURLITE_CONFIG_FLAGS_ISSERVER);
+    c->sock = sock;
+    c->connection_state =
+        (uint32_t)ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTING | ROBOTRACONTEURLITE_STATUS_FLAGS_RECEIVE_REQUESTED;
+    (void)memset(&c->transport_storage, 0, sizeof(c->transport_storage));
+
+    c->last_recv_message_time = now;
+    c->last_send_message_time = now;
+
+    c->remote_nodename.data = c->remote_nodename_char;
+    c->remote_nodename.len = sizeof(c->remote_nodename_char);
+    c->remote_service_name.data = c->remote_service_name_char;
+    c->remote_service_name.len = sizeof(c->remote_service_name_char);
+    if (robotraconteurlite_nodeid_copy_to(&addr->nodeid, &c->remote_nodeid) != 0)
+    {
+        return ROBOTRACONTEURLITE_ERROR_INTERNAL_ERROR;
+    }
+    if (robotraconteurlite_string_copy_to(&addr->nodename, &c->remote_nodename) != 0)
+    {
+        return ROBOTRACONTEURLITE_ERROR_INTERNAL_ERROR;
+    }
+    if (robotraconteurlite_string_copy_to(&addr->service_name, &c->remote_service_name) != 0)
+    {
+        return ROBOTRACONTEURLITE_ERROR_INTERNAL_ERROR;
+    }
+
+    c->last_recv_message_time = now;
+    c->last_send_message_time = now;
+
+    return ROBOTRACONTEURLITE_ERROR_SUCCESS;
+}

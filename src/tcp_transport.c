@@ -1044,46 +1044,23 @@ robotraconteurlite_status robotraconteurlite_tcp_connect_service(
     {
         return rv;
     }
-    c->transport_type = ROBOTRACONTEURLITE_TCP_TRANSPORT;
-    FLAGS_CLEAR(c->config_flags, ROBOTRACONTEURLITE_CONFIG_FLAGS_ISSERVER);
-    c->sock = sock;
-    c->connection_state =
-        (uint32_t)ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTING | ROBOTRACONTEURLITE_STATUS_FLAGS_RECEIVE_REQUESTED;
-    (void)memset(&c->transport_storage, 0, sizeof(c->transport_storage));
+
+    rv = robotraconteurlite_connection_impl_connect2(c, now, ROBOTRACONTEURLITE_TCP_TRANSPORT,
+                                                     connect_data->service_address, sock);
+
+    if (FAILED(rv))
+    {
+        return rv;
+    }
+
+    connect_data->client_out = c;
+
     if (FLAGS_CHECK(connect_data->service_address->flags, ROBOTRACONTEURLITE_ADDR_FLAGS_WEBSOCKET))
     {
         struct robotraconteurlite_tcp_transport_storage* storage = get_storage(c);
         FLAGS_SET(storage->tcp_transport_state, ROBOTRACONTEURLITE_TCP_TRANSPORT_STATE_IS_WEBSOCKET |
                                                     ROBOTRACONTEURLITE_TCP_TRANSPORT_STATE_IN_HTTP_HEADER);
         FLAGS_SET(c->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_BLOCK_SEND);
-    }
-    c->last_recv_message_time = connect_data->now;
-    c->last_send_message_time = connect_data->now;
-
-    c->remote_nodename.data = c->remote_nodename_char;
-    c->remote_nodename.len = sizeof(c->remote_nodename_char);
-    c->remote_service_name.data = c->remote_service_name_char;
-    c->remote_service_name.len = sizeof(c->remote_service_name_char);
-    if (robotraconteurlite_nodeid_copy_to(&connect_data->service_address->nodeid, &c->remote_nodeid) != 0)
-    {
-        return ROBOTRACONTEURLITE_ERROR_INTERNAL_ERROR;
-    }
-    if (robotraconteurlite_string_copy_to(&connect_data->service_address->nodename, &c->remote_nodename) != 0)
-    {
-        return ROBOTRACONTEURLITE_ERROR_INTERNAL_ERROR;
-    }
-    if (robotraconteurlite_string_copy_to(&connect_data->service_address->service_name, &c->remote_service_name) != 0)
-    {
-        return ROBOTRACONTEURLITE_ERROR_INTERNAL_ERROR;
-    }
-
-    c->last_recv_message_time = now;
-    c->last_send_message_time = now;
-
-    connect_data->client_out = c;
-
-    if (FLAGS_CHECK(connect_data->service_address->flags, ROBOTRACONTEURLITE_ADDR_FLAGS_WEBSOCKET))
-    {
         return robotraconteurlite_tcp_connect_service_send_websocket_http_header(connect_data);
     }
 

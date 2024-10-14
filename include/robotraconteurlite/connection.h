@@ -337,6 +337,10 @@ ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_connection_i
     struct robotraconteurlite_connection* connection, robotraconteurlite_timespec now,
     robotraconteurlite_status send_op_rv);
 
+ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_connection_impl_connect2(
+    struct robotraconteurlite_connection* connection, robotraconteurlite_timespec now, uint32_t transport_type,
+    const struct robotraconteurlite_addr* addr, ROBOTRACONTEURLITE_SOCKET sock);
+
 #ifdef __cplusplus
 }
 #endif
