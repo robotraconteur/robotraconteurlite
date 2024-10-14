@@ -52,23 +52,23 @@ robotraconteurlite_status robotraconteurlite_nodeid_parse(const struct robotraco
 
     (void)memset(buf, 0, sizeof(buf));
 
-    if (src_str->len == 32)
+    if (src_str->len == 32U)
     {
         (void)memcpy(buf, src_str->data, 32);
     }
-    else if (src_str->len == 36 || src_str->len == 38)
+    else if ((src_str->len == 36U) || (src_str->len == 38U))
     {
         const char* s = src_str->data;
 
-        if (src_str->len == 38)
+        if (src_str->len == 38U)
         {
-            if (s[0] != '{' || s[37] != '}')
+            if ((s[0] != '{') || (s[37] != '}'))
             {
                 return ROBOTRACONTEURLITE_ERROR_INVALID_ARGUMENT;
             }
             s = &s[1];
         }
-        if (s[8] != '-' || s[13] != '-' || s[18] != '-' || s[23] != '-')
+        if ((s[8] != '-') || (s[13] != '-') || (s[18] != '-') || (s[23] != '-'))
         {
             return ROBOTRACONTEURLITE_ERROR_INVALID_ARGUMENT;
         }
@@ -83,16 +83,18 @@ robotraconteurlite_status robotraconteurlite_nodeid_parse(const struct robotraco
         return ROBOTRACONTEURLITE_ERROR_INVALID_ARGUMENT;
     }
 
-    for (i = 0; i < 16; i++)
+    for (i = 0; i < 16U; i++)
     {
         char hex[3];
         unsigned long int val = 0;
-        hex[0] = buf[i * 2];
-        hex[1] = buf[i * 2 + 1];
+        hex[0] = buf[i * 2U];
+        hex[1] = buf[(i * 2U) + 1U];
         hex[2] = 0;
         errno = 0;
         val = strtoul(hex, NULL, 16);
-        if (errno != 0 || val > 255)
+        /* False positive misra violation */
+        /* cppcheck-suppress misra-c2012-22.10 */
+        if ((errno != 0) && (val > 255U))
         {
             return ROBOTRACONTEURLITE_ERROR_INVALID_ARGUMENT;
         }
