@@ -293,7 +293,7 @@ static robotraconteurlite_status robotraconteurlite_tcp_connection_buffer_send_w
     struct robotraconteurlite_connection* connection, size_t len)
 {
     struct robotraconteurlite_tcp_transport_storage* storage = get_storage(connection);
-    size_t send_len = len - connection->send_buffer_pos;
+    size_t send_len = len;
     int last_errno = -1;
     robotraconteurlite_status rv = -1;
     if ((storage->send_websocket_frame_len == 0U) && (send_len > 0U))
