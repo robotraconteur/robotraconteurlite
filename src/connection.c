@@ -24,6 +24,8 @@
 
 robotraconteurlite_status robotraconteurlite_connection_reset(struct robotraconteurlite_connection* connection)
 {
+    connection->transport_type = 0;
+    connection->config_flags = ROBOTRACONTEURLITE_CONFIG_FLAGS_ENABLE_REDUCED_HEADER4;
     connection->connection_state = ROBOTRACONTEURLITE_STATUS_FLAGS_IDLE;
     connection->recv_buffer_pos = 0;
     connection->recv_message_len = 0;
@@ -256,5 +258,84 @@ robotraconteurlite_status robotraconteurlite_connection_next_wake(struct robotra
         }
     }
 
+    return ROBOTRACONTEURLITE_ERROR_SUCCESS;
+}
+
+struct robotraconteurlite_connection* robotraconteurlite_connection_find_idle(
+    struct robotraconteurlite_connection* connections_head)
+{
+    struct robotraconteurlite_connection* connection = connections_head;
+    while (connection != NULL)
+    {
+        if (FLAGS_CHECK(connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_IDLE))
+        {
+            return connection;
+        }
+        connection = connection->next;
+    }
+    return NULL;
+}
+
+void robotraconteurlite_connection_init(struct robotraconteurlite_connection* connection)
+{
+    (void)robotraconteurlite_connection_reset(connection);
+    connection->heartbeat_period_ms = 5000;
+    connection->heartbeat_timeout_ms = 15000;
+}
+
+void robotraconteurlite_connection_init_connections(struct robotraconteurlite_connection* connections_head)
+{
+    struct robotraconteurlite_connection* c = connections_head;
+    while (c != NULL)
+    {
+        robotraconteurlite_connection_init(c);
+        c = c->next;
+    }
+}
+
+robotraconteurlite_status robotraconteurlite_connection_impl_communicate(
+    struct robotraconteurlite_connection* connection, robotraconteurlite_timespec now, uint32_t transport_type,
+    uint8_t* close_request)
+{
+    robotraconteurlite_status rv = -1;
+    if ((connection->transport_type != transport_type))
+    {
+        return ROBOTRACONTEURLITE_ERROR_CONSUMED;
+    }
+
+    if (FLAGS_CHECK(connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_CLOSED_CONSUMED))
+    {
+        connection->connection_state = ROBOTRACONTEURLITE_STATUS_FLAGS_IDLE;
+        if (robotraconteurlite_connection_reset(connection) != 0)
+        {
+            return ROBOTRACONTEURLITE_ERROR_INTERNAL_ERROR;
+        }
+    }
+
+    if (FLAGS_CHECK(connection->connection_state,
+                    (ROBOTRACONTEURLITE_STATUS_FLAGS_CLOSED | ROBOTRACONTEURLITE_STATUS_FLAGS_IDLE)))
+    {
+        return ROBOTRACONTEURLITE_ERROR_CONSUMED;
+    }
+
+    if (FLAGS_CHECK(connection->connection_state,
+                    (ROBOTRACONTEURLITE_STATUS_FLAGS_CLOSE_REQUESTED | ROBOTRACONTEURLITE_STATUS_FLAGS_CLOSING)))
+    {
+        /* TODO: graceful shutdown */
+        close_request[0] = 1;
+    }
+
+    return ROBOTRACONTEURLITE_ERROR_SUCCESS;
+}
+
+robotraconteurlite_status robotraconteurlite_connection_impl_communicate_after_close_requested(
+    struct robotraconteurlite_connection* connection, robotraconteurlite_timespec now,
+    robotraconteurlite_status close_rv)
+{
+    ROBOTRACONTEURLITE_UNUSED(now);
+    ROBOTRACONTEURLITE_UNUSED(close_rv);
+
+    connection->sock = 0;
+    connection->connection_state = ROBOTRACONTEURLITE_STATUS_FLAGS_CLOSED;
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }

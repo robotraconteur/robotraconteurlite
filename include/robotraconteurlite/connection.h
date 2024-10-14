@@ -307,6 +307,22 @@ ROBOTRACONTEURLITE_API robotraconteurlite_status
 robotraconteurlite_connection_next_wake(struct robotraconteurlite_connection* connection,
                                         robotraconteurlite_timespec now, robotraconteurlite_timespec* next_wake);
 
+ROBOTRACONTEURLITE_API struct robotraconteurlite_connection* robotraconteurlite_connection_find_idle(
+    struct robotraconteurlite_connection* connections_head);
+
+ROBOTRACONTEURLITE_API void robotraconteurlite_connection_init(struct robotraconteurlite_connection* connection);
+
+ROBOTRACONTEURLITE_API void robotraconteurlite_connection_init_connections(
+    struct robotraconteurlite_connection* connections_head);
+
+ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_connection_impl_communicate(
+    struct robotraconteurlite_connection* connection, robotraconteurlite_timespec now, uint32_t transport_type,
+    uint8_t* close_request);
+
+ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_connection_impl_communicate_after_close_requested(
+    struct robotraconteurlite_connection* connection, robotraconteurlite_timespec now,
+    robotraconteurlite_status close_rv);
+
 #ifdef __cplusplus
 }
 #endif

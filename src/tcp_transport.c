@@ -63,19 +63,11 @@ robotraconteurlite_status robotraconteurlite_tcp_acceptor_communicate(
     robotraconteurlite_timespec now)
 {
     /* Find a connection that is idle */
-    struct robotraconteurlite_connection* c = connection_head;
+    struct robotraconteurlite_connection* c = NULL;
     int errno_out = -1;
     robotraconteurlite_status rv = -1;
-    while (c != NULL)
-    {
-        if ((c->transport_type == ROBOTRACONTEURLITE_TCP_TRANSPORT) &&
-            (FLAGS_CHECK(c->config_flags, ROBOTRACONTEURLITE_CONFIG_FLAGS_ISSERVER)) &&
-            (FLAGS_CHECK(c->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_IDLE)))
-        {
-            break;
-        }
-        c = c->next;
-    }
+
+    c = robotraconteurlite_connection_find_idle(connection_head);
 
     if (c == NULL)
     {
@@ -93,33 +85,14 @@ robotraconteurlite_status robotraconteurlite_tcp_acceptor_communicate(
         return rv;
     }
 
+    c->transport_type = ROBOTRACONTEURLITE_TCP_TRANSPORT;
+    FLAGS_SET(c->config_flags, ROBOTRACONTEURLITE_CONFIG_FLAGS_ISSERVER);
     c->connection_state = ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTING;
     c->last_recv_message_time = now;
     c->last_send_message_time = now;
     (void)memset(&c->transport_storage, 0, sizeof(c->transport_storage));
 
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
-}
-
-void robotraconteurlite_tcp_connection_init_connection_server(struct robotraconteurlite_connection* connection)
-{
-    connection->transport_type = ROBOTRACONTEURLITE_TCP_TRANSPORT;
-    connection->sock = 0;
-    FLAGS_SET(connection->config_flags, ROBOTRACONTEURLITE_CONFIG_FLAGS_ISSERVER);
-    FLAGS_SET(connection->config_flags, ROBOTRACONTEURLITE_CONFIG_FLAGS_ENABLE_REDUCED_HEADER4);
-    FLAGS_SET(connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_IDLE);
-    connection->heartbeat_period_ms = 5000;
-    connection->heartbeat_timeout_ms = 15000;
-}
-
-void robotraconteurlite_tcp_connection_init_connections_server(struct robotraconteurlite_connection* connections_head)
-{
-    struct robotraconteurlite_connection* c = connections_head;
-    while (c != NULL)
-    {
-        robotraconteurlite_tcp_connection_init_connection_server(c);
-        c = c->next;
-    }
 }
 
 static size_t robotraconteurlite_tcp_connection_recv_websocket_header_size(uint8_t byte_two)
@@ -1001,34 +974,23 @@ robotraconteurlite_status robotraconteurlite_tcp_connection_communicate(
     struct robotraconteurlite_connection* connection, robotraconteurlite_timespec now)
 {
     robotraconteurlite_status rv = -1;
-    if ((connection->transport_type != ROBOTRACONTEURLITE_TCP_TRANSPORT))
-    {
-        return ROBOTRACONTEURLITE_ERROR_SUCCESS;
-    }
+    uint8_t close_requested = 0;
 
-    if (FLAGS_CHECK(connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_CLOSED_CONSUMED))
+    rv = robotraconteurlite_connection_impl_communicate(connection, now, ROBOTRACONTEURLITE_TCP_TRANSPORT,
+                                                        &close_requested);
+    if (FAILED(rv))
     {
-        connection->connection_state = ROBOTRACONTEURLITE_STATUS_FLAGS_IDLE;
-        if (robotraconteurlite_connection_reset(connection) != 0)
+        if (rv == ROBOTRACONTEURLITE_ERROR_CONSUMED)
         {
-            return ROBOTRACONTEURLITE_ERROR_INTERNAL_ERROR;
+            return ROBOTRACONTEURLITE_ERROR_SUCCESS;
         }
+        return rv;
     }
 
-    if (FLAGS_CHECK(connection->connection_state,
-                    (ROBOTRACONTEURLITE_STATUS_FLAGS_CLOSED | ROBOTRACONTEURLITE_STATUS_FLAGS_IDLE)))
+    if (close_requested != 0U)
     {
-        return ROBOTRACONTEURLITE_ERROR_SUCCESS;
-    }
-
-    if (FLAGS_CHECK(connection->connection_state,
-                    (ROBOTRACONTEURLITE_STATUS_FLAGS_CLOSE_REQUESTED | ROBOTRACONTEURLITE_STATUS_FLAGS_CLOSING)))
-    {
-        /* TODO: graceful shutdown */
-        (void)robotraconteurlite_tcp_socket_close(connection->sock);
-        connection->sock = 0;
-        connection->connection_state = ROBOTRACONTEURLITE_STATUS_FLAGS_CLOSED;
-        return ROBOTRACONTEURLITE_ERROR_SUCCESS;
+        rv = robotraconteurlite_tcp_socket_close(connection->sock);
+        return robotraconteurlite_connection_impl_communicate_after_close_requested(connection, now, rv);
     }
 
     /* Do handshake */
@@ -1166,20 +1128,12 @@ static robotraconteurlite_status robotraconteurlite_tcp_connect_service_send_web
 robotraconteurlite_status robotraconteurlite_tcp_connect_service(
     struct robotraconteurlite_tcp_connect_service_data* connect_data, robotraconteurlite_timespec now)
 {
-    struct robotraconteurlite_connection* c = connect_data->connections_head;
+    struct robotraconteurlite_connection* c = NULL;
     ROBOTRACONTEURLITE_SOCKET sock = 0;
     robotraconteurlite_status rv = -1;
     int last_errno = -1;
-    while (c != NULL)
-    {
-        if ((c->transport_type == ROBOTRACONTEURLITE_TCP_TRANSPORT) &&
-            (!FLAGS_CHECK(c->config_flags, ROBOTRACONTEURLITE_CONFIG_FLAGS_ISSERVER)) &&
-            (FLAGS_CHECK(c->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_IDLE)))
-        {
-            break;
-        }
-        c = c->next;
-    }
+
+    c = robotraconteurlite_connection_find_idle(connect_data->connections_head);
 
     if (!c)
     {
@@ -1191,6 +1145,8 @@ robotraconteurlite_status robotraconteurlite_tcp_connect_service(
     {
         return rv;
     }
+    c->transport_type = ROBOTRACONTEURLITE_TCP_TRANSPORT;
+    FLAGS_CLEAR(c->config_flags, ROBOTRACONTEURLITE_CONFIG_FLAGS_ISSERVER);
     c->sock = sock;
     c->connection_state =
         (uint32_t)ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTING | ROBOTRACONTEURLITE_STATUS_FLAGS_RECEIVE_REQUESTED;
@@ -1233,25 +1189,4 @@ robotraconteurlite_status robotraconteurlite_tcp_connect_service(
     }
 
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
-}
-
-void robotraconteurlite_tcp_connection_init_connection_client(struct robotraconteurlite_connection* connection)
-{
-    connection->transport_type = ROBOTRACONTEURLITE_TCP_TRANSPORT;
-    connection->sock = 0;
-    FLAGS_CLEAR(connection->config_flags, ROBOTRACONTEURLITE_CONFIG_FLAGS_ISSERVER);
-    FLAGS_SET(connection->config_flags, ROBOTRACONTEURLITE_CONFIG_FLAGS_ENABLE_REDUCED_HEADER4);
-    FLAGS_SET(connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_IDLE);
-    connection->heartbeat_period_ms = 5000;
-    connection->heartbeat_timeout_ms = 15000;
-}
-
-void robotraconteurlite_tcp_connection_init_connections_client(struct robotraconteurlite_connection* connections_head)
-{
-    struct robotraconteurlite_connection* c = connections_head;
-    while (c != NULL)
-    {
-        robotraconteurlite_tcp_connection_init_connection_client(c);
-        c = c->next;
-    }
 }

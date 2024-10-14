@@ -92,12 +92,6 @@ ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_tcp_acceptor
     struct robotraconteurlite_connection_acceptor* acceptor, struct robotraconteurlite_connection* connection_head,
     struct robotraconteurlite_pollfd* pollfds, size_t* pollfd_count, size_t max_pollfds);
 
-ROBOTRACONTEURLITE_API void robotraconteurlite_tcp_connection_init_connection_server(
-    struct robotraconteurlite_connection* connection);
-
-ROBOTRACONTEURLITE_API void robotraconteurlite_tcp_connection_init_connections_server(
-    struct robotraconteurlite_connection* connections_head);
-
 ROBOTRACONTEURLITE_API void robotraconteurlite_tcp_connection_close(struct robotraconteurlite_connection* connection);
 
 ROBOTRACONTEURLITE_API void robotraconteurlite_tcp_connections_close(
@@ -126,12 +120,6 @@ ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_tcp_connecti
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_tcp_connect_service(
     struct robotraconteurlite_tcp_connect_service_data* connect_data, robotraconteurlite_timespec now);
-
-ROBOTRACONTEURLITE_API void robotraconteurlite_tcp_connection_init_connection_client(
-    struct robotraconteurlite_connection* connection);
-
-ROBOTRACONTEURLITE_API void robotraconteurlite_tcp_connection_init_connections_client(
-    struct robotraconteurlite_connection* connections_head);
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_tcp_connection_poll_add_fd(
     struct robotraconteurlite_connection* connection, struct robotraconteurlite_pollfd* pollfds, size_t* pollfd_count,
