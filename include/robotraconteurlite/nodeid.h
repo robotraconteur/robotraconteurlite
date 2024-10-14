@@ -21,6 +21,8 @@
 #include "robotraconteurlite/err.h"
 #include "robotraconteurlite/util.h"
 
+struct robotraconteurlite_string;
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -43,6 +45,9 @@ ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_nodeid_reset
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status
 robotraconteurlite_nodeid_copy_to(const struct robotraconteurlite_nodeid* src, struct robotraconteurlite_nodeid* dst);
+
+ROBOTRACONTEURLITE_API robotraconteurlite_status
+robotraconteurlite_nodeid_parse(const struct robotraconteurlite_string* src_str, struct robotraconteurlite_nodeid* dst);
 
 #ifdef __cplusplus
 }

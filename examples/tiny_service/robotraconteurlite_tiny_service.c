@@ -39,6 +39,8 @@
 
 const char* node_name_str = "example.tiny_service";
 const uint16_t node_port = 22228;
+/* Node ID should be different for all instances. Hard coded for example only. */
+const char* default_nodeid_str = "c22551ad-f41e-43b8-9f78-2fb80118ea3c";
 
 const char* service_name = "tiny_service";
 const char* service_def = "service example.tiny_service\n\n"
@@ -363,13 +365,16 @@ int main(int argc, char* argv[])
     struct robotraconteurlite_string node_name;
     struct robotraconteurlite_clock clock;
     robotraconteurlite_timespec now = 0;
+    const char* nodeid_str = default_nodeid_str;
 
 #ifndef _WIN32
     struct sigaction sa;
 #endif
 
-    ROBOTRACONTEURLITE_UNUSED(argc);
-    ROBOTRACONTEURLITE_UNUSED(argv);
+    if (argc > 1)
+    {
+        nodeid_str = argv[1];
+    }
 
 #ifndef _WIN32
     /* Disable sigpipe. This is a common source of errors. Some libraries will disable this for you, but not all. */
@@ -400,8 +405,16 @@ int main(int argc, char* argv[])
     /* Read the clock */
     robotraconteurlite_clock_gettime(&clock, &now);
 
-    /* Use a random nodeid. In practice this should be fixed and unique for every service */
-    robotraconteurlite_nodeid_newrandom(&node_id);
+    /* Load the nodeid from string */
+    {
+        struct robotraconteurlite_string nodeid_str_s;
+        robotraconteurlite_string_from_c_str(nodeid_str, &nodeid_str_s);
+        if (RRLITE_FAILED(robotraconteurlite_nodeid_parse(&nodeid_str_s, &node_id)))
+        {
+            printf("Could not parse nodeid\n");
+            return -1;
+        }
+    }
 
     /* Initialize connections and TCP transport */
     connections_head =
