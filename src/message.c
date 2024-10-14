@@ -2579,8 +2579,8 @@ robotraconteurlite_status robotraconteurlite_message_writer_write_header4_ex(
 
     if (FLAGS_CHECK(message_flags_mask, ROBOTRACONTEURLITE_MESSAGE_FLAGS_ROUTING_INFO))
     {
-        if ((robotraconteurlite_nodeid_isany(&header->sender_nodeid) == 0) ||
-            (robotraconteurlite_nodeid_isany(&header->receiver_nodeid) == 0) || (header->sender_nodename.len != 0U) ||
+        if ((robotraconteurlite_nodeid_isany(&header->sender_nodeid) == 0U) ||
+            (robotraconteurlite_nodeid_isany(&header->receiver_nodeid) == 0U) || (header->sender_nodename.len != 0U) ||
             (header->receiver_nodename.len != 0U))
         {
             size_t s = 0;

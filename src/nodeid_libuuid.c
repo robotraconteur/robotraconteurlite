@@ -17,7 +17,7 @@
 #include <uuid/uuid.h>
 #include <string.h>
 
-int robotraconteurlite_nodeid_newrandom(struct robotraconteurlite_nodeid* a)
+robotraconteurlite_status robotraconteurlite_nodeid_newrandom(struct robotraconteurlite_nodeid* a)
 {
     /* Use uuid.h to generate a random UUID */
     uuid_t uuid;

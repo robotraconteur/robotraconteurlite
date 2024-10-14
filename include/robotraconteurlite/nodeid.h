@@ -18,6 +18,10 @@
 
 #include <stdint.h>
 #include "robotraconteurlite/config.h"
+#include "robotraconteurlite/err.h"
+#include "robotraconteurlite/util.h"
+
+struct robotraconteurlite_string;
 
 #ifdef __cplusplus
 extern "C" {
@@ -28,17 +32,22 @@ struct robotraconteurlite_nodeid
     uint8_t data[16];
 };
 
-ROBOTRACONTEURLITE_API int robotraconteurlite_nodeid_equal(const struct robotraconteurlite_nodeid* a,
-                                                           const struct robotraconteurlite_nodeid* b);
+ROBOTRACONTEURLITE_API robotraconteurlite_bool
+robotraconteurlite_nodeid_equal(const struct robotraconteurlite_nodeid* a, const struct robotraconteurlite_nodeid* b);
 
-ROBOTRACONTEURLITE_API int robotraconteurlite_nodeid_isany(const struct robotraconteurlite_nodeid* a);
+ROBOTRACONTEURLITE_API robotraconteurlite_bool
+robotraconteurlite_nodeid_isany(const struct robotraconteurlite_nodeid* a);
 
-ROBOTRACONTEURLITE_API int robotraconteurlite_nodeid_newrandom(struct robotraconteurlite_nodeid* a);
+ROBOTRACONTEURLITE_API robotraconteurlite_status
+robotraconteurlite_nodeid_newrandom(struct robotraconteurlite_nodeid* a);
 
-ROBOTRACONTEURLITE_API int robotraconteurlite_nodeid_reset(struct robotraconteurlite_nodeid* a);
+ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_nodeid_reset(struct robotraconteurlite_nodeid* a);
 
-ROBOTRACONTEURLITE_API int robotraconteurlite_nodeid_copy_to(const struct robotraconteurlite_nodeid* src,
-                                                             struct robotraconteurlite_nodeid* dst);
+ROBOTRACONTEURLITE_API robotraconteurlite_status
+robotraconteurlite_nodeid_copy_to(const struct robotraconteurlite_nodeid* src, struct robotraconteurlite_nodeid* dst);
+
+ROBOTRACONTEURLITE_API robotraconteurlite_status
+robotraconteurlite_nodeid_parse(const struct robotraconteurlite_string* src_str, struct robotraconteurlite_nodeid* dst);
 
 #ifdef __cplusplus
 }
