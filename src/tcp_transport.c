@@ -421,71 +421,18 @@ robotraconteurlite_status robotraconteurlite_tcp_connection_buffer_send(
 robotraconteurlite_status robotraconteurlite_tcp_connection_communicate_send(
     struct robotraconteurlite_connection* connection, robotraconteurlite_timespec now)
 {
-    /* If the connection is in an error state, return error */
-    if (FLAGS_CHECK(connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_ERROR))
+    size_t send_op_len = 0;
+    robotraconteurlite_status rv = -1;
+
+    rv = robotraconteurlite_connection_impl_communicate_send1(connection, now, &send_op_len);
+    if (FAILED(rv) || (send_op_len == 0U))
     {
-        return ROBOTRACONTEURLITE_ERROR_CONNECTION_ERROR;
+        return rv;
     }
 
-    if (FLAGS_CHECK(connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_MESSAGE_SENT_CONSUMED))
-    {
-        FLAGS_CLEAR(connection->connection_state, (ROBOTRACONTEURLITE_STATUS_FLAGS_MESSAGE_SENT_CONSUMED |
-                                                   ROBOTRACONTEURLITE_STATUS_FLAGS_MESSAGE_SENT));
-        connection->send_buffer_pos = 0;
-        return ROBOTRACONTEURLITE_ERROR_SUCCESS;
-    }
+    rv = robotraconteurlite_tcp_connection_buffer_send(connection, connection->send_message_len);
 
-    if (FLAGS_CHECK(connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_SEND_REQUESTED))
-    {
-        robotraconteurlite_status rv = -1;
-        /* Clear send requested flag */
-        FLAGS_CLEAR(connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_SEND_REQUESTED);
-
-        /* Send data */
-        rv = robotraconteurlite_tcp_connection_buffer_send(connection, connection->send_message_len);
-        if (FAILED(rv))
-        {
-            FLAGS_SET(connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_ERROR);
-            return rv;
-        }
-
-        /* If we have not sent the entire message, set the message sending flag */
-        if ((connection->send_message_len > 0U) && (connection->send_buffer_pos < connection->send_message_len))
-        {
-            FLAGS_SET(connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_SENDING);
-        }
-        else
-        {
-            FLAGS_SET(connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_MESSAGE_SENT);
-            connection->last_send_message_time = now;
-        }
-        return ROBOTRACONTEURLITE_ERROR_SUCCESS;
-    }
-    else if (FLAGS_CHECK(connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_SENDING))
-    {
-        /* Send data */
-        size_t send_op_len =
-            (connection->send_message_len == 0U) ? 64U : (connection->send_message_len - connection->send_buffer_pos);
-        robotraconteurlite_status rv = robotraconteurlite_tcp_connection_buffer_send(connection, send_op_len);
-        if (FAILED(rv))
-        {
-            FLAGS_SET(connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_ERROR);
-            return rv;
-        }
-
-        /* If we have sent the entire message, set the message sent flag */
-        if ((connection->send_message_len > 0U) && (connection->send_buffer_pos >= connection->send_message_len))
-        {
-            FLAGS_CLEAR(connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_SENDING);
-            FLAGS_SET(connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_MESSAGE_SENT);
-            connection->last_send_message_time = now;
-        }
-        return ROBOTRACONTEURLITE_ERROR_SUCCESS;
-    }
-    else
-    {
-        return ROBOTRACONTEURLITE_ERROR_SUCCESS;
-    }
+    return robotraconteurlite_connection_impl_communicate_send2(connection, now, rv);
 }
 
 static robotraconteurlite_status robotraconteurlite_tcp_connection_handshake_http_handshake_find_next_line(

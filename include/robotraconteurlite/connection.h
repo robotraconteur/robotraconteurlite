@@ -330,6 +330,13 @@ ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_connection_i
     struct robotraconteurlite_connection* connection, robotraconteurlite_timespec now,
     robotraconteurlite_status recv_op_rv);
 
+ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_connection_impl_communicate_send1(
+    struct robotraconteurlite_connection* connection, robotraconteurlite_timespec now, size_t* send_op_len);
+
+ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_connection_impl_communicate_send2(
+    struct robotraconteurlite_connection* connection, robotraconteurlite_timespec now,
+    robotraconteurlite_status send_op_rv);
+
 #ifdef __cplusplus
 }
 #endif
