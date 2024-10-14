@@ -57,6 +57,13 @@ static uint16_t robotraconteurlite_util_read_uint16(const void* p)
 #define ROBOTRACONTEURLITE_RETRY(rc) ((rc) == ROBOTRACONTEURLITE_ERROR_RETRY)
 #define ROBOTRACONTEURLITE_NO_MORE(rc) ((rc) == ROBOTRACONTEURLITE_ERROR_NO_MORE)
 
+typedef uint8_t robotraconteurlite_bool;
+
+#define ROBOTRACONTEURLITE_IS_TRUE(x) ((x) != 0)
+#define ROBOTRACONTEURLITE_IS_FALSE(x) ((x) == 0)
+#define ROBOTRACONTEURLITE_TRUE 1
+#define ROBOTRACONTEURLITE_FALSE 0
+
 #ifdef __cplusplus
 }
 #endif

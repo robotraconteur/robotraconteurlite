@@ -17,7 +17,7 @@
 #include "robotraconteurlite/err.h"
 #include <rpc.h>
 
-int robotraconteurlite_nodeid_newrandom(struct robotraconteurlite_nodeid* a)
+robotraconteurlite_status robotraconteurlite_nodeid_newrandom(struct robotraconteurlite_nodeid* a)
 {
     /* Use UuidCreate to generate a random UUID */
 
