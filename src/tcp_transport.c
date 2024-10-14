@@ -424,7 +424,7 @@ robotraconteurlite_status robotraconteurlite_tcp_connection_communicate_send(
         return rv;
     }
 
-    rv = robotraconteurlite_tcp_connection_buffer_send(connection, connection->send_message_len);
+    rv = robotraconteurlite_tcp_connection_buffer_send(connection, send_op_len);
 
     return robotraconteurlite_connection_impl_communicate_send2(connection, now, rv);
 }
