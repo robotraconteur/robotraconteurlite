@@ -413,7 +413,7 @@ int main(int argc, char* argv[])
         return -1;
     }
 
-    robotraconteurlite_tcp_connection_init_connections_server(connections_head);
+    robotraconteurlite_connection_init_connections(connections_head);
 
     /* Initialize the node */
 
