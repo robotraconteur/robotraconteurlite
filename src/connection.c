@@ -300,7 +300,8 @@ robotraconteurlite_status robotraconteurlite_connection_impl_communicate(
     struct robotraconteurlite_connection* connection, robotraconteurlite_timespec now, uint32_t transport_type,
     uint8_t* close_request)
 {
-    robotraconteurlite_status rv = -1;
+    ROBOTRACONTEURLITE_UNUSED(now);
+
     if ((connection->transport_type != transport_type))
     {
         return ROBOTRACONTEURLITE_ERROR_CONSUMED;
@@ -346,6 +347,8 @@ robotraconteurlite_status robotraconteurlite_connection_impl_communicate_after_c
 robotraconteurlite_status robotraconteurlite_connection_impl_communicate_recv1(
     struct robotraconteurlite_connection* connection, robotraconteurlite_timespec now, size_t* recv_op_len)
 {
+    ROBOTRACONTEURLITE_UNUSED(now);
+
     /* If the connection is in an error state, return error */
     if (FLAGS_CHECK(connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_ERROR))
     {
@@ -417,6 +420,8 @@ robotraconteurlite_status robotraconteurlite_connection_impl_communicate_recv2(
 robotraconteurlite_status robotraconteurlite_connection_impl_communicate_send1(
     struct robotraconteurlite_connection* connection, robotraconteurlite_timespec now, size_t* send_op_len)
 {
+    ROBOTRACONTEURLITE_UNUSED(now);
+
     /* If the connection is in an error state, return error */
     if (FLAGS_CHECK(connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_ERROR))
     {
