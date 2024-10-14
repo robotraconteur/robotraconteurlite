@@ -515,3 +515,21 @@ ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_connection_i
 
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
+
+robotraconteurlite_status robotraconteurlite_connection_impl_accept2(struct robotraconteurlite_connection* connection,
+                                                                     robotraconteurlite_timespec now,
+                                                                     uint32_t transport_type,
+                                                                     ROBOTRACONTEURLITE_SOCKET sock)
+{
+
+    struct robotraconteurlite_connection* c = connection;
+    c->sock = sock;
+    c->transport_type = transport_type;
+    FLAGS_SET(c->config_flags, ROBOTRACONTEURLITE_CONFIG_FLAGS_ISSERVER);
+    c->connection_state = ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTING;
+    c->last_recv_message_time = now;
+    c->last_send_message_time = now;
+    (void)memset(&c->transport_storage, 0, sizeof(c->transport_storage));
+
+    return ROBOTRACONTEURLITE_ERROR_SUCCESS;
+}
