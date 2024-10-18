@@ -19,13 +19,13 @@
 #include "robotraconteurlite/array.h"
 #include <errno.h>
 
-robotraconteurlite_bool robotraconteurlite_nodeid_equal(const struct robotraconteurlite_nodeid* a,
-                                                        const struct robotraconteurlite_nodeid* b)
+uint32_t robotraconteurlite_nodeid_equal(const struct robotraconteurlite_nodeid* a,
+                                         const struct robotraconteurlite_nodeid* b)
 {
     return memcmp(a->data, b->data, sizeof(a->data)) == 0;
 }
 
-robotraconteurlite_bool robotraconteurlite_nodeid_isany(const struct robotraconteurlite_nodeid* a)
+uint32_t robotraconteurlite_nodeid_isany(const struct robotraconteurlite_nodeid* a)
 {
     uint8_t zero_uuid[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     return memcmp(a->data, zero_uuid, sizeof(a->data)) == 0;
