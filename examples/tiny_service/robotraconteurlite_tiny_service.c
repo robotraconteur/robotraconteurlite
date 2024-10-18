@@ -279,7 +279,8 @@ int handle_event(struct robotraconteurlite_node* node, struct robotraconteurlite
         break;
     }
     case ROBOTRACONTEURLITE_EVENT_TYPE_CONNECTION_HEARTBEAT_TIMEOUT: {
-        /* TODO: Heartbeat timeout */
+        printf("Connection heartbeat timeout, sending heartbeat\n");
+        robotraconteurlite_client_send_heartbeat(node, event->connection);
         if (robotraconteurlite_node_consume_event(node, event))
         {
             printf("Could not consume event\n");

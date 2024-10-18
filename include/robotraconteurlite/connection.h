@@ -287,12 +287,9 @@ static int robotraconteurlite_connection_is_heartbeat_timeout(struct robotracont
         return 2;
     }
 
-    if (!ROBOTRACONTEURLITE_FLAGS_CHECK(connection->config_flags, ROBOTRACONTEURLITE_CONFIG_FLAGS_ISSERVER))
+    if ((recv_diff_ms > connection->heartbeat_period_ms) || (send_diff_ms > connection->heartbeat_period_ms))
     {
-        if ((recv_diff_ms > connection->heartbeat_period_ms) || (send_diff_ms > connection->heartbeat_period_ms))
-        {
-            return 1;
-        }
+        return 1;
     }
 
     return 0;
