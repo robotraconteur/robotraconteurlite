@@ -286,12 +286,11 @@ static int robotraconteurlite_connection_is_heartbeat_timeout(struct robotracont
     {
         return 2;
     }
-    
+
     if ((recv_diff_ms > connection->heartbeat_period_ms) || (send_diff_ms > connection->heartbeat_period_ms))
     {
         return 1;
     }
-    
 
     return 0;
 }
