@@ -41,6 +41,7 @@ robotraconteurlite_status robotraconteurlite_connection_reset(struct robotracont
     {
         return ROBOTRACONTEURLITE_ERROR_INTERNAL_ERROR;
     }
+    connection->message_flags_inv_mask = 0;
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
 
