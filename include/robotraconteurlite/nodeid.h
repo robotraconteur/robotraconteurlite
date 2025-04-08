@@ -16,7 +16,6 @@
 #ifndef ROBOTRACONTEURLITE_NODEID_H
 #define ROBOTRACONTEURLITE_NODEID_H
 
-#include <stdint.h>
 #include "robotraconteurlite/config.h"
 #include "robotraconteurlite/err.h"
 #include "robotraconteurlite/util.h"

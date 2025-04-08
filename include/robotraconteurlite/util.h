@@ -16,7 +16,6 @@
 #ifndef ROBOTRACONTEURLITE_UTIL_H
 #define ROBOTRACONTEURLITE_UTIL_H
 
-#include <stdint.h>
 #include <string.h>
 
 #include "robotraconteurlite/config.h"

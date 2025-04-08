@@ -16,7 +16,6 @@
 #ifndef ROBOTRACONTEURLITE_POLL_H
 #define ROBOTRACONTEURLITE_POLL_H
 
-#include <stdint.h>
 #include <stdlib.h>
 #include "robotraconteurlite/clock.h"
 

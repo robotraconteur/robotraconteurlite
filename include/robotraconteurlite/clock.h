@@ -16,7 +16,6 @@
 #ifndef ROBOTRACONTEURLITE_CLOCK_H
 #define ROBOTRACONTEURLITE_CLOCK_H
 
-#include <stdint.h>
 #include "robotraconteurlite/config.h"
 #include "robotraconteurlite/err.h"
 

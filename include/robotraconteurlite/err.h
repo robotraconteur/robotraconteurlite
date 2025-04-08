@@ -16,7 +16,7 @@
 #ifndef ROBOTRACONTEURLITE_ERROR_H
 #define ROBOTRACONTEURLITE_ERROR_H
 
-#include <stdint.h>
+#include "robotraconteurlite/config.h"
 
 /* robotraconteurlite_error */
 
