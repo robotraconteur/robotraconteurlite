@@ -47,7 +47,7 @@ extern "C" {
 
 struct robotraconteurlite_tcp_sha1_storage
 {
-    robotraconteurlite_u8 sha1_bytes[20];
+    robotraconteurlite_byte sha1_bytes[20];
 };
 
 struct robotraconteurlite_tcp_transport_storage
@@ -59,8 +59,8 @@ struct robotraconteurlite_tcp_transport_storage
     robotraconteurlite_size_t recv_websocket_header_pos;
     robotraconteurlite_size_t send_websocket_header_pos;
     robotraconteurlite_u8 recv_websocket_mask[4];
-    robotraconteurlite_u8 recv_websocket_header_buffer[16];
-    robotraconteurlite_u8 send_websocket_header_buffer[8];
+    robotraconteurlite_byte recv_websocket_header_buffer[16];
+    robotraconteurlite_byte send_websocket_header_buffer[8];
     robotraconteurlite_size_t send_websocket_frame_len;
     robotraconteurlite_size_t send_websocket_frame_buffer_pos;
     robotraconteurlite_size_t send_websocket_frame_buffer_end;
@@ -132,18 +132,18 @@ ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_tcp_connecti
 /* TCP socket functions */
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status
-robotraconteurlite_tcp_sha1(const robotraconteurlite_u8* data, robotraconteurlite_size_t len, struct robotraconteurlite_tcp_sha1_storage* storage);
+robotraconteurlite_tcp_sha1(const robotraconteurlite_byte* data, robotraconteurlite_size_t len, struct robotraconteurlite_tcp_sha1_storage* storage);
 
-ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_tcp_base64_encode(const robotraconteurlite_u8* binary_data,
+ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_tcp_base64_encode(const robotraconteurlite_byte* binary_data,
                                                                                       robotraconteurlite_size_t binary_len,
                                                                                       char* base64_data,
                                                                                       robotraconteurlite_size_t* base64_len);
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_tcp_socket_recv_nonblocking(
-    ROBOTRACONTEURLITE_SOCKET sock, robotraconteurlite_u8* buffer, robotraconteurlite_size_t* pos, robotraconteurlite_size_t len, int* errno_out);
+    ROBOTRACONTEURLITE_SOCKET sock, robotraconteurlite_byte* buffer, robotraconteurlite_size_t* pos, robotraconteurlite_size_t len, int* errno_out);
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_tcp_socket_send_nonblocking(
-    ROBOTRACONTEURLITE_SOCKET sock, const robotraconteurlite_u8* buffer, robotraconteurlite_size_t* pos, robotraconteurlite_size_t len, int* errno_out);
+    ROBOTRACONTEURLITE_SOCKET sock, const robotraconteurlite_byte* buffer, robotraconteurlite_size_t* pos, robotraconteurlite_size_t len, int* errno_out);
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_tcp_socket_begin_server(
     const struct sockaddr_storage* serv_addr, robotraconteurlite_size_t backlog, ROBOTRACONTEURLITE_SOCKET* sock_out, int* errno_out);

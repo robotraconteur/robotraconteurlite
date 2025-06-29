@@ -34,7 +34,7 @@ robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_{{t
                                                                 {% if type in ("double","single") -%}
                                                                 /* cppcheck-suppress invalidPointerCast */
                                                                 {% endif -%}
-                                                                 (robotraconteurlite_u8*)dest_array->data, &dest_array->len,
+                                                                 (robotraconteurlite_byte*)dest_array->data, &dest_array->len,
                                                                  ROBOTRACONTEURLITE_DATATYPE_{{type.upper()}}, sizeof({{ctype}}));
 }
 
@@ -45,7 +45,7 @@ robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_{{t
         {% if type in ("double","single") -%}
         /* cppcheck-suppress invalidPointerCast */
         {% endif -%}
-        element_reader, (robotraconteurlite_u8*)value, ROBOTRACONTEURLITE_DATATYPE_{{type.upper()}}, sizeof({{ctype}}));
+        element_reader, (robotraconteurlite_byte*)value, ROBOTRACONTEURLITE_DATATYPE_{{type.upper()}}, sizeof({{ctype}}));
 }
 {% endfor %}
 
@@ -63,7 +63,7 @@ robotraconteurlite_status robotraconteurlite_messageelement_writer_write_{{type}
                                                                 {% if type in ("double","single") -%}
                                                                 /* cppcheck-suppress invalidPointerCast */
                                                                 {% endif -%}
-                                                              (const robotraconteurlite_u8*)a.data, a.len,
+                                                              (const robotraconteurlite_byte*)a.data, a.len,
                                                               ROBOTRACONTEURLITE_DATATYPE_{{type.upper()}}, sizeof({{ctype}}));
 }
 
@@ -75,7 +75,7 @@ robotraconteurlite_status robotraconteurlite_messageelement_writer_write_{{type}
                                                                 {% if type in ("double","single") -%}
                                                                 /* cppcheck-suppress invalidPointerCast */
                                                                 {% endif -%}
-                                                              (const robotraconteurlite_u8*)value->data, value->len,
+                                                              (const robotraconteurlite_byte*)value->data, value->len,
                                                               ROBOTRACONTEURLITE_DATATYPE_{{type.upper()}}, sizeof({{ctype}}));
 }
 {% endfor %}
@@ -86,7 +86,7 @@ robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_str
     struct robotraconteurlite_messageelement_reader* element_reader, struct robotraconteurlite_string* dest_str)
 {
     return robotraconteurlite_messageelement_reader_read_data_ex(
-        element_reader, (robotraconteurlite_u8*)dest_str->data, &dest_str->len, ROBOTRACONTEURLITE_DATATYPE_STRING, sizeof(char));
+        element_reader, (robotraconteurlite_byte*)dest_str->data, &dest_str->len, ROBOTRACONTEURLITE_DATATYPE_STRING, sizeof(char));
 }
 
 robotraconteurlite_status robotraconteurlite_messageelement_writer_write_data_string(
@@ -94,6 +94,6 @@ robotraconteurlite_status robotraconteurlite_messageelement_writer_write_data_st
     const struct robotraconteurlite_string* element_name, const struct robotraconteurlite_string* value)
 {
     return robotraconteurlite_messageelement_writer_write_raw(element_writer, element_name,
-                                                              (const robotraconteurlite_u8*)value->data, value->len,
+                                                              (const robotraconteurlite_byte*)value->data, value->len,
                                                               ROBOTRACONTEURLITE_DATATYPE_STRING, sizeof(char));
 }

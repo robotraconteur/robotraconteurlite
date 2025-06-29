@@ -46,7 +46,7 @@
 
 #define FAILED ROBOTRACONTEURLITE_FAILED
 
-robotraconteurlite_status robotraconteurlite_tcp_sha1(const robotraconteurlite_u8* data, robotraconteurlite_size_t len,
+robotraconteurlite_status robotraconteurlite_tcp_sha1(const robotraconteurlite_byte* data, robotraconteurlite_size_t len,
                                                       struct robotraconteurlite_tcp_sha1_storage* storage)
 {
 #ifdef ROBOTRACONTEURLITE_USE_OPENSSL
@@ -60,7 +60,7 @@ robotraconteurlite_status robotraconteurlite_tcp_sha1(const robotraconteurlite_u
 #endif
 }
 
-robotraconteurlite_status robotraconteurlite_tcp_base64_encode(const robotraconteurlite_u8* binary_data, robotraconteurlite_size_t binary_len,
+robotraconteurlite_status robotraconteurlite_tcp_base64_encode(const robotraconteurlite_byte* binary_data, robotraconteurlite_size_t binary_len,
                                                                char* base64_data, robotraconteurlite_size_t* base64_len)
 {
 #ifdef ROBOTRACONTEURLITE_USE_OPENSSL
@@ -87,7 +87,7 @@ robotraconteurlite_status robotraconteurlite_tcp_base64_encode(const robotracont
 }
 
 robotraconteurlite_status robotraconteurlite_tcp_socket_recv_nonblocking(ROBOTRACONTEURLITE_SOCKET sock,
-                                                                         robotraconteurlite_u8* buffer, robotraconteurlite_size_t* pos, robotraconteurlite_size_t len,
+                                                                         robotraconteurlite_byte* buffer, robotraconteurlite_size_t* pos, robotraconteurlite_size_t len,
                                                                          int* errno_out)
 {
     robotraconteurlite_size_t pos1 = *pos;
@@ -125,7 +125,7 @@ robotraconteurlite_status robotraconteurlite_tcp_socket_recv_nonblocking(ROBOTRA
 }
 
 robotraconteurlite_status robotraconteurlite_tcp_socket_send_nonblocking(ROBOTRACONTEURLITE_SOCKET sock,
-                                                                         const robotraconteurlite_u8* buffer, robotraconteurlite_size_t* pos, robotraconteurlite_size_t len,
+                                                                         const robotraconteurlite_byte* buffer, robotraconteurlite_size_t* pos, robotraconteurlite_size_t len,
                                                                          int* errno_out)
 {
     robotraconteurlite_size_t pos1 = *pos;
@@ -285,8 +285,8 @@ robotraconteurlite_u64 robotraconteurlite_be64toh(robotraconteurlite_u64 big_end
 {
     /* Implement byte swap */
     robotraconteurlite_u64 ret = 0;
-    robotraconteurlite_u8* ret_bytes = (robotraconteurlite_u8*)&ret;
-    robotraconteurlite_u8* big_endian_bytes = (robotraconteurlite_u8*)&big_endian_64bits;
+    robotraconteurlite_byte* ret_bytes = (robotraconteurlite_byte*)&ret;
+    robotraconteurlite_byte* big_endian_bytes = (robotraconteurlite_byte*)&big_endian_64bits;
     ret_bytes[0] = big_endian_bytes[7];
     ret_bytes[1] = big_endian_bytes[6];
     ret_bytes[2] = big_endian_bytes[5];

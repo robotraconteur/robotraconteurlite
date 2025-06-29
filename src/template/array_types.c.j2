@@ -32,7 +32,7 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_{{type}}_array(
                                                     {% if type in ("double","single") -%}
                                                     /* cppcheck-suppress invalidPointerCast */
                                                     {% endif -%}
-                                                     (robotraconteurlite_u8*)dest->data, dest->len, dest_pos, sizeof({{ctype}}), dest_count);
+                                                     (robotraconteurlite_byte*)dest->data, dest->len, dest_pos, sizeof({{ctype}}), dest_count);
 }
 
 robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_{{type}}_array(
@@ -43,7 +43,7 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_{{type}}_array
                                                     {% if type in ("double","single") -%}
                                                     /* cppcheck-suppress invalidPointerCast */
                                                     {% endif -%}
-                                                       (const robotraconteurlite_u8*)source->data, source->len, source_pos, sizeof({{ctype}}), source_count);
+                                                       (const robotraconteurlite_byte*)source->data, source->len, source_pos, sizeof({{ctype}}), source_count);
 }
 
 robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_{{type}}(
@@ -53,7 +53,7 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_{{type}}(
                                                     {% if type in ("double","single") -%}
                                                     /* cppcheck-suppress invalidPointerCast */
                                                     {% endif -%}
-                                                     (robotraconteurlite_u8*)dest, 1, 0, sizeof({{ctype}}), 1);
+                                                     (robotraconteurlite_byte*)dest, 1, 0, sizeof({{ctype}}), 1);
 }
 
 robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_{{type}}(
@@ -63,7 +63,7 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_{{type}}(
                                                     {% if type in ("double","single") -%}
                                                     /* cppcheck-suppress invalidPointerCast */
                                                     {% endif -%}
-                                                       (const robotraconteurlite_u8*)&source, 1, 0, sizeof({{ctype}}), 1);
+                                                       (const robotraconteurlite_byte*)&source, 1, 0, sizeof({{ctype}}), 1);
 }
 
 {% endfor %}

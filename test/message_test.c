@@ -12,7 +12,7 @@
 #define inline
 #include <cmocka.h>
 
-robotraconteurlite_u8 message2[] = {
+robotraconteurlite_byte message2[] = {
     82,  82,  65,  67,  94,  4,   0,   0,   2,   0,   107, 0,   216, 53,  196, 29,  51,  156, 71,  168, 132, 219, 240,
     10,  143, 239, 210, 250, 174, 120, 72,  27,  194, 190, 79,  38,  159, 239, 116, 187, 110, 138, 4,   63,  71,  88,
     55,  248, 113, 100, 49,  167, 11,  0,   115, 101, 110, 100, 101, 114, 95,  110, 111, 100, 101, 9,   0,   114, 101,
@@ -63,7 +63,7 @@ robotraconteurlite_u8 message2[] = {
     0,   0,   0,   1,   0,   0,   0,   92,  143, 194, 245, 40,  44,  69,  64,  22,  0,   0,   0,   1,   0,   0,   0,
     0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0};
 
-robotraconteurlite_u8 message4[] = {
+robotraconteurlite_byte message4[] = {
     82,  82,  65,  67,  141, 3,   0,   0,   4,   0,   105, 83,  216, 53,  196, 29,  51,  156, 71,  168, 132, 219, 240,
     10,  143, 239, 210, 250, 174, 120, 72,  27,  194, 190, 79,  38,  159, 239, 116, 187, 110, 138, 4,   63,  11,  115,
     101, 110, 100, 101, 114, 95,  110, 111, 100, 101, 9,   114, 101, 99,  118, 95,  110, 111, 100, 101, 254, 71,  88,
@@ -159,7 +159,7 @@ static int cmp_csingle(const struct robotraconteurlite_csingle* a, const struct 
     return 0;
 }
 
-void robotraconteurlite_message_run_reader_basictest(robotraconteurlite_u8* message_bytes, robotraconteurlite_size_t message_bytes_len,
+void robotraconteurlite_message_run_reader_basictest(robotraconteurlite_byte* message_bytes, robotraconteurlite_size_t message_bytes_len,
                                                      robotraconteurlite_u16 message_ver)
 {
     struct robotraconteurlite_buffer buffer1;
@@ -896,7 +896,7 @@ void robotraconteurlite_message4_reader_basictest(void** state)
     robotraconteurlite_message_run_reader_basictest(message4, sizeof(message4), 4);
 }
 
-void robotraconteurlite_message_run_writer_basictest(robotraconteurlite_u8* buffer_bytes, robotraconteurlite_size_t* buffer_bytes_len,
+void robotraconteurlite_message_run_writer_basictest(robotraconteurlite_byte* buffer_bytes, robotraconteurlite_size_t* buffer_bytes_len,
                                                      robotraconteurlite_u16 message_ver, robotraconteurlite_u8 message_flags_mask)
 {
 
@@ -1280,7 +1280,7 @@ void robotraconteurlite_message_run_writer_basictest(robotraconteurlite_u8* buff
 
 void robotraconteurlite_message_writer_basictest(void** state)
 {
-    robotraconteurlite_u8 buffer_bytes[5000];
+    robotraconteurlite_byte buffer_bytes[5000];
     robotraconteurlite_size_t buffer_bytes_len = sizeof(buffer_bytes);
 
     robotraconteurlite_message_run_writer_basictest(buffer_bytes, &buffer_bytes_len, 2, 0xFF);
@@ -1291,7 +1291,7 @@ void robotraconteurlite_message_writer_basictest(void** state)
 
 void robotraconteurlite_message4_writer_basictest(void** state)
 {
-    robotraconteurlite_u8 buffer_bytes[5000];
+    robotraconteurlite_byte buffer_bytes[5000];
     robotraconteurlite_size_t buffer_bytes_len = sizeof(buffer_bytes);
 
     robotraconteurlite_message_run_writer_basictest(buffer_bytes, &buffer_bytes_len, 4, 0xFF);
@@ -1301,7 +1301,7 @@ void robotraconteurlite_message4_writer_basictest(void** state)
 
 void robotraconteurlite_message4_writer_basictest_masked(void** state)
 {
-    robotraconteurlite_u8 buffer_bytes[5000];
+    robotraconteurlite_byte buffer_bytes[5000];
     robotraconteurlite_size_t buffer_bytes_len = sizeof(buffer_bytes);
 
     robotraconteurlite_u8 message_mask = ROBOTRACONTEURLITE_MESSAGE_FLAGS_MULTIPLE_ENTRIES;
@@ -1338,7 +1338,7 @@ void robotraconteurlite_message4_writer_basictest_masked(void** state)
 
 void robotraconteurlite_message4_writer_basictest_single_entry(void** state)
 {
-    robotraconteurlite_u8 buffer_bytes[5000];
+    robotraconteurlite_byte buffer_bytes[5000];
     robotraconteurlite_size_t buffer_bytes_len = sizeof(buffer_bytes);
 
     {

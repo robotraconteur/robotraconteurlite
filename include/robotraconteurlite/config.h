@@ -56,6 +56,7 @@ typedef uint64_t robotraconteurlite_u64;
 typedef float robotraconteurlite_single;
 typedef double robotraconteurlite_double;
 typedef size_t robotraconteurlite_size_t;
+typedef uint8_t robotraconteurlite_byte;
 #define ROBOTRACONTEURLITE_INT8_MIN INT8_MIN
 #define ROBOTRACONTEURLITE_INT8_MAX INT8_MAX
 #define ROBOTRACONTEURLITE_UINT8_MIN 0

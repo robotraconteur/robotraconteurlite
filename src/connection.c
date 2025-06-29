@@ -186,7 +186,7 @@ robotraconteurlite_status robotraconteurlite_connection_close(struct robotracont
 
 struct robotraconteurlite_connection* robotraconteurlite_connections_init_from_array(
     struct robotraconteurlite_connection connections_fixed_storage[], robotraconteurlite_size_t connections_fixed_storage_len,
-    robotraconteurlite_u8 buffers[], robotraconteurlite_size_t buffer_size, robotraconteurlite_size_t buffer_count)
+    robotraconteurlite_byte buffers[], robotraconteurlite_size_t buffer_size, robotraconteurlite_size_t buffer_count)
 {
     robotraconteurlite_size_t i = 0U;
     assert(connections_fixed_storage_len > 0U);

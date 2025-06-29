@@ -558,16 +558,16 @@ robotraconteurlite_status robotraconteurlite_messageelement_reader_get_data_info
     robotraconteurlite_u32* data_count, robotraconteurlite_u16 data_type, robotraconteurlite_size_t data_element_size);
 
 robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_ex(
-    struct robotraconteurlite_messageelement_reader* element_reader, robotraconteurlite_u8* dest_buf, robotraconteurlite_size_t* dest_len,
+    struct robotraconteurlite_messageelement_reader* element_reader, robotraconteurlite_byte* dest_buf, robotraconteurlite_size_t* dest_len,
     robotraconteurlite_u16 dest_elem_type, robotraconteurlite_size_t dest_elem_size);
 
 robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_scalar_ex(
-    struct robotraconteurlite_messageelement_reader* element_reader, robotraconteurlite_u8* dest_scalar, robotraconteurlite_u16 dest_elem_type,
+    struct robotraconteurlite_messageelement_reader* element_reader, robotraconteurlite_byte* dest_scalar, robotraconteurlite_u16 dest_elem_type,
     robotraconteurlite_size_t dest_elem_size);
 
 robotraconteurlite_status robotraconteurlite_messageelement_writer_write_raw(
     struct robotraconteurlite_messageelement_writer* element_writer,
-    const struct robotraconteurlite_string* element_name, const robotraconteurlite_u8* data_buf, robotraconteurlite_size_t data_len, robotraconteurlite_u16 data_type,
+    const struct robotraconteurlite_string* element_name, const robotraconteurlite_byte* data_buf, robotraconteurlite_size_t data_len, robotraconteurlite_u16 data_type,
     robotraconteurlite_size_t data_elem_size);
 
 #ifdef __cplusplus

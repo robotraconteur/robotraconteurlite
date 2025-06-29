@@ -357,7 +357,7 @@ int main(int argc, char* argv[])
 {
     /* Variable storage */
     struct robotraconteurlite_connection connections_storage[NUM_CONNECTIONS];
-    robotraconteurlite_u8 connection_buffers[NUM_CONNECTIONS * 2 * CONNECTION_BUFFER_SIZE];
+    robotraconteurlite_byte connection_buffers[NUM_CONNECTIONS * 2 * CONNECTION_BUFFER_SIZE];
     struct robotraconteurlite_connection* connections_head = NULL;
     struct robotraconteurlite_connection_acceptor tcp_acceptor;
     struct robotraconteurlite_node node;

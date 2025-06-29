@@ -37,7 +37,7 @@ struct robotraconteurlite_array_storage
 
 struct robotraconteurlite_buffer
 {
-    robotraconteurlite_u8* data;
+    robotraconteurlite_byte* data;
     robotraconteurlite_size_t len;
 };
 
@@ -129,11 +129,11 @@ ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_c
     const struct robotraconteurlite_buffer_vec* dest, robotraconteurlite_size_t dest_pos, robotraconteurlite_size_t dest_elem_size, robotraconteurlite_size_t dest_count);
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_mem(
-    const struct robotraconteurlite_buffer_vec* source, robotraconteurlite_size_t source_pos, robotraconteurlite_u8* dest, robotraconteurlite_size_t dest_len,
+    const struct robotraconteurlite_buffer_vec* source, robotraconteurlite_size_t source_pos, robotraconteurlite_byte* dest, robotraconteurlite_size_t dest_len,
     robotraconteurlite_size_t dest_pos, robotraconteurlite_size_t dest_elem_size, robotraconteurlite_size_t dest_count);
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_mem(
-    struct robotraconteurlite_buffer_vec* dest, robotraconteurlite_size_t dest_pos, const robotraconteurlite_u8* source, robotraconteurlite_size_t source_len,
+    struct robotraconteurlite_buffer_vec* dest, robotraconteurlite_size_t dest_pos, const robotraconteurlite_byte* source, robotraconteurlite_size_t source_len,
     robotraconteurlite_size_t source_pos, robotraconteurlite_size_t source_elem_size, robotraconteurlite_size_t source_count);
 
 {% for type,ctype in types %}

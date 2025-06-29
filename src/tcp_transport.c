@@ -19,9 +19,9 @@
 #include <string.h>
 #include <assert.h>
 
-/* memcmp is used between robotraconteurlite_u8* buffer and const char literals in this function
+/* memcmp is used between robotraconteurlite_byte* buffer and const char literals in this function
    The char null terminator is not used for this comparison, and the comparison between
-   char and robotraconteurlite_u8 is safe. Disabling misra warnings for this file.
+   char and robotraconteurlite_byte is safe. Disabling misra warnings for this file.
 */
 
 #define FLAGS_CHECK_ALL ROBOTRACONTEURLITE_FLAGS_CHECK_ALL
@@ -182,13 +182,13 @@ static robotraconteurlite_status robotraconteurlite_tcp_connection_buffer_recv_w
         if (len1 == 126U)
         {
             robotraconteurlite_u16 frame_len_be = 0;
-            (void)memcpy((robotraconteurlite_u8*)&frame_len_be, &storage->recv_websocket_header_buffer[2], 2);
+            (void)memcpy((robotraconteurlite_byte*)&frame_len_be, &storage->recv_websocket_header_buffer[2], 2);
             storage->recv_websocket_frame_len = robotraconteurlite_ntohs(frame_len_be);
         }
         else if (len1 == 127U)
         {
             robotraconteurlite_u64 frame_len_be = 0;
-            (void)memcpy((robotraconteurlite_u8*)&frame_len_be, &storage->recv_websocket_header_buffer[2], 8);
+            (void)memcpy((robotraconteurlite_byte*)&frame_len_be, &storage->recv_websocket_header_buffer[2], 8);
             storage->recv_websocket_frame_len = robotraconteurlite_be64toh(frame_len_be);
         }
         else
@@ -475,7 +475,7 @@ static robotraconteurlite_status robotraconteurlite_tcp_connection_handshake_htt
     robotraconteurlite_size_t i_sec_websocket = 0;
     robotraconteurlite_size_t i_sec_websocket_end = 0;
     struct robotraconteurlite_tcp_sha1_storage sha1_storage;
-    robotraconteurlite_u8 sha1_input_bytes[60];
+    robotraconteurlite_byte sha1_input_bytes[60];
     char sha1_base64[28];
     robotraconteurlite_size_t sha1_base64_len = sizeof(sha1_base64);
     int last_errno = -1;
@@ -612,7 +612,7 @@ static robotraconteurlite_status robotraconteurlite_tcp_connection_handshake_htt
         /* Check for ending of \r\n\r\n or \n\n or \r\r or \n\r\n\r */
         if (connection->recv_buffer_pos >= 4U)
         {
-            robotraconteurlite_u8* end_minus_4 = &connection->recv_buffer[connection->recv_buffer_pos - 4U];
+            robotraconteurlite_byte* end_minus_4 = &connection->recv_buffer[connection->recv_buffer_pos - 4U];
             /* cppcheck-suppress [misra-c2012-21.14, misra-c2012-21.16] */
             if ((memcmp(end_minus_4, "\r\n\r\n", 4) == 0) || (memcmp(end_minus_4, "\n\r\n\r", 4) == 0))
             {
@@ -622,7 +622,7 @@ static robotraconteurlite_status robotraconteurlite_tcp_connection_handshake_htt
 
         if (connection->recv_buffer_pos >= 2U)
         {
-            robotraconteurlite_u8* end_minus_2 = &connection->recv_buffer[connection->recv_buffer_pos - 2U];
+            robotraconteurlite_byte* end_minus_2 = &connection->recv_buffer[connection->recv_buffer_pos - 2U];
             /* cppcheck-suppress [misra-c2012-21.14, misra-c2012-21.16] */
             if ((memcmp(end_minus_2, "\n\n", 2) == 0) || (memcmp(end_minus_2, "\r\r", 2) == 0))
             {
@@ -958,9 +958,9 @@ void robotraconteurlite_tcp_connections_close(struct robotraconteurlite_connecti
 static robotraconteurlite_status robotraconteurlite_tcp_connect_service_send_websocket_http_header(
     struct robotraconteurlite_tcp_connect_service_data* connect_data)
 {
-    robotraconteurlite_u8* send_buf = NULL;
+    robotraconteurlite_byte* send_buf = NULL;
     int i = 0;
-    robotraconteurlite_u8 websocket_key[STRCONST_HTTP_SEC_WEBSOCKET_KEY_LEN];
+    robotraconteurlite_byte websocket_key[STRCONST_HTTP_SEC_WEBSOCKET_KEY_LEN];
     robotraconteurlite_u32 send_len = STRCONST_HTTP_REQUEST_1_LEN + connect_data->service_address->http_path.len +
                         STRCONST_HTTP_REQUEST_2_LEN + connect_data->service_address->http_host.len +
                         STRCONST_HTTP_REQUEST_3_LEN + WEBSOCKET_KEY_BASE64_LEN + STRCONST_HTTP_REQUEST_4_LEN;
@@ -970,7 +970,7 @@ static robotraconteurlite_status robotraconteurlite_tcp_connect_service_send_web
 
     for (i = 0; i < (int)sizeof(websocket_key); i++)
     {
-        websocket_key[i] = (robotraconteurlite_u8)((robotraconteurlite_u32)rand() % 256U);
+        websocket_key[i] = (robotraconteurlite_byte)((robotraconteurlite_u32)rand() % 256U);
     }
 
     if (send_len > connect_data->client_out->send_buffer_len)

@@ -25,7 +25,7 @@ robotraconteurlite_status robotraconteurlite_buffer_init_scalar(struct robotraco
 
     /* TODO: Fix cppcheck warning */
     /* cppcheck-suppress misra-c2012-11.5 */
-    buffer->data = (robotraconteurlite_u8*)data;
+    buffer->data = (robotraconteurlite_byte*)data;
     buffer->len = len;
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
@@ -345,7 +345,7 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_vec_ex(
 }
 
 robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_mem(const struct robotraconteurlite_buffer_vec* source,
-                                                                    robotraconteurlite_size_t source_pos, robotraconteurlite_u8* dest, robotraconteurlite_size_t dest_len,
+                                                                    robotraconteurlite_size_t source_pos, robotraconteurlite_byte* dest, robotraconteurlite_size_t dest_len,
                                                                     robotraconteurlite_size_t dest_pos, robotraconteurlite_size_t dest_elem_size,
                                                                     robotraconteurlite_size_t dest_count)
 {
@@ -364,7 +364,7 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_mem(const struct
 }
 
 robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_mem(struct robotraconteurlite_buffer_vec* dest,
-                                                                      robotraconteurlite_size_t dest_pos, const robotraconteurlite_u8* source,
+                                                                      robotraconteurlite_size_t dest_pos, const robotraconteurlite_byte* source,
                                                                       robotraconteurlite_size_t source_len, robotraconteurlite_size_t source_pos,
                                                                       robotraconteurlite_size_t source_elem_size, robotraconteurlite_size_t source_count)
 {
@@ -374,7 +374,7 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_mem(struct rob
     (void)memset(&source_vec, 0, sizeof(source_vec));
     /* TODO: fix this misra warning */
     /* cppcheck-suppress misra-c2012-11.8 */
-    source_buf.data = (robotraconteurlite_u8*)source;
+    source_buf.data = (robotraconteurlite_byte*)source;
     source_buf.len = source_len;
     source_vec.buffer_vec = &source_buf;
     source_vec.buffer_vec_cnt = 1;
@@ -388,7 +388,7 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_string(
     const struct robotraconteurlite_buffer_vec* source_buf, robotraconteurlite_size_t source_buf_pos,
     struct robotraconteurlite_string* dest, robotraconteurlite_size_t dest_pos, robotraconteurlite_size_t dest_count)
 {
-    return robotraconteurlite_buffer_vec_copy_to_mem(source_buf, source_buf_pos, (robotraconteurlite_u8*)dest->data, dest->len,
+    return robotraconteurlite_buffer_vec_copy_to_mem(source_buf, source_buf_pos, (robotraconteurlite_byte*)dest->data, dest->len,
                                                      dest_pos, 1, dest_count);
 }
 
@@ -397,7 +397,7 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_string(struct 
                                                                          const struct robotraconteurlite_string* source,
                                                                          robotraconteurlite_size_t source_pos, robotraconteurlite_size_t source_count)
 {
-    return robotraconteurlite_buffer_vec_copy_from_mem(dest_buf, dest_buf_pos, (const robotraconteurlite_u8*)source->data,
+    return robotraconteurlite_buffer_vec_copy_from_mem(dest_buf, dest_buf_pos, (const robotraconteurlite_byte*)source->data,
                                                        source->len, source_pos, 1, source_count);
 }
 

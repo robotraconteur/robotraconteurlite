@@ -62,7 +62,7 @@ extern "C" {
 
 struct robotraconteurlite_transport_storage
 {
-    robotraconteurlite_u8 _storage[128];
+    robotraconteurlite_byte _storage[128];
 };
 
 struct robotraconteurlite_user_storage
@@ -81,8 +81,8 @@ struct robotraconteurlite_connection
     ROBOTRACONTEURLITE_SOCKET sock;
 
     /* Send and receive buffers */
-    robotraconteurlite_u8* send_buffer;
-    robotraconteurlite_u8* recv_buffer;
+    robotraconteurlite_byte* send_buffer;
+    robotraconteurlite_byte* recv_buffer;
     robotraconteurlite_size_t send_buffer_len;
     robotraconteurlite_size_t recv_buffer_len;
     robotraconteurlite_size_t send_buffer_pos;
@@ -137,7 +137,7 @@ struct robotraconteurlite_connection_acceptor
 
 struct robotraconteurlite_sockaddr_storage
 {
-    robotraconteurlite_u8 _storage[128];
+    robotraconteurlite_byte _storage[128];
 };
 
 /* robotraconteurlite_addr_flags */
@@ -274,7 +274,7 @@ static int robotraconteurlite_connection_is_server(struct robotraconteurlite_con
 
 ROBOTRACONTEURLITE_API struct robotraconteurlite_connection* robotraconteurlite_connections_init_from_array(
     struct robotraconteurlite_connection connections_fixed_storage[], robotraconteurlite_size_t connections_fixed_storage_len,
-    robotraconteurlite_u8 buffers[], robotraconteurlite_size_t buffer_size, robotraconteurlite_size_t buffer_count);
+    robotraconteurlite_byte buffers[], robotraconteurlite_size_t buffer_size, robotraconteurlite_size_t buffer_count);
 
 static int robotraconteurlite_connection_is_heartbeat_timeout(struct robotraconteurlite_connection* connection,
                                                               robotraconteurlite_timespec now)

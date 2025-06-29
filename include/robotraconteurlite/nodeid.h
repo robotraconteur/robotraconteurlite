@@ -28,7 +28,7 @@ extern "C" {
 
 struct robotraconteurlite_nodeid
 {
-    robotraconteurlite_u8 data[16];
+    robotraconteurlite_byte data[16];
 };
 
 ROBOTRACONTEURLITE_API robotraconteurlite_u32 robotraconteurlite_nodeid_equal(const struct robotraconteurlite_nodeid* a,
