@@ -36,14 +36,13 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: vcpkg build
-      uses: johnwason/vcpkg-action@v6
+      uses: johnwason/vcpkg-action@v7
       id: vcpkg
       with:
         pkgs: cmocka openssl
         triplet: x64-windows-static-md-release
         cache-key: vcpkg-windows-build
         token: ${{ github.token }}
-        github-binarycache: true
     - name: python pip
       run: python -m pip install robotraconteur
     - uses: ilammy/msvc-dev-cmd@v1
@@ -60,14 +59,13 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: vcpkg build
-      uses: johnwason/vcpkg-action@v6
+      uses: johnwason/vcpkg-action@v7
       id: vcpkg
       with:
         triplet: arm64-osx
         pkgs: cmocka openssl
         cache-key: vcpkg-macos-build
         token: ${{ github.token }}
-        github-binarycache: true
     - name: brew
       run: brew install ninja
     - name: python pip
