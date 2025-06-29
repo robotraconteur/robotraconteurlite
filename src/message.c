@@ -213,6 +213,7 @@ static robotraconteurlite_status robotraconteurlite_message_read_int_x(struct ro
 
     if (b <= 124)
     {
+        /*NOLINTNEXTLINE(bugprone-signed-char-misuse)*/
         *val = b;
         return ROBOTRACONTEURLITE_ERROR_SUCCESS;
     }
