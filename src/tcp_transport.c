@@ -89,7 +89,8 @@ robotraconteurlite_status robotraconteurlite_tcp_acceptor_communicate(
     return robotraconteurlite_connection_impl_accept2(c, now, ROBOTRACONTEURLITE_TCP_TRANSPORT, sock);
 }
 
-static robotraconteurlite_size_t robotraconteurlite_tcp_connection_recv_websocket_header_size(robotraconteurlite_u8 byte_two)
+static robotraconteurlite_size_t robotraconteurlite_tcp_connection_recv_websocket_header_size(
+    robotraconteurlite_u8 byte_two)
 {
     robotraconteurlite_size_t websocket_header_len = 2;
     robotraconteurlite_u8 len1 = byte_two & 0x7FU;
@@ -430,7 +431,8 @@ robotraconteurlite_status robotraconteurlite_tcp_connection_communicate_send(
 }
 
 static robotraconteurlite_status robotraconteurlite_tcp_connection_handshake_http_handshake_find_next_line(
-    const char* recv_data, robotraconteurlite_size_t recv_data_len, robotraconteurlite_size_t* i_end, robotraconteurlite_size_t* i_next)
+    const char* recv_data, robotraconteurlite_size_t recv_data_len, robotraconteurlite_size_t* i_end,
+    robotraconteurlite_size_t* i_next)
 {
     robotraconteurlite_size_t i = *i_next;
     while ((i < recv_data_len) && (recv_data[i] != '\n') && (recv_data[i] != '\r'))
@@ -962,8 +964,9 @@ static robotraconteurlite_status robotraconteurlite_tcp_connect_service_send_web
     int i = 0;
     robotraconteurlite_byte websocket_key[STRCONST_HTTP_SEC_WEBSOCKET_KEY_LEN];
     robotraconteurlite_u32 send_len = STRCONST_HTTP_REQUEST_1_LEN + connect_data->service_address->http_path.len +
-                        STRCONST_HTTP_REQUEST_2_LEN + connect_data->service_address->http_host.len +
-                        STRCONST_HTTP_REQUEST_3_LEN + WEBSOCKET_KEY_BASE64_LEN + STRCONST_HTTP_REQUEST_4_LEN;
+                                      STRCONST_HTTP_REQUEST_2_LEN + connect_data->service_address->http_host.len +
+                                      STRCONST_HTTP_REQUEST_3_LEN + WEBSOCKET_KEY_BASE64_LEN +
+                                      STRCONST_HTTP_REQUEST_4_LEN;
     robotraconteurlite_size_t sec_b64_send_len = send_len;
     assert(connect_data->client_out->transport_type == ROBOTRACONTEURLITE_TCP_TRANSPORT);
     assert(connect_data->client_out->send_buffer_pos == 0U);

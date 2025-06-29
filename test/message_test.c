@@ -105,7 +105,8 @@ robotraconteurlite_byte message4[] = {
     100, 95,  103, 111, 105, 110, 103, 95,  97,  110, 100, 95,  103, 111, 105, 110, 103, 1,   0,   1,   92,  143, 194,
     245, 40,  44,  69,  64,  7,   5,   1,   0,   0,   0,   0};
 
-static int cmp_double(const robotraconteurlite_double* a, const robotraconteurlite_double* b, robotraconteurlite_size_t len)
+static int cmp_double(const robotraconteurlite_double* a, const robotraconteurlite_double* b,
+                      robotraconteurlite_size_t len)
 {
     robotraconteurlite_size_t i = 0;
     for (i = 0; i < len; i++)
@@ -151,7 +152,8 @@ static int cmp_csingle(const struct robotraconteurlite_csingle* a, const struct 
     robotraconteurlite_size_t i = 0;
     for (i = 0; i < len; i++)
     {
-        if (fabs((robotraconteurlite_double)(a[i].real - b[i].real)) > 1e-4 || fabs((robotraconteurlite_double)(a[i].imag - b[i].imag)) > 1e-4)
+        if (fabs((robotraconteurlite_double)(a[i].real - b[i].real)) > 1e-4 ||
+            fabs((robotraconteurlite_double)(a[i].imag - b[i].imag)) > 1e-4)
         {
             return 1;
         }
@@ -159,7 +161,8 @@ static int cmp_csingle(const struct robotraconteurlite_csingle* a, const struct 
     return 0;
 }
 
-void robotraconteurlite_message_run_reader_basictest(robotraconteurlite_byte* message_bytes, robotraconteurlite_size_t message_bytes_len,
+void robotraconteurlite_message_run_reader_basictest(robotraconteurlite_byte* message_bytes,
+                                                     robotraconteurlite_size_t message_bytes_len,
                                                      robotraconteurlite_u16 message_ver)
 {
     struct robotraconteurlite_buffer buffer1;
@@ -450,7 +453,8 @@ void robotraconteurlite_message_run_reader_basictest(robotraconteurlite_byte* me
             nested_element1_name.data = nested_element1_name_data;
             nested_element1_name.len = strlen(nested_element1_name_data);
             nested_element1_read_data.data = nested_element1_read_data_storage;
-            nested_element1_read_data.len = sizeof(nested_element1_read_data_storage) / sizeof(robotraconteurlite_double);
+            nested_element1_read_data.len =
+                sizeof(nested_element1_read_data_storage) / sizeof(robotraconteurlite_double);
             assert_return_code(robotraconteurlite_messageelement_reader_find_nested_element(
                                    &element_reader3, &nested_element1_name, &nested_element1_reader),
                                0);
@@ -692,7 +696,8 @@ void robotraconteurlite_message_run_reader_basictest(robotraconteurlite_byte* me
             nested_element10_name.data = nested_element10_name_data;
             nested_element10_name.len = strlen(nested_element10_name_data);
             nested_element10_read_data.data = nested_element10_read_data_storage;
-            nested_element10_read_data.len = sizeof(nested_element10_read_data_storage) / sizeof(robotraconteurlite_u64);
+            nested_element10_read_data.len =
+                sizeof(nested_element10_read_data_storage) / sizeof(robotraconteurlite_u64);
             assert_return_code(robotraconteurlite_messageelement_reader_find_nested_element(
                                    &element_reader3, &nested_element10_name, &nested_element10_reader),
                                0);
@@ -896,8 +901,10 @@ void robotraconteurlite_message4_reader_basictest(void** state)
     robotraconteurlite_message_run_reader_basictest(message4, sizeof(message4), 4);
 }
 
-void robotraconteurlite_message_run_writer_basictest(robotraconteurlite_byte* buffer_bytes, robotraconteurlite_size_t* buffer_bytes_len,
-                                                     robotraconteurlite_u16 message_ver, robotraconteurlite_u8 message_flags_mask)
+void robotraconteurlite_message_run_writer_basictest(robotraconteurlite_byte* buffer_bytes,
+                                                     robotraconteurlite_size_t* buffer_bytes_len,
+                                                     robotraconteurlite_u16 message_ver,
+                                                     robotraconteurlite_u8 message_flags_mask)
 {
 
     struct robotraconteurlite_buffer buffer1;
@@ -913,9 +920,9 @@ void robotraconteurlite_message_run_writer_basictest(robotraconteurlite_byte* bu
     char extended_data[] = "extended_data\nblah blah";
 
     robotraconteurlite_u8 sender_nodeid[] = {0xd8, 0x35, 0xc4, 0x1d, 0x33, 0x9c, 0x47, 0xa8,
-                               0x84, 0xdb, 0xf0, 0x0a, 0x8f, 0xef, 0xd2, 0xfa};
+                                             0x84, 0xdb, 0xf0, 0x0a, 0x8f, 0xef, 0xd2, 0xfa};
     robotraconteurlite_u8 receiver_nodeid[] = {0xae, 0x78, 0x48, 0x1b, 0xc2, 0xbe, 0x4f, 0x26,
-                                 0x9f, 0xef, 0x74, 0xbb, 0x6e, 0x8a, 0x04, 0x3f};
+                                               0x9f, 0xef, 0x74, 0xbb, 0x6e, 0x8a, 0x04, 0x3f};
 
     memset(&header, 0, sizeof(header));
 
@@ -1206,8 +1213,8 @@ void robotraconteurlite_message_run_writer_basictest(robotraconteurlite_byte* bu
                 sub_cdoubles_name.data = sub_cdoubles_name_d;
                 sub_cdoubles_name.len = strlen(sub_cdoubles_name_d);
                 sub_cdoubles_data.data = (struct robotraconteurlite_cdouble*)sub_cdoubles_data_d;
-                sub_cdoubles_data.len =
-                    ((robotraconteurlite_size_t)sizeof(sub_cdoubles_data_d)) / ((robotraconteurlite_size_t)sizeof(struct robotraconteurlite_cdouble));
+                sub_cdoubles_data.len = ((robotraconteurlite_size_t)sizeof(sub_cdoubles_data_d)) /
+                                        ((robotraconteurlite_size_t)sizeof(struct robotraconteurlite_cdouble));
 
                 assert_return_code(robotraconteurlite_messageelement_writer_write_cdouble_array(
                                        &nested_element_writer, &sub_cdoubles_name, &sub_cdoubles_data),
@@ -1222,8 +1229,8 @@ void robotraconteurlite_message_run_writer_basictest(robotraconteurlite_byte* bu
                 sub_csingles_name.data = sub_csingles_name_d;
                 sub_csingles_name.len = strlen(sub_csingles_name_d);
                 sub_csingles_data.data = (struct robotraconteurlite_csingle*)sub_csingles_data_d;
-                sub_csingles_data.len =
-                    ((robotraconteurlite_size_t)sizeof(sub_csingles_data_d)) / ((robotraconteurlite_size_t)sizeof(struct robotraconteurlite_csingle));
+                sub_csingles_data.len = ((robotraconteurlite_size_t)sizeof(sub_csingles_data_d)) /
+                                        ((robotraconteurlite_size_t)sizeof(struct robotraconteurlite_csingle));
 
                 assert_return_code(robotraconteurlite_messageelement_writer_write_csingle_array(
                                        &nested_element_writer, &sub_csingles_name, &sub_csingles_data),

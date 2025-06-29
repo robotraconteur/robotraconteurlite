@@ -978,7 +978,8 @@ static robotraconteurlite_status robotraconteurlite_client_handshake_handle_erro
 
 static robotraconteurlite_status robotraconteurlite_client_handshake_begin_request(
     struct robotraconteurlite_client_handshake_data* handshake_data,
-    struct robotraconteurlite_node_send_messageentry_data* send_data, robotraconteurlite_u16 entry_type, const char* membername)
+    struct robotraconteurlite_node_send_messageentry_data* send_data, robotraconteurlite_u16 entry_type,
+    const char* membername)
 {
     robotraconteurlite_status rv = -1;
     (void)memset(send_data, 0, sizeof(struct robotraconteurlite_node_send_messageentry_data));
@@ -1249,8 +1250,8 @@ robotraconteurlite_status robotraconteurlite_client_handshake(
 }
 
 robotraconteurlite_status robotraconteurlite_client_begin_request(
-    struct robotraconteurlite_node_send_messageentry_data* send_data, robotraconteurlite_u16 entry_type, const char* membername,
-    const char* servicepath)
+    struct robotraconteurlite_node_send_messageentry_data* send_data, robotraconteurlite_u16 entry_type,
+    const char* membername, const char* servicepath)
 {
     send_data->message_entry_header = &send_data->message_entry_header_storage;
     (void)memset(send_data->message_entry_header, 0, sizeof(struct robotraconteurlite_messageentry_header));
@@ -1299,8 +1300,8 @@ robotraconteurlite_status robotraconteurlite_client_end_request(
 }
 
 robotraconteurlite_status robotraconteurlite_client_send_empty_request(
-    struct robotraconteurlite_node_send_messageentry_data* send_data, robotraconteurlite_u16 entry_type, const char* membername,
-    const char* servicepath)
+    struct robotraconteurlite_node_send_messageentry_data* send_data, robotraconteurlite_u16 entry_type,
+    const char* membername, const char* servicepath)
 {
     robotraconteurlite_status rv =
         robotraconteurlite_client_begin_request(send_data, entry_type, membername, servicepath);
@@ -1359,7 +1360,8 @@ robotraconteurlite_status robotraconteurlite_node_next_wake(struct robotraconteu
 
 robotraconteurlite_status robotraconteurlite_node_poll_add_fd(struct robotraconteurlite_node* node,
                                                               struct robotraconteurlite_pollfd* pollfds,
-                                                              const robotraconteurlite_size_t* pollfd_count, robotraconteurlite_size_t max_pollfds)
+                                                              const robotraconteurlite_size_t* pollfd_count,
+                                                              robotraconteurlite_size_t max_pollfds)
 {
     ROBOTRACONTEURLITE_UNUSED(node);
     ROBOTRACONTEURLITE_UNUSED(pollfds);

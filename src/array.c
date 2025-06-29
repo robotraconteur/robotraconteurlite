@@ -41,7 +41,8 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_init_scalar(struct robot
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
 
-robotraconteurlite_status robotraconteurlite_buffer_len(const struct robotraconteurlite_buffer* source, robotraconteurlite_size_t* len)
+robotraconteurlite_status robotraconteurlite_buffer_len(const struct robotraconteurlite_buffer* source,
+                                                        robotraconteurlite_size_t* len)
 {
     assert(source != NULL);
     assert(len != NULL);
@@ -68,7 +69,8 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_len(const struct robotra
 
 robotraconteurlite_status robotraconteurlite_buffer_copy(const struct robotraconteurlite_buffer* source,
                                                          robotraconteurlite_size_t source_pos,
-                                                         const struct robotraconteurlite_buffer* dest, robotraconteurlite_size_t dest_pos,
+                                                         const struct robotraconteurlite_buffer* dest,
+                                                         robotraconteurlite_size_t dest_pos,
                                                          robotraconteurlite_size_t count)
 {
     assert(source != NULL);
@@ -94,7 +96,8 @@ robotraconteurlite_status robotraconteurlite_buffer_copy(const struct robotracon
 robotraconteurlite_status robotraconteurlite_buffer_vec_copy_vec(const struct robotraconteurlite_buffer_vec* source,
                                                                  robotraconteurlite_size_t source_pos,
                                                                  const struct robotraconteurlite_buffer_vec* dest,
-                                                                 robotraconteurlite_size_t dest_pos, robotraconteurlite_size_t count)
+                                                                 robotraconteurlite_size_t dest_pos,
+                                                                 robotraconteurlite_size_t count)
 {
     robotraconteurlite_size_t source_len = 0;
     robotraconteurlite_size_t dest_len = 0;
@@ -197,11 +200,11 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_vec(const struct ro
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
 
-robotraconteurlite_status robotraconteurlite_buffer_copy_ex(const struct robotraconteurlite_buffer* source,
-                                                            robotraconteurlite_size_t source_pos, robotraconteurlite_size_t source_elem_size,
-                                                            robotraconteurlite_size_t source_count,
-                                                            const struct robotraconteurlite_buffer* dest,
-                                                            robotraconteurlite_size_t dest_pos, robotraconteurlite_size_t dest_elem_size, robotraconteurlite_size_t dest_count)
+robotraconteurlite_status robotraconteurlite_buffer_copy_ex(
+    const struct robotraconteurlite_buffer* source, robotraconteurlite_size_t source_pos,
+    robotraconteurlite_size_t source_elem_size, robotraconteurlite_size_t source_count,
+    const struct robotraconteurlite_buffer* dest, robotraconteurlite_size_t dest_pos,
+    robotraconteurlite_size_t dest_elem_size, robotraconteurlite_size_t dest_count)
 {
     assert(source != NULL);
     assert(source->data != NULL);
@@ -230,8 +233,10 @@ robotraconteurlite_status robotraconteurlite_buffer_copy_ex(const struct robotra
 }
 
 robotraconteurlite_status robotraconteurlite_buffer_vec_copy_vec_ex(
-    const struct robotraconteurlite_buffer_vec* source, robotraconteurlite_size_t source_pos, robotraconteurlite_size_t source_elem_size, robotraconteurlite_size_t source_count,
-    const struct robotraconteurlite_buffer_vec* dest, robotraconteurlite_size_t dest_pos, robotraconteurlite_size_t dest_elem_size, robotraconteurlite_size_t dest_count)
+    const struct robotraconteurlite_buffer_vec* source, robotraconteurlite_size_t source_pos,
+    robotraconteurlite_size_t source_elem_size, robotraconteurlite_size_t source_count,
+    const struct robotraconteurlite_buffer_vec* dest, robotraconteurlite_size_t dest_pos,
+    robotraconteurlite_size_t dest_elem_size, robotraconteurlite_size_t dest_count)
 {
     robotraconteurlite_size_t source_len = 0;
     robotraconteurlite_size_t dest_len = 0;
@@ -310,7 +315,8 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_vec_ex(
     bytes_remaining = source_count * source_elem_size;
     while (bytes_remaining > 0U)
     {
-        robotraconteurlite_size_t source_i_delta = (source->buffer_vec[source_i].len * source_elem_size) - source_i_byte_pos;
+        robotraconteurlite_size_t source_i_delta =
+            (source->buffer_vec[source_i].len * source_elem_size) - source_i_byte_pos;
         robotraconteurlite_size_t dest_i_delta = (dest->buffer_vec[dest_i].len * dest_elem_size) - dest_i_byte_pos;
         robotraconteurlite_size_t delta = 0;
 
@@ -344,10 +350,10 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_vec_ex(
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
 
-robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_mem(const struct robotraconteurlite_buffer_vec* source,
-                                                                    robotraconteurlite_size_t source_pos, robotraconteurlite_byte* dest, robotraconteurlite_size_t dest_len,
-                                                                    robotraconteurlite_size_t dest_pos, robotraconteurlite_size_t dest_elem_size,
-                                                                    robotraconteurlite_size_t dest_count)
+robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_mem(
+    const struct robotraconteurlite_buffer_vec* source, robotraconteurlite_size_t source_pos,
+    robotraconteurlite_byte* dest, robotraconteurlite_size_t dest_len, robotraconteurlite_size_t dest_pos,
+    robotraconteurlite_size_t dest_elem_size, robotraconteurlite_size_t dest_count)
 {
     struct robotraconteurlite_buffer dest_buf;
     struct robotraconteurlite_buffer_vec dest_vec;
@@ -363,10 +369,10 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_mem(const struct
                                                      dest_pos, dest_elem_size, dest_count);
 }
 
-robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_mem(struct robotraconteurlite_buffer_vec* dest,
-                                                                      robotraconteurlite_size_t dest_pos, const robotraconteurlite_byte* source,
-                                                                      robotraconteurlite_size_t source_len, robotraconteurlite_size_t source_pos,
-                                                                      robotraconteurlite_size_t source_elem_size, robotraconteurlite_size_t source_count)
+robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_mem(
+    struct robotraconteurlite_buffer_vec* dest, robotraconteurlite_size_t dest_pos,
+    const robotraconteurlite_byte* source, robotraconteurlite_size_t source_len, robotraconteurlite_size_t source_pos,
+    robotraconteurlite_size_t source_elem_size, robotraconteurlite_size_t source_count)
 {
     struct robotraconteurlite_buffer source_buf;
     struct robotraconteurlite_buffer_vec source_vec;
@@ -388,17 +394,18 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_string(
     const struct robotraconteurlite_buffer_vec* source_buf, robotraconteurlite_size_t source_buf_pos,
     struct robotraconteurlite_string* dest, robotraconteurlite_size_t dest_pos, robotraconteurlite_size_t dest_count)
 {
-    return robotraconteurlite_buffer_vec_copy_to_mem(source_buf, source_buf_pos, (robotraconteurlite_byte*)dest->data, dest->len,
-                                                     dest_pos, 1, dest_count);
+    return robotraconteurlite_buffer_vec_copy_to_mem(source_buf, source_buf_pos, (robotraconteurlite_byte*)dest->data,
+                                                     dest->len, dest_pos, 1, dest_count);
 }
 
 robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_string(struct robotraconteurlite_buffer_vec* dest_buf,
                                                                          robotraconteurlite_size_t dest_buf_pos,
                                                                          const struct robotraconteurlite_string* source,
-                                                                         robotraconteurlite_size_t source_pos, robotraconteurlite_size_t source_count)
+                                                                         robotraconteurlite_size_t source_pos,
+                                                                         robotraconteurlite_size_t source_count)
 {
-    return robotraconteurlite_buffer_vec_copy_from_mem(dest_buf, dest_buf_pos, (const robotraconteurlite_byte*)source->data,
-                                                       source->len, source_pos, 1, source_count);
+    return robotraconteurlite_buffer_vec_copy_from_mem(
+        dest_buf, dest_buf_pos, (const robotraconteurlite_byte*)source->data, source->len, source_pos, 1, source_count);
 }
 
 robotraconteurlite_status robotraconteurlite_string_cmp(const struct robotraconteurlite_string* str1,
@@ -444,10 +451,12 @@ robotraconteurlite_u32 robotraconteurlite_string_hash(const struct robotraconteu
     case 1:
         return (str_len & 0xFFFFU) | ((robotraconteurlite_u32)str->data[0] << 24);
     case 2:
-        return (str_len & 0xFFFFU) | ((robotraconteurlite_u32)str->data[0] << 24) | ((robotraconteurlite_u32)str->data[str_len - 1U] << 16);
+        return (str_len & 0xFFFFU) | ((robotraconteurlite_u32)str->data[0] << 24) |
+               ((robotraconteurlite_u32)str->data[str_len - 1U] << 16);
     default:
         return (str_len & 0xFFFFU) | ((robotraconteurlite_u32)str->data[0] << 24) |
-               (((robotraconteurlite_u32)str->data[str_len - 1U] ^ (robotraconteurlite_u32)str->data[str_len - 2U]) << 16);
+               (((robotraconteurlite_u32)str->data[str_len - 1U] ^ (robotraconteurlite_u32)str->data[str_len - 2U])
+                << 16);
     }
 }
 

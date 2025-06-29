@@ -11,7 +11,8 @@
 #define inline
 #include <cmocka.h>
 
-static int cmp_double(const robotraconteurlite_double* a, const robotraconteurlite_double* b, robotraconteurlite_size_t len)
+static int cmp_double(const robotraconteurlite_double* a, const robotraconteurlite_double* b,
+                      robotraconteurlite_size_t len)
 {
     robotraconteurlite_size_t i = 0;
     for (i = 0; i < len; i++)

@@ -159,15 +159,15 @@ struct robotraconteurlite_addr
 ROBOTRACONTEURLITE_API robotraconteurlite_status
 robotraconteurlite_connection_reset(struct robotraconteurlite_connection* connection);
 
-ROBOTRACONTEURLITE_API robotraconteurlite_status
-robotraconteurlite_connection_verify_preamble(struct robotraconteurlite_connection* connection, robotraconteurlite_u32* message_len);
+ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_connection_verify_preamble(
+    struct robotraconteurlite_connection* connection, robotraconteurlite_u32* message_len);
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_connection_begin_send_message(
     struct robotraconteurlite_connection* connection, struct robotraconteurlite_message_writer* message_writer,
     struct robotraconteurlite_buffer_vec* buffer_storage);
 
-ROBOTRACONTEURLITE_API robotraconteurlite_status
-robotraconteurlite_connection_end_send_message(struct robotraconteurlite_connection* connection, robotraconteurlite_size_t message_len);
+ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_connection_end_send_message(
+    struct robotraconteurlite_connection* connection, robotraconteurlite_size_t message_len);
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status
 robotraconteurlite_connection_abort_send_message(struct robotraconteurlite_connection* connection);
@@ -273,8 +273,9 @@ static int robotraconteurlite_connection_is_server(struct robotraconteurlite_con
 }
 
 ROBOTRACONTEURLITE_API struct robotraconteurlite_connection* robotraconteurlite_connections_init_from_array(
-    struct robotraconteurlite_connection connections_fixed_storage[], robotraconteurlite_size_t connections_fixed_storage_len,
-    robotraconteurlite_byte buffers[], robotraconteurlite_size_t buffer_size, robotraconteurlite_size_t buffer_count);
+    struct robotraconteurlite_connection connections_fixed_storage[],
+    robotraconteurlite_size_t connections_fixed_storage_len, robotraconteurlite_byte buffers[],
+    robotraconteurlite_size_t buffer_size, robotraconteurlite_size_t buffer_count);
 
 static int robotraconteurlite_connection_is_heartbeat_timeout(struct robotraconteurlite_connection* connection,
                                                               robotraconteurlite_timespec now)
@@ -313,34 +314,36 @@ ROBOTRACONTEURLITE_API void robotraconteurlite_connection_init_connections(
     struct robotraconteurlite_connection* connections_head);
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_connection_impl_communicate(
-    struct robotraconteurlite_connection* connection, robotraconteurlite_timespec now, robotraconteurlite_u32 transport_type,
-    robotraconteurlite_u8* close_request);
+    struct robotraconteurlite_connection* connection, robotraconteurlite_timespec now,
+    robotraconteurlite_u32 transport_type, robotraconteurlite_u8* close_request);
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_connection_impl_communicate_after_close_requested(
     struct robotraconteurlite_connection* connection, robotraconteurlite_timespec now,
     robotraconteurlite_status close_rv);
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_connection_impl_communicate_recv1(
-    struct robotraconteurlite_connection* connection, robotraconteurlite_timespec now, robotraconteurlite_size_t* recv_op_len);
+    struct robotraconteurlite_connection* connection, robotraconteurlite_timespec now,
+    robotraconteurlite_size_t* recv_op_len);
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_connection_impl_communicate_recv2(
     struct robotraconteurlite_connection* connection, robotraconteurlite_timespec now,
     robotraconteurlite_status recv_op_rv);
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_connection_impl_communicate_send1(
-    struct robotraconteurlite_connection* connection, robotraconteurlite_timespec now, robotraconteurlite_size_t* send_op_len);
+    struct robotraconteurlite_connection* connection, robotraconteurlite_timespec now,
+    robotraconteurlite_size_t* send_op_len);
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_connection_impl_communicate_send2(
     struct robotraconteurlite_connection* connection, robotraconteurlite_timespec now,
     robotraconteurlite_status send_op_rv);
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_connection_impl_connect2(
-    struct robotraconteurlite_connection* connection, robotraconteurlite_timespec now, robotraconteurlite_u32 transport_type,
-    const struct robotraconteurlite_addr* addr, ROBOTRACONTEURLITE_SOCKET sock);
+    struct robotraconteurlite_connection* connection, robotraconteurlite_timespec now,
+    robotraconteurlite_u32 transport_type, const struct robotraconteurlite_addr* addr, ROBOTRACONTEURLITE_SOCKET sock);
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_connection_impl_accept2(
-    struct robotraconteurlite_connection* connection, robotraconteurlite_timespec now, robotraconteurlite_u32 transport_type,
-    ROBOTRACONTEURLITE_SOCKET sock);
+    struct robotraconteurlite_connection* connection, robotraconteurlite_timespec now,
+    robotraconteurlite_u32 transport_type, ROBOTRACONTEURLITE_SOCKET sock);
 
 #ifdef __cplusplus
 }

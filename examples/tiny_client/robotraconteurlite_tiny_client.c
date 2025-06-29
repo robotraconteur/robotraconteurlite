@@ -143,9 +143,9 @@ int main(int argc, char* argv[])
     robotraconteurlite_nodeid_newrandom(&node_id);
 
     /* Initialize connections and TCP transport */
-    connections_head =
-        robotraconteurlite_connections_init_from_array(connections_storage, NUM_CONNECTIONS, connection_buffers,
-                                                       CONNECTION_BUFFER_SIZE, (robotraconteurlite_size_t)(NUM_CONNECTIONS * 2));
+    connections_head = robotraconteurlite_connections_init_from_array(connections_storage, NUM_CONNECTIONS,
+                                                                      connection_buffers, CONNECTION_BUFFER_SIZE,
+                                                                      (robotraconteurlite_size_t)(NUM_CONNECTIONS * 2));
     if (!connections_head)
     {
         printf("Could not initialize connections\n");

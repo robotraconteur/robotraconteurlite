@@ -5,10 +5,14 @@ foreach(file ${ROBOTRACONTEURLITE_SRC})
     list(APPEND NOSTDINT_ROBOTRACONTEURLITE_SRC "${CMAKE_SOURCE_DIR}/${file}")
 endforeach()
 
-add_executable(robotraconteurlite_no_stdint_test ${NOSTDINT_ROBOTRACONTEURLITE_SRC} ${CMAKE_SOURCE_DIR}/examples/tiny_service/robotraconteurlite_tiny_service.c)
-target_include_directories(robotraconteurlite_no_stdint_test PRIVATE ${CMAKE_SOURCE_DIR}/include ${CMAKE_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
+add_executable(
+    robotraconteurlite_no_stdint_test ${NOSTDINT_ROBOTRACONTEURLITE_SRC}
+                                      ${CMAKE_SOURCE_DIR}/examples/tiny_service/robotraconteurlite_tiny_service.c)
+target_include_directories(robotraconteurlite_no_stdint_test PRIVATE ${CMAKE_SOURCE_DIR}/include ${CMAKE_BINARY_DIR}
+                                                                     ${CMAKE_CURRENT_SOURCE_DIR})
 
-target_compile_definitions(robotraconteurlite_no_stdint_test PRIVATE ROBOTRACONTEURLITE_NO_STDINT ROBOTRACONTEURLITE_USE_LOCAL_CONFIG)
+target_compile_definitions(robotraconteurlite_no_stdint_test PRIVATE ROBOTRACONTEURLITE_NO_STDINT
+                                                                     ROBOTRACONTEURLITE_USE_LOCAL_CONFIG)
 
 # copy dependencies from robotraconteurlite library
 if(ROBOTRACONTEURLITE_USE_OPENSSL)

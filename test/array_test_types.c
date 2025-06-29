@@ -12,10 +12,6 @@
 #define inline
 #include <cmocka.h>
 
-
-
-
-
 void robotraconteurlite_buffer_int8_test(void** state)
 {
     robotraconteurlite_i8 a1[256];
@@ -48,22 +44,20 @@ void robotraconteurlite_buffer_int8_test(void** state)
 
     assert_return_code(robotraconteurlite_buffer_vec_copy_from_int8_array(&buf_vec, 32, &int8s, 10, 15), 0);
 
-    assert_true(memcmp((a1 + 10), (buf_data + 32), 15*sizeof(robotraconteurlite_i8)) == 0);
+    assert_true(memcmp((a1 + 10), (buf_data + 32), 15 * sizeof(robotraconteurlite_i8)) == 0);
 
     int8s2.data = a2;
     int8s2.len = sizeof(a2) / sizeof(robotraconteurlite_i8);
 
     assert_return_code(robotraconteurlite_buffer_vec_copy_to_int8_array(&buf_vec, 32, &int8s2, 12, 12), 0);
 
-    assert_true(memcmp(a1 + 10, a2 + 12, 12*sizeof(robotraconteurlite_i8)) == 0);
+    assert_true(memcmp(a1 + 10, a2 + 12, 12 * sizeof(robotraconteurlite_i8)) == 0);
 
     robotraconteurlite_buffer_vec_copy_from_int8(&buf_vec, 128, d1);
     assert_true(memcmp(&d1, (buf_data + 128), sizeof(robotraconteurlite_i8)) == 0);
-    robotraconteurlite_buffer_vec_copy_to_int8(&buf_vec, 32+sizeof(robotraconteurlite_i8), &d2);
+    robotraconteurlite_buffer_vec_copy_to_int8(&buf_vec, 32 + sizeof(robotraconteurlite_i8), &d2);
     assert_true(d2 == 11);
 }
-
-
 
 void robotraconteurlite_buffer_uint8_test(void** state)
 {
@@ -97,22 +91,20 @@ void robotraconteurlite_buffer_uint8_test(void** state)
 
     assert_return_code(robotraconteurlite_buffer_vec_copy_from_uint8_array(&buf_vec, 32, &uint8s, 10, 15), 0);
 
-    assert_true(memcmp((a1 + 10), (buf_data + 32), 15*sizeof(robotraconteurlite_u8)) == 0);
+    assert_true(memcmp((a1 + 10), (buf_data + 32), 15 * sizeof(robotraconteurlite_u8)) == 0);
 
     uint8s2.data = a2;
     uint8s2.len = sizeof(a2) / sizeof(robotraconteurlite_u8);
 
     assert_return_code(robotraconteurlite_buffer_vec_copy_to_uint8_array(&buf_vec, 32, &uint8s2, 12, 12), 0);
 
-    assert_true(memcmp(a1 + 10, a2 + 12, 12*sizeof(robotraconteurlite_u8)) == 0);
+    assert_true(memcmp(a1 + 10, a2 + 12, 12 * sizeof(robotraconteurlite_u8)) == 0);
 
     robotraconteurlite_buffer_vec_copy_from_uint8(&buf_vec, 128, d1);
     assert_true(memcmp(&d1, (buf_data + 128), sizeof(robotraconteurlite_u8)) == 0);
-    robotraconteurlite_buffer_vec_copy_to_uint8(&buf_vec, 32+sizeof(robotraconteurlite_u8), &d2);
+    robotraconteurlite_buffer_vec_copy_to_uint8(&buf_vec, 32 + sizeof(robotraconteurlite_u8), &d2);
     assert_true(d2 == 11);
 }
-
-
 
 void robotraconteurlite_buffer_int16_test(void** state)
 {
@@ -146,22 +138,20 @@ void robotraconteurlite_buffer_int16_test(void** state)
 
     assert_return_code(robotraconteurlite_buffer_vec_copy_from_int16_array(&buf_vec, 32, &int16s, 10, 15), 0);
 
-    assert_true(memcmp((a1 + 10), (buf_data + 32), 15*sizeof(robotraconteurlite_i16)) == 0);
+    assert_true(memcmp((a1 + 10), (buf_data + 32), 15 * sizeof(robotraconteurlite_i16)) == 0);
 
     int16s2.data = a2;
     int16s2.len = sizeof(a2) / sizeof(robotraconteurlite_i16);
 
     assert_return_code(robotraconteurlite_buffer_vec_copy_to_int16_array(&buf_vec, 32, &int16s2, 12, 12), 0);
 
-    assert_true(memcmp(a1 + 10, a2 + 12, 12*sizeof(robotraconteurlite_i16)) == 0);
+    assert_true(memcmp(a1 + 10, a2 + 12, 12 * sizeof(robotraconteurlite_i16)) == 0);
 
     robotraconteurlite_buffer_vec_copy_from_int16(&buf_vec, 128, d1);
     assert_true(memcmp(&d1, (buf_data + 128), sizeof(robotraconteurlite_i16)) == 0);
-    robotraconteurlite_buffer_vec_copy_to_int16(&buf_vec, 32+sizeof(robotraconteurlite_i16), &d2);
+    robotraconteurlite_buffer_vec_copy_to_int16(&buf_vec, 32 + sizeof(robotraconteurlite_i16), &d2);
     assert_true(d2 == 11);
 }
-
-
 
 void robotraconteurlite_buffer_uint16_test(void** state)
 {
@@ -195,22 +185,20 @@ void robotraconteurlite_buffer_uint16_test(void** state)
 
     assert_return_code(robotraconteurlite_buffer_vec_copy_from_uint16_array(&buf_vec, 32, &uint16s, 10, 15), 0);
 
-    assert_true(memcmp((a1 + 10), (buf_data + 32), 15*sizeof(robotraconteurlite_u16)) == 0);
+    assert_true(memcmp((a1 + 10), (buf_data + 32), 15 * sizeof(robotraconteurlite_u16)) == 0);
 
     uint16s2.data = a2;
     uint16s2.len = sizeof(a2) / sizeof(robotraconteurlite_u16);
 
     assert_return_code(robotraconteurlite_buffer_vec_copy_to_uint16_array(&buf_vec, 32, &uint16s2, 12, 12), 0);
 
-    assert_true(memcmp(a1 + 10, a2 + 12, 12*sizeof(robotraconteurlite_u16)) == 0);
+    assert_true(memcmp(a1 + 10, a2 + 12, 12 * sizeof(robotraconteurlite_u16)) == 0);
 
     robotraconteurlite_buffer_vec_copy_from_uint16(&buf_vec, 128, d1);
     assert_true(memcmp(&d1, (buf_data + 128), sizeof(robotraconteurlite_u16)) == 0);
-    robotraconteurlite_buffer_vec_copy_to_uint16(&buf_vec, 32+sizeof(robotraconteurlite_u16), &d2);
+    robotraconteurlite_buffer_vec_copy_to_uint16(&buf_vec, 32 + sizeof(robotraconteurlite_u16), &d2);
     assert_true(d2 == 11);
 }
-
-
 
 void robotraconteurlite_buffer_int32_test(void** state)
 {
@@ -244,22 +232,20 @@ void robotraconteurlite_buffer_int32_test(void** state)
 
     assert_return_code(robotraconteurlite_buffer_vec_copy_from_int32_array(&buf_vec, 32, &int32s, 10, 15), 0);
 
-    assert_true(memcmp((a1 + 10), (buf_data + 32), 15*sizeof(robotraconteurlite_i32)) == 0);
+    assert_true(memcmp((a1 + 10), (buf_data + 32), 15 * sizeof(robotraconteurlite_i32)) == 0);
 
     int32s2.data = a2;
     int32s2.len = sizeof(a2) / sizeof(robotraconteurlite_i32);
 
     assert_return_code(robotraconteurlite_buffer_vec_copy_to_int32_array(&buf_vec, 32, &int32s2, 12, 12), 0);
 
-    assert_true(memcmp(a1 + 10, a2 + 12, 12*sizeof(robotraconteurlite_i32)) == 0);
+    assert_true(memcmp(a1 + 10, a2 + 12, 12 * sizeof(robotraconteurlite_i32)) == 0);
 
     robotraconteurlite_buffer_vec_copy_from_int32(&buf_vec, 128, d1);
     assert_true(memcmp(&d1, (buf_data + 128), sizeof(robotraconteurlite_i32)) == 0);
-    robotraconteurlite_buffer_vec_copy_to_int32(&buf_vec, 32+sizeof(robotraconteurlite_i32), &d2);
+    robotraconteurlite_buffer_vec_copy_to_int32(&buf_vec, 32 + sizeof(robotraconteurlite_i32), &d2);
     assert_true(d2 == 11);
 }
-
-
 
 void robotraconteurlite_buffer_uint32_test(void** state)
 {
@@ -293,22 +279,20 @@ void robotraconteurlite_buffer_uint32_test(void** state)
 
     assert_return_code(robotraconteurlite_buffer_vec_copy_from_uint32_array(&buf_vec, 32, &uint32s, 10, 15), 0);
 
-    assert_true(memcmp((a1 + 10), (buf_data + 32), 15*sizeof(robotraconteurlite_u32)) == 0);
+    assert_true(memcmp((a1 + 10), (buf_data + 32), 15 * sizeof(robotraconteurlite_u32)) == 0);
 
     uint32s2.data = a2;
     uint32s2.len = sizeof(a2) / sizeof(robotraconteurlite_u32);
 
     assert_return_code(robotraconteurlite_buffer_vec_copy_to_uint32_array(&buf_vec, 32, &uint32s2, 12, 12), 0);
 
-    assert_true(memcmp(a1 + 10, a2 + 12, 12*sizeof(robotraconteurlite_u32)) == 0);
+    assert_true(memcmp(a1 + 10, a2 + 12, 12 * sizeof(robotraconteurlite_u32)) == 0);
 
     robotraconteurlite_buffer_vec_copy_from_uint32(&buf_vec, 128, d1);
     assert_true(memcmp(&d1, (buf_data + 128), sizeof(robotraconteurlite_u32)) == 0);
-    robotraconteurlite_buffer_vec_copy_to_uint32(&buf_vec, 32+sizeof(robotraconteurlite_u32), &d2);
+    robotraconteurlite_buffer_vec_copy_to_uint32(&buf_vec, 32 + sizeof(robotraconteurlite_u32), &d2);
     assert_true(d2 == 11);
 }
-
-
 
 void robotraconteurlite_buffer_int64_test(void** state)
 {
@@ -342,22 +326,20 @@ void robotraconteurlite_buffer_int64_test(void** state)
 
     assert_return_code(robotraconteurlite_buffer_vec_copy_from_int64_array(&buf_vec, 32, &int64s, 10, 15), 0);
 
-    assert_true(memcmp((a1 + 10), (buf_data + 32), 15*sizeof(robotraconteurlite_i64)) == 0);
+    assert_true(memcmp((a1 + 10), (buf_data + 32), 15 * sizeof(robotraconteurlite_i64)) == 0);
 
     int64s2.data = a2;
     int64s2.len = sizeof(a2) / sizeof(robotraconteurlite_i64);
 
     assert_return_code(robotraconteurlite_buffer_vec_copy_to_int64_array(&buf_vec, 32, &int64s2, 12, 12), 0);
 
-    assert_true(memcmp(a1 + 10, a2 + 12, 12*sizeof(robotraconteurlite_i64)) == 0);
+    assert_true(memcmp(a1 + 10, a2 + 12, 12 * sizeof(robotraconteurlite_i64)) == 0);
 
     robotraconteurlite_buffer_vec_copy_from_int64(&buf_vec, 128, d1);
     assert_true(memcmp(&d1, (buf_data + 128), sizeof(robotraconteurlite_i64)) == 0);
-    robotraconteurlite_buffer_vec_copy_to_int64(&buf_vec, 32+sizeof(robotraconteurlite_i64), &d2);
+    robotraconteurlite_buffer_vec_copy_to_int64(&buf_vec, 32 + sizeof(robotraconteurlite_i64), &d2);
     assert_true(d2 == 11);
 }
-
-
 
 void robotraconteurlite_buffer_uint64_test(void** state)
 {
@@ -391,24 +373,20 @@ void robotraconteurlite_buffer_uint64_test(void** state)
 
     assert_return_code(robotraconteurlite_buffer_vec_copy_from_uint64_array(&buf_vec, 32, &uint64s, 10, 15), 0);
 
-    assert_true(memcmp((a1 + 10), (buf_data + 32), 15*sizeof(robotraconteurlite_u64)) == 0);
+    assert_true(memcmp((a1 + 10), (buf_data + 32), 15 * sizeof(robotraconteurlite_u64)) == 0);
 
     uint64s2.data = a2;
     uint64s2.len = sizeof(a2) / sizeof(robotraconteurlite_u64);
 
     assert_return_code(robotraconteurlite_buffer_vec_copy_to_uint64_array(&buf_vec, 32, &uint64s2, 12, 12), 0);
 
-    assert_true(memcmp(a1 + 10, a2 + 12, 12*sizeof(robotraconteurlite_u64)) == 0);
+    assert_true(memcmp(a1 + 10, a2 + 12, 12 * sizeof(robotraconteurlite_u64)) == 0);
 
     robotraconteurlite_buffer_vec_copy_from_uint64(&buf_vec, 128, d1);
     assert_true(memcmp(&d1, (buf_data + 128), sizeof(robotraconteurlite_u64)) == 0);
-    robotraconteurlite_buffer_vec_copy_to_uint64(&buf_vec, 32+sizeof(robotraconteurlite_u64), &d2);
+    robotraconteurlite_buffer_vec_copy_to_uint64(&buf_vec, 32 + sizeof(robotraconteurlite_u64), &d2);
     assert_true(d2 == 11);
 }
-
-
-
-
 
 #define robotraconteurlite_array_float robotraconteurlite_array_single
 #define robotraconteurlite_buffer_vec_copy_from_float_array robotraconteurlite_buffer_vec_copy_from_single_array
@@ -416,8 +394,8 @@ void robotraconteurlite_buffer_uint64_test(void** state)
 #define robotraconteurlite_buffer_vec_copy_from_float robotraconteurlite_buffer_vec_copy_from_single
 #define robotraconteurlite_buffer_vec_copy_to_float robotraconteurlite_buffer_vec_copy_to_single
 
-
-static int cmp_double(const robotraconteurlite_double* a, const robotraconteurlite_double* b, robotraconteurlite_size_t len)
+static int cmp_double(const robotraconteurlite_double* a, const robotraconteurlite_double* b,
+                      robotraconteurlite_size_t len)
 {
     robotraconteurlite_size_t i = 0;
     for (i = 0; i < len; i++)
@@ -473,7 +451,7 @@ void robotraconteurlite_buffer_double_test(void** state)
 
     robotraconteurlite_buffer_vec_copy_from_double(&buf_vec, 128, d1);
     assert_true(cmp_double(&d1, (robotraconteurlite_double*)(buf_data + 128), 1) == 0);
-    robotraconteurlite_buffer_vec_copy_to_double(&buf_vec, 32+sizeof(robotraconteurlite_double), &d2);
+    robotraconteurlite_buffer_vec_copy_to_double(&buf_vec, 32 + sizeof(robotraconteurlite_double), &d2);
     assert_true(d2 == 11.0);
 }
 
@@ -533,15 +511,9 @@ void robotraconteurlite_buffer_single_test(void** state)
 
     robotraconteurlite_buffer_vec_copy_from_single(&buf_vec, 128, d1);
     assert_true(cmp_single(&d1, (float*)(buf_data + 128), 1) == 0);
-    robotraconteurlite_buffer_vec_copy_to_single(&buf_vec, 32+sizeof(float), &d2);
+    robotraconteurlite_buffer_vec_copy_to_single(&buf_vec, 32 + sizeof(float), &d2);
     assert_true(d2 == 11.0);
 }
-
-
-
-
-
-
 
 static int cmp_csingle(const struct robotraconteurlite_csingle* a, const struct robotraconteurlite_csingle* b,
                        robotraconteurlite_size_t len)
@@ -581,7 +553,7 @@ void robotraconteurlite_buffer_csingle_test(void** state)
     for (i = 0; i < sizeof(a1) / sizeof(struct robotraconteurlite_csingle); i++)
     {
         a1[i].real = (float)i;
-        a1[i].imag = (float)(i+1);
+        a1[i].imag = (float)(i + 1);
     }
     (void)memset(a2, 0, sizeof(a2));
     (void)memset(buf_data, 0, sizeof(buf_data));
@@ -608,12 +580,10 @@ void robotraconteurlite_buffer_csingle_test(void** state)
 
     robotraconteurlite_buffer_vec_copy_from_csingle(&buf_vec, 128, d1);
     assert_true(cmp_csingle(&d1, (struct robotraconteurlite_csingle*)(buf_data + 128), 1) == 0);
-    robotraconteurlite_buffer_vec_copy_to_csingle(&buf_vec, 32+sizeof(struct robotraconteurlite_csingle), &d2);
+    robotraconteurlite_buffer_vec_copy_to_csingle(&buf_vec, 32 + sizeof(struct robotraconteurlite_csingle), &d2);
     assert_true(d2.real == 11.0);
     assert_true(d2.imag == 12.0);
 }
-
-
 
 static int cmp_cdouble(const struct robotraconteurlite_cdouble* a, const struct robotraconteurlite_cdouble* b,
                        robotraconteurlite_size_t len)
@@ -653,7 +623,7 @@ void robotraconteurlite_buffer_cdouble_test(void** state)
     for (i = 0; i < sizeof(a1) / sizeof(struct robotraconteurlite_cdouble); i++)
     {
         a1[i].real = (float)i;
-        a1[i].imag = (float)(i+1);
+        a1[i].imag = (float)(i + 1);
     }
     (void)memset(a2, 0, sizeof(a2));
     (void)memset(buf_data, 0, sizeof(buf_data));
@@ -680,30 +650,24 @@ void robotraconteurlite_buffer_cdouble_test(void** state)
 
     robotraconteurlite_buffer_vec_copy_from_cdouble(&buf_vec, 128, d1);
     assert_true(cmp_cdouble(&d1, (struct robotraconteurlite_cdouble*)(buf_data + 128), 1) == 0);
-    robotraconteurlite_buffer_vec_copy_to_cdouble(&buf_vec, 32+sizeof(struct robotraconteurlite_cdouble), &d2);
+    robotraconteurlite_buffer_vec_copy_to_cdouble(&buf_vec, 32 + sizeof(struct robotraconteurlite_cdouble), &d2);
     assert_true(d2.real == 11.0);
     assert_true(d2.imag == 12.0);
 }
 
-
-
-
-
-
 int main(void)
 {
     const struct CMUnitTest tests[] = {cmocka_unit_test(robotraconteurlite_buffer_int8_test),
-        cmocka_unit_test(robotraconteurlite_buffer_uint8_test),
-        cmocka_unit_test(robotraconteurlite_buffer_int16_test),
-        cmocka_unit_test(robotraconteurlite_buffer_uint16_test),
-        cmocka_unit_test(robotraconteurlite_buffer_int32_test),
-        cmocka_unit_test(robotraconteurlite_buffer_uint32_test),
-        cmocka_unit_test(robotraconteurlite_buffer_int64_test),
-        cmocka_unit_test(robotraconteurlite_buffer_uint64_test),
-        cmocka_unit_test(robotraconteurlite_buffer_double_test),
-        cmocka_unit_test(robotraconteurlite_buffer_single_test),
-        cmocka_unit_test(robotraconteurlite_buffer_csingle_test), 
-        cmocka_unit_test(robotraconteurlite_buffer_cdouble_test)
-        };
+                                       cmocka_unit_test(robotraconteurlite_buffer_uint8_test),
+                                       cmocka_unit_test(robotraconteurlite_buffer_int16_test),
+                                       cmocka_unit_test(robotraconteurlite_buffer_uint16_test),
+                                       cmocka_unit_test(robotraconteurlite_buffer_int32_test),
+                                       cmocka_unit_test(robotraconteurlite_buffer_uint32_test),
+                                       cmocka_unit_test(robotraconteurlite_buffer_int64_test),
+                                       cmocka_unit_test(robotraconteurlite_buffer_uint64_test),
+                                       cmocka_unit_test(robotraconteurlite_buffer_double_test),
+                                       cmocka_unit_test(robotraconteurlite_buffer_single_test),
+                                       cmocka_unit_test(robotraconteurlite_buffer_csingle_test),
+                                       cmocka_unit_test(robotraconteurlite_buffer_cdouble_test)};
     return cmocka_run_group_tests(tests, NULL, NULL);
 }

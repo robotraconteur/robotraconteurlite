@@ -20,7 +20,7 @@
 #include <errno.h>
 
 robotraconteurlite_u32 robotraconteurlite_nodeid_equal(const struct robotraconteurlite_nodeid* a,
-                                         const struct robotraconteurlite_nodeid* b)
+                                                       const struct robotraconteurlite_nodeid* b)
 {
     return memcmp(a->data, b->data, sizeof(a->data)) == 0;
 }
