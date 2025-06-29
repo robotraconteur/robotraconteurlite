@@ -13,7 +13,7 @@
 #define inline
 #include <cmocka.h>
 
-uint8_t message2[] = {
+robotraconteurlite_u8 message2[] = {
     82,  82,  65,  67,  94,  4,   0,   0,   2,   0,   107, 0,   216, 53,  196, 29,  51,  156, 71,  168, 132, 219, 240,
     10,  143, 239, 210, 250, 174, 120, 72,  27,  194, 190, 79,  38,  159, 239, 116, 187, 110, 138, 4,   63,  71,  88,
     55,  248, 113, 100, 49,  167, 11,  0,   115, 101, 110, 100, 101, 114, 95,  110, 111, 100, 101, 9,   0,   114, 101,
@@ -64,7 +64,7 @@ uint8_t message2[] = {
     0,   0,   0,   1,   0,   0,   0,   92,  143, 194, 245, 40,  44,  69,  64,  22,  0,   0,   0,   1,   0,   0,   0,
     0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0};
 
-uint8_t message4[] = {
+robotraconteurlite_u8 message4[] = {
     82,  82,  65,  67,  141, 3,   0,   0,   4,   0,   105, 83,  216, 53,  196, 29,  51,  156, 71,  168, 132, 219, 240,
     10,  143, 239, 210, 250, 174, 120, 72,  27,  194, 190, 79,  38,  159, 239, 116, 187, 110, 138, 4,   63,  11,  115,
     101, 110, 100, 101, 114, 95,  110, 111, 100, 101, 9,   114, 101, 99,  118, 95,  110, 111, 100, 101, 254, 71,  88,
@@ -106,9 +106,9 @@ uint8_t message4[] = {
     100, 95,  103, 111, 105, 110, 103, 95,  97,  110, 100, 95,  103, 111, 105, 110, 103, 1,   0,   1,   92,  143, 194,
     245, 40,  44,  69,  64,  7,   5,   1,   0,   0,   0,   0};
 
-static int cmp_double(const double* a, const double* b, size_t len)
+static int cmp_double(const robotraconteurlite_double* a, const robotraconteurlite_double* b, robotraconteurlite_size_t len)
 {
-    size_t i = 0;
+    robotraconteurlite_size_t i = 0;
     for (i = 0; i < len; i++)
     {
         if (a[i] != b[i])
@@ -119,12 +119,12 @@ static int cmp_double(const double* a, const double* b, size_t len)
     return 0;
 }
 
-static int cmp_float(const float* a, const float* b, size_t len)
+static int cmp_float(const float* a, const float* b, robotraconteurlite_size_t len)
 {
-    size_t i = 0;
+    robotraconteurlite_size_t i = 0;
     for (i = 0; i < len; i++)
     {
-        if (fabs((double)(a[i] - b[i])) > 1e-4)
+        if (fabs((robotraconteurlite_double)(a[i] - b[i])) > 1e-4)
         {
             return 1;
         }
@@ -133,9 +133,9 @@ static int cmp_float(const float* a, const float* b, size_t len)
 }
 
 static int cmp_cdouble(const struct robotraconteurlite_cdouble* a, const struct robotraconteurlite_cdouble* b,
-                       size_t len)
+                       robotraconteurlite_size_t len)
 {
-    size_t i = 0;
+    robotraconteurlite_size_t i = 0;
     for (i = 0; i < len; i++)
     {
         if (a[i].real != b[i].real || a[i].imag != b[i].imag)
@@ -147,12 +147,12 @@ static int cmp_cdouble(const struct robotraconteurlite_cdouble* a, const struct 
 }
 
 static int cmp_csingle(const struct robotraconteurlite_csingle* a, const struct robotraconteurlite_csingle* b,
-                       size_t len)
+                       robotraconteurlite_size_t len)
 {
-    size_t i = 0;
+    robotraconteurlite_size_t i = 0;
     for (i = 0; i < len; i++)
     {
-        if (fabs((double)(a[i].real - b[i].real)) > 1e-4 || fabs((double)(a[i].imag - b[i].imag)) > 1e-4)
+        if (fabs((robotraconteurlite_double)(a[i].real - b[i].real)) > 1e-4 || fabs((robotraconteurlite_double)(a[i].imag - b[i].imag)) > 1e-4)
         {
             return 1;
         }
@@ -160,8 +160,8 @@ static int cmp_csingle(const struct robotraconteurlite_csingle* a, const struct 
     return 0;
 }
 
-void robotraconteurlite_message_run_reader_basictest(uint8_t* message_bytes, size_t message_bytes_len,
-                                                     uint16_t message_ver)
+void robotraconteurlite_message_run_reader_basictest(robotraconteurlite_u8* message_bytes, robotraconteurlite_size_t message_bytes_len,
+                                                     robotraconteurlite_u16 message_ver)
 {
     struct robotraconteurlite_buffer buffer1;
     struct robotraconteurlite_buffer_vec buffer;
@@ -445,13 +445,13 @@ void robotraconteurlite_message_run_reader_basictest(uint8_t* message_bytes, siz
             struct robotraconteurlite_messageelement_reader nested_element1_reader;
             char nested_element1_name_data[] = "sub_doubles";
             struct robotraconteurlite_string nested_element1_name;
-            double nested_element1_expected_data[] = {1, 2, 3, 4};
-            double nested_element1_read_data_storage[4];
+            robotraconteurlite_double nested_element1_expected_data[] = {1, 2, 3, 4};
+            robotraconteurlite_double nested_element1_read_data_storage[4];
             struct robotraconteurlite_array_double nested_element1_read_data;
             nested_element1_name.data = nested_element1_name_data;
             nested_element1_name.len = strlen(nested_element1_name_data);
             nested_element1_read_data.data = nested_element1_read_data_storage;
-            nested_element1_read_data.len = sizeof(nested_element1_read_data_storage) / sizeof(double);
+            nested_element1_read_data.len = sizeof(nested_element1_read_data_storage) / sizeof(robotraconteurlite_double);
             assert_return_code(robotraconteurlite_messageelement_reader_find_nested_element(
                                    &element_reader3, &nested_element1_name, &nested_element1_reader),
                                0);
@@ -497,13 +497,13 @@ void robotraconteurlite_message_run_reader_basictest(uint8_t* message_bytes, siz
             struct robotraconteurlite_messageelement_reader nested_element3_reader;
             char nested_element3_name_data[] = "sub_int8";
             struct robotraconteurlite_string nested_element3_name;
-            int8_t nested_element3_expected_data[] = {1, 2, 3, 4};
-            int8_t nested_element3_read_data_storage[4];
+            robotraconteurlite_i8 nested_element3_expected_data[] = {1, 2, 3, 4};
+            robotraconteurlite_i8 nested_element3_read_data_storage[4];
             struct robotraconteurlite_array_int8 nested_element3_read_data;
             nested_element3_name.data = nested_element3_name_data;
             nested_element3_name.len = strlen(nested_element3_name_data);
             nested_element3_read_data.data = nested_element3_read_data_storage;
-            nested_element3_read_data.len = sizeof(nested_element3_read_data_storage) / sizeof(int8_t);
+            nested_element3_read_data.len = sizeof(nested_element3_read_data_storage) / sizeof(robotraconteurlite_i8);
             assert_return_code(robotraconteurlite_messageelement_reader_find_nested_element(
                                    &element_reader3, &nested_element3_name, &nested_element3_reader),
                                0);
@@ -524,13 +524,13 @@ void robotraconteurlite_message_run_reader_basictest(uint8_t* message_bytes, siz
             struct robotraconteurlite_messageelement_reader nested_element4_reader;
             char nested_element4_name_data[] = "sub_uint8";
             struct robotraconteurlite_string nested_element4_name;
-            uint8_t nested_element4_expected_data[] = {1, 2, 3, 4};
-            uint8_t nested_element4_read_data_storage[4];
+            robotraconteurlite_u8 nested_element4_expected_data[] = {1, 2, 3, 4};
+            robotraconteurlite_u8 nested_element4_read_data_storage[4];
             struct robotraconteurlite_array_uint8 nested_element4_read_data;
             nested_element4_name.data = nested_element4_name_data;
             nested_element4_name.len = strlen(nested_element4_name_data);
             nested_element4_read_data.data = nested_element4_read_data_storage;
-            nested_element4_read_data.len = sizeof(nested_element4_read_data_storage) / sizeof(uint8_t);
+            nested_element4_read_data.len = sizeof(nested_element4_read_data_storage) / sizeof(robotraconteurlite_u8);
             assert_return_code(robotraconteurlite_messageelement_reader_find_nested_element(
                                    &element_reader3, &nested_element4_name, &nested_element4_reader),
                                0);
@@ -551,13 +551,13 @@ void robotraconteurlite_message_run_reader_basictest(uint8_t* message_bytes, siz
             struct robotraconteurlite_messageelement_reader nested_element5_reader;
             char nested_element5_name_data[] = "sub_int16";
             struct robotraconteurlite_string nested_element5_name;
-            int16_t nested_element5_expected_data[] = {1, 2, 3, 4};
-            int16_t nested_element5_read_data_storage[4];
+            robotraconteurlite_i16 nested_element5_expected_data[] = {1, 2, 3, 4};
+            robotraconteurlite_i16 nested_element5_read_data_storage[4];
             struct robotraconteurlite_array_int16 nested_element5_read_data;
             nested_element5_name.data = nested_element5_name_data;
             nested_element5_name.len = strlen(nested_element5_name_data);
             nested_element5_read_data.data = nested_element5_read_data_storage;
-            nested_element5_read_data.len = sizeof(nested_element5_read_data_storage) / sizeof(int16_t);
+            nested_element5_read_data.len = sizeof(nested_element5_read_data_storage) / sizeof(robotraconteurlite_i16);
             assert_return_code(robotraconteurlite_messageelement_reader_find_nested_element(
                                    &element_reader3, &nested_element5_name, &nested_element5_reader),
                                0);
@@ -578,13 +578,13 @@ void robotraconteurlite_message_run_reader_basictest(uint8_t* message_bytes, siz
             struct robotraconteurlite_messageelement_reader nested_element6_reader;
             char nested_element6_name_data[] = "sub_uint16";
             struct robotraconteurlite_string nested_element6_name;
-            uint16_t nested_element6_expected_data[] = {1, 2, 3, 4};
-            uint16_t nested_element6_read_data_storage[4];
+            robotraconteurlite_u16 nested_element6_expected_data[] = {1, 2, 3, 4};
+            robotraconteurlite_u16 nested_element6_read_data_storage[4];
             struct robotraconteurlite_array_uint16 nested_element6_read_data;
             nested_element6_name.data = nested_element6_name_data;
             nested_element6_name.len = strlen(nested_element6_name_data);
             nested_element6_read_data.data = nested_element6_read_data_storage;
-            nested_element6_read_data.len = sizeof(nested_element6_read_data_storage) / sizeof(uint16_t);
+            nested_element6_read_data.len = sizeof(nested_element6_read_data_storage) / sizeof(robotraconteurlite_u16);
             assert_return_code(robotraconteurlite_messageelement_reader_find_nested_element(
                                    &element_reader3, &nested_element6_name, &nested_element6_reader),
                                0);
@@ -605,13 +605,13 @@ void robotraconteurlite_message_run_reader_basictest(uint8_t* message_bytes, siz
             struct robotraconteurlite_messageelement_reader nested_element7_reader;
             char nested_element7_name_data[] = "sub_int32";
             struct robotraconteurlite_string nested_element7_name;
-            int32_t nested_element7_expected_data[] = {1, 2, 3, 4};
-            int32_t nested_element7_read_data_storage[4];
+            robotraconteurlite_i32 nested_element7_expected_data[] = {1, 2, 3, 4};
+            robotraconteurlite_i32 nested_element7_read_data_storage[4];
             struct robotraconteurlite_array_int32 nested_element7_read_data;
             nested_element7_name.data = nested_element7_name_data;
             nested_element7_name.len = strlen(nested_element7_name_data);
             nested_element7_read_data.data = nested_element7_read_data_storage;
-            nested_element7_read_data.len = sizeof(nested_element7_read_data_storage) / sizeof(int32_t);
+            nested_element7_read_data.len = sizeof(nested_element7_read_data_storage) / sizeof(robotraconteurlite_i32);
             assert_return_code(robotraconteurlite_messageelement_reader_find_nested_element(
                                    &element_reader3, &nested_element7_name, &nested_element7_reader),
                                0);
@@ -632,13 +632,13 @@ void robotraconteurlite_message_run_reader_basictest(uint8_t* message_bytes, siz
             struct robotraconteurlite_messageelement_reader nested_element8_reader;
             char nested_element8_name_data[] = "sub_uint32";
             struct robotraconteurlite_string nested_element8_name;
-            uint32_t nested_element8_expected_data[] = {1, 2, 3, 4};
-            uint32_t nested_element8_read_data_storage[4];
+            robotraconteurlite_u32 nested_element8_expected_data[] = {1, 2, 3, 4};
+            robotraconteurlite_u32 nested_element8_read_data_storage[4];
             struct robotraconteurlite_array_uint32 nested_element8_read_data;
             nested_element8_name.data = nested_element8_name_data;
             nested_element8_name.len = strlen(nested_element8_name_data);
             nested_element8_read_data.data = nested_element8_read_data_storage;
-            nested_element8_read_data.len = sizeof(nested_element8_read_data_storage) / sizeof(uint32_t);
+            nested_element8_read_data.len = sizeof(nested_element8_read_data_storage) / sizeof(robotraconteurlite_u32);
             assert_return_code(robotraconteurlite_messageelement_reader_find_nested_element(
                                    &element_reader3, &nested_element8_name, &nested_element8_reader),
                                0);
@@ -659,13 +659,13 @@ void robotraconteurlite_message_run_reader_basictest(uint8_t* message_bytes, siz
             struct robotraconteurlite_messageelement_reader nested_element9_reader;
             char nested_element9_name_data[] = "sub_int64";
             struct robotraconteurlite_string nested_element9_name;
-            int64_t nested_element9_expected_data[] = {1, 2, 3, 4};
-            int64_t nested_element9_read_data_storage[4];
+            robotraconteurlite_i64 nested_element9_expected_data[] = {1, 2, 3, 4};
+            robotraconteurlite_i64 nested_element9_read_data_storage[4];
             struct robotraconteurlite_array_int64 nested_element9_read_data;
             nested_element9_name.data = nested_element9_name_data;
             nested_element9_name.len = strlen(nested_element9_name_data);
             nested_element9_read_data.data = nested_element9_read_data_storage;
-            nested_element9_read_data.len = sizeof(nested_element9_read_data_storage) / sizeof(int64_t);
+            nested_element9_read_data.len = sizeof(nested_element9_read_data_storage) / sizeof(robotraconteurlite_i64);
 
             assert_return_code(robotraconteurlite_messageelement_reader_find_nested_element(
                                    &element_reader3, &nested_element9_name, &nested_element9_reader),
@@ -687,13 +687,13 @@ void robotraconteurlite_message_run_reader_basictest(uint8_t* message_bytes, siz
             struct robotraconteurlite_messageelement_reader nested_element10_reader;
             char nested_element10_name_data[] = "sub_uint64";
             struct robotraconteurlite_string nested_element10_name;
-            uint64_t nested_element10_expected_data[] = {1, 2, 3, 4};
-            uint64_t nested_element10_read_data_storage[4];
+            robotraconteurlite_u64 nested_element10_expected_data[] = {1, 2, 3, 4};
+            robotraconteurlite_u64 nested_element10_read_data_storage[4];
             struct robotraconteurlite_array_uint64 nested_element10_read_data;
             nested_element10_name.data = nested_element10_name_data;
             nested_element10_name.len = strlen(nested_element10_name_data);
             nested_element10_read_data.data = nested_element10_read_data_storage;
-            nested_element10_read_data.len = sizeof(nested_element10_read_data_storage) / sizeof(uint64_t);
+            nested_element10_read_data.len = sizeof(nested_element10_read_data_storage) / sizeof(robotraconteurlite_u64);
             assert_return_code(robotraconteurlite_messageelement_reader_find_nested_element(
                                    &element_reader3, &nested_element10_name, &nested_element10_reader),
                                0);
@@ -794,12 +794,12 @@ void robotraconteurlite_message_run_reader_basictest(uint8_t* message_bytes, siz
             /* nested sub_bool */
             struct robotraconteurlite_messageelement_reader nested_element14_reader;
             char nested_element14_name_data[] = "sub_bool";
-            uint8_t nested_element14_expected_data[] = {1, 1, 0, 1};
-            uint8_t nested_element14_read_data_storage[4];
+            robotraconteurlite_u8 nested_element14_expected_data[] = {1, 1, 0, 1};
+            robotraconteurlite_u8 nested_element14_read_data_storage[4];
             struct robotraconteurlite_array_bool nested_element14_read_data;
             struct robotraconteurlite_string nested_element14_name;
             nested_element14_read_data.data = (struct robotraconteurlite_bool*)nested_element14_read_data_storage;
-            nested_element14_read_data.len = sizeof(nested_element14_read_data_storage) / sizeof(uint8_t);
+            nested_element14_read_data.len = sizeof(nested_element14_read_data_storage) / sizeof(robotraconteurlite_u8);
             nested_element14_name.data = nested_element14_name_data;
             nested_element14_name.len = strlen(nested_element14_name_data);
             assert_return_code(robotraconteurlite_messageelement_reader_find_nested_element(
@@ -829,16 +829,16 @@ void robotraconteurlite_message_run_reader_basictest(uint8_t* message_bytes, siz
                            0);
 
         {
-            double el4_array_data[16];
+            robotraconteurlite_double el4_array_data[16];
             struct robotraconteurlite_array_double el4_array;
             el4_array.data = el4_array_data;
-            el4_array.len = sizeof(el4_array_data) / sizeof(double);
+            el4_array.len = sizeof(el4_array_data) / sizeof(robotraconteurlite_double);
             assert_return_code(
                 robotraconteurlite_messageelement_reader_read_data_double_array(&element_reader4, &el4_array), 0);
         }
 
         {
-            double el4_scalar_data = 0.0;
+            robotraconteurlite_double el4_scalar_data = 0.0;
             assert_return_code(
                 robotraconteurlite_messageelement_reader_read_data_double(&element_reader4, &el4_scalar_data), 0);
         }
@@ -897,8 +897,8 @@ void robotraconteurlite_message4_reader_basictest(void** state)
     robotraconteurlite_message_run_reader_basictest(message4, sizeof(message4), 4);
 }
 
-void robotraconteurlite_message_run_writer_basictest(uint8_t* buffer_bytes, size_t* buffer_bytes_len,
-                                                     uint16_t message_ver, uint8_t message_flags_mask)
+void robotraconteurlite_message_run_writer_basictest(robotraconteurlite_u8* buffer_bytes, robotraconteurlite_size_t* buffer_bytes_len,
+                                                     robotraconteurlite_u16 message_ver, robotraconteurlite_u8 message_flags_mask)
 {
 
     struct robotraconteurlite_buffer buffer1;
@@ -913,9 +913,9 @@ void robotraconteurlite_message_run_writer_basictest(uint8_t* buffer_bytes, size
     char receiver_nodename_data[] = "recv_node";
     char extended_data[] = "extended_data\nblah blah";
 
-    uint8_t sender_nodeid[] = {0xd8, 0x35, 0xc4, 0x1d, 0x33, 0x9c, 0x47, 0xa8,
+    robotraconteurlite_u8 sender_nodeid[] = {0xd8, 0x35, 0xc4, 0x1d, 0x33, 0x9c, 0x47, 0xa8,
                                0x84, 0xdb, 0xf0, 0x0a, 0x8f, 0xef, 0xd2, 0xfa};
-    uint8_t receiver_nodeid[] = {0xae, 0x78, 0x48, 0x1b, 0xc2, 0xbe, 0x4f, 0x26,
+    robotraconteurlite_u8 receiver_nodeid[] = {0xae, 0x78, 0x48, 0x1b, 0xc2, 0xbe, 0x4f, 0x26,
                                  0x9f, 0xef, 0x74, 0xbb, 0x6e, 0x8a, 0x04, 0x3f};
 
     memset(&header, 0, sizeof(header));
@@ -983,7 +983,7 @@ void robotraconteurlite_message_run_writer_basictest(uint8_t* buffer_bytes, size
         struct robotraconteurlite_string el1_name;
         char el2_name_data[] = "el2";
         struct robotraconteurlite_string el2_name;
-        double el1_data_d[] = {1, 2, 3, 4, 5};
+        robotraconteurlite_double el1_data_d[] = {1, 2, 3, 4, 5};
         char el2_data_d[] = "some random string";
 
         struct robotraconteurlite_array_double el1_data;
@@ -1007,7 +1007,7 @@ void robotraconteurlite_message_run_writer_basictest(uint8_t* buffer_bytes, size
         el1_name.data = el1_name_data;
         el1_name.len = strlen(el1_name_data);
         el1_data.data = el1_data_d;
-        el1_data.len = sizeof(el1_data_d) / sizeof(double);
+        el1_data.len = sizeof(el1_data_d) / sizeof(robotraconteurlite_double);
         assert_return_code(
             robotraconteurlite_messageelement_writer_write_double_array(&element_writer, &el1_name, &el1_data), 0);
         el2_name.data = el2_name_data;
@@ -1035,14 +1035,14 @@ void robotraconteurlite_message_run_writer_basictest(uint8_t* buffer_bytes, size
                                0);
             {
                 char sub_doubles_name_d[] = "sub_doubles";
-                double sub_doubles_data_d[] = {1, 2, 3, 4};
+                robotraconteurlite_double sub_doubles_data_d[] = {1, 2, 3, 4};
                 struct robotraconteurlite_string sub_doubles_name;
                 struct robotraconteurlite_array_double sub_doubles_data;
 
                 sub_doubles_name.data = sub_doubles_name_d;
                 sub_doubles_name.len = strlen(sub_doubles_name_d);
                 sub_doubles_data.data = sub_doubles_data_d;
-                sub_doubles_data.len = sizeof(sub_doubles_data_d) / sizeof(double);
+                sub_doubles_data.len = sizeof(sub_doubles_data_d) / sizeof(robotraconteurlite_double);
 
                 assert_return_code(robotraconteurlite_messageelement_writer_write_double_array(
                                        &nested_element_writer, &sub_doubles_name, &sub_doubles_data),
@@ -1065,14 +1065,14 @@ void robotraconteurlite_message_run_writer_basictest(uint8_t* buffer_bytes, size
             }
             {
                 char sub_int8s_name_d[] = "sub_int8";
-                int8_t sub_int8s_data_d[] = {1, 2, 3, 4};
+                robotraconteurlite_i8 sub_int8s_data_d[] = {1, 2, 3, 4};
                 struct robotraconteurlite_string sub_int8s_name;
                 struct robotraconteurlite_array_int8 sub_int8s_data;
 
                 sub_int8s_name.data = sub_int8s_name_d;
                 sub_int8s_name.len = strlen(sub_int8s_name_d);
                 sub_int8s_data.data = sub_int8s_data_d;
-                sub_int8s_data.len = sizeof(sub_int8s_data_d) / sizeof(int8_t);
+                sub_int8s_data.len = sizeof(sub_int8s_data_d) / sizeof(robotraconteurlite_i8);
 
                 assert_return_code(robotraconteurlite_messageelement_writer_write_int8_array(
                                        &nested_element_writer, &sub_int8s_name, &sub_int8s_data),
@@ -1080,14 +1080,14 @@ void robotraconteurlite_message_run_writer_basictest(uint8_t* buffer_bytes, size
             }
             {
                 char sub_uint8s_name_d[] = "sub_uint8";
-                uint8_t sub_uint8s_data_d[] = {1, 2, 3, 4};
+                robotraconteurlite_u8 sub_uint8s_data_d[] = {1, 2, 3, 4};
                 struct robotraconteurlite_string sub_uint8s_name;
                 struct robotraconteurlite_array_uint8 sub_uint8s_data;
 
                 sub_uint8s_name.data = sub_uint8s_name_d;
                 sub_uint8s_name.len = strlen(sub_uint8s_name_d);
                 sub_uint8s_data.data = sub_uint8s_data_d;
-                sub_uint8s_data.len = sizeof(sub_uint8s_data_d) / sizeof(uint8_t);
+                sub_uint8s_data.len = sizeof(sub_uint8s_data_d) / sizeof(robotraconteurlite_u8);
 
                 assert_return_code(robotraconteurlite_messageelement_writer_write_uint8_array(
                                        &nested_element_writer, &sub_uint8s_name, &sub_uint8s_data),
@@ -1095,14 +1095,14 @@ void robotraconteurlite_message_run_writer_basictest(uint8_t* buffer_bytes, size
             }
             {
                 char sub_int16s_name_d[] = "sub_int16";
-                int16_t sub_int16s_data_d[] = {1, 2, 3, 4};
+                robotraconteurlite_i16 sub_int16s_data_d[] = {1, 2, 3, 4};
                 struct robotraconteurlite_string sub_int16s_name;
                 struct robotraconteurlite_array_int16 sub_int16s_data;
 
                 sub_int16s_name.data = sub_int16s_name_d;
                 sub_int16s_name.len = strlen(sub_int16s_name_d);
                 sub_int16s_data.data = sub_int16s_data_d;
-                sub_int16s_data.len = sizeof(sub_int16s_data_d) / sizeof(int16_t);
+                sub_int16s_data.len = sizeof(sub_int16s_data_d) / sizeof(robotraconteurlite_i16);
 
                 assert_return_code(robotraconteurlite_messageelement_writer_write_int16_array(
                                        &nested_element_writer, &sub_int16s_name, &sub_int16s_data),
@@ -1110,14 +1110,14 @@ void robotraconteurlite_message_run_writer_basictest(uint8_t* buffer_bytes, size
             }
             {
                 char sub_uint16s_name_d[] = "sub_uint16";
-                uint16_t sub_uint16s_data_d[] = {1, 2, 3, 4};
+                robotraconteurlite_u16 sub_uint16s_data_d[] = {1, 2, 3, 4};
                 struct robotraconteurlite_string sub_uint16s_name;
                 struct robotraconteurlite_array_uint16 sub_uint16s_data;
 
                 sub_uint16s_name.data = sub_uint16s_name_d;
                 sub_uint16s_name.len = strlen(sub_uint16s_name_d);
                 sub_uint16s_data.data = sub_uint16s_data_d;
-                sub_uint16s_data.len = sizeof(sub_uint16s_data_d) / sizeof(uint16_t);
+                sub_uint16s_data.len = sizeof(sub_uint16s_data_d) / sizeof(robotraconteurlite_u16);
 
                 assert_return_code(robotraconteurlite_messageelement_writer_write_uint16_array(
                                        &nested_element_writer, &sub_uint16s_name, &sub_uint16s_data),
@@ -1125,14 +1125,14 @@ void robotraconteurlite_message_run_writer_basictest(uint8_t* buffer_bytes, size
             }
             {
                 char sub_int32s_name_d[] = "sub_int32";
-                int32_t sub_int32s_data_d[] = {1, 2, 3, 4};
+                robotraconteurlite_i32 sub_int32s_data_d[] = {1, 2, 3, 4};
                 struct robotraconteurlite_string sub_int32s_name;
                 struct robotraconteurlite_array_int32 sub_int32s_data;
 
                 sub_int32s_name.data = sub_int32s_name_d;
                 sub_int32s_name.len = strlen(sub_int32s_name_d);
                 sub_int32s_data.data = sub_int32s_data_d;
-                sub_int32s_data.len = sizeof(sub_int32s_data_d) / sizeof(int32_t);
+                sub_int32s_data.len = sizeof(sub_int32s_data_d) / sizeof(robotraconteurlite_i32);
 
                 assert_return_code(robotraconteurlite_messageelement_writer_write_int32_array(
                                        &nested_element_writer, &sub_int32s_name, &sub_int32s_data),
@@ -1140,14 +1140,14 @@ void robotraconteurlite_message_run_writer_basictest(uint8_t* buffer_bytes, size
             }
             {
                 char sub_uint32s_name_d[] = "sub_uint32";
-                uint32_t sub_uint32s_data_d[] = {1, 2, 3, 4};
+                robotraconteurlite_u32 sub_uint32s_data_d[] = {1, 2, 3, 4};
                 struct robotraconteurlite_string sub_uint32s_name;
                 struct robotraconteurlite_array_uint32 sub_uint32s_data;
 
                 sub_uint32s_name.data = sub_uint32s_name_d;
                 sub_uint32s_name.len = strlen(sub_uint32s_name_d);
                 sub_uint32s_data.data = sub_uint32s_data_d;
-                sub_uint32s_data.len = sizeof(sub_uint32s_data_d) / sizeof(uint32_t);
+                sub_uint32s_data.len = sizeof(sub_uint32s_data_d) / sizeof(robotraconteurlite_u32);
 
                 assert_return_code(robotraconteurlite_messageelement_writer_write_uint32_array(
                                        &nested_element_writer, &sub_uint32s_name, &sub_uint32s_data),
@@ -1155,14 +1155,14 @@ void robotraconteurlite_message_run_writer_basictest(uint8_t* buffer_bytes, size
             }
             {
                 char sub_int64s_name_d[] = "sub_int64";
-                int64_t sub_int64s_data_d[] = {1, 2, 3, 4};
+                robotraconteurlite_i64 sub_int64s_data_d[] = {1, 2, 3, 4};
                 struct robotraconteurlite_string sub_int64s_name;
                 struct robotraconteurlite_array_int64 sub_int64s_data;
 
                 sub_int64s_name.data = sub_int64s_name_d;
                 sub_int64s_name.len = strlen(sub_int64s_name_d);
                 sub_int64s_data.data = sub_int64s_data_d;
-                sub_int64s_data.len = sizeof(sub_int64s_data_d) / sizeof(int64_t);
+                sub_int64s_data.len = sizeof(sub_int64s_data_d) / sizeof(robotraconteurlite_i64);
 
                 assert_return_code(robotraconteurlite_messageelement_writer_write_int64_array(
                                        &nested_element_writer, &sub_int64s_name, &sub_int64s_data),
@@ -1170,14 +1170,14 @@ void robotraconteurlite_message_run_writer_basictest(uint8_t* buffer_bytes, size
             }
             {
                 char sub_uint64s_name_d[] = "sub_uint64";
-                uint64_t sub_uint64s_data_d[] = {1, 2, 3, 4};
+                robotraconteurlite_u64 sub_uint64s_data_d[] = {1, 2, 3, 4};
                 struct robotraconteurlite_string sub_uint64s_name;
                 struct robotraconteurlite_array_uint64 sub_uint64s_data;
 
                 sub_uint64s_name.data = sub_uint64s_name_d;
                 sub_uint64s_name.len = strlen(sub_uint64s_name_d);
                 sub_uint64s_data.data = sub_uint64s_data_d;
-                sub_uint64s_data.len = sizeof(sub_uint64s_data_d) / sizeof(uint64_t);
+                sub_uint64s_data.len = sizeof(sub_uint64s_data_d) / sizeof(robotraconteurlite_u64);
 
                 assert_return_code(robotraconteurlite_messageelement_writer_write_uint64_array(
                                        &nested_element_writer, &sub_uint64s_name, &sub_uint64s_data),
@@ -1200,7 +1200,7 @@ void robotraconteurlite_message_run_writer_basictest(uint8_t* buffer_bytes, size
             }
             {
                 char sub_cdoubles_name_d[] = "sub_cdouble";
-                double sub_cdoubles_data_d[] = {1, 10, 2, 20, 3, 30, 4, 40};
+                robotraconteurlite_double sub_cdoubles_data_d[] = {1, 10, 2, 20, 3, 30, 4, 40};
                 struct robotraconteurlite_string sub_cdoubles_name;
                 struct robotraconteurlite_array_cdouble sub_cdoubles_data;
 
@@ -1208,7 +1208,7 @@ void robotraconteurlite_message_run_writer_basictest(uint8_t* buffer_bytes, size
                 sub_cdoubles_name.len = strlen(sub_cdoubles_name_d);
                 sub_cdoubles_data.data = (struct robotraconteurlite_cdouble*)sub_cdoubles_data_d;
                 sub_cdoubles_data.len =
-                    ((size_t)sizeof(sub_cdoubles_data_d)) / ((size_t)sizeof(struct robotraconteurlite_cdouble));
+                    ((robotraconteurlite_size_t)sizeof(sub_cdoubles_data_d)) / ((robotraconteurlite_size_t)sizeof(struct robotraconteurlite_cdouble));
 
                 assert_return_code(robotraconteurlite_messageelement_writer_write_cdouble_array(
                                        &nested_element_writer, &sub_cdoubles_name, &sub_cdoubles_data),
@@ -1224,7 +1224,7 @@ void robotraconteurlite_message_run_writer_basictest(uint8_t* buffer_bytes, size
                 sub_csingles_name.len = strlen(sub_csingles_name_d);
                 sub_csingles_data.data = (struct robotraconteurlite_csingle*)sub_csingles_data_d;
                 sub_csingles_data.len =
-                    ((size_t)sizeof(sub_csingles_data_d)) / ((size_t)sizeof(struct robotraconteurlite_csingle));
+                    ((robotraconteurlite_size_t)sizeof(sub_csingles_data_d)) / ((robotraconteurlite_size_t)sizeof(struct robotraconteurlite_csingle));
 
                 assert_return_code(robotraconteurlite_messageelement_writer_write_csingle_array(
                                        &nested_element_writer, &sub_csingles_name, &sub_csingles_data),
@@ -1232,14 +1232,14 @@ void robotraconteurlite_message_run_writer_basictest(uint8_t* buffer_bytes, size
             }
             {
                 char sub_bools_name_d[] = "sub_bool";
-                uint8_t sub_bools_data_d[] = {1, 1, 0, 1};
+                robotraconteurlite_u8 sub_bools_data_d[] = {1, 1, 0, 1};
                 struct robotraconteurlite_string sub_bools_name;
                 struct robotraconteurlite_array_bool sub_bools_data;
 
                 sub_bools_name.data = sub_bools_name_d;
                 sub_bools_name.len = strlen(sub_bools_name_d);
                 sub_bools_data.data = (struct robotraconteurlite_bool*)sub_bools_data_d;
-                sub_bools_data.len = sizeof(sub_bools_data_d) / sizeof(uint8_t);
+                sub_bools_data.len = sizeof(sub_bools_data_d) / sizeof(robotraconteurlite_u8);
 
                 assert_return_code(robotraconteurlite_messageelement_writer_write_bool_array(
                                        &nested_element_writer, &sub_bools_name, &sub_bools_data),
@@ -1281,8 +1281,8 @@ void robotraconteurlite_message_run_writer_basictest(uint8_t* buffer_bytes, size
 
 void robotraconteurlite_message_writer_basictest(void** state)
 {
-    uint8_t buffer_bytes[5000];
-    size_t buffer_bytes_len = sizeof(buffer_bytes);
+    robotraconteurlite_u8 buffer_bytes[5000];
+    robotraconteurlite_size_t buffer_bytes_len = sizeof(buffer_bytes);
 
     robotraconteurlite_message_run_writer_basictest(buffer_bytes, &buffer_bytes_len, 2, 0xFF);
 
@@ -1292,8 +1292,8 @@ void robotraconteurlite_message_writer_basictest(void** state)
 
 void robotraconteurlite_message4_writer_basictest(void** state)
 {
-    uint8_t buffer_bytes[5000];
-    size_t buffer_bytes_len = sizeof(buffer_bytes);
+    robotraconteurlite_u8 buffer_bytes[5000];
+    robotraconteurlite_size_t buffer_bytes_len = sizeof(buffer_bytes);
 
     robotraconteurlite_message_run_writer_basictest(buffer_bytes, &buffer_bytes_len, 4, 0xFF);
 
@@ -1302,10 +1302,10 @@ void robotraconteurlite_message4_writer_basictest(void** state)
 
 void robotraconteurlite_message4_writer_basictest_masked(void** state)
 {
-    uint8_t buffer_bytes[5000];
-    size_t buffer_bytes_len = sizeof(buffer_bytes);
+    robotraconteurlite_u8 buffer_bytes[5000];
+    robotraconteurlite_size_t buffer_bytes_len = sizeof(buffer_bytes);
 
-    uint8_t message_mask = ROBOTRACONTEURLITE_MESSAGE_FLAGS_MULTIPLE_ENTRIES;
+    robotraconteurlite_u8 message_mask = ROBOTRACONTEURLITE_MESSAGE_FLAGS_MULTIPLE_ENTRIES;
 
     robotraconteurlite_message_run_writer_basictest(buffer_bytes, &buffer_bytes_len, 4, message_mask);
 
@@ -1339,11 +1339,11 @@ void robotraconteurlite_message4_writer_basictest_masked(void** state)
 
 void robotraconteurlite_message4_writer_basictest_single_entry(void** state)
 {
-    uint8_t buffer_bytes[5000];
-    size_t buffer_bytes_len = sizeof(buffer_bytes);
+    robotraconteurlite_u8 buffer_bytes[5000];
+    robotraconteurlite_size_t buffer_bytes_len = sizeof(buffer_bytes);
 
     {
-        uint8_t message_flags_mask = 0;
+        robotraconteurlite_u8 message_flags_mask = 0;
 
         struct robotraconteurlite_buffer buffer1;
         struct robotraconteurlite_buffer_vec buffer;

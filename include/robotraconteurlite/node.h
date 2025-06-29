@@ -54,7 +54,7 @@ struct robotraconteurlite_node
     struct robotraconteurlite_string nodename;
 
     /* Event information */
-    size_t events_serviced;
+    robotraconteurlite_size_t events_serviced;
 };
 
 struct robotraconteurlite_node_send_messageentry_data
@@ -65,7 +65,7 @@ struct robotraconteurlite_node_send_messageentry_data
     struct robotraconteurlite_messageentry_header* message_entry_header;
     /* Outputs */
     struct robotraconteurlite_messageelement_writer element_writer;
-    uint32_t request_id;
+    robotraconteurlite_u32 request_id;
     /* Internal */
     struct robotraconteurlite_message_header message_header;
     struct robotraconteurlite_message_writer message_writer;
@@ -113,7 +113,7 @@ struct robotraconteurlite_event
     struct robotraconteurlite_connection* connection;
     struct robotraconteurlite_node_receive_messageentry_data received_message;
     int event_error_code;
-    size_t events_serviced;
+    robotraconteurlite_size_t events_serviced;
 };
 
 enum robotraconteurlite_client_handshake_state
@@ -138,8 +138,8 @@ struct robotraconteurlite_client_handshake_data
 {
     struct robotraconteurlite_node* node;
     struct robotraconteurlite_connection* connection;
-    uint32_t handshake_state;
-    uint32_t request_id;
+    robotraconteurlite_u32 handshake_state;
+    robotraconteurlite_u32 request_id;
     struct robotraconteurlite_string root_object_type;
     char root_object_type_char[128];
 };
@@ -186,7 +186,7 @@ ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_node_receive
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_connection_send_messageentry_error_response(
     struct robotraconteurlite_node* node, struct robotraconteurlite_connection* connection,
-    struct robotraconteurlite_messageentry_header* request_message_entry_header, uint16_t error_code,
+    struct robotraconteurlite_messageentry_header* request_message_entry_header, robotraconteurlite_u16 error_code,
     const char* error_name, const char* error_message);
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_node_begin_send_messageentry_response(
@@ -199,12 +199,12 @@ ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_node_send_me
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_node_event_special_request_service_definition(
     struct robotraconteurlite_node* node, struct robotraconteurlite_event* event,
-    struct robotraconteurlite_node_service_object service_objects[], size_t service_objects_len,
-    struct robotraconteurlite_node_service_definition service_defs[], size_t service_defs_len);
+    struct robotraconteurlite_node_service_object service_objects[], robotraconteurlite_size_t service_objects_len,
+    struct robotraconteurlite_node_service_definition service_defs[], robotraconteurlite_size_t service_defs_len);
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_node_event_special_request_object_type_name(
     struct robotraconteurlite_node* node, struct robotraconteurlite_event* event,
-    struct robotraconteurlite_node_service_object service_objects[], size_t service_objects_len);
+    struct robotraconteurlite_node_service_object service_objects[], robotraconteurlite_size_t service_objects_len);
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_event_is_member(
     struct robotraconteurlite_event* event, const char* service_path, const char* member_name);
@@ -218,11 +218,11 @@ robotraconteurlite_client_handshake(struct robotraconteurlite_client_handshake_d
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status
 robotraconteurlite_client_begin_request(struct robotraconteurlite_node_send_messageentry_data* send_data,
-                                        uint16_t entry_type, const char* membername, const char* servicepath);
+                                        robotraconteurlite_u16 entry_type, const char* membername, const char* servicepath);
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status
 robotraconteurlite_client_send_empty_request(struct robotraconteurlite_node_send_messageentry_data* send_data,
-                                             uint16_t entry_type, const char* membername, const char* servicepath);
+                                             robotraconteurlite_u16 entry_type, const char* membername, const char* servicepath);
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status
 robotraconteurlite_client_send_request(struct robotraconteurlite_node_send_messageentry_data* send_data);
@@ -239,17 +239,17 @@ ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_node_next_wa
 /* Note: does not add connection fds */
 ROBOTRACONTEURLITE_API robotraconteurlite_status
 robotraconteurlite_node_poll_add_fd(struct robotraconteurlite_node* node, struct robotraconteurlite_pollfd* pollfds,
-                                    const size_t* pollfd_count, size_t max_pollfds);
+                                    const robotraconteurlite_size_t* pollfd_count, robotraconteurlite_size_t max_pollfds);
 
 /*ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_client_process_request(struct
  * robotraconteurlite_node_send_messageentry_data* request_data, struct
  * robotraconteurlite_node_receive_messageentry_data* response_data);*/
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_node_transport_parse_capabilities(
-    struct robotraconteurlite_messageentry_reader* entry_reader, uint32_t* parsed_flags);
+    struct robotraconteurlite_messageentry_reader* entry_reader, robotraconteurlite_u32* parsed_flags);
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_node_transport_populate_capabilities(
-    struct robotraconteurlite_messageelement_writer* element_writer, uint32_t capability_flags);
+    struct robotraconteurlite_messageelement_writer* element_writer, robotraconteurlite_u32 capability_flags);
 
 #ifdef __cplusplus
 }

@@ -34,7 +34,7 @@ int robotraconteurlite_poll(struct robotraconteurlite_pollfd* fds, int nfds, int
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status
 robotraconteurlite_wait_next_wake(struct robotraconteurlite_clock* clock, struct robotraconteurlite_pollfd* pollfds,
-                                  size_t pollfd_count, robotraconteurlite_timespec wake_time);
+                                  robotraconteurlite_size_t pollfd_count, robotraconteurlite_timespec wake_time);
 
 #ifdef __cplusplus
 }

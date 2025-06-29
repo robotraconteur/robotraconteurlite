@@ -21,8 +21,8 @@ void robotraconteurlite_buffer_{{ type }}_test(void** state)
 {
     {{ type }}_t a1[256];
     {{ type }}_t a2[256];
-    uint8_t buf_data[256 * sizeof({{type}}_t)];
-    size_t i = 0;
+    robotraconteurlite_u8 buf_data[256 * sizeof({{type}}_t)];
+    robotraconteurlite_size_t i = 0;
     struct robotraconteurlite_buffer buf;
     struct robotraconteurlite_buffer_vec buf_vec;
     struct robotraconteurlite_array_{{type}} {{type}}s;
@@ -75,9 +75,9 @@ void robotraconteurlite_buffer_{{ type }}_test(void** state)
 #define robotraconteurlite_buffer_vec_copy_to_float robotraconteurlite_buffer_vec_copy_to_single
 
 {% for type in float_types %}
-static int cmp_{{ type }}(const {{type}}* a, const {{type}}* b, size_t len)
+static int cmp_{{ type }}(const {{type}}* a, const {{type}}* b, robotraconteurlite_size_t len)
 {
-    size_t i = 0;
+    robotraconteurlite_size_t i = 0;
     for (i = 0; i < len; i++)
     {
         if (a[i] != b[i])
@@ -92,8 +92,8 @@ void robotraconteurlite_buffer_{{type}}_test(void** state)
 {
     {{type}} a1[256];
     {{type}} a2[256];
-    uint8_t buf_data[256 * sizeof({{type}})];
-    size_t i = 0;
+    robotraconteurlite_u8 buf_data[256 * sizeof({{type}})];
+    robotraconteurlite_size_t i = 0;
     struct robotraconteurlite_buffer buf;
     struct robotraconteurlite_buffer_vec buf_vec;
     struct robotraconteurlite_array_{{type}} {{type}}s;
@@ -142,9 +142,9 @@ void robotraconteurlite_buffer_{{type}}_test(void** state)
 {% for type in complex_types %}
 
 static int cmp_{{type}}(const struct robotraconteurlite_{{type}}* a, const struct robotraconteurlite_{{type}}* b,
-                       size_t len)
+                       robotraconteurlite_size_t len)
 {
-    size_t i = 0;
+    robotraconteurlite_size_t i = 0;
     for (i = 0; i < len; i++)
     {
         if (fabs((double)(a[i].real - b[i].real)) > 1e-4 || fabs((double)(a[i].imag - b[i].imag)) > 1e-4)
@@ -159,8 +159,8 @@ void robotraconteurlite_buffer_{{type}}_test(void** state)
 {
     struct robotraconteurlite_{{type}} a1[256];
     struct robotraconteurlite_{{type}} a2[256];
-    uint8_t buf_data[256 * sizeof(struct robotraconteurlite_{{type}})];
-    size_t i = 0;
+    robotraconteurlite_u8 buf_data[256 * sizeof(struct robotraconteurlite_{{type}})];
+    robotraconteurlite_size_t i = 0;
     struct robotraconteurlite_buffer buf;
     struct robotraconteurlite_buffer_vec buf_vec;
     struct robotraconteurlite_array_{{type}} {{type}}s;

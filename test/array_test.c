@@ -12,9 +12,9 @@
 #define inline
 #include <cmocka.h>
 
-static int cmp_double(const double* a, const double* b, size_t len)
+static int cmp_double(const robotraconteurlite_double* a, const robotraconteurlite_double* b, robotraconteurlite_size_t len)
 {
-    size_t i = 0;
+    robotraconteurlite_size_t i = 0;
     for (i = 0; i < len; i++)
     {
         if (a[i] != b[i])
@@ -27,15 +27,15 @@ static int cmp_double(const double* a, const double* b, size_t len)
 
 void robotraconteurlite_arraytest_buffer(void** state)
 {
-    uint8_t a[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-    uint8_t b[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    uint8_t c[] = {0, 0, 5, 6, 7, 8, 0, 0, 0, 0};
-    uint8_t d[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    robotraconteurlite_u8 a[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+    robotraconteurlite_u8 b[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    robotraconteurlite_u8 c[] = {0, 0, 5, 6, 7, 8, 0, 0, 0, 0};
+    robotraconteurlite_u8 d[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
     struct robotraconteurlite_buffer bufa;
     struct robotraconteurlite_buffer bufb;
     struct robotraconteurlite_buffer bufd;
-    size_t bufa_len = 0;
+    robotraconteurlite_size_t bufa_len = 0;
 
     ROBOTRACONTEURLITE_UNUSED(state);
 
@@ -62,16 +62,16 @@ void robotraconteurlite_arraytest_buffer(void** state)
 
 void robotraconteurlite_arraytest_buffer_vec_copy_vec(void** state)
 {
-    uint8_t a1[100];
-    uint8_t a2[100];
-    uint8_t* a[2];
-    uint8_t i = 0;
+    robotraconteurlite_u8 a1[100];
+    robotraconteurlite_u8 a2[100];
+    robotraconteurlite_u8* a[2];
+    robotraconteurlite_u8 i = 0;
     struct robotraconteurlite_buffer bufa[8];
     struct robotraconteurlite_buffer bufb[8];
     struct robotraconteurlite_buffer_vec bufa_vec;
     struct robotraconteurlite_buffer_vec bufb_vec;
     struct robotraconteurlite_buffer_vec* buf_vecs[2];
-    size_t iter = 0;
+    robotraconteurlite_size_t iter = 0;
 
     ROBOTRACONTEURLITE_UNUSED(state);
 
@@ -81,7 +81,7 @@ void robotraconteurlite_arraytest_buffer_vec_copy_vec(void** state)
     srand((unsigned int)time(0));
     assert_true(sizeof(a1) == sizeof(a2));
 
-    for (i = 0; i < (uint8_t)sizeof(a1); i++)
+    for (i = 0; i < (robotraconteurlite_u8)sizeof(a1); i++)
         a1[i] = i;
 
     bufa_vec.buffer_vec = bufa;
@@ -95,25 +95,25 @@ void robotraconteurlite_arraytest_buffer_vec_copy_vec(void** state)
 
     for (iter = 0; iter < 10000; iter++)
     {
-        size_t buf_i = 0;
-        size_t len_bufa = 0;
-        size_t len_bufb = 0;
-        size_t bufa_vec_start = 0;
-        size_t bufb_vec_start = 0;
-        size_t count = 0;
+        robotraconteurlite_size_t buf_i = 0;
+        robotraconteurlite_size_t len_bufa = 0;
+        robotraconteurlite_size_t len_bufb = 0;
+        robotraconteurlite_size_t bufa_vec_start = 0;
+        robotraconteurlite_size_t bufb_vec_start = 0;
+        robotraconteurlite_size_t count = 0;
 
         (void)memset(a2, 0, sizeof(a2));
 
         for (buf_i = 0; buf_i < 2; buf_i++)
         {
             struct robotraconteurlite_buffer_vec* buf_vec = buf_vecs[buf_i];
-            size_t pos = 0;
-            size_t i = 0;
+            robotraconteurlite_size_t pos = 0;
+            robotraconteurlite_size_t i = 0;
             buf_vec->buffer_vec_cnt = 0;
 
             for (i = 0; i < 8; i++)
             {
-                size_t c = 0;
+                robotraconteurlite_size_t c = 0;
                 if (i == 7)
                 {
                     c = sizeof(a1) - pos;
@@ -153,19 +153,19 @@ void robotraconteurlite_arraytest_buffer_vec_copy_vec(void** state)
 
 void robotraconteurlite_arraytest_buffer_vec_copy_vec_ex(void** state)
 {
-    uint8_t a1[255];
-    uint8_t a2[255];
-    uint8_t i = 0;
-    uint8_t* a[2];
+    robotraconteurlite_u8 a1[255];
+    robotraconteurlite_u8 a2[255];
+    robotraconteurlite_u8 i = 0;
+    robotraconteurlite_u8* a[2];
     struct robotraconteurlite_buffer bufa[8];
     struct robotraconteurlite_buffer bufb[8];
     struct robotraconteurlite_buffer_vec bufa_vec;
     struct robotraconteurlite_buffer_vec bufb_vec;
     struct robotraconteurlite_buffer_vec* buf_vecs[2];
-    size_t bufa_vec_el = 0;
-    size_t bufb_vec_el = 0;
-    size_t* buf_vec_els[2];
-    size_t iter = 0;
+    robotraconteurlite_size_t bufa_vec_el = 0;
+    robotraconteurlite_size_t bufb_vec_el = 0;
+    robotraconteurlite_size_t* buf_vec_els[2];
+    robotraconteurlite_size_t iter = 0;
 
     ROBOTRACONTEURLITE_UNUSED(state);
 
@@ -173,7 +173,7 @@ void robotraconteurlite_arraytest_buffer_vec_copy_vec_ex(void** state)
 
     srand((unsigned int)time(0));
 
-    for (i = 0; i < (uint8_t)sizeof(a1); i++)
+    for (i = 0; i < (robotraconteurlite_u8)sizeof(a1); i++)
         a1[i] = i;
 
     a[0] = &a1[0];
@@ -195,31 +195,31 @@ void robotraconteurlite_arraytest_buffer_vec_copy_vec_ex(void** state)
 
     for (iter = 0; iter < 100000; iter++)
     {
-        size_t buf_i = 0;
-        size_t len_bufa = 0;
-        size_t len_bufb = 0;
-        size_t bufa_vec_start = 0;
-        size_t bufb_vec_start = 0;
-        size_t bufa_vec_count = 0;
-        size_t bufb_vec_count = 0;
-        size_t bufa_vec_count_b = 0;
-        size_t bufb_vec_count_b = 0;
+        robotraconteurlite_size_t buf_i = 0;
+        robotraconteurlite_size_t len_bufa = 0;
+        robotraconteurlite_size_t len_bufb = 0;
+        robotraconteurlite_size_t bufa_vec_start = 0;
+        robotraconteurlite_size_t bufb_vec_start = 0;
+        robotraconteurlite_size_t bufa_vec_count = 0;
+        robotraconteurlite_size_t bufb_vec_count = 0;
+        robotraconteurlite_size_t bufa_vec_count_b = 0;
+        robotraconteurlite_size_t bufb_vec_count_b = 0;
 
-        size_t count_bytes = 0;
-        size_t big_el = 0;
+        robotraconteurlite_size_t count_bytes = 0;
+        robotraconteurlite_size_t big_el = 0;
 
         (void)memset(a2, 0, sizeof(a2));
 
         for (buf_i = 0; buf_i < 2; buf_i++)
         {
             struct robotraconteurlite_buffer_vec* buf_vec = buf_vecs[buf_i];
-            size_t pos = 0;
-            size_t i = 0;
+            robotraconteurlite_size_t pos = 0;
+            robotraconteurlite_size_t i = 0;
             buf_vec->buffer_vec_cnt = 0;
 
             for (i = 0; i < 8; i++)
             {
-                size_t c = 0;
+                robotraconteurlite_size_t c = 0;
                 if (i == 7)
                 {
                     c = (sizeof(a1) / *buf_vec_els[buf_i]) - pos;
@@ -270,22 +270,22 @@ void robotraconteurlite_arraytest_buffer_vec_copy_vec_ex(void** state)
 
 void robotraconteurlite_buffer_copy_to_double_test(void** state)
 {
-    double a1[256];
-    double a2[256];
-    uint8_t buf_data[256 * sizeof(double)];
-    size_t i = 0;
+    robotraconteurlite_double a1[256];
+    robotraconteurlite_double a2[256];
+    robotraconteurlite_u8 buf_data[256 * sizeof(robotraconteurlite_double)];
+    robotraconteurlite_size_t i = 0;
     struct robotraconteurlite_buffer buf;
     struct robotraconteurlite_buffer_vec buf_vec;
     struct robotraconteurlite_array_double doubles;
     struct robotraconteurlite_array_double doubles2;
 
-    double d1 = 10.23;
-    double d2 = 0.0;
+    robotraconteurlite_double d1 = 10.23;
+    robotraconteurlite_double d2 = 0.0;
 
     ROBOTRACONTEURLITE_UNUSED(state);
 
-    for (i = 0; i < sizeof(a1) / sizeof(double); i++)
-        a1[i] = (double)i;
+    for (i = 0; i < sizeof(a1) / sizeof(robotraconteurlite_double); i++)
+        a1[i] = (robotraconteurlite_double)i;
     (void)memset(a2, 0, sizeof(a2));
     (void)memset(buf_data, 0, sizeof(buf_data));
 
@@ -296,21 +296,21 @@ void robotraconteurlite_buffer_copy_to_double_test(void** state)
     buf_vec.buffer_vec_cnt = 1;
 
     doubles.data = a1;
-    doubles.len = sizeof(a1) / sizeof(double);
+    doubles.len = sizeof(a1) / sizeof(robotraconteurlite_double);
 
     assert_return_code(robotraconteurlite_buffer_vec_copy_from_double_array(&buf_vec, 32, &doubles, 10, 15), 0);
 
-    assert_true(cmp_double(a1 + 10, (double*)(buf_data + 32), 15) == 0);
+    assert_true(cmp_double(a1 + 10, (robotraconteurlite_double*)(buf_data + 32), 15) == 0);
 
     doubles2.data = a2;
-    doubles2.len = sizeof(a2) / sizeof(double);
+    doubles2.len = sizeof(a2) / sizeof(robotraconteurlite_double);
 
     assert_return_code(robotraconteurlite_buffer_vec_copy_to_double_array(&buf_vec, 32, &doubles2, 12, 12), 0);
 
     assert_true(cmp_double(a1 + 10, a2 + 12, 12) == 0);
 
     robotraconteurlite_buffer_vec_copy_from_double(&buf_vec, 128, d1);
-    assert_true(cmp_double(&d1, (double*)(buf_data + 128), 1) == 0);
+    assert_true(cmp_double(&d1, (robotraconteurlite_double*)(buf_data + 128), 1) == 0);
     robotraconteurlite_buffer_vec_copy_to_double(&buf_vec, 40, &d2);
     assert_true(d2 == 11.0);
 }

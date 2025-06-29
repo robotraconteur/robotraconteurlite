@@ -25,10 +25,10 @@ extern "C" {
 
 struct robotraconteurlite_clock
 {
-    int64_t clock_epoch_offset;
+    robotraconteurlite_i64 clock_epoch_offset;
 };
 
-typedef int64_t robotraconteurlite_timespec;
+typedef robotraconteurlite_i64 robotraconteurlite_timespec;
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_clock_init(struct robotraconteurlite_clock* clock);
 

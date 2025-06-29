@@ -44,7 +44,7 @@ and RRLITE_SUCCEEDED if Windows support required */
 
 /* #define TINY_CLIENT_WEBSOCKET 1 */
 
-const uint16_t default_service_port = 22229;
+const robotraconteurlite_u16 default_service_port = 22229;
 const char* default_service_ip_str = "127.0.0.1";
 const char* service_name = "tiny_service";
 
@@ -63,7 +63,7 @@ int main(int argc, char* argv[])
 {
     /* Variable storage */
     struct robotraconteurlite_connection connections_storage[NUM_CONNECTIONS];
-    uint8_t connection_buffers[NUM_CONNECTIONS * 2 * CONNECTION_BUFFER_SIZE];
+    robotraconteurlite_u8 connection_buffers[NUM_CONNECTIONS * 2 * CONNECTION_BUFFER_SIZE];
     struct robotraconteurlite_connection* connections_head = NULL;
     struct robotraconteurlite_connection* connection = NULL;
     struct robotraconteurlite_node node;
@@ -76,14 +76,14 @@ int main(int argc, char* argv[])
     robotraconteurlite_status rv = -1;
     struct robotraconteurlite_event event;
     struct robotraconteurlite_string nodename_str;
-    uint64_t end_time = 0;
+    robotraconteurlite_u64 end_time = 0;
     enum tiny_client_state state = TINY_CLIENT_STATE_INIT;
     struct robotraconteurlite_node_send_messageentry_data request_data;
 
-    double d1_set_val = 42.2;
+    robotraconteurlite_double d1_set_val = 42.2;
 
     const char* service_ip_str = NULL;
-    uint16_t service_port = 0;
+    robotraconteurlite_u16 service_port = 0;
     int use_ws = 0;
 
     if (argc > 1)
@@ -105,7 +105,7 @@ int main(int argc, char* argv[])
             printf("Invalid port number\n");
             return -1;
         }
-        service_port = (uint16_t)temp_port;
+        service_port = (robotraconteurlite_u16)temp_port;
     }
     else
     {
@@ -145,7 +145,7 @@ int main(int argc, char* argv[])
     /* Initialize connections and TCP transport */
     connections_head =
         robotraconteurlite_connections_init_from_array(connections_storage, NUM_CONNECTIONS, connection_buffers,
-                                                       CONNECTION_BUFFER_SIZE, (size_t)(NUM_CONNECTIONS * 2));
+                                                       CONNECTION_BUFFER_SIZE, (robotraconteurlite_size_t)(NUM_CONNECTIONS * 2));
     if (!connections_head)
     {
         printf("Could not initialize connections\n");
@@ -327,7 +327,7 @@ int main(int argc, char* argv[])
 
                 /* One socket per connection plus acceptor and node. May vary, check documentation */
                 struct robotraconteurlite_pollfd pollfds[NUM_CONNECTIONS + 2];
-                size_t num_pollfds = 0;
+                robotraconteurlite_size_t num_pollfds = 0;
                 robotraconteurlite_timespec next_wake = 0;
                 rv = robotraconteurlite_node_next_wake(&node, now, &next_wake);
                 if (RRLITE_FAILED(rv))
@@ -401,7 +401,7 @@ int main(int argc, char* argv[])
                     case ROBOTRACONTEURLITE_ERROR_SUCCESS: {
                         struct robotraconteurlite_messageelement_reader reader;
                         struct robotraconteurlite_string element_name;
-                        double d1_val = 0.0;
+                        robotraconteurlite_double d1_val = 0.0;
 
                         printf("Received get_d1 response\n");
                         state = TINY_CLIENT_STATE_GET_D1_RECEIVED;

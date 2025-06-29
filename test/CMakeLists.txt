@@ -15,3 +15,5 @@ add_test(array_test robotraconteurlite_array_types_test)
 add_executable(robotraconteurlite_message_test message_test.c)
 target_link_libraries(robotraconteurlite_message_test robotraconteurlite cmocka::cmocka)
 add_test(message_test robotraconteurlite_message_test)
+
+add_subdirectory(no_stdint_test)

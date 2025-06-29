@@ -25,8 +25,8 @@ robotraconteurlite_status robotraconteurlite_clock_init(struct robotraconteurlit
 {
     FILETIME ft;
     ULARGE_INTEGER ui;
-    int64_t monotonic_ms = 0;
-    int64_t realtime_ms = 0;
+    robotraconteurlite_i64 monotonic_ms = 0;
+    robotraconteurlite_i64 realtime_ms = 0;
 
     // Get the current system time (realtime)
     GetSystemTimeAsFileTime(&ft);
@@ -50,7 +50,7 @@ robotraconteurlite_status robotraconteurlite_clock_gettime(struct robotraconteur
                                                            robotraconteurlite_timespec* now)
 {
     LARGE_INTEGER freq, counter;
-    int64_t monotonic_ms = 0;
+    robotraconteurlite_i64 monotonic_ms = 0;
 
     QueryPerformanceFrequency(&freq);
     QueryPerformanceCounter(&counter);
