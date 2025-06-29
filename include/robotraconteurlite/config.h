@@ -44,6 +44,8 @@
 
 #ifndef ROBOTRACONTEURLITE_NO_STDINT
 #include <stdint.h>
+#include <stddef.h>
+#include <limits.h>
 #include <float.h>
 typedef int8_t robotraconteurlite_i8;
 typedef uint8_t robotraconteurlite_u8;

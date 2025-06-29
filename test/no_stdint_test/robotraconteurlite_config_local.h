@@ -8,10 +8,17 @@ typedef char robotraconteurlite_i8;
 typedef unsigned char robotraconteurlite_u8;
 typedef short robotraconteurlite_i16;
 typedef unsigned short robotraconteurlite_u16;
+#ifdef _WIN32
 typedef long robotraconteurlite_i32;
 typedef unsigned long robotraconteurlite_u32;
 typedef long long robotraconteurlite_i64;
 typedef unsigned long long robotraconteurlite_u64;
+#else
+typedef int robotraconteurlite_i32;
+typedef unsigned int robotraconteurlite_u32;
+typedef long robotraconteurlite_i64;
+typedef unsigned long robotraconteurlite_u64;
+#endif
 typedef float robotraconteurlite_single;
 typedef double robotraconteurlite_double;
 typedef size_t robotraconteurlite_size_t;
@@ -36,7 +43,7 @@ typedef unsigned char robotraconteurlite_byte;
 #define ROBOTRACONTEURLITE_SINGLE_MAX FLT_MAX
 #define ROBOTRACONTEURLITE_DOUBLE_MIN DBL_MIN
 #define ROBOTRACONTEURLITE_DOUBLE_MAX DBL_MAX
-#define ROBOTRACONTEURLITE_SIZE_T_MAX SIZE_MAX
+#define ROBOTRACONTEURLITE_SIZE_T_MAX 4294967295UL
 #define ROBOTRACONTEURLITE_SIZE_T_MIN 0
 
-#endif // ROBOTRACONTEURLITE_CONFIG_LOCAL_H
+#endif /* ROBOTRACONTEURLITE_CONFIG_LOCAL_H */
