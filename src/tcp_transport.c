@@ -299,9 +299,9 @@ static robotraconteurlite_status robotraconteurlite_tcp_connection_buffer_send_w
     if ((storage->send_websocket_frame_len == 0U) && (send_len > 0U))
     {
         /* Prepare new frame */
-        if (send_len >= UINT16_MAX)
+        if (send_len >= ROBOTRACONTEURLITE_UINT16_MAX)
         {
-            send_len = UINT16_MAX;
+            send_len = ROBOTRACONTEURLITE_UINT16_MAX;
         }
 
         storage->send_websocket_header_len = 2;

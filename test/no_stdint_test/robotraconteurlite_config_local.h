@@ -1,6 +1,9 @@
 #ifndef ROBOTRACONTEURLITE_CONFIG_LOCAL_H
 #define ROBOTRACONTEURLITE_CONFIG_LOCAL_H
 
+#include <limits.h>
+#include <stddef.h>
+
 typedef char robotraconteurlite_i8;
 typedef unsigned char robotraconteurlite_u8;
 typedef short robotraconteurlite_i16;
