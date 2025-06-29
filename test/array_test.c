@@ -2,7 +2,6 @@
 #include <stdarg.h>
 #include <stddef.h>
 #include <setjmp.h>
-#include <stdint.h>
 #include <string.h>
 #include <time.h>
 #include <stdlib.h>

@@ -16,7 +16,6 @@
 #ifndef ROBOTRACONTEURLITE_ARRAY_H
 #define ROBOTRACONTEURLITE_ARRAY_H
 
-#include <stdint.h>
 #include "robotraconteurlite/err.h"
 #include "robotraconteurlite/config.h"
 #include <stddef.h>
