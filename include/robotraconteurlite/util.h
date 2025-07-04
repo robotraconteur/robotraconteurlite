@@ -16,7 +16,6 @@
 #ifndef ROBOTRACONTEURLITE_UTIL_H
 #define ROBOTRACONTEURLITE_UTIL_H
 
-#include <stdint.h>
 #include <string.h>
 
 #include "robotraconteurlite/config.h"
@@ -25,17 +24,17 @@
 extern "C" {
 #endif
 
-static uint32_t robotraconteurlite_util_read_uint32(const void* p)
+static robotraconteurlite_u32 robotraconteurlite_util_read_uint32(const void* p)
 {
-    uint32_t ret = 0;
-    (void)memcpy(&ret, p, sizeof(uint32_t));
+    robotraconteurlite_u32 ret = 0;
+    (void)memcpy(&ret, p, sizeof(robotraconteurlite_u32));
     return ret;
 }
 
-static uint16_t robotraconteurlite_util_read_uint16(const void* p)
+static robotraconteurlite_u16 robotraconteurlite_util_read_uint16(const void* p)
 {
-    uint16_t ret = 0;
-    (void)memcpy(&ret, p, sizeof(uint16_t));
+    robotraconteurlite_u16 ret = 0;
+    (void)memcpy(&ret, p, sizeof(robotraconteurlite_u16));
     return ret;
 }
 

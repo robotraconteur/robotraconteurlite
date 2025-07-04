@@ -11,7 +11,7 @@ on:
 
 jobs:
   build-ubuntu:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
     - uses: actions/checkout@v3
     - name: robotraconteur ppa
@@ -32,18 +32,17 @@ jobs:
       working-directory: build
       run: ctest --output-on-failure
   build-windows:
-    runs-on: windows-2019
+    runs-on: windows-2022
     steps:
     - uses: actions/checkout@v3
     - name: vcpkg build
-      uses: johnwason/vcpkg-action@v6
+      uses: johnwason/vcpkg-action@v7
       id: vcpkg
       with:
         pkgs: cmocka openssl
         triplet: x64-windows-static-md-release
         cache-key: vcpkg-windows-build
         token: ${{ github.token }}
-        github-binarycache: true
     - name: python pip
       run: python -m pip install robotraconteur
     - uses: ilammy/msvc-dev-cmd@v1
@@ -60,14 +59,13 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: vcpkg build
-      uses: johnwason/vcpkg-action@v6
+      uses: johnwason/vcpkg-action@v7
       id: vcpkg
       with:
         triplet: arm64-osx
         pkgs: cmocka openssl
         cache-key: vcpkg-macos-build
         token: ${{ github.token }}
-        github-binarycache: true
     - name: brew
       run: brew install ninja
     - name: python pip
@@ -81,7 +79,7 @@ jobs:
       working-directory: build
       run: ctest --output-on-failure
   clang-tidy:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
     - uses: actions/checkout@v3
     - name: apt update
@@ -130,6 +128,8 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - uses: actions/setup-python@v3
+      with:
+        python-version: '3.10'
     - name: apt
       run: |
         sudo apt update

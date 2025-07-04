@@ -22,12 +22,13 @@
 
 robotraconteurlite_status robotraconteurlite_wait_next_wake(struct robotraconteurlite_clock* clock,
                                                             struct robotraconteurlite_pollfd* pollfds,
-                                                            size_t pollfd_count, robotraconteurlite_timespec wake_time)
+                                                            robotraconteurlite_size_t pollfd_count,
+                                                            robotraconteurlite_timespec wake_time)
 {
     robotraconteurlite_timespec now = 0;
     robotraconteurlite_status rv = -1;
     int timeout = 0;
-    int64_t timeout_i64 = 0;
+    robotraconteurlite_i64 timeout_i64 = 0;
 
     rv = robotraconteurlite_clock_gettime(clock, &now);
     if (FAILED(rv))

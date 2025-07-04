@@ -29,12 +29,12 @@ robotraconteurlite_status robotraconteurlite_clock_init(struct robotraconteurlit
 {
     struct timespec monotonic_time;
     struct timespec realtime_time;
-    int64_t monotonic_ms = 0;
-    int64_t realtime_ms = 0;
+    robotraconteurlite_i64 monotonic_ms = 0;
+    robotraconteurlite_i64 realtime_ms = 0;
     clock_gettime(CLOCK_MONOTONIC, &monotonic_time);
     clock_gettime(CLOCK_REALTIME, &realtime_time);
 
-    /* Convert both times to uint64_t ms */
+    /* Convert both times to robotraconteurlite_u64 ms */
     monotonic_ms = (monotonic_time.tv_sec * 1000) + (monotonic_time.tv_nsec / 1000000);
     realtime_ms = (realtime_time.tv_sec * 1000) + (realtime_time.tv_nsec / 1000000);
 
@@ -48,7 +48,7 @@ robotraconteurlite_status robotraconteurlite_clock_gettime(struct robotraconteur
                                                            robotraconteurlite_timespec* now)
 {
     struct timespec monotonic_time;
-    int64_t monotonic_ms = 0;
+    robotraconteurlite_i64 monotonic_ms = 0;
     clock_gettime(CLOCK_MONOTONIC, &monotonic_time);
 
     monotonic_ms = (monotonic_time.tv_sec * 1000) + (monotonic_time.tv_nsec / 1000000);

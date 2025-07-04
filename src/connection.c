@@ -46,13 +46,13 @@ robotraconteurlite_status robotraconteurlite_connection_reset(struct robotracont
 }
 
 robotraconteurlite_status robotraconteurlite_connection_verify_preamble(
-    struct robotraconteurlite_connection* connection, uint32_t* message_len)
+    struct robotraconteurlite_connection* connection, robotraconteurlite_u32* message_len)
 {
     const char rrac_magic[4] = {'R', 'R', 'A', 'C'};
 
     if ((connection->recv_buffer_pos >= 12U) && (connection->recv_message_len == 0U))
     {
-        uint16_t message_version = 0U;
+        robotraconteurlite_u16 message_version = 0U;
         /* Check the message RRAC */
         if (memcmp(connection->recv_buffer, rrac_magic, sizeof(rrac_magic)) != 0)
         {
@@ -118,7 +118,7 @@ robotraconteurlite_status robotraconteurlite_connection_begin_send_message(
     struct robotraconteurlite_connection* connection, struct robotraconteurlite_message_writer* message_writer,
     struct robotraconteurlite_buffer_vec* buffer_storage)
 {
-    uint16_t message_version = 2;
+    robotraconteurlite_u16 message_version = 2;
     if (FLAGS_CHECK(connection->connection_state,
                     (ROBOTRACONTEURLITE_STATUS_FLAGS_ERROR | ROBOTRACONTEURLITE_STATUS_FLAGS_CLOSED |
                      ROBOTRACONTEURLITE_STATUS_FLAGS_CLOSE_REQUESTED | ROBOTRACONTEURLITE_STATUS_FLAGS_IDLE)) ||
@@ -157,7 +157,7 @@ robotraconteurlite_status robotraconteurlite_connection_begin_send_message(
 }
 
 robotraconteurlite_status robotraconteurlite_connection_end_send_message(
-    struct robotraconteurlite_connection* connection, size_t message_len)
+    struct robotraconteurlite_connection* connection, robotraconteurlite_size_t message_len)
 {
     connection->send_message_len = message_len;
     FLAGS_SET(connection->connection_state, ROBOTRACONTEURLITE_STATUS_FLAGS_SEND_REQUESTED);
@@ -185,10 +185,11 @@ robotraconteurlite_status robotraconteurlite_connection_close(struct robotracont
 }
 
 struct robotraconteurlite_connection* robotraconteurlite_connections_init_from_array(
-    struct robotraconteurlite_connection connections_fixed_storage[], size_t connections_fixed_storage_len,
-    uint8_t buffers[], size_t buffer_size, size_t buffer_count)
+    struct robotraconteurlite_connection connections_fixed_storage[],
+    robotraconteurlite_size_t connections_fixed_storage_len, robotraconteurlite_byte buffers[],
+    robotraconteurlite_size_t buffer_size, robotraconteurlite_size_t buffer_count)
 {
-    size_t i = 0U;
+    robotraconteurlite_size_t i = 0U;
     assert(connections_fixed_storage_len > 0U);
     assert(buffer_count >= (connections_fixed_storage_len * 2U));
     assert(buffer_size > 1024U);
@@ -298,8 +299,8 @@ void robotraconteurlite_connection_init_connections(struct robotraconteurlite_co
 }
 
 robotraconteurlite_status robotraconteurlite_connection_impl_communicate(
-    struct robotraconteurlite_connection* connection, robotraconteurlite_timespec now, uint32_t transport_type,
-    uint8_t* close_request)
+    struct robotraconteurlite_connection* connection, robotraconteurlite_timespec now,
+    robotraconteurlite_u32 transport_type, robotraconteurlite_u8* close_request)
 {
     ROBOTRACONTEURLITE_UNUSED(now);
 
@@ -346,7 +347,8 @@ robotraconteurlite_status robotraconteurlite_connection_impl_communicate_after_c
 }
 
 robotraconteurlite_status robotraconteurlite_connection_impl_communicate_recv1(
-    struct robotraconteurlite_connection* connection, robotraconteurlite_timespec now, size_t* recv_op_len)
+    struct robotraconteurlite_connection* connection, robotraconteurlite_timespec now,
+    robotraconteurlite_size_t* recv_op_len)
 {
     ROBOTRACONTEURLITE_UNUSED(now);
 
@@ -419,7 +421,8 @@ robotraconteurlite_status robotraconteurlite_connection_impl_communicate_recv2(
 }
 
 robotraconteurlite_status robotraconteurlite_connection_impl_communicate_send1(
-    struct robotraconteurlite_connection* connection, robotraconteurlite_timespec now, size_t* send_op_len)
+    struct robotraconteurlite_connection* connection, robotraconteurlite_timespec now,
+    robotraconteurlite_size_t* send_op_len)
 {
     ROBOTRACONTEURLITE_UNUSED(now);
 
@@ -484,16 +487,16 @@ robotraconteurlite_status robotraconteurlite_connection_impl_communicate_send2(
 }
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_connection_impl_connect2(
-    struct robotraconteurlite_connection* connection, robotraconteurlite_timespec now, uint32_t transport_type,
-    const struct robotraconteurlite_addr* addr, ROBOTRACONTEURLITE_SOCKET sock)
+    struct robotraconteurlite_connection* connection, robotraconteurlite_timespec now,
+    robotraconteurlite_u32 transport_type, const struct robotraconteurlite_addr* addr, ROBOTRACONTEURLITE_SOCKET sock)
 {
     struct robotraconteurlite_connection* c = connection;
 
     c->transport_type = transport_type;
     FLAGS_CLEAR(c->config_flags, ROBOTRACONTEURLITE_CONFIG_FLAGS_ISSERVER);
     c->sock = sock;
-    c->connection_state =
-        (uint32_t)ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTING | ROBOTRACONTEURLITE_STATUS_FLAGS_RECEIVE_REQUESTED;
+    c->connection_state = (robotraconteurlite_u32)ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTING |
+                          ROBOTRACONTEURLITE_STATUS_FLAGS_RECEIVE_REQUESTED;
     (void)memset(&c->transport_storage, 0, sizeof(c->transport_storage));
 
     c->last_recv_message_time = now;
@@ -524,7 +527,7 @@ ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_connection_i
 
 robotraconteurlite_status robotraconteurlite_connection_impl_accept2(struct robotraconteurlite_connection* connection,
                                                                      robotraconteurlite_timespec now,
-                                                                     uint32_t transport_type,
+                                                                     robotraconteurlite_u32 transport_type,
                                                                      ROBOTRACONTEURLITE_SOCKET sock)
 {
 

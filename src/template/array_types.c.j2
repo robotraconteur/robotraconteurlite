@@ -18,52 +18,52 @@
 #include <string.h>
 #include <assert.h>
 
-{% set types=[("double","double"),("single","float"),("int8","int8_t"),("uint8","uint8_t"),("int16","int16_t"),
-    ("uint16","uint16_t"),("int32","int32_t"),("uint32","uint32_t"),("int64","int64_t"),("uint64","uint64_t"),
+{% set types=[("double","robotraconteurlite_double"),("single","robotraconteurlite_single"),("int8","robotraconteurlite_i8"),("uint8","robotraconteurlite_u8"),("int16","robotraconteurlite_i16"),
+    ("uint16","robotraconteurlite_u16"),("int32","robotraconteurlite_i32"),("uint32","robotraconteurlite_u32"),("int64","robotraconteurlite_i64"),("uint64","robotraconteurlite_u64"),
     ("cdouble","struct robotraconteurlite_cdouble"),("csingle","struct robotraconteurlite_csingle"),
     ("bool","struct robotraconteurlite_bool")] %}
 {% for type,ctype in types %}
 /* {{type}} */
 robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_{{type}}_array(
-    const struct robotraconteurlite_buffer_vec* source_buf, size_t source_buf_pos,
-    struct robotraconteurlite_array_{{type}}* dest, size_t dest_pos, size_t dest_count)
+    const struct robotraconteurlite_buffer_vec* source_buf, robotraconteurlite_size_t source_buf_pos,
+    struct robotraconteurlite_array_{{type}}* dest, robotraconteurlite_size_t dest_pos, robotraconteurlite_size_t dest_count)
 {
     return robotraconteurlite_buffer_vec_copy_to_mem(source_buf, source_buf_pos,
                                                     {% if type in ("double","single") -%}
                                                     /* cppcheck-suppress invalidPointerCast */
                                                     {% endif -%}
-                                                     (uint8_t*)dest->data, dest->len, dest_pos, sizeof({{ctype}}), dest_count);
+                                                     (robotraconteurlite_byte*)dest->data, dest->len, dest_pos, sizeof({{ctype}}), dest_count);
 }
 
 robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_{{type}}_array(
-    struct robotraconteurlite_buffer_vec* dest_buf, size_t dest_buf_pos,
-    const struct robotraconteurlite_array_{{type}}* source, size_t source_pos, size_t source_count)
+    struct robotraconteurlite_buffer_vec* dest_buf, robotraconteurlite_size_t dest_buf_pos,
+    const struct robotraconteurlite_array_{{type}}* source, robotraconteurlite_size_t source_pos, robotraconteurlite_size_t source_count)
 {
     return robotraconteurlite_buffer_vec_copy_from_mem(dest_buf, dest_buf_pos,
                                                     {% if type in ("double","single") -%}
                                                     /* cppcheck-suppress invalidPointerCast */
                                                     {% endif -%}
-                                                       (const uint8_t*)source->data, source->len, source_pos, sizeof({{ctype}}), source_count);
+                                                       (const robotraconteurlite_byte*)source->data, source->len, source_pos, sizeof({{ctype}}), source_count);
 }
 
 robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_{{type}}(
-    const struct robotraconteurlite_buffer_vec* source_buf, size_t source_buf_pos, {{ctype}}* dest)
+    const struct robotraconteurlite_buffer_vec* source_buf, robotraconteurlite_size_t source_buf_pos, {{ctype}}* dest)
 {
     return robotraconteurlite_buffer_vec_copy_to_mem(source_buf, source_buf_pos,
                                                     {% if type in ("double","single") -%}
                                                     /* cppcheck-suppress invalidPointerCast */
                                                     {% endif -%}
-                                                     (uint8_t*)dest, 1, 0, sizeof({{ctype}}), 1);
+                                                     (robotraconteurlite_byte*)dest, 1, 0, sizeof({{ctype}}), 1);
 }
 
 robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_{{type}}(
-    struct robotraconteurlite_buffer_vec* dest_buf, size_t dest_buf_pos, {{ctype}} source)
+    struct robotraconteurlite_buffer_vec* dest_buf, robotraconteurlite_size_t dest_buf_pos, {{ctype}} source)
 {
     return robotraconteurlite_buffer_vec_copy_from_mem(dest_buf, dest_buf_pos,
                                                     {% if type in ("double","single") -%}
                                                     /* cppcheck-suppress invalidPointerCast */
                                                     {% endif -%}
-                                                       (const uint8_t*)&source, 1, 0, sizeof({{ctype}}), 1);
+                                                       (const robotraconteurlite_byte*)&source, 1, 0, sizeof({{ctype}}), 1);
 }
 
 {% endfor %}

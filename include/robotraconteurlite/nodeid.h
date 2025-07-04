@@ -16,7 +16,6 @@
 #ifndef ROBOTRACONTEURLITE_NODEID_H
 #define ROBOTRACONTEURLITE_NODEID_H
 
-#include <stdint.h>
 #include "robotraconteurlite/config.h"
 #include "robotraconteurlite/err.h"
 #include "robotraconteurlite/util.h"
@@ -29,13 +28,14 @@ extern "C" {
 
 struct robotraconteurlite_nodeid
 {
-    uint8_t data[16];
+    robotraconteurlite_byte data[16];
 };
 
-ROBOTRACONTEURLITE_API uint32_t robotraconteurlite_nodeid_equal(const struct robotraconteurlite_nodeid* a,
-                                                                const struct robotraconteurlite_nodeid* b);
+ROBOTRACONTEURLITE_API robotraconteurlite_u32
+robotraconteurlite_nodeid_equal(const struct robotraconteurlite_nodeid* a, const struct robotraconteurlite_nodeid* b);
 
-ROBOTRACONTEURLITE_API uint32_t robotraconteurlite_nodeid_isany(const struct robotraconteurlite_nodeid* a);
+ROBOTRACONTEURLITE_API robotraconteurlite_u32
+robotraconteurlite_nodeid_isany(const struct robotraconteurlite_nodeid* a);
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status
 robotraconteurlite_nodeid_newrandom(struct robotraconteurlite_nodeid* a);

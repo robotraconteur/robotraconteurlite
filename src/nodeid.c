@@ -19,15 +19,15 @@
 #include "robotraconteurlite/array.h"
 #include <errno.h>
 
-uint32_t robotraconteurlite_nodeid_equal(const struct robotraconteurlite_nodeid* a,
-                                         const struct robotraconteurlite_nodeid* b)
+robotraconteurlite_u32 robotraconteurlite_nodeid_equal(const struct robotraconteurlite_nodeid* a,
+                                                       const struct robotraconteurlite_nodeid* b)
 {
     return memcmp(a->data, b->data, sizeof(a->data)) == 0;
 }
 
-uint32_t robotraconteurlite_nodeid_isany(const struct robotraconteurlite_nodeid* a)
+robotraconteurlite_u32 robotraconteurlite_nodeid_isany(const struct robotraconteurlite_nodeid* a)
 {
-    uint8_t zero_uuid[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    robotraconteurlite_u8 zero_uuid[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     return memcmp(a->data, zero_uuid, sizeof(a->data)) == 0;
 }
 
@@ -48,7 +48,7 @@ robotraconteurlite_status robotraconteurlite_nodeid_parse(const struct robotraco
                                                           struct robotraconteurlite_nodeid* dst)
 {
     char buf[33];
-    size_t i = 0;
+    robotraconteurlite_size_t i = 0;
 
     (void)memset(buf, 0, sizeof(buf));
 
@@ -98,7 +98,7 @@ robotraconteurlite_status robotraconteurlite_nodeid_parse(const struct robotraco
         {
             return ROBOTRACONTEURLITE_ERROR_INVALID_ARGUMENT;
         }
-        dst->data[i] = (uint8_t)val;
+        dst->data[i] = (robotraconteurlite_u8)val;
     }
 
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;

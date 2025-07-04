@@ -38,7 +38,7 @@
 #define RETRY ROBOTRACONTEURLITE_RETRY
 
 const char* node_name_str = "example.tiny_service";
-const uint16_t node_port = 22228;
+const robotraconteurlite_u16 node_port = 22228;
 /* Node ID should be different for all instances. Hard coded for example only. */
 const char* default_nodeid_str = "c22551ad-f41e-43b8-9f78-2fb80118ea3c";
 
@@ -101,7 +101,7 @@ int handle_message(struct robotraconteurlite_node* node, struct robotraconteurli
     case ROBOTRACONTEURLITE_MESSAGEENTRYTYPE_PROPERTYGETREQ: {
         if (robotraconteurlite_event_is_member(event, "tiny_service", "d1"))
         {
-            double d1 = 1.234;
+            robotraconteurlite_double d1 = 1.234;
             struct robotraconteurlite_node_send_messageentry_data send_data;
             struct robotraconteurlite_string element_name;
             robotraconteurlite_status rv = -1;
@@ -160,7 +160,7 @@ int handle_message(struct robotraconteurlite_node* node, struct robotraconteurli
             struct robotraconteurlite_string element_name;
             struct robotraconteurlite_messageelement_reader element_reader;
             robotraconteurlite_status rv = -1;
-            double d1 = 0.0;
+            robotraconteurlite_double d1 = 0.0;
             robotraconteurlite_string_from_c_str("value", &element_name);
 
             rv = robotraconteurlite_messageentry_reader_find_element_verify_scalar(
@@ -357,7 +357,7 @@ int main(int argc, char* argv[])
 {
     /* Variable storage */
     struct robotraconteurlite_connection connections_storage[NUM_CONNECTIONS];
-    uint8_t connection_buffers[NUM_CONNECTIONS * 2 * CONNECTION_BUFFER_SIZE];
+    robotraconteurlite_byte connection_buffers[NUM_CONNECTIONS * 2 * CONNECTION_BUFFER_SIZE];
     struct robotraconteurlite_connection* connections_head = NULL;
     struct robotraconteurlite_connection_acceptor tcp_acceptor;
     struct robotraconteurlite_node node;
@@ -418,9 +418,9 @@ int main(int argc, char* argv[])
     }
 
     /* Initialize connections and TCP transport */
-    connections_head =
-        robotraconteurlite_connections_init_from_array(connections_storage, NUM_CONNECTIONS, connection_buffers,
-                                                       CONNECTION_BUFFER_SIZE, (size_t)(NUM_CONNECTIONS * 2));
+    connections_head = robotraconteurlite_connections_init_from_array(connections_storage, NUM_CONNECTIONS,
+                                                                      connection_buffers, CONNECTION_BUFFER_SIZE,
+                                                                      (robotraconteurlite_size_t)(NUM_CONNECTIONS * 2));
     if (!connections_head)
     {
         printf("Could not initialize connections\n");
@@ -457,7 +457,7 @@ int main(int argc, char* argv[])
     {
         /* One socket per connection plus acceptor and node. May vary, check documentation */
         struct robotraconteurlite_pollfd pollfds[NUM_CONNECTIONS + 2];
-        size_t num_pollfds = 0;
+        robotraconteurlite_size_t num_pollfds = 0;
         robotraconteurlite_status rv = -1;
         robotraconteurlite_timespec next_wake = 0;
 

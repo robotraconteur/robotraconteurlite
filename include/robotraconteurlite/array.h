@@ -16,7 +16,6 @@
 #ifndef ROBOTRACONTEURLITE_ARRAY_H
 #define ROBOTRACONTEURLITE_ARRAY_H
 
-#include <stdint.h>
 #include "robotraconteurlite/err.h"
 #include "robotraconteurlite/config.h"
 #include <stddef.h>
@@ -29,19 +28,19 @@ extern "C" {
 struct robotraconteurlite_array_storage
 {
     void* data;
-    size_t len;
+    robotraconteurlite_size_t len;
 };
 
 struct robotraconteurlite_buffer
 {
-    uint8_t* data;
-    size_t len;
+    robotraconteurlite_byte* data;
+    robotraconteurlite_size_t len;
 };
 
 struct robotraconteurlite_buffer_vec
 {
     struct robotraconteurlite_buffer* buffer_vec;
-    size_t buffer_vec_cnt;
+    robotraconteurlite_size_t buffer_vec_cnt;
 
     struct robotraconteurlite_array_storage _scalar_storage;
 };
@@ -49,172 +48,172 @@ struct robotraconteurlite_buffer_vec
 /* Complex types */
 struct robotraconteurlite_cdouble
 {
-    double real;
-    double imag;
+    robotraconteurlite_double real;
+    robotraconteurlite_double imag;
 };
 
 struct robotraconteurlite_csingle
 {
-    float real;
-    float imag;
+    robotraconteurlite_single real;
+    robotraconteurlite_single imag;
 };
 
 struct robotraconteurlite_bool
 {
-    uint8_t logical;
+    robotraconteurlite_u8 logical;
 };
 
 /* All strings are utf8! */
 struct robotraconteurlite_string
 {
     char* data;
-    size_t len;
+    robotraconteurlite_size_t len;
 };
 
 struct robotraconteurlite_string_vec
 {
     struct robotraconteurlite_string* string_vec;
-    size_t string_vec_cnt;
+    robotraconteurlite_size_t string_vec_cnt;
 
     struct robotraconteurlite_array_storage _scalar_storage;
 };
 
 struct robotraconteurlite_array_double
 {
-    double* data;
-    size_t len;
+    robotraconteurlite_double* data;
+    robotraconteurlite_size_t len;
 };
 
 struct robotraconteurlite_array_vec_double
 {
     struct robotraconteurlite_array_double* array_vec;
-    size_t array_vec_cnt;
+    robotraconteurlite_size_t array_vec_cnt;
 
     struct robotraconteurlite_array_storage _scalar_storage;
 };
 
 struct robotraconteurlite_array_single
 {
-    float* data;
-    size_t len;
+    robotraconteurlite_single* data;
+    robotraconteurlite_size_t len;
 };
 
 struct robotraconteurlite_array_vec_single
 {
     struct robotraconteurlite_array_single* array_vec;
-    size_t array_vec_cnt;
+    robotraconteurlite_size_t array_vec_cnt;
 
     struct robotraconteurlite_array_storage _scalar_storage;
 };
 
 struct robotraconteurlite_array_int8
 {
-    int8_t* data;
-    size_t len;
+    robotraconteurlite_i8* data;
+    robotraconteurlite_size_t len;
 };
 
 struct robotraconteurlite_array_vec_int8
 {
     struct robotraconteurlite_array_int8* array_vec;
-    size_t array_vec_cnt;
+    robotraconteurlite_size_t array_vec_cnt;
 
     struct robotraconteurlite_array_storage _scalar_storage;
 };
 
 struct robotraconteurlite_array_uint8
 {
-    uint8_t* data;
-    size_t len;
+    robotraconteurlite_u8* data;
+    robotraconteurlite_size_t len;
 };
 
 struct robotraconteurlite_array_vec_uint8
 {
     struct robotraconteurlite_array_uint8* array_vec;
-    size_t array_vec_cnt;
+    robotraconteurlite_size_t array_vec_cnt;
 
     struct robotraconteurlite_array_storage _scalar_storage;
 };
 
 struct robotraconteurlite_array_int16
 {
-    int16_t* data;
-    size_t len;
+    robotraconteurlite_i16* data;
+    robotraconteurlite_size_t len;
 };
 
 struct robotraconteurlite_array_vec_int16
 {
     struct robotraconteurlite_array_int16* array_vec;
-    size_t array_vec_cnt;
+    robotraconteurlite_size_t array_vec_cnt;
 
     struct robotraconteurlite_array_storage _scalar_storage;
 };
 
 struct robotraconteurlite_array_uint16
 {
-    uint16_t* data;
-    size_t len;
+    robotraconteurlite_u16* data;
+    robotraconteurlite_size_t len;
 };
 
 struct robotraconteurlite_array_vec_uint16
 {
     struct robotraconteurlite_array_uint16* array_vec;
-    size_t array_vec_cnt;
+    robotraconteurlite_size_t array_vec_cnt;
 
     struct robotraconteurlite_array_storage _scalar_storage;
 };
 
 struct robotraconteurlite_array_int32
 {
-    int32_t* data;
-    size_t len;
+    robotraconteurlite_i32* data;
+    robotraconteurlite_size_t len;
 };
 
 struct robotraconteurlite_array_vec_int32
 {
     struct robotraconteurlite_array_int32* array_vec;
-    size_t array_vec_cnt;
+    robotraconteurlite_size_t array_vec_cnt;
 
     struct robotraconteurlite_array_storage _scalar_storage;
 };
 
 struct robotraconteurlite_array_uint32
 {
-    uint32_t* data;
-    size_t len;
+    robotraconteurlite_u32* data;
+    robotraconteurlite_size_t len;
 };
 
 struct robotraconteurlite_array_vec_uint32
 {
     struct robotraconteurlite_array_uint32* array_vec;
-    size_t array_vec_cnt;
+    robotraconteurlite_size_t array_vec_cnt;
 
     struct robotraconteurlite_array_storage _scalar_storage;
 };
 
 struct robotraconteurlite_array_int64
 {
-    int64_t* data;
-    size_t len;
+    robotraconteurlite_i64* data;
+    robotraconteurlite_size_t len;
 };
 
 struct robotraconteurlite_array_vec_int64
 {
     struct robotraconteurlite_array_int64* array_vec;
-    size_t array_vec_cnt;
+    robotraconteurlite_size_t array_vec_cnt;
 
     struct robotraconteurlite_array_storage _scalar_storage;
 };
 
 struct robotraconteurlite_array_uint64
 {
-    uint64_t* data;
-    size_t len;
+    robotraconteurlite_u64* data;
+    robotraconteurlite_size_t len;
 };
 
 struct robotraconteurlite_array_vec_uint64
 {
     struct robotraconteurlite_array_uint64* array_vec;
-    size_t array_vec_cnt;
+    robotraconteurlite_size_t array_vec_cnt;
 
     struct robotraconteurlite_array_storage _scalar_storage;
 };
@@ -222,13 +221,13 @@ struct robotraconteurlite_array_vec_uint64
 struct robotraconteurlite_array_cdouble
 {
     struct robotraconteurlite_cdouble* data;
-    size_t len;
+    robotraconteurlite_size_t len;
 };
 
 struct robotraconteurlite_array_vec_cdouble
 {
     struct robotraconteurlite_array_cdouble* array_vec;
-    size_t array_vec_cnt;
+    robotraconteurlite_size_t array_vec_cnt;
 
     struct robotraconteurlite_array_storage _scalar_storage;
 };
@@ -236,13 +235,13 @@ struct robotraconteurlite_array_vec_cdouble
 struct robotraconteurlite_array_csingle
 {
     struct robotraconteurlite_csingle* data;
-    size_t len;
+    robotraconteurlite_size_t len;
 };
 
 struct robotraconteurlite_array_vec_csingle
 {
     struct robotraconteurlite_array_csingle* array_vec;
-    size_t array_vec_cnt;
+    robotraconteurlite_size_t array_vec_cnt;
 
     struct robotraconteurlite_array_storage _scalar_storage;
 };
@@ -250,266 +249,323 @@ struct robotraconteurlite_array_vec_csingle
 struct robotraconteurlite_array_bool
 {
     struct robotraconteurlite_bool* data;
-    size_t len;
+    robotraconteurlite_size_t len;
 };
 
 struct robotraconteurlite_array_vec_bool
 {
     struct robotraconteurlite_array_bool* array_vec;
-    size_t array_vec_cnt;
+    robotraconteurlite_size_t array_vec_cnt;
 
     struct robotraconteurlite_array_storage _scalar_storage;
 };
 
-ROBOTRACONTEURLITE_API robotraconteurlite_status
-robotraconteurlite_buffer_init_scalar(struct robotraconteurlite_buffer* buffer, void* data, size_t len);
+ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_init_scalar(
+    struct robotraconteurlite_buffer* buffer, void* data, robotraconteurlite_size_t len);
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_init_scalar(
     struct robotraconteurlite_buffer_vec* buffer_vec, struct robotraconteurlite_buffer* buffer);
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status
-robotraconteurlite_buffer_len(const struct robotraconteurlite_buffer* source, size_t* len);
+robotraconteurlite_buffer_len(const struct robotraconteurlite_buffer* source, robotraconteurlite_size_t* len);
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status
-robotraconteurlite_buffer_vec_len(const struct robotraconteurlite_buffer_vec* source, size_t* len);
+robotraconteurlite_buffer_vec_len(const struct robotraconteurlite_buffer_vec* source, robotraconteurlite_size_t* len);
+
+ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_copy(
+    const struct robotraconteurlite_buffer* source, robotraconteurlite_size_t source_pos,
+    const struct robotraconteurlite_buffer* dest, robotraconteurlite_size_t dest_pos, robotraconteurlite_size_t count);
+
+ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_vec(
+    const struct robotraconteurlite_buffer_vec* source, robotraconteurlite_size_t source_pos,
+    const struct robotraconteurlite_buffer_vec* dest, robotraconteurlite_size_t dest_pos,
+    robotraconteurlite_size_t count);
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status
-robotraconteurlite_buffer_copy(const struct robotraconteurlite_buffer* source, size_t source_pos,
-                               const struct robotraconteurlite_buffer* dest, size_t dest_pos, size_t count);
-
-ROBOTRACONTEURLITE_API robotraconteurlite_status
-robotraconteurlite_buffer_vec_copy_vec(const struct robotraconteurlite_buffer_vec* source, size_t source_pos,
-                                       const struct robotraconteurlite_buffer_vec* dest, size_t dest_pos, size_t count);
-
-ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_copy_ex(
-    const struct robotraconteurlite_buffer* source, size_t source_pos, size_t source_elem_size, size_t source_count,
-    const struct robotraconteurlite_buffer* dest, size_t dest_pos, size_t dest_elem_size, size_t dest_count);
+robotraconteurlite_buffer_copy_ex(const struct robotraconteurlite_buffer* source, robotraconteurlite_size_t source_pos,
+                                  robotraconteurlite_size_t source_elem_size, robotraconteurlite_size_t source_count,
+                                  const struct robotraconteurlite_buffer* dest, robotraconteurlite_size_t dest_pos,
+                                  robotraconteurlite_size_t dest_elem_size, robotraconteurlite_size_t dest_count);
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_vec_ex(
-    const struct robotraconteurlite_buffer_vec* source, size_t source_pos, size_t source_elem_size, size_t source_count,
-    const struct robotraconteurlite_buffer_vec* dest, size_t dest_pos, size_t dest_elem_size, size_t dest_count);
+    const struct robotraconteurlite_buffer_vec* source, robotraconteurlite_size_t source_pos,
+    robotraconteurlite_size_t source_elem_size, robotraconteurlite_size_t source_count,
+    const struct robotraconteurlite_buffer_vec* dest, robotraconteurlite_size_t dest_pos,
+    robotraconteurlite_size_t dest_elem_size, robotraconteurlite_size_t dest_count);
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_mem(
-    const struct robotraconteurlite_buffer_vec* source, size_t source_pos, uint8_t* dest, size_t dest_len,
-    size_t dest_pos, size_t dest_elem_size, size_t dest_count);
+    const struct robotraconteurlite_buffer_vec* source, robotraconteurlite_size_t source_pos,
+    robotraconteurlite_byte* dest, robotraconteurlite_size_t dest_len, robotraconteurlite_size_t dest_pos,
+    robotraconteurlite_size_t dest_elem_size, robotraconteurlite_size_t dest_count);
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_mem(
-    struct robotraconteurlite_buffer_vec* dest, size_t dest_pos, const uint8_t* source, size_t source_len,
-    size_t source_pos, size_t source_elem_size, size_t source_count);
+    struct robotraconteurlite_buffer_vec* dest, robotraconteurlite_size_t dest_pos,
+    const robotraconteurlite_byte* source, robotraconteurlite_size_t source_len, robotraconteurlite_size_t source_pos,
+    robotraconteurlite_size_t source_elem_size, robotraconteurlite_size_t source_count);
 
 /* double */
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_double_array(
-    const struct robotraconteurlite_buffer_vec* source_buf, size_t source_buf_pos,
-    struct robotraconteurlite_array_double* dest, size_t dest_pos, size_t dest_count);
+    const struct robotraconteurlite_buffer_vec* source_buf, robotraconteurlite_size_t source_buf_pos,
+    struct robotraconteurlite_array_double* dest, robotraconteurlite_size_t dest_pos,
+    robotraconteurlite_size_t dest_count);
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_double_array(
-    struct robotraconteurlite_buffer_vec* dest_buf, size_t dest_buf_pos,
-    const struct robotraconteurlite_array_double* source, size_t source_pos, size_t source_count);
+    struct robotraconteurlite_buffer_vec* dest_buf, robotraconteurlite_size_t dest_buf_pos,
+    const struct robotraconteurlite_array_double* source, robotraconteurlite_size_t source_pos,
+    robotraconteurlite_size_t source_count);
 
-ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_double(
-    const struct robotraconteurlite_buffer_vec* source_buf, size_t source_buf_pos, double* dest);
+ROBOTRACONTEURLITE_API robotraconteurlite_status
+robotraconteurlite_buffer_vec_copy_to_double(const struct robotraconteurlite_buffer_vec* source_buf,
+                                             robotraconteurlite_size_t source_buf_pos, robotraconteurlite_double* dest);
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_double(
-    struct robotraconteurlite_buffer_vec* dest_buf, size_t dest_buf_pos, double source);
+    struct robotraconteurlite_buffer_vec* dest_buf, robotraconteurlite_size_t dest_buf_pos,
+    robotraconteurlite_double source);
 
 /* single */
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_single_array(
-    const struct robotraconteurlite_buffer_vec* source_buf, size_t source_buf_pos,
-    struct robotraconteurlite_array_single* dest, size_t dest_pos, size_t dest_count);
+    const struct robotraconteurlite_buffer_vec* source_buf, robotraconteurlite_size_t source_buf_pos,
+    struct robotraconteurlite_array_single* dest, robotraconteurlite_size_t dest_pos,
+    robotraconteurlite_size_t dest_count);
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_single_array(
-    struct robotraconteurlite_buffer_vec* dest_buf, size_t dest_buf_pos,
-    const struct robotraconteurlite_array_single* source, size_t source_pos, size_t source_count);
+    struct robotraconteurlite_buffer_vec* dest_buf, robotraconteurlite_size_t dest_buf_pos,
+    const struct robotraconteurlite_array_single* source, robotraconteurlite_size_t source_pos,
+    robotraconteurlite_size_t source_count);
 
-ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_single(
-    const struct robotraconteurlite_buffer_vec* source_buf, size_t source_buf_pos, float* dest);
+ROBOTRACONTEURLITE_API robotraconteurlite_status
+robotraconteurlite_buffer_vec_copy_to_single(const struct robotraconteurlite_buffer_vec* source_buf,
+                                             robotraconteurlite_size_t source_buf_pos, robotraconteurlite_single* dest);
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_single(
-    struct robotraconteurlite_buffer_vec* dest_buf, size_t dest_buf_pos, float source);
+    struct robotraconteurlite_buffer_vec* dest_buf, robotraconteurlite_size_t dest_buf_pos,
+    robotraconteurlite_single source);
 
 /* int8 */
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_int8_array(
-    const struct robotraconteurlite_buffer_vec* source_buf, size_t source_buf_pos,
-    struct robotraconteurlite_array_int8* dest, size_t dest_pos, size_t dest_count);
+    const struct robotraconteurlite_buffer_vec* source_buf, robotraconteurlite_size_t source_buf_pos,
+    struct robotraconteurlite_array_int8* dest, robotraconteurlite_size_t dest_pos,
+    robotraconteurlite_size_t dest_count);
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_int8_array(
-    struct robotraconteurlite_buffer_vec* dest_buf, size_t dest_buf_pos,
-    const struct robotraconteurlite_array_int8* source, size_t source_pos, size_t source_count);
+    struct robotraconteurlite_buffer_vec* dest_buf, robotraconteurlite_size_t dest_buf_pos,
+    const struct robotraconteurlite_array_int8* source, robotraconteurlite_size_t source_pos,
+    robotraconteurlite_size_t source_count);
 
-ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_int8(
-    const struct robotraconteurlite_buffer_vec* source_buf, size_t source_buf_pos, int8_t* dest);
+ROBOTRACONTEURLITE_API robotraconteurlite_status
+robotraconteurlite_buffer_vec_copy_to_int8(const struct robotraconteurlite_buffer_vec* source_buf,
+                                           robotraconteurlite_size_t source_buf_pos, robotraconteurlite_i8* dest);
 
-ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_int8(
-    struct robotraconteurlite_buffer_vec* dest_buf, size_t dest_buf_pos, int8_t source);
+ROBOTRACONTEURLITE_API robotraconteurlite_status
+robotraconteurlite_buffer_vec_copy_from_int8(struct robotraconteurlite_buffer_vec* dest_buf,
+                                             robotraconteurlite_size_t dest_buf_pos, robotraconteurlite_i8 source);
 
 /* uint8 */
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_uint8_array(
-    const struct robotraconteurlite_buffer_vec* source_buf, size_t source_buf_pos,
-    struct robotraconteurlite_array_uint8* dest, size_t dest_pos, size_t dest_count);
+    const struct robotraconteurlite_buffer_vec* source_buf, robotraconteurlite_size_t source_buf_pos,
+    struct robotraconteurlite_array_uint8* dest, robotraconteurlite_size_t dest_pos,
+    robotraconteurlite_size_t dest_count);
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_uint8_array(
-    struct robotraconteurlite_buffer_vec* dest_buf, size_t dest_buf_pos,
-    const struct robotraconteurlite_array_uint8* source, size_t source_pos, size_t source_count);
+    struct robotraconteurlite_buffer_vec* dest_buf, robotraconteurlite_size_t dest_buf_pos,
+    const struct robotraconteurlite_array_uint8* source, robotraconteurlite_size_t source_pos,
+    robotraconteurlite_size_t source_count);
 
-ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_uint8(
-    const struct robotraconteurlite_buffer_vec* source_buf, size_t source_buf_pos, uint8_t* dest);
+ROBOTRACONTEURLITE_API robotraconteurlite_status
+robotraconteurlite_buffer_vec_copy_to_uint8(const struct robotraconteurlite_buffer_vec* source_buf,
+                                            robotraconteurlite_size_t source_buf_pos, robotraconteurlite_u8* dest);
 
-ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_uint8(
-    struct robotraconteurlite_buffer_vec* dest_buf, size_t dest_buf_pos, uint8_t source);
+ROBOTRACONTEURLITE_API robotraconteurlite_status
+robotraconteurlite_buffer_vec_copy_from_uint8(struct robotraconteurlite_buffer_vec* dest_buf,
+                                              robotraconteurlite_size_t dest_buf_pos, robotraconteurlite_u8 source);
 
 /* int16 */
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_int16_array(
-    const struct robotraconteurlite_buffer_vec* source_buf, size_t source_buf_pos,
-    struct robotraconteurlite_array_int16* dest, size_t dest_pos, size_t dest_count);
+    const struct robotraconteurlite_buffer_vec* source_buf, robotraconteurlite_size_t source_buf_pos,
+    struct robotraconteurlite_array_int16* dest, robotraconteurlite_size_t dest_pos,
+    robotraconteurlite_size_t dest_count);
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_int16_array(
-    struct robotraconteurlite_buffer_vec* dest_buf, size_t dest_buf_pos,
-    const struct robotraconteurlite_array_int16* source, size_t source_pos, size_t source_count);
+    struct robotraconteurlite_buffer_vec* dest_buf, robotraconteurlite_size_t dest_buf_pos,
+    const struct robotraconteurlite_array_int16* source, robotraconteurlite_size_t source_pos,
+    robotraconteurlite_size_t source_count);
 
-ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_int16(
-    const struct robotraconteurlite_buffer_vec* source_buf, size_t source_buf_pos, int16_t* dest);
+ROBOTRACONTEURLITE_API robotraconteurlite_status
+robotraconteurlite_buffer_vec_copy_to_int16(const struct robotraconteurlite_buffer_vec* source_buf,
+                                            robotraconteurlite_size_t source_buf_pos, robotraconteurlite_i16* dest);
 
-ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_int16(
-    struct robotraconteurlite_buffer_vec* dest_buf, size_t dest_buf_pos, int16_t source);
+ROBOTRACONTEURLITE_API robotraconteurlite_status
+robotraconteurlite_buffer_vec_copy_from_int16(struct robotraconteurlite_buffer_vec* dest_buf,
+                                              robotraconteurlite_size_t dest_buf_pos, robotraconteurlite_i16 source);
 
 /* uint16 */
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_uint16_array(
-    const struct robotraconteurlite_buffer_vec* source_buf, size_t source_buf_pos,
-    struct robotraconteurlite_array_uint16* dest, size_t dest_pos, size_t dest_count);
+    const struct robotraconteurlite_buffer_vec* source_buf, robotraconteurlite_size_t source_buf_pos,
+    struct robotraconteurlite_array_uint16* dest, robotraconteurlite_size_t dest_pos,
+    robotraconteurlite_size_t dest_count);
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_uint16_array(
-    struct robotraconteurlite_buffer_vec* dest_buf, size_t dest_buf_pos,
-    const struct robotraconteurlite_array_uint16* source, size_t source_pos, size_t source_count);
+    struct robotraconteurlite_buffer_vec* dest_buf, robotraconteurlite_size_t dest_buf_pos,
+    const struct robotraconteurlite_array_uint16* source, robotraconteurlite_size_t source_pos,
+    robotraconteurlite_size_t source_count);
 
-ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_uint16(
-    const struct robotraconteurlite_buffer_vec* source_buf, size_t source_buf_pos, uint16_t* dest);
+ROBOTRACONTEURLITE_API robotraconteurlite_status
+robotraconteurlite_buffer_vec_copy_to_uint16(const struct robotraconteurlite_buffer_vec* source_buf,
+                                             robotraconteurlite_size_t source_buf_pos, robotraconteurlite_u16* dest);
 
-ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_uint16(
-    struct robotraconteurlite_buffer_vec* dest_buf, size_t dest_buf_pos, uint16_t source);
+ROBOTRACONTEURLITE_API robotraconteurlite_status
+robotraconteurlite_buffer_vec_copy_from_uint16(struct robotraconteurlite_buffer_vec* dest_buf,
+                                               robotraconteurlite_size_t dest_buf_pos, robotraconteurlite_u16 source);
 
 /* int32 */
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_int32_array(
-    const struct robotraconteurlite_buffer_vec* source_buf, size_t source_buf_pos,
-    struct robotraconteurlite_array_int32* dest, size_t dest_pos, size_t dest_count);
+    const struct robotraconteurlite_buffer_vec* source_buf, robotraconteurlite_size_t source_buf_pos,
+    struct robotraconteurlite_array_int32* dest, robotraconteurlite_size_t dest_pos,
+    robotraconteurlite_size_t dest_count);
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_int32_array(
-    struct robotraconteurlite_buffer_vec* dest_buf, size_t dest_buf_pos,
-    const struct robotraconteurlite_array_int32* source, size_t source_pos, size_t source_count);
+    struct robotraconteurlite_buffer_vec* dest_buf, robotraconteurlite_size_t dest_buf_pos,
+    const struct robotraconteurlite_array_int32* source, robotraconteurlite_size_t source_pos,
+    robotraconteurlite_size_t source_count);
 
-ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_int32(
-    const struct robotraconteurlite_buffer_vec* source_buf, size_t source_buf_pos, int32_t* dest);
+ROBOTRACONTEURLITE_API robotraconteurlite_status
+robotraconteurlite_buffer_vec_copy_to_int32(const struct robotraconteurlite_buffer_vec* source_buf,
+                                            robotraconteurlite_size_t source_buf_pos, robotraconteurlite_i32* dest);
 
-ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_int32(
-    struct robotraconteurlite_buffer_vec* dest_buf, size_t dest_buf_pos, int32_t source);
+ROBOTRACONTEURLITE_API robotraconteurlite_status
+robotraconteurlite_buffer_vec_copy_from_int32(struct robotraconteurlite_buffer_vec* dest_buf,
+                                              robotraconteurlite_size_t dest_buf_pos, robotraconteurlite_i32 source);
 
 /* uint32 */
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_uint32_array(
-    const struct robotraconteurlite_buffer_vec* source_buf, size_t source_buf_pos,
-    struct robotraconteurlite_array_uint32* dest, size_t dest_pos, size_t dest_count);
+    const struct robotraconteurlite_buffer_vec* source_buf, robotraconteurlite_size_t source_buf_pos,
+    struct robotraconteurlite_array_uint32* dest, robotraconteurlite_size_t dest_pos,
+    robotraconteurlite_size_t dest_count);
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_uint32_array(
-    struct robotraconteurlite_buffer_vec* dest_buf, size_t dest_buf_pos,
-    const struct robotraconteurlite_array_uint32* source, size_t source_pos, size_t source_count);
+    struct robotraconteurlite_buffer_vec* dest_buf, robotraconteurlite_size_t dest_buf_pos,
+    const struct robotraconteurlite_array_uint32* source, robotraconteurlite_size_t source_pos,
+    robotraconteurlite_size_t source_count);
 
-ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_uint32(
-    const struct robotraconteurlite_buffer_vec* source_buf, size_t source_buf_pos, uint32_t* dest);
+ROBOTRACONTEURLITE_API robotraconteurlite_status
+robotraconteurlite_buffer_vec_copy_to_uint32(const struct robotraconteurlite_buffer_vec* source_buf,
+                                             robotraconteurlite_size_t source_buf_pos, robotraconteurlite_u32* dest);
 
-ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_uint32(
-    struct robotraconteurlite_buffer_vec* dest_buf, size_t dest_buf_pos, uint32_t source);
+ROBOTRACONTEURLITE_API robotraconteurlite_status
+robotraconteurlite_buffer_vec_copy_from_uint32(struct robotraconteurlite_buffer_vec* dest_buf,
+                                               robotraconteurlite_size_t dest_buf_pos, robotraconteurlite_u32 source);
 
 /* int64 */
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_int64_array(
-    const struct robotraconteurlite_buffer_vec* source_buf, size_t source_buf_pos,
-    struct robotraconteurlite_array_int64* dest, size_t dest_pos, size_t dest_count);
+    const struct robotraconteurlite_buffer_vec* source_buf, robotraconteurlite_size_t source_buf_pos,
+    struct robotraconteurlite_array_int64* dest, robotraconteurlite_size_t dest_pos,
+    robotraconteurlite_size_t dest_count);
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_int64_array(
-    struct robotraconteurlite_buffer_vec* dest_buf, size_t dest_buf_pos,
-    const struct robotraconteurlite_array_int64* source, size_t source_pos, size_t source_count);
+    struct robotraconteurlite_buffer_vec* dest_buf, robotraconteurlite_size_t dest_buf_pos,
+    const struct robotraconteurlite_array_int64* source, robotraconteurlite_size_t source_pos,
+    robotraconteurlite_size_t source_count);
 
-ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_int64(
-    const struct robotraconteurlite_buffer_vec* source_buf, size_t source_buf_pos, int64_t* dest);
+ROBOTRACONTEURLITE_API robotraconteurlite_status
+robotraconteurlite_buffer_vec_copy_to_int64(const struct robotraconteurlite_buffer_vec* source_buf,
+                                            robotraconteurlite_size_t source_buf_pos, robotraconteurlite_i64* dest);
 
-ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_int64(
-    struct robotraconteurlite_buffer_vec* dest_buf, size_t dest_buf_pos, int64_t source);
+ROBOTRACONTEURLITE_API robotraconteurlite_status
+robotraconteurlite_buffer_vec_copy_from_int64(struct robotraconteurlite_buffer_vec* dest_buf,
+                                              robotraconteurlite_size_t dest_buf_pos, robotraconteurlite_i64 source);
 
 /* uint64 */
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_uint64_array(
-    const struct robotraconteurlite_buffer_vec* source_buf, size_t source_buf_pos,
-    struct robotraconteurlite_array_uint64* dest, size_t dest_pos, size_t dest_count);
+    const struct robotraconteurlite_buffer_vec* source_buf, robotraconteurlite_size_t source_buf_pos,
+    struct robotraconteurlite_array_uint64* dest, robotraconteurlite_size_t dest_pos,
+    robotraconteurlite_size_t dest_count);
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_uint64_array(
-    struct robotraconteurlite_buffer_vec* dest_buf, size_t dest_buf_pos,
-    const struct robotraconteurlite_array_uint64* source, size_t source_pos, size_t source_count);
+    struct robotraconteurlite_buffer_vec* dest_buf, robotraconteurlite_size_t dest_buf_pos,
+    const struct robotraconteurlite_array_uint64* source, robotraconteurlite_size_t source_pos,
+    robotraconteurlite_size_t source_count);
 
-ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_uint64(
-    const struct robotraconteurlite_buffer_vec* source_buf, size_t source_buf_pos, uint64_t* dest);
+ROBOTRACONTEURLITE_API robotraconteurlite_status
+robotraconteurlite_buffer_vec_copy_to_uint64(const struct robotraconteurlite_buffer_vec* source_buf,
+                                             robotraconteurlite_size_t source_buf_pos, robotraconteurlite_u64* dest);
 
-ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_uint64(
-    struct robotraconteurlite_buffer_vec* dest_buf, size_t dest_buf_pos, uint64_t source);
+ROBOTRACONTEURLITE_API robotraconteurlite_status
+robotraconteurlite_buffer_vec_copy_from_uint64(struct robotraconteurlite_buffer_vec* dest_buf,
+                                               robotraconteurlite_size_t dest_buf_pos, robotraconteurlite_u64 source);
 
 /* cdouble */
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_cdouble_array(
-    const struct robotraconteurlite_buffer_vec* source_buf, size_t source_buf_pos,
-    struct robotraconteurlite_array_cdouble* dest, size_t dest_pos, size_t dest_count);
+    const struct robotraconteurlite_buffer_vec* source_buf, robotraconteurlite_size_t source_buf_pos,
+    struct robotraconteurlite_array_cdouble* dest, robotraconteurlite_size_t dest_pos,
+    robotraconteurlite_size_t dest_count);
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_cdouble_array(
-    struct robotraconteurlite_buffer_vec* dest_buf, size_t dest_buf_pos,
-    const struct robotraconteurlite_array_cdouble* source, size_t source_pos, size_t source_count);
+    struct robotraconteurlite_buffer_vec* dest_buf, robotraconteurlite_size_t dest_buf_pos,
+    const struct robotraconteurlite_array_cdouble* source, robotraconteurlite_size_t source_pos,
+    robotraconteurlite_size_t source_count);
 
-ROBOTRACONTEURLITE_API robotraconteurlite_status
-robotraconteurlite_buffer_vec_copy_to_cdouble(const struct robotraconteurlite_buffer_vec* source_buf,
-                                              size_t source_buf_pos, struct robotraconteurlite_cdouble* dest);
+ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_cdouble(
+    const struct robotraconteurlite_buffer_vec* source_buf, robotraconteurlite_size_t source_buf_pos,
+    struct robotraconteurlite_cdouble* dest);
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_cdouble(
-    struct robotraconteurlite_buffer_vec* dest_buf, size_t dest_buf_pos, struct robotraconteurlite_cdouble source);
+    struct robotraconteurlite_buffer_vec* dest_buf, robotraconteurlite_size_t dest_buf_pos,
+    struct robotraconteurlite_cdouble source);
 
 /* csingle */
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_csingle_array(
-    const struct robotraconteurlite_buffer_vec* source_buf, size_t source_buf_pos,
-    struct robotraconteurlite_array_csingle* dest, size_t dest_pos, size_t dest_count);
+    const struct robotraconteurlite_buffer_vec* source_buf, robotraconteurlite_size_t source_buf_pos,
+    struct robotraconteurlite_array_csingle* dest, robotraconteurlite_size_t dest_pos,
+    robotraconteurlite_size_t dest_count);
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_csingle_array(
-    struct robotraconteurlite_buffer_vec* dest_buf, size_t dest_buf_pos,
-    const struct robotraconteurlite_array_csingle* source, size_t source_pos, size_t source_count);
+    struct robotraconteurlite_buffer_vec* dest_buf, robotraconteurlite_size_t dest_buf_pos,
+    const struct robotraconteurlite_array_csingle* source, robotraconteurlite_size_t source_pos,
+    robotraconteurlite_size_t source_count);
 
-ROBOTRACONTEURLITE_API robotraconteurlite_status
-robotraconteurlite_buffer_vec_copy_to_csingle(const struct robotraconteurlite_buffer_vec* source_buf,
-                                              size_t source_buf_pos, struct robotraconteurlite_csingle* dest);
+ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_csingle(
+    const struct robotraconteurlite_buffer_vec* source_buf, robotraconteurlite_size_t source_buf_pos,
+    struct robotraconteurlite_csingle* dest);
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_csingle(
-    struct robotraconteurlite_buffer_vec* dest_buf, size_t dest_buf_pos, struct robotraconteurlite_csingle source);
+    struct robotraconteurlite_buffer_vec* dest_buf, robotraconteurlite_size_t dest_buf_pos,
+    struct robotraconteurlite_csingle source);
 
 /* bool */
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_bool_array(
-    const struct robotraconteurlite_buffer_vec* source_buf, size_t source_buf_pos,
-    struct robotraconteurlite_array_bool* dest, size_t dest_pos, size_t dest_count);
+    const struct robotraconteurlite_buffer_vec* source_buf, robotraconteurlite_size_t source_buf_pos,
+    struct robotraconteurlite_array_bool* dest, robotraconteurlite_size_t dest_pos,
+    robotraconteurlite_size_t dest_count);
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_bool_array(
-    struct robotraconteurlite_buffer_vec* dest_buf, size_t dest_buf_pos,
-    const struct robotraconteurlite_array_bool* source, size_t source_pos, size_t source_count);
+    struct robotraconteurlite_buffer_vec* dest_buf, robotraconteurlite_size_t dest_buf_pos,
+    const struct robotraconteurlite_array_bool* source, robotraconteurlite_size_t source_pos,
+    robotraconteurlite_size_t source_count);
 
-ROBOTRACONTEURLITE_API robotraconteurlite_status
-robotraconteurlite_buffer_vec_copy_to_bool(const struct robotraconteurlite_buffer_vec* source_buf,
-                                           size_t source_buf_pos, struct robotraconteurlite_bool* dest);
+ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_bool(
+    const struct robotraconteurlite_buffer_vec* source_buf, robotraconteurlite_size_t source_buf_pos,
+    struct robotraconteurlite_bool* dest);
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_bool(
-    struct robotraconteurlite_buffer_vec* dest_buf, size_t dest_buf_pos, struct robotraconteurlite_bool source);
+    struct robotraconteurlite_buffer_vec* dest_buf, robotraconteurlite_size_t dest_buf_pos,
+    struct robotraconteurlite_bool source);
 
 /* string */
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_string(
-    const struct robotraconteurlite_buffer_vec* source_buf, size_t source_buf_pos,
-    struct robotraconteurlite_string* dest, size_t dest_pos, size_t dest_count);
+    const struct robotraconteurlite_buffer_vec* source_buf, robotraconteurlite_size_t source_buf_pos,
+    struct robotraconteurlite_string* dest, robotraconteurlite_size_t dest_pos, robotraconteurlite_size_t dest_count);
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_string(
-    struct robotraconteurlite_buffer_vec* dest_buf, size_t dest_buf_pos, const struct robotraconteurlite_string* source,
-    size_t source_pos, size_t source_count);
+    struct robotraconteurlite_buffer_vec* dest_buf, robotraconteurlite_size_t dest_buf_pos,
+    const struct robotraconteurlite_string* source, robotraconteurlite_size_t source_pos,
+    robotraconteurlite_size_t source_count);
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_string_cmp(
     const struct robotraconteurlite_string* str1, const struct robotraconteurlite_string* str2);
 
 static int robotraconteurlite_string_cmp_c_str(const struct robotraconteurlite_string* str1, const char* str2)
 {
-    size_t strlen_str2 = strlen(str2);
+    robotraconteurlite_size_t strlen_str2 = strlen(str2);
     if ((strlen_str2 == 0U) && (str1->len == 0U))
     {
         return 0;
@@ -540,7 +596,8 @@ static int robotraconteurlite_string_cmp_c_str(const struct robotraconteurlite_s
     return memcmp(str1->data, str2, str1->len);
 }
 
-ROBOTRACONTEURLITE_API uint32_t robotraconteurlite_string_hash(const struct robotraconteurlite_string* str);
+ROBOTRACONTEURLITE_API robotraconteurlite_u32
+robotraconteurlite_string_hash(const struct robotraconteurlite_string* str);
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_string_copy_to(
     const struct robotraconteurlite_string* source, struct robotraconteurlite_string* dest);

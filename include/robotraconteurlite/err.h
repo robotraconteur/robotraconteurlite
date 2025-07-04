@@ -16,7 +16,7 @@
 #ifndef ROBOTRACONTEURLITE_ERROR_H
 #define ROBOTRACONTEURLITE_ERROR_H
 
-#include <stdint.h>
+#include "robotraconteurlite/config.h"
 
 /* robotraconteurlite_error */
 
@@ -49,9 +49,9 @@
 extern "C" {
 #endif
 
-typedef int32_t robotraconteurlite_status;
+typedef robotraconteurlite_i32 robotraconteurlite_status;
 
-static int32_t robotraconteurlite_is_success(robotraconteurlite_status status)
+static robotraconteurlite_i32 robotraconteurlite_is_success(robotraconteurlite_status status)
 {
     return status >= ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
