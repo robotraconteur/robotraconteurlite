@@ -67,7 +67,7 @@ void robotraconteurlite_buffer_{{ type }}_test(void** state)
 
 {% endfor %}
 
-{% set float_types=[("double","robotraconteurlite_double"),("single","float")] %}
+{% set float_types=[("double","robotraconteurlite_double"),("single","robotraconteurlite_single")] %}
 
 #define robotraconteurlite_array_float robotraconteurlite_array_single
 #define robotraconteurlite_buffer_vec_copy_from_float_array robotraconteurlite_buffer_vec_copy_from_single_array
@@ -179,8 +179,8 @@ void robotraconteurlite_buffer_{{type}}_test(void** state)
 
     for (i = 0; i < sizeof(a1) / sizeof(struct robotraconteurlite_{{type}}); i++)
     {
-        a1[i].real = (float)i;
-        a1[i].imag = (float)(i+1);
+        a1[i].real = (robotraconteurlite_single)i;
+        a1[i].imag = (robotraconteurlite_single)(i+1);
     }
     (void)memset(a2, 0, sizeof(a2));
     (void)memset(buf_data, 0, sizeof(buf_data));

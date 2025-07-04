@@ -455,7 +455,8 @@ void robotraconteurlite_buffer_double_test(void** state)
     assert_true(d2 == 11.0);
 }
 
-static int cmp_single(const float* a, const float* b, robotraconteurlite_size_t len)
+static int cmp_single(const robotraconteurlite_single* a, const robotraconteurlite_single* b,
+                      robotraconteurlite_size_t len)
 {
     robotraconteurlite_size_t i = 0;
     for (i = 0; i < len; i++)
@@ -470,22 +471,22 @@ static int cmp_single(const float* a, const float* b, robotraconteurlite_size_t 
 
 void robotraconteurlite_buffer_single_test(void** state)
 {
-    float a1[256];
-    float a2[256];
-    robotraconteurlite_byte buf_data[256 * sizeof(float)];
+    robotraconteurlite_single a1[256];
+    robotraconteurlite_single a2[256];
+    robotraconteurlite_byte buf_data[256 * sizeof(robotraconteurlite_single)];
     robotraconteurlite_size_t i = 0;
     struct robotraconteurlite_buffer buf;
     struct robotraconteurlite_buffer_vec buf_vec;
     struct robotraconteurlite_array_single singles;
     struct robotraconteurlite_array_single singles2;
 
-    float d1 = 10.23;
-    float d2 = 0.0;
+    robotraconteurlite_single d1 = 10.23;
+    robotraconteurlite_single d2 = 0.0;
 
     ROBOTRACONTEURLITE_UNUSED(state);
 
-    for (i = 0; i < sizeof(a1) / sizeof(float); i++)
-        a1[i] = (float)i;
+    for (i = 0; i < sizeof(a1) / sizeof(robotraconteurlite_single); i++)
+        a1[i] = (robotraconteurlite_single)i;
     (void)memset(a2, 0, sizeof(a2));
     (void)memset(buf_data, 0, sizeof(buf_data));
 
@@ -496,22 +497,22 @@ void robotraconteurlite_buffer_single_test(void** state)
     buf_vec.buffer_vec_cnt = 1;
 
     singles.data = a1;
-    singles.len = sizeof(a1) / sizeof(float);
+    singles.len = sizeof(a1) / sizeof(robotraconteurlite_single);
 
     assert_return_code(robotraconteurlite_buffer_vec_copy_from_single_array(&buf_vec, 32, &singles, 10, 15), 0);
 
-    assert_true(cmp_single(a1 + 10, (float*)(buf_data + 32), 15) == 0);
+    assert_true(cmp_single(a1 + 10, (robotraconteurlite_single*)(buf_data + 32), 15) == 0);
 
     singles2.data = a2;
-    singles2.len = sizeof(a2) / sizeof(float);
+    singles2.len = sizeof(a2) / sizeof(robotraconteurlite_single);
 
     assert_return_code(robotraconteurlite_buffer_vec_copy_to_single_array(&buf_vec, 32, &singles2, 12, 12), 0);
 
     assert_true(cmp_single(a1 + 10, a2 + 12, 12) == 0);
 
     robotraconteurlite_buffer_vec_copy_from_single(&buf_vec, 128, d1);
-    assert_true(cmp_single(&d1, (float*)(buf_data + 128), 1) == 0);
-    robotraconteurlite_buffer_vec_copy_to_single(&buf_vec, 32 + sizeof(float), &d2);
+    assert_true(cmp_single(&d1, (robotraconteurlite_single*)(buf_data + 128), 1) == 0);
+    robotraconteurlite_buffer_vec_copy_to_single(&buf_vec, 32 + sizeof(robotraconteurlite_single), &d2);
     assert_true(d2 == 11.0);
 }
 
@@ -552,8 +553,8 @@ void robotraconteurlite_buffer_csingle_test(void** state)
 
     for (i = 0; i < sizeof(a1) / sizeof(struct robotraconteurlite_csingle); i++)
     {
-        a1[i].real = (float)i;
-        a1[i].imag = (float)(i + 1);
+        a1[i].real = (robotraconteurlite_single)i;
+        a1[i].imag = (robotraconteurlite_single)(i + 1);
     }
     (void)memset(a2, 0, sizeof(a2));
     (void)memset(buf_data, 0, sizeof(buf_data));
@@ -622,8 +623,8 @@ void robotraconteurlite_buffer_cdouble_test(void** state)
 
     for (i = 0; i < sizeof(a1) / sizeof(struct robotraconteurlite_cdouble); i++)
     {
-        a1[i].real = (float)i;
-        a1[i].imag = (float)(i + 1);
+        a1[i].real = (robotraconteurlite_single)i;
+        a1[i].imag = (robotraconteurlite_single)(i + 1);
     }
     (void)memset(a2, 0, sizeof(a2));
     (void)memset(buf_data, 0, sizeof(buf_data));

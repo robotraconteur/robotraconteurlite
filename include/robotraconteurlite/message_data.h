@@ -37,7 +37,7 @@ ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_messageeleme
     struct robotraconteurlite_messageelement_reader* element_reader, struct robotraconteurlite_array_single* array);
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_single(
-    struct robotraconteurlite_messageelement_reader* element_reader, float* value);
+    struct robotraconteurlite_messageelement_reader* element_reader, robotraconteurlite_single* value);
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_int8_array(
     struct robotraconteurlite_messageelement_reader* element_reader, struct robotraconteurlite_array_int8* array);
@@ -120,7 +120,7 @@ ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_messageeleme
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_messageelement_writer_write_single(
     struct robotraconteurlite_messageelement_writer* element_writer,
-    const struct robotraconteurlite_string* element_name, float value);
+    const struct robotraconteurlite_string* element_name, robotraconteurlite_single value);
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_messageelement_writer_write_single_array(
     struct robotraconteurlite_messageelement_writer* element_writer,

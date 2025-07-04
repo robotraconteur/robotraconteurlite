@@ -119,7 +119,8 @@ static int cmp_double(const robotraconteurlite_double* a, const robotraconteurli
     return 0;
 }
 
-static int cmp_float(const float* a, const float* b, robotraconteurlite_size_t len)
+static int cmp_float(const robotraconteurlite_single* a, const robotraconteurlite_single* b,
+                     robotraconteurlite_size_t len)
 {
     robotraconteurlite_size_t i = 0;
     for (i = 0; i < len; i++)
@@ -474,13 +475,14 @@ void robotraconteurlite_message_run_reader_basictest(robotraconteurlite_byte* me
             struct robotraconteurlite_messageelement_reader nested_element2_reader;
             char nested_element2_name_data[] = "sub_singles";
             struct robotraconteurlite_string nested_element2_name;
-            float nested_element2_expected_data[] = {1, 2, 3, 4};
-            float nested_element2_read_data_storage[4];
+            robotraconteurlite_single nested_element2_expected_data[] = {1, 2, 3, 4};
+            robotraconteurlite_single nested_element2_read_data_storage[4];
             struct robotraconteurlite_array_single nested_element2_read_data;
             nested_element2_name.data = nested_element2_name_data;
             nested_element2_name.len = strlen(nested_element2_name_data);
             nested_element2_read_data.data = nested_element2_read_data_storage;
-            nested_element2_read_data.len = sizeof(nested_element2_read_data_storage) / sizeof(float);
+            nested_element2_read_data.len =
+                sizeof(nested_element2_read_data_storage) / sizeof(robotraconteurlite_single);
             assert_return_code(robotraconteurlite_messageelement_reader_find_nested_element(
                                    &element_reader3, &nested_element2_name, &nested_element2_reader),
                                0);
@@ -1056,14 +1058,14 @@ void robotraconteurlite_message_run_writer_basictest(robotraconteurlite_byte* bu
             }
             {
                 char sub_singles_name_d[] = "sub_singles";
-                float sub_singles_data_d[] = {1, 2, 3, 4};
+                robotraconteurlite_single sub_singles_data_d[] = {1, 2, 3, 4};
                 struct robotraconteurlite_string sub_singles_name;
                 struct robotraconteurlite_array_single sub_singles_data;
 
                 sub_singles_name.data = sub_singles_name_d;
                 sub_singles_name.len = strlen(sub_singles_name_d);
                 sub_singles_data.data = sub_singles_data_d;
-                sub_singles_data.len = sizeof(sub_singles_data_d) / sizeof(float);
+                sub_singles_data.len = sizeof(sub_singles_data_d) / sizeof(robotraconteurlite_single);
 
                 assert_return_code(robotraconteurlite_messageelement_writer_write_single_array(
                                        &nested_element_writer, &sub_singles_name, &sub_singles_data),
@@ -1222,7 +1224,7 @@ void robotraconteurlite_message_run_writer_basictest(robotraconteurlite_byte* bu
             }
             {
                 char sub_csingles_name_d[] = "sub_csingle";
-                float sub_csingles_data_d[] = {1, 10, 2, 20, 3, 30, 4, 40};
+                robotraconteurlite_single sub_csingles_data_d[] = {1, 10, 2, 20, 3, 30, 4, 40};
                 struct robotraconteurlite_string sub_csingles_name;
                 struct robotraconteurlite_array_csingle sub_csingles_data;
 

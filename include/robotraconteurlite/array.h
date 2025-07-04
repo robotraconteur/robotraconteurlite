@@ -54,8 +54,8 @@ struct robotraconteurlite_cdouble
 
 struct robotraconteurlite_csingle
 {
-    float real;
-    float imag;
+    robotraconteurlite_single real;
+    robotraconteurlite_single imag;
 };
 
 struct robotraconteurlite_bool
@@ -94,7 +94,7 @@ struct robotraconteurlite_array_vec_double
 
 struct robotraconteurlite_array_single
 {
-    float* data;
+    robotraconteurlite_single* data;
     robotraconteurlite_size_t len;
 };
 
@@ -333,11 +333,13 @@ ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_c
     const struct robotraconteurlite_array_single* source, robotraconteurlite_size_t source_pos,
     robotraconteurlite_size_t source_count);
 
-ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_single(
-    const struct robotraconteurlite_buffer_vec* source_buf, robotraconteurlite_size_t source_buf_pos, float* dest);
+ROBOTRACONTEURLITE_API robotraconteurlite_status
+robotraconteurlite_buffer_vec_copy_to_single(const struct robotraconteurlite_buffer_vec* source_buf,
+                                             robotraconteurlite_size_t source_buf_pos, robotraconteurlite_single* dest);
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_single(
-    struct robotraconteurlite_buffer_vec* dest_buf, robotraconteurlite_size_t dest_buf_pos, float source);
+    struct robotraconteurlite_buffer_vec* dest_buf, robotraconteurlite_size_t dest_buf_pos,
+    robotraconteurlite_single source);
 
 /* int8 */
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_int8_array(

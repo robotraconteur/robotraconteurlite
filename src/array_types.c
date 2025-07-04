@@ -69,7 +69,7 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_single_array(
     return robotraconteurlite_buffer_vec_copy_to_mem(source_buf, source_buf_pos,
                                                      /* cppcheck-suppress invalidPointerCast */
                                                      (robotraconteurlite_byte*)dest->data, dest->len, dest_pos,
-                                                     sizeof(float), dest_count);
+                                                     sizeof(robotraconteurlite_single), dest_count);
 }
 
 robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_single_array(
@@ -80,24 +80,27 @@ robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_single_array(
     return robotraconteurlite_buffer_vec_copy_from_mem(dest_buf, dest_buf_pos,
                                                        /* cppcheck-suppress invalidPointerCast */
                                                        (const robotraconteurlite_byte*)source->data, source->len,
-                                                       source_pos, sizeof(float), source_count);
+                                                       source_pos, sizeof(robotraconteurlite_single), source_count);
 }
 
 robotraconteurlite_status robotraconteurlite_buffer_vec_copy_to_single(
-    const struct robotraconteurlite_buffer_vec* source_buf, robotraconteurlite_size_t source_buf_pos, float* dest)
+    const struct robotraconteurlite_buffer_vec* source_buf, robotraconteurlite_size_t source_buf_pos,
+    robotraconteurlite_single* dest)
 {
     return robotraconteurlite_buffer_vec_copy_to_mem(source_buf, source_buf_pos,
                                                      /* cppcheck-suppress invalidPointerCast */
-                                                     (robotraconteurlite_byte*)dest, 1, 0, sizeof(float), 1);
+                                                     (robotraconteurlite_byte*)dest, 1, 0,
+                                                     sizeof(robotraconteurlite_single), 1);
 }
 
 robotraconteurlite_status robotraconteurlite_buffer_vec_copy_from_single(struct robotraconteurlite_buffer_vec* dest_buf,
                                                                          robotraconteurlite_size_t dest_buf_pos,
-                                                                         float source)
+                                                                         robotraconteurlite_single source)
 {
     return robotraconteurlite_buffer_vec_copy_from_mem(dest_buf, dest_buf_pos,
                                                        /* cppcheck-suppress invalidPointerCast */
-                                                       (const robotraconteurlite_byte*)&source, 1, 0, sizeof(float), 1);
+                                                       (const robotraconteurlite_byte*)&source, 1, 0,
+                                                       sizeof(robotraconteurlite_single), 1);
 }
 
 /* int8 */

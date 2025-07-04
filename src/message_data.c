@@ -46,15 +46,16 @@ robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_sin
                                                                  /* cppcheck-suppress invalidPointerCast */
                                                                  (robotraconteurlite_byte*)dest_array->data,
                                                                  &dest_array->len, ROBOTRACONTEURLITE_DATATYPE_SINGLE,
-                                                                 sizeof(float));
+                                                                 sizeof(robotraconteurlite_single));
 }
 
 robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_single(
-    struct robotraconteurlite_messageelement_reader* element_reader, float* value)
+    struct robotraconteurlite_messageelement_reader* element_reader, robotraconteurlite_single* value)
 {
     return robotraconteurlite_messageelement_reader_read_data_scalar_ex(
         /* cppcheck-suppress invalidPointerCast */
-        element_reader, (robotraconteurlite_byte*)value, ROBOTRACONTEURLITE_DATATYPE_SINGLE, sizeof(float));
+        element_reader, (robotraconteurlite_byte*)value, ROBOTRACONTEURLITE_DATATYPE_SINGLE,
+        sizeof(robotraconteurlite_single));
 }
 /* int8 */
 robotraconteurlite_status robotraconteurlite_messageelement_reader_read_data_int8_array(
@@ -264,7 +265,7 @@ robotraconteurlite_status robotraconteurlite_messageelement_writer_write_double_
 /* single */
 robotraconteurlite_status robotraconteurlite_messageelement_writer_write_single(
     struct robotraconteurlite_messageelement_writer* element_writer,
-    const struct robotraconteurlite_string* element_name, float value)
+    const struct robotraconteurlite_string* element_name, robotraconteurlite_single value)
 {
     struct robotraconteurlite_array_single a;
     a.data = &value;
@@ -272,7 +273,8 @@ robotraconteurlite_status robotraconteurlite_messageelement_writer_write_single(
     return robotraconteurlite_messageelement_writer_write_raw(element_writer, element_name,
                                                               /* cppcheck-suppress invalidPointerCast */
                                                               (const robotraconteurlite_byte*)a.data, a.len,
-                                                              ROBOTRACONTEURLITE_DATATYPE_SINGLE, sizeof(float));
+                                                              ROBOTRACONTEURLITE_DATATYPE_SINGLE,
+                                                              sizeof(robotraconteurlite_single));
 }
 
 robotraconteurlite_status robotraconteurlite_messageelement_writer_write_single_array(
@@ -282,7 +284,8 @@ robotraconteurlite_status robotraconteurlite_messageelement_writer_write_single_
     return robotraconteurlite_messageelement_writer_write_raw(element_writer, element_name,
                                                               /* cppcheck-suppress invalidPointerCast */
                                                               (const robotraconteurlite_byte*)value->data, value->len,
-                                                              ROBOTRACONTEURLITE_DATATYPE_SINGLE, sizeof(float));
+                                                              ROBOTRACONTEURLITE_DATATYPE_SINGLE,
+                                                              sizeof(robotraconteurlite_single));
 }
 /* int8 */
 robotraconteurlite_status robotraconteurlite_messageelement_writer_write_int8(
