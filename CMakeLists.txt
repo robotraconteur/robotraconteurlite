@@ -49,16 +49,18 @@ set(ROBOTRACONTEURLITE_SRC
     src/poll.c)
 
 if(ROBOTRACONTEURLITE_POSIX)
-    set(ROBOTRACONTEURLITE_SRC ${ROBOTRACONTEURLITE_SRC} src/tcp_transport_posix.c src/clock_posix.c src/poll_posix.c)
+    set(ROBOTRACONTEURLITE_SRC ${ROBOTRACONTEURLITE_SRC} platform/posix/src/tcp_transport_posix.c
+                               platform/posix/src/clock_posix.c platform/posix/src/poll_posix.c)
 endif()
 
 if(ROBOTRACONTEURLITE_USE_LIBUUID)
-    set(ROBOTRACONTEURLITE_SRC ${ROBOTRACONTEURLITE_SRC} src/nodeid_libuuid.c)
+    set(ROBOTRACONTEURLITE_SRC ${ROBOTRACONTEURLITE_SRC} platform/posix/src/nodeid_libuuid.c)
 endif()
 
 if(WIN32)
-    set(ROBOTRACONTEURLITE_SRC ${ROBOTRACONTEURLITE_SRC} src/tcp_transport_win32.c src/clock_win32.c src/poll_win32.c
-                               src/nodeid_win32.c)
+    set(ROBOTRACONTEURLITE_SRC
+        ${ROBOTRACONTEURLITE_SRC} platform/win32/src/tcp_transport_win32.c platform/win32/src/clock_win32.c
+        platform/win32/src/poll_win32.c platform/win32/src/nodeid_win32.c)
 endif()
 
 add_library(robotraconteurlite ${ROBOTRACONTEURLITE_SRC})
