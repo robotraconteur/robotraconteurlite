@@ -26,9 +26,11 @@ struct robotraconteurlite_string;
 extern "C" {
 #endif
 
+#define ROBOTRACONTEURLITE_NODEID_SIZE 16
+
 struct robotraconteurlite_nodeid
 {
-    robotraconteurlite_byte data[16];
+    robotraconteurlite_byte data[ROBOTRACONTEURLITE_NODEID_SIZE];
 };
 
 ROBOTRACONTEURLITE_API robotraconteurlite_u32

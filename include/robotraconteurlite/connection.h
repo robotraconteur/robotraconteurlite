@@ -62,7 +62,7 @@ extern "C" {
 
 struct robotraconteurlite_transport_storage
 {
-    robotraconteurlite_byte _storage[128];
+    robotraconteurlite_byte _storage[ROBOTRACONTEURLITE_TRANSPORT_STORAGE_SIZE];
 };
 
 struct robotraconteurlite_user_storage
@@ -101,9 +101,9 @@ struct robotraconteurlite_connection
     robotraconteurlite_u32 local_endpoint;
     robotraconteurlite_u32 remote_endpoint;
     struct robotraconteurlite_nodeid remote_nodeid;
-    char remote_nodename_char[128];
+    char remote_nodename_char[ROBOTRACONTEURLITE_MESSAGE_STR_MAX_SIZE];
     struct robotraconteurlite_string remote_nodename;
-    char remote_service_name_char[128];
+    char remote_service_name_char[ROBOTRACONTEURLITE_MESSAGE_STR_MAX_SIZE];
     struct robotraconteurlite_string remote_service_name;
     robotraconteurlite_timespec last_recv_message_time;
     robotraconteurlite_timespec last_send_message_time;
@@ -137,7 +137,7 @@ struct robotraconteurlite_connection_acceptor
 
 struct robotraconteurlite_sockaddr_storage
 {
-    robotraconteurlite_byte _storage[128];
+    robotraconteurlite_byte _storage[ROBOTRACONTEURLITE_SOCKADDR_STORAGE_SIZE];
 };
 
 /* robotraconteurlite_addr_flags */
