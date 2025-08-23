@@ -45,10 +45,16 @@
 extern "C" {
 #endif
 
+#define ROBOTRACONTEURLITE_TCP_SHA1_BYTES 20
+
 struct robotraconteurlite_tcp_sha1_storage
 {
-    robotraconteurlite_byte sha1_bytes[20];
+    robotraconteurlite_byte sha1_bytes[ROBOTRACONTEURLITE_TCP_SHA1_BYTES];
 };
+
+#define ROBOTRACONTEURLITE_WEBSOCKET_MASK_SIZE 4
+#define ROBOTRACONTEURLITE_WEBSOCKET_HEADER_SEND_SIZE 8
+#define ROBOTRACONTEURLITE_WEBSOCKET_HEADER_RECV_SIZE 16
 
 struct robotraconteurlite_tcp_transport_storage
 {
@@ -58,14 +64,14 @@ struct robotraconteurlite_tcp_transport_storage
     robotraconteurlite_size_t recv_websocket_frame_len;
     robotraconteurlite_size_t recv_websocket_header_pos;
     robotraconteurlite_size_t send_websocket_header_pos;
-    robotraconteurlite_u8 recv_websocket_mask[4];
-    robotraconteurlite_byte recv_websocket_header_buffer[16];
-    robotraconteurlite_byte send_websocket_header_buffer[8];
+    robotraconteurlite_u8 recv_websocket_mask[ROBOTRACONTEURLITE_WEBSOCKET_MASK_SIZE];
+    robotraconteurlite_byte recv_websocket_header_buffer[ROBOTRACONTEURLITE_WEBSOCKET_HEADER_RECV_SIZE];
+    robotraconteurlite_byte send_websocket_header_buffer[ROBOTRACONTEURLITE_WEBSOCKET_HEADER_SEND_SIZE];
     robotraconteurlite_size_t send_websocket_frame_len;
     robotraconteurlite_size_t send_websocket_frame_buffer_pos;
     robotraconteurlite_size_t send_websocket_frame_buffer_end;
     robotraconteurlite_size_t send_websocket_header_len;
-    robotraconteurlite_u8 send_websocket_mask[4];
+    robotraconteurlite_u8 send_websocket_mask[ROBOTRACONTEURLITE_WEBSOCKET_MASK_SIZE];
 };
 
 struct robotraconteurlite_tcp_connect_service_data

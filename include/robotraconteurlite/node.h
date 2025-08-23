@@ -50,7 +50,7 @@ struct robotraconteurlite_node
 
     /* Node information */
     struct robotraconteurlite_nodeid nodeid;
-    char nodename_char[128];
+    char nodename_char[ROBOTRACONTEURLITE_MESSAGE_STR_MAX_SIZE];
     struct robotraconteurlite_string nodename;
 
     /* Event information */
@@ -87,11 +87,11 @@ struct robotraconteurlite_node_receive_messageentry_data
     /* Internal */
     struct robotraconteurlite_buffer buffer_storage;
     struct robotraconteurlite_buffer_vec buffer_vec_storage;
-    char receiver_nodename_char[128];
-    char sender_nodename_char[128];
-    char service_path_char[128];
-    char member_name_char[128];
-    char extended_char[128];
+    char receiver_nodename_char[ROBOTRACONTEURLITE_MESSAGE_STR_MAX_SIZE];
+    char sender_nodename_char[ROBOTRACONTEURLITE_MESSAGE_STR_MAX_SIZE];
+    char service_path_char[ROBOTRACONTEURLITE_MESSAGE_STR_MAX_SIZE];
+    char member_name_char[ROBOTRACONTEURLITE_MESSAGE_STR_MAX_SIZE];
+    char extended_char[ROBOTRACONTEURLITE_MESSAGE_STR_MAX_SIZE];
 };
 
 struct robotraconteurlite_node_service_definition
@@ -141,7 +141,7 @@ struct robotraconteurlite_client_handshake_data
     robotraconteurlite_u32 handshake_state;
     robotraconteurlite_u32 request_id;
     struct robotraconteurlite_string root_object_type;
-    char root_object_type_char[128];
+    char root_object_type_char[ROBOTRACONTEURLITE_MESSAGE_STR_MAX_SIZE];
 };
 
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_node_init(
