@@ -48,6 +48,12 @@
 #define ROBOTRACONTEURLITE_STATUS_FLAGS_MESSAGE_SENT_CONSUMED 0x40000U
 #define ROBOTRACONTEURLITE_STATUS_FLAGS_CONNECTED_CONSUMED 0x80000U
 #define ROBOTRACONTEURLITE_STATUS_FLAGS_SEND_MESSAGE4 0x100000U
+#define ROBOTRACONTEURLITE_STATUS_FLAGS_RECEIVE_WOULD_BLOCK 0x200000U
+#define ROBOTRACONTEURLITE_STATUS_FLAGS_SEND_WOULD_BLOCK 0x400000U
+
+/* robotraconteurlite_connection_acceptor_status_flags */
+#define ROBOTRACONTEURLITE_CONNECTION_ACCEPTOR_STATUS_FLAGS_NULL 0U
+#define ROBOTRACONTEURLITE_CONNECTION_ACCEPTOR_STATUS_FLAGS_ACCEPT_WOULD_BLOCK 0x1U
 
 /* transport_capability_flags */
 #define ROBOTRACONTEURLITE_TRANSPORT_CAPABILITY_CODE_PAGE_MASK 0xFFF00000U
@@ -130,6 +136,10 @@ struct robotraconteurlite_connection_acceptor
     robotraconteurlite_u32 transport_type;
     struct robotraconteurlite_connection_acceptor* next;
     struct robotraconteurlite_connection_acceptor* prev;
+
+    /* Control flags */
+    robotraconteurlite_u32 config_flags;
+    robotraconteurlite_u32 acceptor_state;
 
     /* Socket storage */
     ROBOTRACONTEURLITE_SOCKET sock;
@@ -344,6 +354,9 @@ ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_connection_i
 ROBOTRACONTEURLITE_API robotraconteurlite_status robotraconteurlite_connection_impl_accept2(
     struct robotraconteurlite_connection* connection, robotraconteurlite_timespec now,
     robotraconteurlite_u32 transport_type, ROBOTRACONTEURLITE_SOCKET sock);
+
+ROBOTRACONTEURLITE_API void robotraconteurlite_connection_init_acceptor(
+    struct robotraconteurlite_connection_acceptor* acceptor);
 
 #ifdef __cplusplus
 }

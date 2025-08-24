@@ -542,3 +542,9 @@ robotraconteurlite_status robotraconteurlite_connection_impl_accept2(struct robo
 
     return ROBOTRACONTEURLITE_ERROR_SUCCESS;
 }
+
+void robotraconteurlite_connection_init_acceptor(struct robotraconteurlite_connection_acceptor* acceptor)
+{
+    /* Clear all fields */
+    (void)memset(acceptor, 0, sizeof(struct robotraconteurlite_connection_acceptor));
+}
