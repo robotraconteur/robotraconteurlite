@@ -289,7 +289,7 @@ robotraconteurlite_status robotraconteurlite_tcp_socket_accept(ROBOTRACONTEURLIT
     /* Accept connection */
     struct sockaddr_in cli_addr;
     int clilen = sizeof(cli_addr);
-    ROBOTRACONTEURLITE_UNUSED(acceptor);
+    FLAGS_CLEAR(acceptor->acceptor_state, ROBOTRACONTEURLITE_CONNECTION_ACCEPTOR_STATUS_FLAGS_ACCEPT_WOULD_BLOCK);
     *errno_out = 0;
     SOCKET newsockfd = WSAAccept(acceptor_sock, (struct sockaddr*)&cli_addr, &clilen, NULL, NULL);
     if (newsockfd == INVALID_SOCKET)
@@ -297,6 +297,7 @@ robotraconteurlite_status robotraconteurlite_tcp_socket_accept(ROBOTRACONTEURLIT
         int wsaError = WSAGetLastError();
         if (wsaError == WSAEWOULDBLOCK)
         {
+            FLAGS_SET(acceptor->acceptor_state, ROBOTRACONTEURLITE_CONNECTION_ACCEPTOR_STATUS_FLAGS_ACCEPT_WOULD_BLOCK);
             return ROBOTRACONTEURLITE_ERROR_RETRY;
         }
         *errno_out = wsaError;
